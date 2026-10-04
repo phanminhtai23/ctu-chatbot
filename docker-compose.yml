@@ -1,0 +1,23 @@
+# Postgres cho môi trường dev. Chạy: docker compose up -d db
+# Cổng 5433 (không phải 5432) để không đụng các Postgres khác trên máy.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ctu-chatbot-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ctu
+      POSTGRES_PASSWORD: ctu_dev_password
+      POSTGRES_DB: ctu_chatbot
+    ports:
+      - "5433:5432"
+    volumes:
+      - ctu_chatbot_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ctu -d ctu_chatbot"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  ctu_chatbot_pgdata:

@@ -1,5 +1,8 @@
 # internal AI working docs — not pushed
 agent-docs/
+brainstorm.txt
+CLAUDE.md
+vector-docs
 
 # frontend
 ctu-chatbot-fe/node_modules/

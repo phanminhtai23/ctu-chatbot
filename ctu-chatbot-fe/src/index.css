@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Token theo theme: đổi giá trị ở :root / .dark, component chỉ dùng tên token. */
+:root {
+  --surface: #ffffff;
+  --tint: #f1f6fd;
+  --line: #d6e2f3;
+  --field: #9aa9bd;
+  --heading: #132c33;
+  --muted: #666666;
+  --accent: #0d47a1;
+  --link: #077fe4;
+  --link-hover: #0f6ecd;
+  --bubble-user: #e8f1fd;
+  --bubble-bot: #f5f7fa;
+  color-scheme: light;
+}
+
+.dark {
+  --surface: #0b1220;
+  --tint: #111c30;
+  --line: #24344f;
+  --field: #4a5c7a;
+  --heading: #e8eef7;
+  --muted: #a9b6c9;
+  --accent: #5bbbff;
+  --link: #5bbbff;
+  --link-hover: #8dd0ff;
+  --bubble-user: #16335e;
+  --bubble-bot: #162033;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: 'Readex Pro', ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand cố định (CTU) */
+  --color-ctu-navy: #0d47a1;
+  --color-ctu-navy-dark: #0e346f;
+  --color-ctu-cyan: #22b8f0;
+  --color-ctu-gold: #fff201;
+  --color-ctu-gold-active: #fbc500;
+
+  /* Theo theme */
+  --color-surface: var(--surface);
+  --color-tint: var(--tint);
+  --color-line: var(--line);
+  --color-field: var(--field);
+  --color-heading: var(--heading);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-link: var(--link);
+  --color-link-hover: var(--link-hover);
+  --color-bubble-user: var(--bubble-user);
+  --color-bubble-bot: var(--bubble-bot);
+}
+
+@layer base {
+  body {
+    @apply font-sans font-light text-muted bg-surface leading-[1.7];
+  }
+  h1, h2, h3 {
+    @apply font-semibold text-heading;
+  }
+}

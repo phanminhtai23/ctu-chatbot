@@ -1,0 +1,66 @@
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+    env: str = "dev"
+    database_url: str = "postgresql://ctu:ctu_dev_password@localhost:5433/ctu_chatbot"
+    deepseek_api_key: str = ""
+
+    # LLM (Gemini). Điền key vào GEMINI_API_KEY_1..9 trong .env; hết hạn mức thì tự xoay sang key kế tiếp.
+    llm_model: str = "gemini-2.5-flash-lite"
+    gemini_api_key: str = ""  # key đơn (tuỳ chọn, được tính như key đầu tiên)
+    gemini_api_key_1: str = ""
+    gemini_api_key_2: str = ""
+    gemini_api_key_3: str = ""
+    gemini_api_key_4: str = ""
+    gemini_api_key_5: str = ""
+    gemini_api_key_6: str = ""
+    gemini_api_key_7: str = ""
+    gemini_api_key_8: str = ""
+    gemini_api_key_9: str = ""
+    llm_timeout_seconds: float = 60
+    llm_key_cooldown_seconds: int = 60  # key bị 429 thì nghỉ chừng này giây (nếu Gemini không báo thời gian chờ)
+    chat_history_window: int = 30  # số tin nhắn gần nhất gửi cho LLM; toàn bộ lịch sử vẫn nằm trong checkpoint
+
+    # OAuth Client ID (Web application) tạo ở Google Cloud Console. Rỗng = tắt đăng nhập Google.
+    google_client_id: str = ""
+
+    # JWT. Đổi secret_key ở mọi môi trường không phải dev.
+    secret_key: str = "dev-only-change-me-dev-only-change-me-0000"
+    access_token_expire_minutes: int = 60 * 24 * 7  # access token: 7 ngày
+    refresh_token_expire_days: int = 30  # refresh token: 30 ngày
+
+    # Tên miền email được phép đăng nhập (khớp domain chính xác hoặc subdomain).
+    # Đặt ALLOWED_EMAIL_DOMAINS=[] trong .env để cho MỌI email đăng nhập (chỉ khi test).
+    # CHƯA CHỐT: brainstorm ghi ".edu.ctu.vn" nhưng email sinh viên thật là "@student.ctu.edu.vn".
+    allowed_email_domains: list[str] = ["ctu.edu.vn", "edu.ctu.vn"]
+
+    cors_origins: list[str] = [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:5174",
+    ]
+
+
+    @property
+    def gemini_api_keys(self) -> list[str]:
+        """Các key đã điền, theo thứ tự, bỏ trùng và bỏ ô trống."""
+        candidates = [
+            self.gemini_api_key,
+            self.gemini_api_key_1,
+            self.gemini_api_key_2,
+            self.gemini_api_key_3,
+            self.gemini_api_key_4,
+            self.gemini_api_key_5,
+            self.gemini_api_key_6,
+            self.gemini_api_key_7,
+            self.gemini_api_key_8,
+            self.gemini_api_key_9,
+        ]
+        return list(dict.fromkeys(k.strip() for k in candidates if k and k.strip()))
+
+
+settings = Settings()

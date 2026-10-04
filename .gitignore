@@ -1,0 +1,27 @@
+# internal AI working docs — not pushed
+agent-docs/
+
+# frontend
+ctu-chatbot-fe/node_modules/
+ctu-chatbot-fe/dist/
+ctu-chatbot-fe/dist-ssr/
+ctu-chatbot-fe/.env
+ctu-chatbot-fe/*.local
+
+# backend
+ctu-chatbot-be/venv/
+ctu-chatbot-be/__pycache__/
+**/__pycache__/
+*.pyc
+ctu-chatbot-be/.pytest_cache/
+ctu-chatbot-be/.env
+
+# logs
+*.log
+npm-debug.log*
+
+# editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store

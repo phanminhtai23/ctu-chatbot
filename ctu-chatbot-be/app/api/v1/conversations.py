@@ -24,6 +24,7 @@ from app.schemas.conversation import (
 )
 from app.services.chat.service import delete_thread, get_history, run_turn, stream_turn
 from app.services.llm.gemini import LLMError, LLMNotConfigured, LLMUnavailable
+from app.services.rate_limit import chat_limiter
 
 logger = logging.getLogger("app.chat")
 
@@ -43,6 +44,17 @@ def _owned(db: Session, user: User, conversation_id: uuid.UUID) -> Conversation:
     if conv is None or conv.user_id != user.id:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Conversation not found")
     return conv
+
+
+def _enforce_rate_limit(user: User) -> None:
+    """Mỗi user tối đa N tin trong M giây (mặc định 10 tin / 5 phút). Quá thì 429 kèm Retry-After."""
+    allowed, retry_after = chat_limiter.hit(str(user.id))
+    if not allowed:
+        raise HTTPException(
+            status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="RATE_LIMITED",
+            headers={"Retry-After": str(retry_after)},
+        )
 
 
 def _touch(db: Session, conversation_id: uuid.UUID, first_text: str) -> Conversation | None:
@@ -119,6 +131,7 @@ def send_message(
     conv = _owned(db, user, conversation_id)
     conv_id = conv.id
     db.rollback()  # trả kết nối DB về pool trong lúc chờ LLM (có thể mất vài chục giây)
+    _enforce_rate_limit(user)
 
     try:
         user_msg, bot_msg = run_turn(graph, conv_id, body.content)
@@ -161,11 +174,13 @@ def stream_message(
 
     Sự kiện: `start` {user_message} → nhiều `token` {text} → `done` {assistant_message, conversation}.
     Lỗi giữa chừng: `error` {code, retry_after?} với code LLM_RATE_LIMITED | LLM_NOT_CONFIGURED | LLM_ERROR | INTERNAL_ERROR.
-    Kiểm tra quyền sở hữu và nội dung được làm TRƯỚC khi bắt đầu stream nên lỗi đó vẫn là HTTP 404/422 bình thường.
+    Kiểm tra quyền sở hữu, nội dung và giới hạn tốc độ được làm TRƯỚC khi bắt đầu stream nên các lỗi đó
+    vẫn là HTTP 404/422/429 bình thường.
     """
     conv = _owned(db, user, conversation_id)
     conv_id = conv.id
     db.rollback()
+    _enforce_rate_limit(user)
 
     def events() -> Iterator[str]:
         try:

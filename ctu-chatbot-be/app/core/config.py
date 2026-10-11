@@ -24,6 +24,19 @@ class Settings(BaseSettings):
     llm_key_cooldown_seconds: int = 60  # key bị 429 thì nghỉ chừng này giây (nếu Gemini không báo thời gian chờ)
     chat_history_window: int = 30  # số tin nhắn gần nhất gửi cho LLM; toàn bộ lịch sử vẫn nằm trong checkpoint
 
+    # Giới hạn chat: mỗi user tối đa `chat_rate_limit_max` tin trong `chat_rate_limit_window_seconds` giây.
+    chat_rate_limit_max: int = 10
+    chat_rate_limit_window_seconds: int = 300
+
+    # RAG: văn bản quy chế -> chunk theo Điều -> embedding Gemini -> ChromaDB (nhúng, không cần server).
+    embedding_model: str = "models/gemini-embedding-2"
+    embedding_model_api_key: str = ""  # rỗng thì dùng key Gemini đầu tiên
+    embedding_dim: int = 768
+    rag_source_path: str = ""  # rỗng = vector-docs/qd3266-clean.md ở thư mục gốc dự án
+    chroma_path: str = "chroma_db"  # tương đối so với thư mục ctu-chatbot-be
+    rag_top_k: int = 5
+
+
     # OAuth Client ID (Web application) tạo ở Google Cloud Console. Rỗng = tắt đăng nhập Google.
     google_client_id: str = ""
 

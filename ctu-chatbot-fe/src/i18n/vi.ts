@@ -171,6 +171,7 @@ const vi = {
   'chat.errLoad': 'Không tải được cuộc trò chuyện này.',
   'chat.errRateLimited': 'Chatbot đang quá tải. Vui lòng thử lại sau ',
   'chat.errRateLimitedSuffix': ' giây.',
+  'chat.errTooManyMessages': 'Bạn nhắn hơi nhanh rồi 😊 Mỗi người chỉ được gửi tối đa 10 tin trong 5 phút. Nghỉ một chút rồi hỏi tiếp nhé!',
   'chat.errNotConfigured': 'Chatbot chưa được cấu hình. Vui lòng liên hệ quản trị viên.',
   'chat.errLlm': 'Chatbot gặp lỗi khi trả lời. Hãy thử lại.',
   'chat.errNetwork': 'Không kết nối được tới máy chủ. Kiểm tra mạng và thử lại.',

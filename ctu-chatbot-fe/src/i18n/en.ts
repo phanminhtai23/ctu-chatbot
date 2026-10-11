@@ -173,6 +173,7 @@ const en: Record<TranslationKey, string> = {
   'chat.errLoad': 'Couldn’t load this conversation.',
   'chat.errRateLimited': 'The chatbot is busy. Please try again in ',
   'chat.errRateLimitedSuffix': ' seconds.',
+  'chat.errTooManyMessages': 'You’re sending messages a bit fast 😊 Each person can send up to 10 messages every 5 minutes. Take a short break and ask again!',
   'chat.errNotConfigured': 'The chatbot is not configured yet. Please contact an administrator.',
   'chat.errLlm': 'The chatbot ran into an error. Please try again.',
   'chat.errNetwork': 'Couldn’t reach the server. Check your connection and try again.',

@@ -14,6 +14,7 @@ from app.db.session import get_db, get_sessionmaker
 from app.main import app
 from app.models import User
 from app.services.chat.graph import build_chat_graph
+from app.services.rate_limit import chat_limiter
 from tests.fakes import FakeLLM
 
 
@@ -23,6 +24,14 @@ def _isolated_settings(monkeypatch):
     monkeypatch.setattr(settings, "env", "dev")
     monkeypatch.setattr(settings, "google_client_id", "")
     monkeypatch.setattr(settings, "allowed_email_domains", ["ctu.edu.vn", "edu.ctu.vn"])
+
+
+@pytest.fixture(autouse=True)
+def _reset_chat_limiter():
+    # Bộ đếm giới hạn chat nằm trong bộ nhớ process: test này không được dùng hết lượt của test khác.
+    chat_limiter.reset()
+    yield
+    chat_limiter.reset()
 
 
 @pytest.fixture()

@@ -2,7 +2,8 @@
 agent-docs/
 brainstorm.txt
 CLAUDE.md
-vector-docs
+vector-docs/QD3266_Quy_dinh_cong_tac_hoc_vu_danh_cho_sinh_vien_trinh_do_dai_hoc_hinh_thuc_chinh_quy_V3.pdf
+vector-docs/ocr-pdf-text.txt
 
 # frontend
 ctu-chatbot-fe/node_modules/

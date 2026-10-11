@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -10,6 +11,25 @@ from app.api.v1 import api_router
 from app.core.config import settings
 from app.services.chat.graph import build_chat_graph
 from app.services.llm.gemini import GeminiClient
+from app.services.rag.embeddings import GeminiEmbedder
+from app.services.rag.store import Retriever, VectorStore, default_chroma_path, ensure_index
+
+logger = logging.getLogger("app")
+
+
+def build_retriever() -> Retriever | None:
+    """Kho vector ChromaDB (nhúng, không cần server) chứa các Điều của quy định.
+
+    Lỗi ở đây (thiếu key embedding, mất mạng...) không được làm app chết: chatbot vẫn chạy nhưng không có ngữ cảnh.
+    """
+    try:
+        store = VectorStore(GeminiEmbedder.from_settings(), path=default_chroma_path())
+        count = ensure_index(store)
+        logger.info("RAG sẵn sàng: %d Điều trong ChromaDB", count)
+        return Retriever(store)
+    except Exception:  # noqa: BLE001
+        logger.exception("Không dựng được RAG; chatbot chạy không có ngữ cảnh quy định")
+        return None
 
 
 @asynccontextmanager
@@ -27,7 +47,7 @@ async def lifespan(app: FastAPI):
     checkpointer = PostgresSaver(pool)
     checkpointer.setup()  # tạo bảng checkpoint nếu chưa có (chạy an toàn nhiều lần)
 
-    app.state.chat_graph = build_chat_graph(GeminiClient.from_settings(), checkpointer)
+    app.state.chat_graph = build_chat_graph(GeminiClient.from_settings(), checkpointer, build_retriever())
     try:
         yield
     finally:

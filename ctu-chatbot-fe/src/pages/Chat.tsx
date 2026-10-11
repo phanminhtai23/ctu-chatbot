@@ -140,6 +140,7 @@ export default function Chat() {
             return t('chat.errLlm')
         }
       }
+      if (err instanceof ApiError && err.status === 429) return t('chat.errTooManyMessages')
       if (err instanceof ApiError) return t('chat.errLlm')
       return t('chat.errNetwork')
     },

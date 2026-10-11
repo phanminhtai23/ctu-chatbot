@@ -3,3 +3,6 @@ __pycache__/
 *.pyc
 .env
 .pytest_cache/
+chroma_db/
+tests/.live_quota.json
+tests/.live_embed_cache.json

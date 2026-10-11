@@ -10,6 +10,8 @@ PyJWT
 tzdata
 google-auth
 requests
+chromadb
+google-genai
 
 # test
 pytest

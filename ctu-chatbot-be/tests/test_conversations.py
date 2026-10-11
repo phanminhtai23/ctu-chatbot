@@ -1,6 +1,6 @@
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
-from app.services.chat.graph import SYSTEM_PROMPT, build_chat_graph, window
+from app.services.chat.graph import SYSTEM_PROMPT, build_chat_graph, build_system_prompt, window
 from app.services.llm.gemini import LLMError, LLMNotConfigured, LLMUnavailable
 
 
@@ -44,7 +44,8 @@ def test_bot_remembers_earlier_turns_from_checkpoint(client, auth_headers, fake_
 
     second_call = fake_llm.calls[1]
     texts = [m.content for m in second_call]
-    assert second_call[0].content == SYSTEM_PROMPT  # prompt hệ thống luôn ở đầu
+    assert second_call[0].content == build_system_prompt([])  # prompt hệ thống luôn ở đầu (đồ thị này chưa gắn RAG)
+    assert second_call[0].content.startswith(SYSTEM_PROMPT)
     assert "Tên tôi là An" in texts  # lượt 1 của người dùng được nạp lại từ checkpoint
     assert any(isinstance(m, AIMessage) for m in second_call)  # cả câu trả lời lượt 1
     assert texts[-1] == "Tôi tên gì?"

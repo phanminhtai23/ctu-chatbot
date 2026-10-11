@@ -16,10 +16,12 @@ class Case:
     must: tuple[tuple[str, ...], ...]
     forbid: tuple[str, ...] = field(default_factory=tuple)
     formula: bool = False
+    lead: str = ""  # regex phải khớp trong ~250 ký tự đầu của câu trả lời (trả lời Có/Không ngay từ đầu)
 
 
-def c(id, article, question, *must, forbid=(), formula=False) -> Case:
-    return Case(id, article, question, tuple(tuple(group) if isinstance(group, (list, tuple)) else (group,) for group in must), tuple(forbid), formula)
+def c(id, article, question, *must, forbid=(), formula=False, lead="") -> Case:
+    groups = tuple(tuple(group) if isinstance(group, (list, tuple)) else (group,) for group in must)
+    return Case(id, article, question, groups, tuple(forbid), formula, lead)
 
 
 # Điểm chữ B (không phải B+): B không đứng liền với chữ cái hay dấu +.
@@ -87,7 +89,7 @@ FORMULA_CASES: list[Case] = [
     c("f22e", 22, "Điểm 4,5 theo thang 10 là điểm chữ gì và có được tích lũy học phần không?", r"(?<![a-zđ])d(?![+a-zđ])", r"(có|được) (được )?tích lũy|được tích lũy", formula=True),
     # Điều 18: cảnh báo học tập
     c("f18a", 18, "ĐTBCHK của mình là 0,9 ở học kỳ đầu tiên của khóa học. Mình có bị cảnh báo học tập không?", r"không|chưa", r"0[,.]80?", formula=True),
-    c("f18b", 18, "ĐTBCHK của mình là 0,9 ở học kỳ thứ hai. Mình có bị cảnh báo học tập không?", r"1[,.]00?", forbid=(r"không (bị|thuộc)",), formula=True),
+    c("f18b", 18, "ĐTBCHK của mình là 0,9 ở học kỳ thứ hai. Mình có bị cảnh báo học tập không?", r"1[,.]00?", lead=r"\bcó\b|bị cảnh báo", forbid=(r"(?<!để )(?<!tránh )không (bị|thuộc) (diện )?cảnh báo",), formula=True),
     # Điều 19: giờ lên lớp
     c("f19", 19, "Học phần lý thuyết của mình có 45 tiết, mình vắng tối đa bao nhiêu tiết thì không bị cấm thi?", r"\b9\b", formula=True),
     # Điều 8: tín chỉ -> giờ
@@ -122,3 +124,23 @@ UNKNOWN_CASES: list[Case] = [
 ]
 
 OFF_TOPIC = "Bạn viết giúp mình một bài thơ lục bát về mùa thu nhé"
+
+
+# ---- Câu hỏi "có đạt được mục tiêu không": phải tính mức tối đa và trả lời Có/Không ngay câu đầu ----
+FEASIBILITY_CASES: list[Case] = [
+    # 100 TC x 3,2 = 320; toàn A ở 51 TC còn lại -> (320 + 204) / 151 = 3,47 < 3,60: KHÔNG THỂ
+    c("g01", 34, "chương trình tôi học 151 chỉ tôi đã học 100 chỉ điểm tb chung tích lũy hiện 3.2 tôi có thể tốt nghiệp xuất sắc không ?",
+      r"3[,.]47", r"cải thiện", r"điều kiện|điểm m\b", r"bao nhiêu",
+      forbid=(r"hoàn toàn có thể (đạt|tốt nghiệp)", r"vẫn (có|còn) cơ hội"),
+      lead=r"không (thể|được|đạt)|không nhé|không bạn", formula=True),
+    # 100 TC x 3,4 = 340; toàn A -> (340 + 204) / 151 = 3,60: CÓ THỂ nhưng phải gần như toàn A
+    c("g02", 34, "Chương trình của mình 151 tín chỉ, mình đã tích lũy 100 tín chỉ với ĐTBCTL là 3,4. Mình có thể tốt nghiệp loại xuất sắc không?",
+      r"3[,.]9\d|4[,.]0|toàn a|tất cả.{0,20}\ba\b|gần như", r"3[,.]60?",
+      lead=r"\bcó\b", formula=True),
+    # 100 TC x 3,5 = 350; cần (543,6 - 350) / 51 = 3,80 ở phần còn lại: CÓ THỂ
+    c("g03", 34, "Mình học chương trình 151 tín chỉ, đã tích lũy 100 tín chỉ, ĐTBCTL hiện tại 3,5. Mình cần điểm trung bình bao nhiêu ở phần còn lại để tốt nghiệp xuất sắc?",
+      r"3[,.]8", formula=True),
+    # 90 TC x 2,0 = 180; tối đa (180 + 61*4) / 151 = 2,81 < 3,2 (giỏi): KHÔNG THỂ
+    c("g04", 34, "Chương trình 151 tín chỉ, mình đã học 90 tín chỉ và ĐTBCTL đang là 2,0. Mình có thể ra trường loại giỏi không?",
+      r"2[,.]8", lead=r"không (thể|được|đạt)|không nhé|không bạn", formula=True),
+]

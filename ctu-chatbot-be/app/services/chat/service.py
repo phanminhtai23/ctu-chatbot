@@ -1,11 +1,27 @@
+import re
 import uuid
 from collections.abc import Iterator
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, RemoveMessage
 
 from app.services.chat.graph import now_iso
 from app.services.chat.text import message_text
+
+
+def _mentioned_sources(stored: list, text: str) -> list[dict]:
+    """Chỉ giữ tham chiếu mà câu trả lời thực sự nhắc tới ("Điều N").
+
+    Tin nhắn lưu từ phiên bản cũ ghi mọi Điều đã tra cứu làm tham chiếu; lọc lại ở đây để mở lại cuộc
+    trò chuyện cũ không hiện những chip không liên quan.
+    """
+    kept = []
+    for item in stored:
+        if not isinstance(item, dict) or not isinstance(item.get('article'), int):
+            continue
+        if re.search(rf'điều\s+{item["article"]}\b', text, flags=re.IGNORECASE):
+            kept.append(item)
+    return kept
 
 
 @dataclass
@@ -15,6 +31,7 @@ class ChatMessage:
     content: str
     created_at: str | None
     duration_seconds: float | None = None  # chỉ có ở tin của bot: thời gian chờ chatbot trả lời
+    sources: list[dict] = field(default_factory=list)  # chỉ có ở tin của bot: [{article, title}]
 
 
 def to_chat_message(message: BaseMessage) -> ChatMessage | None:
@@ -34,6 +51,7 @@ def to_chat_message(message: BaseMessage) -> ChatMessage | None:
         content=text,
         created_at=extra.get("created_at"),
         duration_seconds=extra.get("duration_seconds"),
+        sources=_mentioned_sources(list(extra.get("sources") or []), text) if role == "assistant" else [],
     )
 
 

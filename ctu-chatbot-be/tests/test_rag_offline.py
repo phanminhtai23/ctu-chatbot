@@ -240,3 +240,67 @@ def test_question_bank_covers_every_article():
 def test_question_bank_has_many_formula_cases():
     assert len(FORMULA_CASES) >= 20
     assert {case.article for case in FORMULA_CASES} >= {5, 8, 18, 19, 22, 24, 25, 28, 30, 34}
+
+
+# ---- tham chiếu (sources) ----
+
+
+def test_cited_sources_only_lists_articles_the_answer_mentions(store):
+    from app.services.rag.citations import cited_sources
+
+    hits = Retriever(store, top_k=5).retrieve("Mỗi học kỳ đăng ký tối đa bao nhiêu tín chỉ")
+    answer = "Theo Điều 14, tối đa 20 TC. Xem thêm Điều 14 và Điều 99 (không có trong ngữ cảnh)."
+    sources = cited_sources(answer, hits + [h for h in [store.get_article(14)] if h])
+    assert [s["article"] for s in sources] == [14]
+    assert sources[0]["title"] == "Số tín chỉ đăng ký trong một học kỳ"
+
+
+def test_cited_sources_is_empty_when_answer_cites_nothing(store):
+    from app.services.rag.citations import cited_sources
+
+    assert cited_sources("Mình chưa thấy quy định này nhé.", Retriever(store).retrieve("học phí")) == []
+
+
+def test_message_api_returns_sources_for_the_assistant_reply(client, auth_headers, store):
+    from app.api.deps import get_chat_graph
+    from app.main import app
+
+    graph = build_chat_graph(FakeLLM(), InMemorySaver(), Retriever(store, top_k=3))
+    app.dependency_overrides[get_chat_graph] = lambda: graph
+
+    conv_id = client.post("/api/v1/conversations", headers=auth_headers).json()["id"]
+    res = client.post(
+        f"/api/v1/conversations/{conv_id}/messages",
+        headers=auth_headers,
+        json={"content": "Theo Điều 14 thì tối đa bao nhiêu tín chỉ?"},
+    )
+    assert res.status_code == 200
+    body = res.json()
+    assert body["user_message"]["sources"] == []
+    assert body["assistant_message"]["sources"] == [
+        {"article": 14, "title": "Số tín chỉ đăng ký trong một học kỳ"}
+    ]
+
+    # mở lại cuộc trò chuyện (đọc từ checkpoint) vẫn còn tham chiếu
+    history = client.get(f"/api/v1/conversations/{conv_id}", headers=auth_headers).json()["messages"]
+    assert history[-1]["sources"][0]["article"] == 14
+
+
+def test_old_messages_with_unmentioned_sources_are_filtered_on_read():
+    from langchain_core.messages import AIMessage
+
+    from app.services.chat.service import to_chat_message
+
+    legacy = AIMessage(
+        content="Chào bạn! Mình có thể giúp gì cho bạn?",
+        id="m1",
+        additional_kwargs={"sources": [{"article": 4, "title": "Kế hoạch học tập"}, {"article": 1, "title": "Phạm vi"}]},
+    )
+    assert to_chat_message(legacy).sources == []
+
+    cited = AIMessage(
+        content="Theo Điều 14, tối đa 20 TC.",
+        id="m2",
+        additional_kwargs={"sources": [{"article": 14, "title": "Số tín chỉ"}, {"article": 4, "title": "Kế hoạch"}]},
+    )
+    assert [s["article"] for s in to_chat_message(cited).sources] == [14]

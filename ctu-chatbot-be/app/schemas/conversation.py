@@ -14,12 +14,20 @@ class ConversationOut(BaseModel):
     updated_at: datetime
 
 
+class SourceOut(BaseModel):
+    """Một tham chiếu tới văn bản quy định: bấm vào để xem đúng đoạn trong PDF."""
+
+    article: int
+    title: str
+
+
 class ChatMessageOut(BaseModel):
     id: str  # id tin nhắn trong LangGraph; dùng làm `message_id` khi gửi feedback
     role: Literal["user", "assistant"]
     content: str
     created_at: str | None
     duration_seconds: float | None = None  # thời gian chờ chatbot trả lời (chỉ tin của bot)
+    sources: list[SourceOut] = Field(default_factory=list)  # tham chiếu quy định (chỉ tin của bot)
 
 
 class ConversationDetail(ConversationOut):

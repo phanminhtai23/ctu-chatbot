@@ -156,9 +156,11 @@ def test_non_key_errors_do_not_burn_other_keys(monkeypatch):
 def test_empty_and_duplicate_keys_are_ignored(monkeypatch):
     from app.core.config import settings
 
+    # Xoá sạch mọi ô key (kể cả các ô 5-9 mà .env của máy có thể đã điền) rồi mới đặt giá trị thử.
     monkeypatch.setattr(settings, "gemini_api_key", "")
+    for i in range(1, 10):
+        monkeypatch.setattr(settings, f"gemini_api_key_{i}", "")
     monkeypatch.setattr(settings, "gemini_api_key_1", "A")
-    monkeypatch.setattr(settings, "gemini_api_key_2", "")
     monkeypatch.setattr(settings, "gemini_api_key_3", "A")
     monkeypatch.setattr(settings, "gemini_api_key_4", " B ")
     assert settings.gemini_api_keys == ["A", "B"]

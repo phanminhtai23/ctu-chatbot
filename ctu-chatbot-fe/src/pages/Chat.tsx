@@ -4,6 +4,7 @@ import { useAuth } from '../auth'
 import Composer from '../components/chat/Composer'
 import ConversationList from '../components/chat/ConversationList'
 import MessageBubble, { type UiMessage } from '../components/chat/MessageBubble'
+import ReferencePanel from '../components/chat/ReferencePanel'
 import ConfirmDialog from '../components/ConfirmDialog'
 import FeedbackModal from '../components/FeedbackModal'
 import Icon from '../components/Icon'
@@ -22,6 +23,7 @@ import {
   renameConversation,
   streamMessage,
   type Conversation,
+  type SourceRef,
 } from '../lib/conversations'
 import type { FeedbackType } from '../lib/feedback'
 
@@ -287,6 +289,14 @@ export default function Chat() {
   })
   const closeFeedback = () => setFeedback((prev) => ({ ...prev, open: false }))
 
+  // Điều đang xem trong cửa sổ tham chiếu bên phải (null = đóng)
+  const [reference, setReference] = useState<{ article: number; sources: SourceRef[] } | null>(null)
+  const openReference = useCallback(
+    (article: number, sources: SourceRef[]) => setReference({ article, sources }),
+    [],
+  )
+  const closeReference = useCallback(() => setReference(null), [])
+
   const activeTitle = conversations.find((c) => c.id === conversationId)?.title
   const isEmpty = !conversationId || (messages.length === 0 && !loadingConversation && !loadError)
 
@@ -473,6 +483,8 @@ export default function Chat() {
                   message={m}
                   liveElapsed={elapsed}
                   onReport={(msg) => setFeedback({ open: true, type: 'answer_issue', messageId: msg.id })}
+                  onOpenReference={openReference}
+                  activeArticle={reference?.article ?? null}
                 />
               ))}
             </div>
@@ -487,6 +499,15 @@ export default function Chat() {
           busy={busy}
         />
       </main>
+
+      {reference !== null && (
+        <ReferencePanel
+          article={reference.article}
+          sources={reference.sources}
+          onSelect={(article) => setReference((prev) => (prev ? { ...prev, article } : prev))}
+          onClose={closeReference}
+        />
+      )}
     </div>
   )
 }

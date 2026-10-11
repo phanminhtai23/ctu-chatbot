@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     deepseek_api_key: str = ""
 
     # LLM (Gemini). Điền key vào GEMINI_API_KEY_1..9 trong .env; hết hạn mức thì tự xoay sang key kế tiếp.
-    llm_model: str = "gemini-2.5-flash-lite"
+    llm_model: str = "gemini-3.5-flash-lite"
     gemini_api_key: str = ""  # key đơn (tuỳ chọn, được tính như key đầu tiên)
     gemini_api_key_1: str = ""
     gemini_api_key_2: str = ""

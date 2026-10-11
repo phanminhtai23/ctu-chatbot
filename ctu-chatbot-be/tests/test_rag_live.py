@@ -19,11 +19,11 @@ from app.services.llm.gemini import GeminiClient
 from app.services.rag.embeddings import EmbeddingError, GeminiEmbedder
 from app.services.rag.store import Retriever, VectorStore, default_source_path, ensure_index
 from tests.live_gemini import CachedEmbedder, ThrottledLLM
-from tests.rag_cases import ARTICLE_CASES, FORMULA_CASES, OFF_TOPIC, UNKNOWN_CASES, Case
+from tests.rag_cases import ARTICLE_CASES, FEASIBILITY_CASES, FORMULA_CASES, OFF_TOPIC, UNKNOWN_CASES, Case
 
 pytestmark = pytest.mark.live
 
-ALL_CASES = ARTICLE_CASES + FORMULA_CASES + UNKNOWN_CASES
+ALL_CASES = ARTICLE_CASES + FORMULA_CASES + UNKNOWN_CASES + FEASIBILITY_CASES
 EMOJI = re.compile("[\U0001f300-\U0001faff\u2600-\u27bf\u2b50\u2728]")
 LATEX = re.compile(r"\$\$|\\frac|\\sum|\\times|\\cdot|\\text|\\begin|\\\(|\\\[")
 _answers: dict[str, tuple[str, list[int]]] = {}
@@ -57,7 +57,7 @@ def ask(graph, question: str) -> tuple[str, list[int]]:
         config = {"configurable": {"thread_id": str(uuid.uuid4())}}
         result = graph.invoke({"messages": [HumanMessage(content=question)]}, config)
         reply = result["messages"][-1]
-        sources = [s["article"] for s in reply.additional_kwargs.get("sources", [])]
+        sources = [s["article"] for s in reply.additional_kwargs.get("retrieved", [])]
         _answers[question] = (str(reply.content), sources)
     return _answers[question]
 
@@ -75,6 +75,10 @@ def assert_friendly(answer: str) -> None:
 
 def assert_case(case: Case, answer: str) -> None:
     text = normalize(answer)
+    if case.lead:
+        assert re.search(case.lead, text[:260], flags=re.IGNORECASE), (
+            f"[{case.id}] câu trả lời chưa mở đầu bằng Có/Không rõ ràng ({case.lead!r})\n--- trả lời:\n{answer}"
+        )
     for group in case.must:
         assert any(re.search(p, text, flags=re.IGNORECASE) for p in group), (
             f"[{case.id}] thiếu một trong {group}\n--- câu hỏi: {case.question}\n--- trả lời:\n{answer}"
@@ -123,6 +127,44 @@ def test_formula_answer_shows_the_steps(graph):
     assert re.search(r"\b9\b", answer), f"chưa thể hiện tổng 9 tín chỉ:\n{answer}"
 
 
+# ---- 3b. Câu hỏi "có đạt được mục tiêu không": trả lời Có/Không ngay và nêu mức tối đa ----
+
+
+@pytest.mark.parametrize("case", FEASIBILITY_CASES, ids=lambda c: c.id)
+def test_feasibility_questions_answer_yes_or_no_first(graph, case):
+    answer, retrieved = ask(graph, case.question)
+    assert 34 in retrieved, f"[{case.id}] Điều 34 không nằm trong ngữ cảnh: {retrieved}"
+    assert_case(case, answer)
+    assert_friendly(answer)
+
+
+def test_feasibility_recomputes_after_user_gives_the_counted_credits(graph):
+    """Lượt 1: chỉ có tổng TC -> trả lời theo giả định + hỏi số TC không tính điểm.
+    Lượt 2: người dùng cho số TC học phần điều kiện -> bot phải TÍNH LẠI bằng C và T đã loại học phần điều kiện."""
+    config = {"configurable": {"thread_id": str(uuid.uuid4())}}
+
+    def say(text: str) -> str:
+        return str(graph.invoke({"messages": [HumanMessage(content=text)]}, config)["messages"][-1].content)
+
+    first = say("Chương trình 151 tín chỉ, mình đã học 100 tín chỉ, ĐTBCTL 3,5. Mình có thể đạt xuất sắc không?")
+    first_text = normalize(first)
+    # 4 - 0,5 x 100/151 = 3,67 >= 3,60 -> CÓ THỂ; và phải hỏi lại số TC học phần điều kiện để tính chính xác
+    assert re.search(r"\bcó\b", first_text[:260]), first
+    assert re.search(r"3[,.]6\d", first_text), first
+    assert re.search(r"điều kiện", first_text), f"chưa hỏi/nhắc tới học phần điều kiện:\n{first}"
+    assert re.search(r"bao nhiêu", first_text), f"chưa hỏi số TC không tính điểm:\n{first}"
+
+    second = say(
+        "Trong 100 TC đã học có 30 TC là GDTC, GDQP&AN và các học phần điều kiện; "
+        "tổng học phần điều kiện của cả chương trình cũng là 30 TC. Tính lại giúp mình nhé."
+    )
+    text = normalize(second)
+    # C = 70, T = 121, còn lại 51 TC: tối đa (3,5x70 + 4x51)/121 = 3,71; cần trung bình 3,74 ở phần còn lại
+    assert re.search(r"\b121\b", text), f"chưa dùng T = 151 - 30 = 121:\n{second}"
+    assert re.search(r"3[,.]7[1-4]", text), f"chưa ra kết quả tính lại (3,71 / 3,74):\n{second}"
+    assert_friendly(second)
+
+
 # ---- 4. Không bịa khi văn bản không có ----
 
 
@@ -167,4 +209,4 @@ def test_follow_up_question_uses_previous_turn(retriever, graph):
     result = graph.invoke({"messages": [HumanMessage(content="Vậy bao nhiêu điểm thì xếp loại xuất sắc?")]}, config)
     reply = result["messages"][-1]
     assert re.search(r"3[,.]60?", normalize(str(reply.content))), str(reply.content)
-    assert 24 in [s["article"] for s in reply.additional_kwargs["sources"]]
+    assert 24 in [s["article"] for s in reply.additional_kwargs["retrieved"]]

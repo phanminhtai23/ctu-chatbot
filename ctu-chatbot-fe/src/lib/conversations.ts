@@ -1,5 +1,8 @@
 import { apiFetch, apiStream } from './api'
 
+/** Một Điều của quy định mà câu trả lời đã dựa vào (bấm để xem trong PDF). */
+export type SourceRef = { article: number; title: string }
+
 export type ChatMessage = {
   id: string
   role: 'user' | 'assistant'
@@ -7,6 +10,8 @@ export type ChatMessage = {
   created_at: string | null
   /** Thời gian chờ chatbot trả lời (giây); chỉ tin của bot, tin cũ có thể không có */
   duration_seconds: number | null
+  /** Tham chiếu quy định; chỉ tin của bot, tin cũ có thể không có */
+  sources?: SourceRef[]
 }
 
 export type Conversation = {

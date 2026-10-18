@@ -24,8 +24,8 @@ class Settings(BaseSettings):
     llm_key_cooldown_seconds: int = 60  # key bị 429 thì nghỉ chừng này giây (nếu Gemini không báo thời gian chờ)
     chat_history_window: int = 30  # số tin nhắn gần nhất gửi cho LLM; toàn bộ lịch sử vẫn nằm trong checkpoint
 
-    # Giới hạn chat theo từng user, MỘT biến duy nhất: "<số tin>/<khoảng thời gian>" với đơn vị s (giây), m (phút), h (giờ).
-    # Ví dụ: "10/5m" (mặc định: 10 tin mỗi 5 phút), "30/1h", "5/30s". Đặt "off" để không giới hạn.
+    # Giới hạn chat theo từng user, MỘT biến duy nhất: "<số tin>/<khoảng thời gian>" với đơn vị s (giây), m (phút), h (giờ), d (ngày).
+    # Ví dụ: "10/5m" (mặc định: 10 tin mỗi 5 phút), "30/1h", "5/30s"; nhiều cửa sổ cách nhau bằng dấu phẩy: "10/5m,40/1d". "off" = không giới hạn.
     chat_rate_limit: str = "10/5m"
 
     # RAG: văn bản quy chế -> chunk theo Điều -> embedding Gemini -> ChromaDB (nhúng, không cần server).

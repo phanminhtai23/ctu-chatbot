@@ -45,6 +45,8 @@ export function classifyChatError(err: unknown, t: T): ChatErrorInfo {
     if (err.status === 429 && err.message.includes('TURN_IN_PROGRESS')) return { kind: 'busy', message: t('chat.errTurnInProgress') }
     if (err.status === 429) {
       const info = parseRateLimit(err.message)
+      // Hết lượt trong ngày: không có đồng hồ đếm ngược (chờ tới cả chục giờ), nói rõ là hẹn ngày mai.
+      if (info?.unit === 'd') return { kind: 'rate', message: t('chat.errDailyLimit') }
       return {
         kind: 'rate',
         retryAfter,

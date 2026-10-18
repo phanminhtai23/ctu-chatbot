@@ -71,15 +71,15 @@ def _enforce_rate_limit(user: User) -> None:
     """Mỗi user tối đa N tin trong M giây (mặc định 10 tin / 5 phút). Quá thì 429 kèm Retry-After."""
     if chat_limiter is None:  # CHAT_RATE_LIMIT=off
         return
-    allowed, retry_after = chat_limiter.hit(str(user.id))
-    if not allowed:
+    allowed, retry_after, blocked = chat_limiter.hit_detail(str(user.id))
+    if not allowed and blocked is not None:
         # `limit` và `window` cho giao diện hiện đúng "tối đa N tin trong M phút" theo cấu hình hiện tại.
         raise HTTPException(
             status.HTTP_429_TOO_MANY_REQUESTS,
             detail={
                 "code": "RATE_LIMITED",
-                "limit": chat_limiter.max_events,
-                "window": describe_window(chat_limiter.window_seconds),
+                "limit": blocked.max_events,
+                "window": describe_window(blocked.window_seconds),
                 "retry_after": retry_after,
             },
             headers={"Retry-After": str(retry_after)},

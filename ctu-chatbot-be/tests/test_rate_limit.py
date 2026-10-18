@@ -1,7 +1,7 @@
 import pytest
 
 from app.services import rate_limit
-from app.services.rate_limit import RateLimit, SlidingWindowLimiter, chat_limiter, describe_window, parse_rate_limit
+from app.services.rate_limit import MultiWindowLimiter, RateLimit, SlidingWindowLimiter, chat_limiter, describe_window, parse_rate_limit
 
 
 class FakeClock:
@@ -58,8 +58,7 @@ def test_blocked_attempts_do_not_extend_the_block():
 
 
 def test_default_limit_is_10_per_5_minutes():
-    assert chat_limiter._max == 10
-    assert chat_limiter._window == 300
+    assert [(lim.max_events, lim.window_seconds) for lim in chat_limiter.limits] == [(10, 300)]
 
 
 # ---- qua API ----
@@ -138,7 +137,8 @@ def test_streaming_endpoint_shares_the_same_budget(client, auth_headers):
 
 def test_allowed_again_after_5_minutes(client, auth_headers, monkeypatch):
     clock = FakeClock()
-    monkeypatch.setattr(chat_limiter, "_clock", clock)
+    for window in chat_limiter._windows:
+        monkeypatch.setattr(window, "_clock", clock)
     conv_id = _new_conversation(client, auth_headers)
     for i in range(10):
         assert _send(client, auth_headers, conv_id, f"câu hỏi {i}").status_code == 200
@@ -195,7 +195,7 @@ def test_rate_limit_can_be_turned_off(text):
     assert parse_rate_limit(text) is None
 
 
-@pytest.mark.parametrize("text", ["10", "10/5", "abc", "10/5d", "-1/5m", "0/5m", "10/0m", "10 per 5 minutes"])
+@pytest.mark.parametrize("text", ["10", "10/5", "abc", "10/5y", "-1/5m", "0/5m", "10/0m", "10 per 5 minutes"])
 def test_invalid_rate_limit_is_rejected_with_a_clear_message(text):
     with pytest.raises(ValueError, match="CHAT_RATE_LIMIT"):
         parse_rate_limit(text)
@@ -219,7 +219,7 @@ def test_no_limit_when_turned_off(client, auth_headers, monkeypatch):
 def test_custom_limit_is_applied_and_reported(client, auth_headers, monkeypatch):
     from app.api.v1 import conversations
 
-    monkeypatch.setattr(conversations, "chat_limiter", SlidingWindowLimiter(2, 3600))
+    monkeypatch.setattr(conversations, "chat_limiter", MultiWindowLimiter([RateLimit(2, 3600)]))
     conv_id = _new_conversation(client, auth_headers)
     assert _send(client, auth_headers, conv_id, "một").status_code == 200
     assert _send(client, auth_headers, conv_id, "hai").status_code == 200

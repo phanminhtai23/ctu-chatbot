@@ -434,6 +434,7 @@ const vi = {
   'chat.unit.s': 'giây',
   'chat.unit.m': 'phút',
   'chat.unit.h': 'giờ',
+  'chat.errDailyLimit': 'Hôm nay bạn đã hỏi nhiều rồi nè 🥹 Hệ thống giới hạn số lượt mỗi ngày để ai cũng được dùng. Hẹn bạn ngày mai nha!',
   'chat.errNotConfigured': 'Chatbot chưa được cấu hình. Vui lòng liên hệ quản trị viên.',
   'chat.errLlm': 'Chatbot gặp lỗi khi trả lời. Hãy thử lại.',
   'chat.errNetwork': 'Không kết nối được tới máy chủ. Kiểm tra mạng và thử lại.',

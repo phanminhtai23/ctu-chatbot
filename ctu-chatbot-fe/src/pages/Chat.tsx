@@ -19,6 +19,7 @@ import Sidebar, { labelClass, useSidebarCollapsed } from '../components/Sidebar'
 import { useI18n } from '../i18n'
 import { ApiError } from '../lib/api'
 import { listFiles } from '../lib/files'
+import { fillTemplate, formatBytes } from '../lib/format'
 import {
   createConversation,
   deleteConversation,
@@ -304,6 +305,7 @@ export default function Chat() {
   // --- Đổi tên / xoá ---
   const [deleteTarget, setDeleteTarget] = useState<Conversation | null>(null)
   const [profileOpen, setProfileOpen] = useState(false)
+  const [profileToFiles, setProfileToFiles] = useState(false) // mở hồ sơ từ thanh dung lượng: cuộn tới mục tệp
   // Dung lượng file đã dùng / tối đa (hiện ở thanh bên); lấy lại mỗi khi đóng hộp thoại hồ sơ (nơi xoá bớt tệp).
   const [usage, setUsage] = useState<{ used: number; quota: number } | null>(null)
   const refreshUsage = useCallback(() => {
@@ -380,8 +382,10 @@ export default function Chat() {
       />
       <ProfileDialog
         open={profileOpen}
+        scrollToFiles={profileToFiles}
         onClose={() => {
           setProfileOpen(false)
+          setProfileToFiles(false)
           refreshUsage()
         }}
       />
@@ -416,9 +420,17 @@ export default function Chat() {
         footer={
           <div>
             {usage && (
-              <div className={`mb-3 px-1 ${labelClass(collapsed)}`}>
+              <button
+                type="button"
+                onClick={() => {
+                  setProfileToFiles(true)
+                  setProfileOpen(true)
+                }}
+                title={fillTemplate(t('files.usage.hint'), { quota: formatBytes(usage.quota) })}
+                className={`mb-2 block w-full cursor-pointer rounded-lg border-0 bg-transparent px-2 py-1.5 text-left font-sans text-white hover:bg-white/10 ${labelClass(collapsed)}`}
+              >
                 <UsageBar used={usage.used} quota={usage.quota} variant="sidebar" />
-              </div>
+              </button>
             )}
           <div className={`flex items-center gap-3 ${collapsed ? 'md:justify-center' : ''}`}>
             <Avatar src={user?.avatar_url} name={displayName} />
@@ -428,7 +440,10 @@ export default function Chat() {
             </div>
             <button
               type="button"
-              onClick={() => setProfileOpen(true)}
+              onClick={() => {
+                setProfileToFiles(false)
+                setProfileOpen(true)
+              }}
               aria-label={t('chat.profile')}
               title={t('chat.profile')}
               className={`size-11 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-white hover:bg-white/10 ${

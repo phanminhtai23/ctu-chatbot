@@ -198,9 +198,10 @@ function ProfileForm({ onClose }: { onClose: () => void }) {
 }
 
 /** Ảnh đại diện + biểu mẫu thông tin + tệp đã tải lên. Dung lượng đã dùng lấy từ server mỗi lần mở hộp thoại. */
-function ProfileBody({ onClose }: { onClose: () => void }) {
+function ProfileBody({ onClose, scrollToFiles }: { onClose: () => void; scrollToFiles: boolean }) {
   const [listing, setListing] = useState<FileListing | null>(null)
   const { user } = useAuth()
+  const scrolled = useRef(false)
 
   const refresh = useCallback(() => {
     listFiles()
@@ -216,6 +217,13 @@ function ProfileBody({ onClose }: { onClose: () => void }) {
     if (avatar) refresh()
   }, [avatar, refresh])
 
+  // Mở từ thanh dung lượng ở thanh bên: cuộn thẳng tới mục "Tệp của bạn" (sau khi danh sách tệp đã hiện ra).
+  useEffect(() => {
+    if (!scrollToFiles || !listing || scrolled.current) return
+    scrolled.current = true
+    requestAnimationFrame(() => document.getElementById('my-files')?.scrollIntoView({ block: 'start' }))
+  }, [scrollToFiles, listing])
+
   return (
     <>
       <AvatarEditor maxBytes={listing?.max_upload_bytes ?? 5 * 1024 * 1024} />
@@ -225,10 +233,10 @@ function ProfileBody({ onClose }: { onClose: () => void }) {
   )
 }
 
-type Props = { open: boolean; onClose: () => void }
+type Props = { open: boolean; onClose: () => void; /** true = cuộn tới mục "Tệp của bạn" khi mở */ scrollToFiles?: boolean }
 
 /** Hộp thoại chỉnh thông tin cá nhân (thay cho trang /profile cũ). */
-export default function ProfileDialog({ open, onClose }: Props) {
+export default function ProfileDialog({ open, onClose, scrollToFiles = false }: Props) {
   const { t } = useI18n()
   const dialogRef = useRef<HTMLDialogElement>(null)
 
@@ -262,7 +270,7 @@ export default function ProfileDialog({ open, onClose }: Props) {
           <Icon name="close" />
         </button>
       </div>
-      {open && <ProfileBody onClose={onClose} />}
+      {open && <ProfileBody onClose={onClose} scrollToFiles={scrollToFiles} />}
       {open && <DonateSection />}
     </dialog>
   )

@@ -121,6 +121,7 @@ const vi = {
   'files.avatar.hint': 'Ảnh PNG, JPEG hoặc WebP, tối đa {max}. Chưa tải ảnh riêng thì dùng ảnh ngộ nghĩnh ngẫu nhiên.',
   'files.title': 'Tệp của bạn',
   'files.usage': 'Dung lượng đã dùng',
+  'files.usage.hint': 'Dung lượng lưu trữ cho ảnh đại diện và các tệp (PDF, ảnh) bạn gửi khi trò chuyện với chatbot. Mỗi người được dùng tối đa {quota}. Bấm để xem các tệp đã lưu và xoá bớt.',
   'files.empty': 'Chưa có tệp nào. Tệp bạn đính kèm khi trò chuyện với chatbot sẽ hiện ở đây.',
   'files.delete': 'Xoá',
   'files.confirmDelete': 'Bấm lần nữa để xoá',

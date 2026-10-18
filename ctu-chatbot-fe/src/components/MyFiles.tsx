@@ -64,7 +64,7 @@ export default function MyFiles({ listing, onChange }: { listing: FileListing | 
   }
 
   return (
-    <section aria-labelledby="my-files-title" className="mt-6 rounded-2xl border border-line bg-tint p-4 sm:p-5">
+    <section id="my-files" aria-labelledby="my-files-title" className="mt-6 rounded-2xl border border-line bg-tint p-4 sm:p-5">
       <h3 id="my-files-title" className="mb-3 mt-0 text-base">
         {t('files.title')}
       </h3>

@@ -39,8 +39,9 @@ def test_cache_has_scholarship_and_gpa_questions():
     items = suggested.load()
     assert len(items) >= 4
     categories = {item.category for item in items}
-    assert categories == {"Học bổng", "Điểm trung bình"}
-    assert sum(1 for i in items if i.category == "Học bổng") >= 2
+    assert {"Học bổng", "Điểm trung bình"} <= categories  # ngoài ra có các nhóm quan trọng khác (cảnh báo học tập, tốt nghiệp...)
+    assert len(categories) >= 3
+    assert [i.id for i in items[:2]] == ["xuat-sac", "hb-so-sanh"]  # hai câu hay nhất nằm đầu
     assert len({i.id for i in items}) == len(items)
     assert len({suggested.normalize(i.question) for i in items}) == len(items)
 

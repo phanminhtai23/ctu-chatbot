@@ -3,7 +3,7 @@
 Với mỗi câu, chạy bot thật (RAG + bộ luật + công cụ máy tính) tối đa vài lần cho tới khi câu trả lời qua bộ kiểm tra
 đáp án (`tests/answer_checks.py`) rồi ghi lại. Từ đó, bấm câu gợi ý trả lời ngay từ file này, không gọi LLM.
 
-Chạy lại khi đổi câu hỏi/prompt:   python scripts/build_suggested_cache.py
+Chạy lại khi đổi câu hỏi/prompt:   python scripts/build_suggested_cache.py   (chỉ sinh các câu chưa có; thêm --force để sinh lại tất cả)
 Mất vài phút (giãn cách giữa các lần gọi LLM để không vượt quota free).
 """
 
@@ -29,7 +29,7 @@ from app.services.rag.embeddings import GeminiEmbedder  # noqa: E402
 from app.services.rag.store import Retriever, VectorStore, default_chroma_path  # noqa: E402
 from tests.answer_checks import case_problems, friendly_problems  # noqa: E402
 from tests.rag_cases import ARTICLE_CASES, FORMULA_CASES, c  # noqa: E402
-from tests.rag_cases_hard import CREDITS_HARD, GPA_HARD, SCHOLARSHIP_HARD  # noqa: E402
+from tests.rag_cases_hard import CREDITS_HARD, GRADUATION_HARD, WARNING_HARD  # noqa: E402
 from tests.rag_cases_scholarship import SCHOLARSHIP_CASES  # noqa: E402
 
 MAX_ATTEMPTS = 4
@@ -40,8 +40,20 @@ def pick(cases, case_id):
     return next(case for case in cases if case.id == case_id)
 
 
-# (id, nhóm hiển thị, câu hỏi, kỳ vọng). Chọn các tình huống hay gặp về học bổng và điểm trung bình.
+# (id, nhóm hiển thị, câu hỏi, kỳ vọng). Thứ tự ở đây = thứ tự hiện trên giao diện. Chọn các tình huống hay gặp và quan trọng:
+# tốt nghiệp loại xuất sắc, học bổng, cảnh báo học tập, hạng tốt nghiệp.
 SUGGESTIONS = [
+    (
+        "xuat-sac",
+        "Điểm trung bình",
+        "Chương trình 151 tín chỉ, mình đã học 100 tín chỉ với ĐTBCTL 3,2. Mình có thể tốt nghiệp loại xuất sắc không?",
+        dataclasses.replace(
+            pick(CREDITS_HARD, "k05"),
+            question="Chương trình 151 tín chỉ, mình đã học 100 tín chỉ với ĐTBCTL 3,2. Mình có thể tốt nghiệp loại xuất sắc không?",
+            must=((r"3[,.]47",), (r"cải thiện",), (r"điều kiện|điểm m\b",)),
+            lead=r"không (thể|được|đạt)|không nhé|không bạn",
+        ),
+    ),
     (
         "hb-so-sanh",
         "Học bổng",
@@ -58,26 +70,20 @@ SUGGESTIONS = [
         ),
     ),
     (
-        "hb-muc",
-        "Học bổng",
-        "ĐTBCHK của mình là 3,3 còn ĐRL là 79 thì mình thuộc mức học bổng nào?",
-        pick(SCHOLARSHIP_HARD, "s04"),
+        "canh-bao",
+        "Cảnh báo học tập",
+        pick(WARNING_HARD, "w04").question,
+        pick(WARNING_HARD, "w04"),
     ),
     (
-        "dtbchk-vi-du",
-        "Điểm trung bình",
-        pick(FORMULA_CASES, "f24a").question,
-        pick(FORMULA_CASES, "f24a"),
-    ),
-    (
-        "xuat-sac",
-        "Điểm trung bình",
-        "Chương trình 151 tín chỉ, mình đã học 100 tín chỉ với ĐTBCTL 3,2. Mình có thể tốt nghiệp loại xuất sắc không?",
+        "tot-nghiep",
+        "Tốt nghiệp",
+        pick(GRADUATION_HARD, "t08").question,
+        # 8/120 = 6,67%: bắt buộc nêu đúng con số này (lần sinh trước từng ghi nhầm 5,67% mà vẫn qua bộ kiểm tra cũ).
         dataclasses.replace(
-            pick(CREDITS_HARD, "k05"),
-            question="Chương trình 151 tín chỉ, mình đã học 100 tín chỉ với ĐTBCTL 3,2. Mình có thể tốt nghiệp loại xuất sắc không?",
-            must=((r"3[,.]47",), (r"cải thiện",), (r"điều kiện|điểm m\b",)),
-            lead=r"không (thể|được|đạt)|không nhé|không bạn",
+            pick(GRADUATION_HARD, "t08"),
+            must=((r"khá",), (r"6[,.]67",)),
+            forbid=(r"5[,.]67",),
         ),
     ),
 ]
@@ -106,8 +112,17 @@ def main() -> None:
     store = VectorStore(GeminiEmbedder.from_settings(), path=default_chroma_path())
     graph = build_chat_graph(ThrottledLLM(GeminiClient.from_settings(), MIN_LLM_INTERVAL), InMemorySaver(), Retriever(store))
 
+    # Mặc định giữ lại các câu ĐÃ có trong file (cùng id và cùng câu hỏi) để khỏi tốn LLM; `--force` = sinh lại tất cả.
+    existing = {}
+    if DATA_FILE.exists() and "--force" not in sys.argv:
+        existing = {item["id"]: item for item in json.loads(DATA_FILE.read_text(encoding="utf-8")).get("items", [])}
+
     items = []
     for item_id, category, question, case in SUGGESTIONS:
+        if item_id in existing and existing[item_id]["question"] == question:
+            print(f"[{item_id}] giữ câu trả lời đã có", flush=True)
+            items.append({**existing[item_id], "category": category})
+            continue
         accepted = None
         for attempt in range(1, MAX_ATTEMPTS + 1):
             config = {"configurable": {"thread_id": str(uuid.uuid4())}}

@@ -1,8 +1,20 @@
 {
  "version": 1,
- "generated_at": "2026-10-18T07:25:32+00:00",
+ "generated_at": "2026-10-18T15:09:37+00:00",
  "model": "gemini-3.5-flash-lite",
  "items": [
+  {
+   "id": "xuat-sac",
+   "category": "Điểm trung bình",
+   "question": "Chương trình 151 tín chỉ, mình đã học 100 tín chỉ với ĐTBCTL 3,2. Mình có thể tốt nghiệp loại xuất sắc không?",
+   "answer": "Không thể bạn nhé 😊 Tối đa điểm trung bình chung tích lũy (ĐTBCTL) của bạn cũng chỉ đạt được là 3,47, thấp hơn mức 3,60 để được tốt nghiệp loại xuất sắc theo quy định tại Điều 34.\n\nDưới đây là chi tiết quá trình tính toán của mình:\n- **Tối đa hóa điểm số:** Giả sử trong 51 tín chỉ (TC) còn lại, bạn đều đạt điểm A (4,0), tổng điểm hệ 4 tích lũy cuối cùng sẽ là: `(320 + 51 * 4,0) / 151 = 3,47`. Do kết quả này nhỏ hơn 3,60 nên mục tiêu xuất sắc không thể đạt được.\n- **Cách duy nhất:** Nếu vẫn muốn cải thiện xếp hạng, cách duy nhất là bạn đăng ký học cải thiện điểm các học phần cũ để thay thế bằng điểm cao hơn (theo Điều 17 và 24). Cứ mỗi TC nâng từ C (2,0) lên A (4,0), bạn sẽ được cộng thêm 2,0 điểm vào tổng điểm hệ 4.\n\n*Lưu ý nhỏ:* Phép tính trên đang dựa trên giả định tạm thời là tất cả số TC bạn đã học đều được tính vào ĐTBCTL. Để mình tính lại chính xác hơn cho bạn, bạn cho mình biết thêm 2 thông tin này nhé:\n1. Trong 100 TC đã học, có bao nhiêu TC là học phần điều kiện hoặc điểm M (không tính vào ĐTBCTL)?\n2. Tổng số TC học phần điều kiện của toàn chương trình là bao nhiêu?\n\nBạn có muốn mình tính thử xem bạn cần điểm trung bình bao nhiêu ở các kỳ tới để chắc suất tốt nghiệp loại giỏi không nè? ✨",
+   "sources": [
+    {
+     "article": 34,
+     "title": "Bằng tốt nghiệp và hạng tốt nghiệp"
+    }
+   ]
+  },
   {
    "id": "hb-so-sanh",
    "category": "Học bổng",
@@ -16,34 +28,22 @@
    ]
   },
   {
-   "id": "hb-muc",
-   "category": "Học bổng",
-   "question": "ĐTBCHK của mình là 3,3 còn ĐRL là 79 thì mình thuộc mức học bổng nào?",
-   "answer": "Bạn đạt **mức học bổng loại khá** bạn nha 😊 ✨\n\nDựa theo quy định về xét học bổng khuyến khích học tập tại Điều 9, việc phân loại mức học bổng cần đáp ứng cả hai tiêu chí về điểm trung bình chung học kỳ (ĐTBCHK) và điểm rèn luyện (ĐRL):\n\n- **Mức xuất sắc:** ĐTBCHK từ 3,60 VÀ ĐRL loại xuất sắc.\n- **Mức giỏi:** ĐTBCHK từ 3,20 VÀ ĐRL từ loại tốt trở lên.\n- **Mức khá:** ĐTBCHK VÀ ĐRL đều từ loại khá trở lên.\n\nMặc dù ĐTBCHK của bạn là 3,30 (đạt chuẩn mức giỏi), nhưng ĐRL của bạn là 79 (xếp loại khá, dưới mức tốt là 80), nên bạn sẽ được xếp vào **mức khá** bạn nhé. \n\n*Lưu ý nhỏ:* Mức học bổng cụ thể bằng tiền và chỉ tiêu phân bổ sẽ do Hiệu trưởng quyết định, bạn nhớ theo dõi các thông báo mới nhất của Trường để nắm rõ hơn nha (Điều 9 khoản 1e) 📚\n\nBạn có muốn mình chia sẻ thêm thông tin gì khác nữa không nè?",
+   "id": "canh-bao",
+   "category": "Cảnh báo học tập",
+   "question": "Mình là sinh viên K48, học kỳ này đăng ký 16 TC và rớt đúng 8 TC, ĐTBCHK 1,5. Mình có bị cảnh báo học tập không?",
+   "answer": "Chào bạn 😊 Theo các tiêu chí đã có số liệu thì bạn không bị cảnh báo học tập, nhưng vẫn còn một vài điều cần kiểm tra thêm nha! \n\nDựa theo Điều 18 của quy định, chi tiết như sau:\n\n- Về điểm trung bình chung học kỳ (ĐTBCHK): ĐTBCHK của bạn là 1,50, lớn hơn mức 1,00 đối với các học kỳ tiếp theo nên không bị cảnh báo ở mục này.\n- Về số tín chỉ (TC) không đạt trong học kỳ: Bạn đăng ký 16 TC và rớt 8 TC, tức là chiếm đúng 50% số khối lượng đăng ký. Quy định nêu rõ là số TC không đạt phải *vượt quá* 50% mới bị cảnh báo (đúng bằng 50% thì chưa vượt quá, vì theo phép so sánh thì 8/16*100 không lớn hơn 50%). Do đó, bạn không bị cảnh báo ở mục này luôn nhé!\n\nTuy nhiên, mình chưa kiểm tra được hai tiêu chí sau vì chưa đủ thông tin:\n- Tổng số TC nợ đọng từ đầu khóa học đến nay (có vượt quá 24 TC hay không?).\n- Điểm trung bình chung tích lũy (ĐTBCTL) có dưới ngưỡng theo năm học không (với sinh viên năm nhất là 1,2; năm thứ hai là 1,4; năm thứ ba là 1,6; và các năm tiếp theo là 1,8).\n\nBạn có muốn chia sẻ thêm về tổng số TC nợ đọng hoặc ĐTBCTL hiện tại để mình kiểm tra kỹ hơn giúp bạn không? ✨",
    "sources": [
     {
-     "article": 9,
-     "title": "Học bổng và trợ cấp xã hội"
+     "article": 18,
+     "title": "Nghỉ học tạm thời, cảnh báo học tập, đình chỉ học tập và buộc thôi học"
     }
    ]
   },
   {
-   "id": "dtbchk-vi-du",
-   "category": "Điểm trung bình",
-   "question": "Học kỳ này mình học 3 môn: môn A 3 tín chỉ được điểm A, môn B 2 tín chỉ được điểm B+, môn C 4 tín chỉ được điểm C. Tính giúp mình ĐTBCHK nhé!",
-   "answer": "Điểm trung bình chung học kỳ của bạn là **3,00** nha, tương ứng với xếp loại **Khá** theo Điều 24 đó bạn nhé 😊 ✨\n\nDựa trên kết quả các môn học kỳ này:\n- Tổng số tín chỉ là 9 tín chỉ.\n- Tổng số điểm quy đổi là 27 điểm.\n\nBạn còn muốn mình tính toán hay tra cứu thông tin gì thêm nữa không nè? 📚",
-   "sources": [
-    {
-     "article": 24,
-     "title": "Điểm trung bình chung học kỳ, điểm trung bình chung năm học và điểm trung bình chung tích lũy"
-    }
-   ]
-  },
-  {
-   "id": "xuat-sac",
-   "category": "Điểm trung bình",
-   "question": "Chương trình 151 tín chỉ, mình đã học 100 tín chỉ với ĐTBCTL 3,2. Mình có thể tốt nghiệp loại xuất sắc không?",
-   "answer": "Không thể bạn nhé 😊 Tối đa điểm trung bình chung tích lũy (ĐTBCTL) của bạn cũng chỉ đạt được là 3,47, thấp hơn mức 3,60 để được tốt nghiệp loại xuất sắc theo quy định tại Điều 34.\n\nDưới đây là chi tiết quá trình tính toán của mình:\n- **Tối đa hóa điểm số:** Giả sử trong 51 tín chỉ (TC) còn lại, bạn đều đạt điểm A (4,0), tổng điểm hệ 4 tích lũy cuối cùng sẽ là: `(320 + 51 * 4,0) / 151 = 3,47`. Do kết quả này nhỏ hơn 3,60 nên mục tiêu xuất sắc không thể đạt được.\n- **Cách duy nhất:** Nếu vẫn muốn cải thiện xếp hạng, cách duy nhất là bạn đăng ký học cải thiện điểm các học phần cũ để thay thế bằng điểm cao hơn (theo Điều 17 và 24). Cứ mỗi TC nâng từ C (2,0) lên A (4,0), bạn sẽ được cộng thêm 2,0 điểm vào tổng điểm hệ 4.\n\n*Lưu ý nhỏ:* Phép tính trên đang dựa trên giả định tạm thời là tất cả số TC bạn đã học đều được tính vào ĐTBCTL. Để mình tính lại chính xác hơn cho bạn, bạn cho mình biết thêm 2 thông tin này nhé:\n1. Trong 100 TC đã học, có bao nhiêu TC là học phần điều kiện hoặc điểm M (không tính vào ĐTBCTL)?\n2. Tổng số TC học phần điều kiện của toàn chương trình là bao nhiêu?\n\nBạn có muốn mình tính thử xem bạn cần điểm trung bình bao nhiêu ở các kỳ tới để chắc suất tốt nghiệp loại giỏi không nè? ✨",
+   "id": "tot-nghiep",
+   "category": "Tốt nghiệp",
+   "question": "ĐTBCTL 3,5 (loại giỏi), có 8 TC bị điểm F trên chương trình 120 TC. Mình tốt nghiệp loại gì?",
+   "answer": "Hạng tốt nghiệp của bạn là **loại khá** bạn nhé 😊 \n\nTheo Điều 34 của quy định, dù ĐTBCTL đạt 3,50 (thuộc loại giỏi), hạng tốt nghiệp của bạn vẫn bị giảm một mức xuống loại khá. \n\nLý do là:\n- Chương trình của bạn có tổng cộng 120 TC, mức giới hạn cho phép bị điểm F là vượt quá 5% (tương đương trên 6 TC).\n- Bạn có 8 TC bị điểm F, tức đã vượt quá mức 5% cho phép (8 / 120 = 6,67%).\n- Ngoài ra, hạng xuất sắc và giỏi cũng sẽ bị giảm một mức nếu bạn từng bị kỷ luật từ mức cảnh cáo cấp Trường trở lên trong thời gian học.\n\nBạn có muốn mình kiểm tra thêm thông tin nào khác về điều kiện tốt nghiệp không nè? ✨",
    "sources": [
     {
      "article": 34,

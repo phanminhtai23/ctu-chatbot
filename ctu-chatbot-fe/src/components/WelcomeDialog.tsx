@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useAuth } from '../auth'
 import { useI18n } from '../i18n'
 import { welcomeGifs, pickGif } from '../lib/gifs'
-import { guessGender } from '../lib/gender'
 import { pickGreeting, type Greeting } from '../lib/greetings'
 import { markWelcomed } from '../lib/me'
 import Fireworks from './Fireworks'
@@ -22,14 +21,13 @@ export default function WelcomeDialog() {
 
   const needsWelcome = Boolean(user && !user.welcomed)
   const nameRef = useRef('')
-  const fullNameRef = useRef('') // họ tên đầy đủ (hoặc phần trước @) để đoán nam/nữ
   useEffect(() => {
     if (!needsWelcome || shown) return
     // eslint-disable-next-line react-hooks/set-state-in-effect -- mở hộp thoại đúng một lần khi phát hiện tài khoản mới
     setOpen(true)
     setShown(true)
     setGif(pickGif(welcomeGifs))
-    setGreeting(pickGreeting(nameRef.current, guessGender(fullNameRef.current)).greeting)
+    setGreeting(pickGreeting(nameRef.current).greeting)
     markWelcomed().catch(() => {}) // lỗi mạng thì lần sau vào sẽ chào lại, chấp nhận được
   }, [needsWelcome, shown])
 
@@ -38,7 +36,6 @@ export default function WelcomeDialog() {
   const last = raw.split(/\s+/).slice(-1)[0] ?? ''
   const name = last.charAt(0).toUpperCase() + last.slice(1)
   nameRef.current = name
-  fullNameRef.current = raw
 
   return (
     <FunDialog

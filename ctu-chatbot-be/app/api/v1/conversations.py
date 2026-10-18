@@ -104,7 +104,10 @@ def _pre_screen(user: User, text: str):
     - chào hỏi xã giao -> trả lời có sẵn, không gọi LLM (cũng tính vào giới hạn tốc độ);
     - câu hỏi gợi ý -> trả lời có sẵn, không tính giới hạn; còn lại -> None (đi đường bình thường)."""
     if is_profane(text):
-        _enforce_rate_limit(user)
+        # Vẫn tính vào giới hạn, nhưng KHÔNG đổi thành 429: người dùng luôn thấy đúng lời cảnh báo chửi thề
+        # (nếu đang bị giới hạn thì tin chửi không được ghi thêm, tin bình thường kế tiếp mới nhận 429).
+        if chat_limiter is not None:
+            chat_limiter.hit(str(user.id))
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="PROFANITY")
     hit = suggested.lookup(text)
     if hit is None:

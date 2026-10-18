@@ -76,7 +76,8 @@ def test_greetings_and_profanity_count_toward_the_rate_limit(client, auth_header
         res = client.post(url, headers=auth_headers, json={"content": text})
         assert res.status_code == (200 if i % 2 == 0 else 422)
     assert client.post(url, headers=auth_headers, json={"content": "xin chào"}).status_code == 429
-    assert client.post(url, headers=auth_headers, json={"content": "đm"}).status_code == 429
+    # Đang bị giới hạn mà chửi thề thì vẫn thấy cảnh báo chửi thề (422), không phải thông báo giới hạn (429).
+    assert client.post(url, headers=auth_headers, json={"content": "đm"}).status_code == 422
 
 
 def test_suggested_questions_still_skip_the_rate_limit(client, auth_headers):

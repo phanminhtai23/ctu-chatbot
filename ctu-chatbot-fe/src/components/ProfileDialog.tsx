@@ -191,7 +191,7 @@ function ProfileForm({ onClose }: { onClose: () => void }) {
         <button
           type="button"
           onClick={handleLogout}
-          className="ml-auto inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-field bg-transparent px-4 py-2 font-sans text-sm font-normal text-heading hover:bg-tint"
+          className="ml-auto inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border-0 bg-[#B3261E] px-4 py-2 font-sans text-sm font-semibold text-white hover:bg-[#8C1D18] dark:bg-[#C93C3C] dark:hover:bg-[#A82F2F]"
         >
           <Icon name="logout" size={18} />
           {t('profile.logout')}

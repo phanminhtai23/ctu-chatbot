@@ -167,7 +167,7 @@ export default function Landing() {
           <div className={`${container} py-20 sm:py-22`}>
             <h2 className="mb-3 text-center text-[length:clamp(1.6rem,3vw,2.25rem)]">{t('samples.title')}</h2>
             <p className="mx-auto mb-12 max-w-[640px] text-center">{t('samples.sub')}</p>
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(min(340px,100%),1fr))] gap-5">
+            <div className="mx-auto flex max-w-[820px] flex-col gap-4">
               {samples.map((s) => (
                 <Link
                   key={s.id}

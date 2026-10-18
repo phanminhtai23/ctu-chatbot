@@ -86,6 +86,21 @@ def get_history(graph, conversation_id: uuid.UUID) -> list[ChatMessage]:
     return [m for m in (to_chat_message(msg) for msg in messages) if m is not None]
 
 
+def find_exchange(graph, conversation_id: str | None, message_id: str | None) -> tuple[str | None, str | None]:
+    """(câu hỏi, câu trả lời) của tin bot `message_id`; (None, None) nếu không tìm thấy (đã xoá, id sai...)."""
+    if not conversation_id or not message_id:
+        return None, None
+    try:
+        history = get_history(graph, uuid.UUID(conversation_id))
+    except Exception:  # id không hợp lệ / checkpoint lỗi: phản hồi vẫn phải lưu được
+        return None, None
+    for i, msg in enumerate(history):
+        if msg.id == message_id and msg.role == "assistant":
+            question = next((m.content for m in reversed(history[:i]) if m.role == "user"), None)
+            return question, msg.content
+    return None, None
+
+
 def run_turn(graph, conversation_id: uuid.UUID, text: str, author_name: str | None = None) -> tuple[ChatMessage, ChatMessage]:
     """Thêm tin của người dùng, chạy đồ thị, trả về (tin người dùng, câu trả lời của bot).
 

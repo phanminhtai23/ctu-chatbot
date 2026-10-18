@@ -52,7 +52,16 @@ export default function AdminFeedback() {
     [items, typeFilter, statusFilter],
   )
 
+  const total = items.length
+  const unresolved = items.filter((i) => i.status !== 'resolved').length
+
   const selected = items.find((i) => i.id === selectedId) ?? null
+
+  // Chưa mở = chưa xem: bấm vào một phản hồi "Mới" thì tự chuyển thành "Đã xem" (và huy hiệu giảm đi).
+  const handleOpen = (item: FeedbackItem) => {
+    setSelectedId(item.id)
+    if (item.status === 'new') handleSaveStatus(item.id, 'reviewed').catch(() => {})
+  }
 
   const handleSaveStatus = async (id: string, status: FeedbackStatus) => {
     await updateFeedbackStatus(id, status)
@@ -62,6 +71,22 @@ export default function AdminFeedback() {
 
   return (
     <AdminLayout title={t('admin.fb.title')} subtitle={t('admin.fb.subtitle')}>
+      {state === 'ready' && (
+        <dl className="mb-5 mt-0 grid grid-cols-2 gap-3 sm:max-w-md">
+          {(
+            [
+              ['admin.fb.stat.total', total],
+              ['admin.fb.stat.unresolved', unresolved],
+            ] as const
+          ).map(([label, value]) => (
+            <div key={label} className="rounded-xl border border-line bg-tint px-4 py-3">
+              <dt className="text-xs">{t(label)}</dt>
+              <dd className="m-0 mt-1 text-2xl font-semibold text-heading">{value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+
       <div className="mb-5 flex flex-wrap items-end gap-4">
         <div className="flex flex-col gap-1">
           <label htmlFor="fb-type" className="text-sm font-normal text-heading">{t('admin.fb.filterType')}</label>
@@ -124,7 +149,7 @@ export default function AdminFeedback() {
             <li key={item.id}>
               <button
                 type="button"
-                onClick={() => setSelectedId(item.id)}
+                onClick={() => handleOpen(item)}
                 aria-label={`${t('admin.fb.open')}: ${item.user_email}`}
                 className="block w-full cursor-pointer rounded-xl border border-line bg-surface px-5 py-4 text-left font-sans hover:bg-tint"
               >

@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_chat_graph, get_current_user
 from app.db.session import get_db
 from app.models import Feedback, User
 from app.schemas.feedback import FeedbackCreate, FeedbackCreated
+from app.services.chat.service import find_exchange
 
 router = APIRouter(prefix="/feedback", tags=["feedback"])
 
@@ -14,8 +15,11 @@ def create_feedback(
     body: FeedbackCreate,
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
+    graph=Depends(get_chat_graph),
 ):
     item = Feedback(user_id=user.id, **body.model_dump())
+    if body.type == "answer_issue":
+        item.question, item.answer = find_exchange(graph, body.conversation_id, body.message_id)
     db.add(item)
     db.commit()
     db.refresh(item)

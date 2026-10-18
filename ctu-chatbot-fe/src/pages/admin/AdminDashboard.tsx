@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { BarChart, LineChart, Sparkline } from '../../components/admin/Charts'
 import Icon from '../../components/Icon'
@@ -137,6 +137,8 @@ function Skeleton() {
   )
 }
 
+const FILTER_KEY = 'ctu-admin-dashboard-filters'
+
 export default function AdminDashboard() {
   const { t } = useI18n()
   const formatDate = useFormatDate()
@@ -149,6 +151,28 @@ export default function AdminDashboard() {
   const customFrom = params.get('from') ?? ''
   const customTo = params.get('to') ?? ''
 
+  // Nhớ bộ lọc lần trước: vào lại trang (URL trống) thì khôi phục từ localStorage; mỗi lần đổi bộ lọc thì lưu lại.
+  const restored = useRef(false)
+  useEffect(() => {
+    if (!restored.current) {
+      restored.current = true
+      if (!['r', 'g', 'cmp', 'from', 'to'].some((k) => params.has(k))) {
+        try {
+          const saved = localStorage.getItem(FILTER_KEY)
+          if (saved) {
+            setParams(new URLSearchParams(saved), { replace: true })
+            return
+          }
+        } catch { /* localStorage có thể bị chặn */ }
+      }
+    }
+    const keep = new URLSearchParams()
+    for (const k of ['r', 'g', 'cmp', 'from', 'to']) if (params.has(k)) keep.set(k, params.get(k)!)
+    try {
+      localStorage.setItem(FILTER_KEY, keep.toString())
+    } catch { /* bỏ qua */ }
+  }, [params, setParams])
+
   const query = useMemo<StatsQuery | null>(() => {
     if (preset === 'custom') return customFrom ? { from: customFrom, to: customTo || undefined, granularity } : null
     return { days: Number(preset), granularity }
@@ -157,6 +181,11 @@ export default function AdminDashboard() {
   const [draftFrom, setDraftFrom] = useState(customFrom)
   const [draftTo, setDraftTo] = useState(customTo || localToday())
   const [rangeError, setRangeError] = useState('')
+  useEffect(() => {
+    // bộ lọc được khôi phục từ lần trước => cập nhật ô ngày đang soạn
+    setDraftFrom(customFrom)
+    if (customTo) setDraftTo(customTo)
+  }, [customFrom, customTo])
   const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)

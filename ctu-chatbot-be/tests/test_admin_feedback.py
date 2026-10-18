@@ -73,3 +73,25 @@ def test_admin_update_rejects_bad_status_and_unknown_id(client, auth_headers, ad
         client.patch(f"/api/v1/admin/feedback/{missing}", headers=admin_headers, json={"status": "new"}).status_code
         == 404
     )
+
+
+def test_answer_issue_keeps_the_reported_question_and_answer(client, auth_headers, admin_headers):
+    conv_id = client.post("/api/v1/conversations", headers=auth_headers).json()["id"]
+    sent = client.post(
+        f"/api/v1/conversations/{conv_id}/messages", headers=auth_headers, json={"content": "Điều 14 nói gì?"}
+    ).json()
+    bot = next(m for m in sent.values() if isinstance(m, dict) and m.get("role") == "assistant")
+    fid = _create_feedback(
+        client,
+        auth_headers,
+        type="answer_issue",
+        category="wrong_answer",
+        conversation_id=conv_id,
+        message_id=bot["id"],
+    )
+
+    # xoá cuộc trò chuyện vẫn xem được nội dung bị báo cáo (bản chụp lưu theo phản hồi)
+    client.delete(f"/api/v1/conversations/{conv_id}", headers=auth_headers)
+    item = next(i for i in client.get("/api/v1/admin/feedback", headers=admin_headers).json() if i["id"] == fid)
+    assert item["question"] == "Điều 14 nói gì?"
+    assert item["answer"] == bot["content"]

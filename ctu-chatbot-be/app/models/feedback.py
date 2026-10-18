@@ -23,8 +23,11 @@ class Feedback(Base):
     type: Mapped[str] = mapped_column(String(20))
     category: Mapped[str] = mapped_column(String(20))
     message: Mapped[str] = mapped_column(Text, default="")
-    # Chưa có bảng conversations/messages nên chưa đặt FK.
+    # Không đặt FK: nội dung hội thoại nằm trong checkpoint LangGraph.
     conversation_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
     message_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # Bản chụp câu hỏi + câu trả lời bị báo cáo (còn xem được kể cả khi người dùng xoá cuộc trò chuyện).
+    question: Mapped[str | None] = mapped_column(Text, nullable=True)
+    answer: Mapped[str | None] = mapped_column(Text, nullable=True)
     status: Mapped[str] = mapped_column(String(20), default="new")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

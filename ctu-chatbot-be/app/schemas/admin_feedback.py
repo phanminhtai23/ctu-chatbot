@@ -19,7 +19,7 @@ class AdminFeedbackOut(BaseModel):
     status: FeedbackStatus
     conversation_id: str | None
     message_id: str | None
-    # Chưa có bảng conversations/messages nên chưa có nội dung hội thoại đi kèm.
+    # Câu hỏi / câu trả lời bị báo cáo (chỉ có ở loại answer_issue).
     question: str | None = None
     answer: str | None = None
 

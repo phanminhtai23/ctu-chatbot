@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import DonateSection from '../components/DonateSection'
 import Icon, { type IconName } from '../components/Icon'
 import Logo from '../components/Logo'
 import PrefToggles from '../components/PrefToggles'
@@ -78,7 +77,8 @@ export default function Landing() {
               {t('hero.title1')}
               <br />
               {t('hero.title2')}{' '}
-              <span className="text-accent [box-shadow:inset_0_-0.32em_0_#fbc500] dark:[box-shadow:inset_0_-0.32em_0_rgba(251,197,0,.55)]">
+              {/* Gạch chân vàng bằng text-decoration (không dùng box-shadow: nó phụ thuộc kích thước hộp chữ của font nên lúc lệch lúc đứt). */}
+              <span className="text-accent underline [text-decoration-color:#fbc500] [text-decoration-skip-ink:none] [text-decoration-thickness:0.11em] [text-underline-offset:0.2em]">
                 {t('hero.highlight')}
               </span>
             </h1>
@@ -223,9 +223,6 @@ export default function Landing() {
           </Link>
         </div>
       </section>
-
-      {/* Mã QR ủng hộ + GIF ở cuối trang (chỉ hiện khi admin đã tải QR lên). */}
-      <DonateSection band />
 
       <footer id="lien-he" className="bg-ctu-navy-dark text-white">
         <div className={`${container} flex flex-wrap justify-between gap-10 pb-8 pt-14`}>

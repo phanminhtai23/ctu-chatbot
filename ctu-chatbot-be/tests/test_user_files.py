@@ -264,3 +264,20 @@ def test_cloudinary_errors_become_storage_errors(monkeypatch):
 def test_deleting_an_already_missing_file_is_fine(monkeypatch):
     monkeypatch.setattr(storage_module.requests, "post", lambda *a, **k: _Resp(200, {"result": "not found"}))
     CloudinaryStorage("c", "k", "s", "root").delete("id", resource_type="image", delivery_type="upload")
+
+
+def test_back_to_the_account_default_avatar_is_stable(client, storage, auth_headers, session_factory):
+    with session_factory() as db:
+        user = db.query(User).filter(User.email == "b2100001@student.ctu.edu.vn").first()
+    me = client.get("/api/v1/me", headers=auth_headers).json()
+    initial = me["avatar_url"]
+    assert initial == default_avatar_url(me["id"])  # tài khoản mới: ảnh mặc định cố định theo id
+
+    _avatar(client, auth_headers, PNG)
+    client.delete("/api/v1/me/avatar", headers=auth_headers)  # quay ngẫu nhiên: ra ảnh khác
+    assert client.get("/api/v1/me", headers=auth_headers).json()["avatar_url"] != initial
+
+    _avatar(client, auth_headers, PNG)
+    back = client.delete("/api/v1/me/avatar", params={"random": "false"}, headers=auth_headers)
+    assert back.status_code == 200 and back.json()["avatar_url"] == initial  # về đúng ảnh mặc định ban đầu
+    assert client.get("/api/v1/me/files", headers=auth_headers).json()["used_bytes"] == 0

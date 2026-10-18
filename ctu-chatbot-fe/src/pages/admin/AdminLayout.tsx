@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../auth'
 import Icon from '../../components/Icon'
 import PrefToggles from '../../components/PrefToggles'
-import Sidebar, { labelClass, useSidebarCollapsed } from '../../components/Sidebar'
+import Sidebar, { MobileNavButton, labelClass, useMobileNav, useSidebarCollapsed } from '../../components/Sidebar'
 import { useI18n } from '../../i18n'
 import { FEEDBACK_CHANGED_EVENT, getUnreadFeedbackCount } from '../../lib/adminFeedback'
 
@@ -20,6 +20,7 @@ export default function AdminLayout({ title, subtitle, children }: Props) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const [collapsed, toggleSidebar] = useSidebarCollapsed('ctu-admin-sidebar')
+  const [navOpen, setNavOpen] = useMobileNav() // ngăn kéo thanh bên trên điện thoại
   const [unread, setUnread] = useState(0)
 
   const refreshUnread = useCallback(() => {
@@ -45,6 +46,8 @@ export default function AdminLayout({ title, subtitle, children }: Props) {
       <Sidebar
         collapsed={collapsed}
         onToggle={toggleSidebar}
+        mobileOpen={navOpen}
+        onMobileClose={() => setNavOpen(false)}
         title={t('admin.title')}
         subtitle={t('brand.app')}
         switchTo={{ to: '/chat', label: t('admin.nav.chat'), icon: 'chat' }}
@@ -120,9 +123,12 @@ export default function AdminLayout({ title, subtitle, children }: Props) {
 
       <main className="min-w-0 flex-1">
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-line px-6 py-5 md:px-8">
-          <div>
-            <h1 className="m-0 text-xl">{title}</h1>
-            {subtitle && <p className="m-0 mt-1 text-sm">{subtitle}</p>}
+          <div className="flex min-w-0 flex-1 items-start gap-3">
+            <MobileNavButton onClick={() => setNavOpen(true)} />
+            <div className="min-w-0 flex-1">
+              <h1 className="m-0 text-xl">{title}</h1>
+              {subtitle && <p className="m-0 mt-1 text-sm">{subtitle}</p>}
+            </div>
           </div>
           <PrefToggles />
         </div>

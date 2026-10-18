@@ -61,6 +61,13 @@ const paths = {
       <path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5" />
     </>
   ),
+  calendar: (
+    <>
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <path d="M16 3v4M8 3v4M3 10h18" />
+    </>
+  ),
+  menu: <path d="M4 6h16M4 12h16M4 18h16" />,
   upload: <path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />,
   minus: <path d="M6 12h12" />,
   arrow: <path d="M5 12h14M13 6l6 6-6 6" />,

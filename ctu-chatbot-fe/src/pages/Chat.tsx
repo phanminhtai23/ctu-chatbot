@@ -14,7 +14,7 @@ import PrefToggles from '../components/PrefToggles'
 import { UsageBar } from '../components/MyFiles'
 import ProfileDialog from '../components/ProfileDialog'
 import ShareDialog from '../components/ShareDialog'
-import Sidebar, { labelClass, useSidebarCollapsed } from '../components/Sidebar'
+import Sidebar, { MobileNavButton, labelClass, useMobileNav, useSidebarCollapsed } from '../components/Sidebar'
 import { useI18n } from '../i18n'
 import { ApiError } from '../lib/api'
 import { deleteFile, fileErrorCode, listFiles, uploadFile } from '../lib/files'
@@ -49,6 +49,7 @@ export default function Chat() {
 
   const displayName = user?.name || user?.email || ''
   const [collapsed, toggleSidebar] = useSidebarCollapsed('ctu-chat-sidebar')
+  const [navOpen, setNavOpen] = useMobileNav() // ngăn kéo thanh bên trên điện thoại
 
   // --- Danh sách cuộc trò chuyện ---
   const [conversations, setConversations] = useState<Conversation[]>([])
@@ -290,6 +291,7 @@ export default function Chat() {
 
   const startNewConversation = async () => {
     if (busy || creating) return
+    setNavOpen(false)
     setChatError(null)
 
     // Đã có sẵn một cuộc trò chuyện trống (chưa có tin nào, nên chưa có tiêu đề) thì mở lại nó,
@@ -467,6 +469,8 @@ export default function Chat() {
       <Sidebar
         collapsed={collapsed}
         onToggle={toggleSidebar}
+        mobileOpen={navOpen}
+        onMobileClose={() => setNavOpen(false)}
         title={t('brand.app')}
         subtitle={t('brand.appSub')}
         switchTo={user?.role === 'admin' ? { to: '/admin/dashboard', label: t('chat.adminLink'), icon: 'chart' } : undefined}
@@ -563,7 +567,9 @@ export default function Chat() {
 
       <main className="flex min-h-0 min-w-0 flex-1 flex-col bg-surface">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-8 sm:py-4">
-          <div className="min-w-0 basis-full lg:flex-1 lg:basis-auto">
+          <div className="flex min-w-0 basis-full items-center gap-3 lg:flex-1 lg:basis-auto">
+            <MobileNavButton onClick={() => setNavOpen(true)} />
+            <div className="min-w-0 flex-1">
             <h1 className="m-0 truncate text-lg">{activeTitle || sharedList.find((s) => s.id === conversationId)?.title || t('chat.untitled')}</h1>
             {access !== 'owner' && (
               <p className="m-0 mt-0.5 flex flex-wrap items-center gap-2 text-xs">
@@ -575,6 +581,7 @@ export default function Chat() {
                 </span>
               </p>
             )}
+            </div>
           </div>
           <div className="ml-auto flex flex-wrap items-center gap-3">
             {/* Trên điện thoại sidebar thu gọn nên cần lối tắt để mở cuộc trò chuyện mới. */}

@@ -1,14 +1,14 @@
 import { useRef, useState } from 'react'
 import { useAuth } from '../auth'
 import { useI18n } from '../i18n'
-import { fileErrorCode, randomAvatar, uploadAvatar } from '../lib/files'
+import { defaultAvatar, fileErrorCode, randomAvatar, uploadAvatar } from '../lib/files'
 import { fillTemplate, formatBytes } from '../lib/format'
 import { fileErrorMessage } from './fileErrors'
 import Avatar from './Avatar'
 import Icon from './Icon'
 
 const buttonClass =
-  'inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-lg border border-field bg-transparent px-3.5 py-1.5 font-sans text-sm font-normal text-heading hover:bg-tint disabled:cursor-not-allowed disabled:opacity-50'
+  'inline-flex min-h-10 min-w-0 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-field bg-transparent px-2 py-1.5 font-sans text-[13px] font-normal text-heading hover:bg-tint disabled:cursor-not-allowed disabled:opacity-50'
 
 /** Đổi ảnh đại diện: tải ảnh riêng lên hoặc "quay" một ảnh ngẫu nhiên mặc định. */
 export default function AvatarEditor({ maxBytes }: { maxBytes: number }) {
@@ -33,17 +33,42 @@ export default function AvatarEditor({ maxBytes }: { maxBytes: number }) {
   }
 
   return (
-    <div className="mb-5 flex items-center gap-4">
+    <div className="mb-5 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
       <Avatar src={user.avatar_url} name={user.name || user.email} className="size-20 text-2xl" />
-      <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap gap-2">
-          <button type="button" disabled={busy} onClick={() => inputRef.current?.click()} className={buttonClass}>
-            <Icon name="upload" size={18} />
+      <div className="w-full min-w-0 sm:flex-1">
+        <div className="grid grid-cols-3 gap-2">
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => inputRef.current?.click()}
+            title={t('files.avatar.upload.hint')}
+            aria-label={t('files.avatar.upload.hint')}
+            className={buttonClass}
+          >
+            <Icon name="upload" size={18} className="hidden flex-none sm:block" />
             {t('files.avatar.upload')}
           </button>
-          <button type="button" disabled={busy} onClick={() => run(randomAvatar)} className={buttonClass}>
-            <Icon name="sparkles" size={18} />
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => run(randomAvatar)}
+            title={t('files.avatar.random.hint')}
+            aria-label={t('files.avatar.random.hint')}
+            className={buttonClass}
+          >
+            <Icon name="sparkles" size={18} className="hidden flex-none sm:block" />
             {t('files.avatar.random')}
+          </button>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => run(defaultAvatar)}
+            title={t('files.avatar.default.hint')}
+            aria-label={t('files.avatar.default.hint')}
+            className={buttonClass}
+          >
+            <Icon name="swap" size={18} className="hidden flex-none sm:block" />
+            {t('files.avatar.default')}
           </button>
         </div>
         <p className="mb-0 mt-2 text-xs">{fillTemplate(t('files.avatar.hint'), { max: formatBytes(maxBytes) })}</p>

@@ -53,15 +53,18 @@ function linkifyArticles(text: string, articles: Set<number>): string {
   )
 }
 
-/** Giờ gửi tin theo múi giờ đã cài của người dùng; chỉ hiện khi rê chuột / focus vào tin nhắn. */
+/**
+ * Giờ gửi tin theo múi giờ đã cài của người dùng. Nằm NỔI phía trên tin nhắn (không chiếm chỗ trong bố cục) và chỉ hiện khi
+ * rê chuột / focus vào tin; cha phải có `group relative`.
+ */
 function SentAt({ iso, align = 'left' }: { iso: string | null; align?: 'left' | 'right' }) {
   const { t } = useI18n()
   const formatDate = useFormatDate()
   if (!iso) return null
   return (
     <span
-      className={`pointer-events-none px-1 text-xs text-muted opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 ${
-        align === 'right' ? 'self-end' : ''
+      className={`pointer-events-none absolute -top-5 z-10 whitespace-nowrap text-xs text-muted opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 ${
+        align === 'right' ? 'right-1' : 'left-[50px]'
       }`}
     >
       {t('chat.sentAt')} {formatDate(iso)}
@@ -80,7 +83,7 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
 
   if (message.role === 'user') {
     return (
-      <div className="group flex max-w-[85%] flex-col items-end gap-1 self-end">
+      <div className="group relative flex max-w-[85%] flex-col items-end gap-1 self-end">
         {message.author_name && <span className="px-1 text-xs text-muted">{message.author_name}</span>}
         {message.attachments && message.attachments.length > 0 && (
           <ul className="m-0 flex list-none flex-wrap justify-end gap-2 p-0" aria-label={t('chat.attach')}>
@@ -115,7 +118,8 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
   const seconds = message.pending ? liveElapsed : message.duration_seconds
   const open = (article: number) => onOpenReference(article, sources)
   return (
-    <div className="group flex items-start gap-3.5">
+    <div className="group relative flex items-start gap-3.5">
+      {!message.pending && <SentAt iso={message.created_at} />}
       <div className="flex size-9 flex-none items-center justify-center rounded-full bg-ctu-navy text-ctu-gold-active">
         <Icon name="diamond" size={18} strokeWidth={2} />
       </div>
@@ -191,7 +195,6 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
         )}
 
         <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px]">
-          {!message.pending && <SentAt iso={message.created_at} />}
           {seconds != null && (
             <span className="inline-flex items-center gap-1.5 tabular-nums" title={t('chat.waited')}>
               <Icon name="clock" size={14} />

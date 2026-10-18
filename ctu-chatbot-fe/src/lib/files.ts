@@ -40,8 +40,11 @@ export const uploadAvatar = (file: File): Promise<UserProfile> =>
     body: file,
   })
 
-/** Bỏ ảnh đã tải lên và đổi sang một ảnh mặc định ngẫu nhiên mới. */
+/** Bỏ ảnh đã tải lên và đổi sang một ảnh ngẫu nhiên MỚI. */
 export const randomAvatar = (): Promise<UserProfile> => apiFetch('/api/v1/me/avatar', { method: 'DELETE' })
+
+/** Bỏ ảnh đã tải lên và về ảnh mặc định của tài khoản (ảnh lúc mới đăng ký, cố định). */
+export const defaultAvatar = (): Promise<UserProfile> => apiFetch('/api/v1/me/avatar?random=false', { method: 'DELETE' })
 
 const CODES = ['FILE_TOO_LARGE', 'QUOTA_EXCEEDED', 'UNSUPPORTED_TYPE', 'EMPTY_FILE', 'STORAGE_NOT_CONFIGURED', 'STORAGE_ERROR', 'UPLOAD_RATE_LIMITED'] as const
 export type FileErrorCode = (typeof CODES)[number] | 'UNKNOWN'

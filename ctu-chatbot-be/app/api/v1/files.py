@@ -117,9 +117,11 @@ async def upload_avatar(
 
 @router.delete("/avatar", response_model=UserOut)
 def reset_avatar(
+    random: bool = Query(True, description="true = quay một ảnh ngẫu nhiên MỚI; false = về ảnh mặc định của tài khoản (cố định theo id)"),
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
     storage: CloudStorage = Depends(get_storage),
 ):
-    """Bỏ ảnh đã tải lên và đổi sang ảnh mặc định ngẫu nhiên khác (gọi lại để "quay" ảnh mới)."""
-    return user_files.reset_avatar(db, storage, user)
+    """Bỏ ảnh đã tải lên. `random=true` (mặc định): đổi sang một ảnh ngẫu nhiên mới (gọi lại để "quay" ảnh khác);
+    `random=false`: về ảnh mặc định của tài khoản (ảnh lúc mới đăng ký, cố định theo id)."""
+    return user_files.reset_avatar(db, storage, user, random_default=random)

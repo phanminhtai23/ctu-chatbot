@@ -7,6 +7,7 @@ import { listFiles, type FileListing } from '../lib/files'
 import type { ThemeMode } from '../lib/me'
 import { useTheme } from '../theme'
 import AvatarEditor from './AvatarEditor'
+import DateField from './DateField'
 import DonateSection from './DonateSection'
 import Icon from './Icon'
 import MyFiles from './MyFiles'
@@ -45,6 +46,7 @@ function ProfileForm({ onClose }: { onClose: () => void }) {
 
   const [name, setName] = useState(user?.name ?? '')
   const [birthday, setBirthday] = useState(user?.birthday ?? '')
+  const [birthdayValid, setBirthdayValid] = useState(true) // false = đang gõ dở / ngày không hợp lệ: chặn nút Lưu
   const [theme, setTheme] = useState<ThemeMode>(user?.theme ?? 'system')
   const [timezone, setTimezone] = useState(user?.timezone ?? 'Asia/Ho_Chi_Minh')
   const [saveState, setSaveState] = useState<SaveState>('idle')
@@ -69,6 +71,7 @@ function ProfileForm({ onClose }: { onClose: () => void }) {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+    if (!birthdayValid) return
     setSaveState('saving')
     try {
       await updateProfile({ name: name.trim(), birthday: birthday || null, timezone, theme })
@@ -113,15 +116,16 @@ function ProfileForm({ onClose }: { onClose: () => void }) {
         <label htmlFor="profile-birthday" className={labelClass}>
           {t('profile.birthday')}
         </label>
-        <input
+        <DateField
           id="profile-birthday"
-          type="date"
           value={birthday}
           min="1900-01-01"
           max={now.toISOString().slice(0, 10)}
-          autoComplete="bday"
-          onChange={(e) => setBirthday(e.target.value)}
-          className={`${fieldClass} sm:max-w-[240px]`}
+          onChange={(iso, valid) => {
+            setBirthday(iso)
+            setBirthdayValid(valid)
+          }}
+          className="sm:max-w-[300px]"
         />
       </div>
 
@@ -170,7 +174,7 @@ function ProfileForm({ onClose }: { onClose: () => void }) {
       <div className="flex flex-wrap items-center gap-3 border-t border-line pt-4">
         <button
           type="submit"
-          disabled={saveState === 'saving'}
+          disabled={saveState === 'saving' || !birthdayValid}
           className="min-h-11 cursor-pointer rounded-lg border-0 bg-ctu-navy px-6 py-2.5 font-sans text-base font-semibold text-white hover:bg-ctu-navy-dark disabled:cursor-not-allowed disabled:opacity-50"
         >
           {t(saveState === 'saving' ? 'profile.saving' : 'profile.save')}

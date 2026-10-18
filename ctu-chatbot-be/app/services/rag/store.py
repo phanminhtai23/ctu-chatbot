@@ -83,6 +83,36 @@ class VectorStore:
             # Chroma chỉ cho đổi metadata của collection, không cho đổi `hnsw:space` sau khi tạo.
             self._collection.modify(metadata={"source_hash": source_hash})
 
+    def index_vectors(self, chunks: list[Chunk], vectors: list[list[float]], source_hash: str = "") -> None:
+        """Như `index` nhưng vector đã được tạo sẵn (để nơi gọi tự chia lô và báo tiến độ). Không xoá dữ liệu cũ."""
+        self._collection.upsert(
+            ids=[c.id for c in chunks],
+            embeddings=vectors,
+            documents=[c.text for c in chunks],
+            metadatas=[{"article": c.article, "title": c.title, "chapter": c.chapter} for c in chunks],
+        )
+        if source_hash:
+            self._collection.modify(metadata={"source_hash": source_hash})
+
+    def vector_dimensions(self) -> set[int]:
+        """Số chiều của mọi vector đang lưu (đúng ra chỉ có một giá trị)."""
+        embeddings = self._collection.get(include=["embeddings"])["embeddings"]
+        return {len(e) for e in embeddings} if embeddings is not None else set()
+
+    def switch_collection(self, name: str) -> None:
+        """Chuyển sang collection khác (khi admin kích hoạt phiên bản tài liệu mới); các truy vấn sau đó dùng bản mới."""
+        self._collection = self._client.get_or_create_collection(name, metadata={"hnsw:space": "cosine"})
+
+    @property
+    def collection_name(self) -> str:
+        return self._collection.name
+
+    def collection_names(self) -> list[str]:
+        return [c.name if hasattr(c, "name") else str(c) for c in self._client.list_collections()]
+
+    def delete_collection(self, name: str) -> None:
+        self._client.delete_collection(name)
+
     def search(self, query: str, k: int) -> list[Hit]:
         if self.count() == 0:
             return []
@@ -133,6 +163,14 @@ class Retriever:
         self._store = store
         self._top_k = top_k or settings.rag_top_k
         self._phrases: dict[int, list[str]] | None = None
+
+    def reset(self) -> None:
+        """Xoá bộ nhớ đệm tiêu đề (gọi sau khi kho vector chuyển sang phiên bản tài liệu khác)."""
+        self._phrases = None
+
+    @property
+    def store(self) -> VectorStore:
+        return self._store
 
     def _title_matches(self, question: str, exclude: set[int]) -> list[int]:
         if self._phrases is None:

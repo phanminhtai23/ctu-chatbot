@@ -40,6 +40,11 @@ def get_current_user(
     return user
 
 
+def get_ingest_manager(request: Request):
+    """Bộ điều phối các lần nạp tài liệu (dựng một lần lúc khởi động app)."""
+    return request.app.state.ingest_manager
+
+
 def get_chat_graph(request: Request):
     """Đồ thị LangGraph (đã gắn checkpointer Postgres) được dựng một lần lúc khởi động app."""
     return request.app.state.chat_graph

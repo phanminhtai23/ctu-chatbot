@@ -45,6 +45,17 @@ class Settings(BaseSettings):
     chat_queue_max_waiting: int = 30
     chat_queue_wait_seconds: int = 120  # chờ quá lâu trong hàng thì bỏ cuộc (báo QUEUE_TIMEOUT)
 
+    # Admin nạp tài liệu mới: PDF -> OCR -> chuẩn hóa -> chunk theo Điều -> embedding -> vị trí trên trang -> test -> kích hoạt.
+    document_ingest_enabled: bool = True  # false = tắt hẳn các endpoint nạp tài liệu (ví dụ ở production)
+    documents_dir: str = "data/documents"  # tương đối so với ctu-chatbot-be; mỗi lần nạp là một thư mục phiên bản
+    ingest_model: str = "gemini-3.5-flash"  # model đọc ảnh trang (OCR + khoanh vị trí Điều)
+    ingest_ocr_pages_per_call: int = 5  # Gemini hay từ chối khi gửi cả file dài: chia nhóm trang nhỏ
+    ingest_call_interval_seconds: float = 4.0  # giãn cách giữa các lần gọi Gemini để không vượt hạn mức free
+    ingest_max_pdf_mb: int = 30
+    ingest_keep_versions: int = 10  # giữ tối đa chừng này phiên bản đã nạp (để chuyển qua lại); bản đang dùng luôn được giữ
+    ingest_max_pages: int = 80
+    ingest_min_retrieval_pass: float = 0.9  # tỉ lệ Điều tự truy xuất lại đúng ở bước test để được kích hoạt
+
 
     # OAuth Client ID (Web application) tạo ở Google Cloud Console. Rỗng = tắt đăng nhập Google.
     google_client_id: str = ""

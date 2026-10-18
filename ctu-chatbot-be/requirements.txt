@@ -35,3 +35,5 @@ chromadb==1.5.9
 pytest==9.1.1
 httpx==0.28.1
 ddgs==9.16.0
+pypdfium2==5.14.0
+pillow==12.3.0

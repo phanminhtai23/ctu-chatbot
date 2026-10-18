@@ -1,23 +1,35 @@
 import json
-from functools import lru_cache
-from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import FileResponse
 
+from app.services.ingest.storage import active_data_dir
+
 router = APIRouter(prefix="/documents", tags=["documents"])
 
-# Dữ liệu do scripts/build_pdf_layout.py sinh ra: ảnh từng trang PDF + vị trí từng Điều trên trang.
-DATA_DIR = Path(__file__).resolve().parents[2] / "data" / "qd3266"
-_CACHE_HEADERS = {"Cache-Control": "public, max-age=86400"}
+# Ảnh từng trang PDF + vị trí từng Điều trên trang của phiên bản tài liệu ĐANG DÙNG: do admin nạp (xem
+# app/services/ingest) hoặc, nếu chưa nạp lần nào, do scripts/build_pdf_layout.py sinh ra.
+# Ảnh luôn được kiểm tra lại với ETag (không cache cứng) vì admin có thể thay tài liệu bất cứ lúc nào.
+_CACHE_HEADERS = {"Cache-Control": "no-cache"}
+_layout_cache: dict[str, tuple[float, dict]] = {}
 
 
-@lru_cache(maxsize=1)
+def clear_layout_cache() -> None:
+    _layout_cache.clear()
+
+
 def _layout() -> dict:
-    path = DATA_DIR / "layout.json"
-    if not path.exists():
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Document layout not built")
-    return json.loads(path.read_text(encoding="utf-8"))
+    path = active_data_dir() / "layout.json"
+    try:
+        mtime = path.stat().st_mtime
+    except OSError:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Document layout not built") from None
+    cached = _layout_cache.get(str(path))
+    if cached is None or cached[0] != mtime:
+        cached = (mtime, json.loads(path.read_text(encoding="utf-8")))
+        _layout_cache.clear()
+        _layout_cache[str(path)] = cached
+    return cached[1]
 
 
 # Văn bản quy định là tài liệu công khai của Trường và FE hiển thị ảnh bằng thẻ <img> (không gắn được header
@@ -33,7 +45,7 @@ def get_page_image(page: int) -> FileResponse:
     layout = _layout()
     if page < 1 or page > int(layout["page_count"]):
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Page not found")
-    path = DATA_DIR / "pages" / f"page-{page:02d}.jpg"
+    path = active_data_dir() / "pages" / f"page-{page:02d}.jpg"
     if not path.exists():
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Page not found")
     return FileResponse(path, media_type="image/jpeg", headers=_CACHE_HEADERS)

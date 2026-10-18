@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../auth'
 import Icon from '../../components/Icon'
 import PrefToggles from '../../components/PrefToggles'
@@ -17,6 +17,7 @@ export default function AdminLayout({ title, subtitle, children }: Props) {
   const { t } = useI18n()
   const { logout } = useAuth()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const [collapsed, toggleSidebar] = useSidebarCollapsed('ctu-admin-sidebar')
 
   return (
@@ -55,17 +56,28 @@ export default function AdminLayout({ title, subtitle, children }: Props) {
             <Icon name="chat" />
             <span className={labelClass(collapsed)}>{t('admin.nav.chat')}</span>
           </Link>
-          <Link
-            to="/admin/feedback"
-            aria-current="page"
-            title={t('admin.nav.feedback')}
-            className={`flex min-h-11 items-center gap-3 rounded-lg bg-white/15 px-3 py-2.5 text-sm font-normal text-white no-underline ${
-              collapsed ? 'md:justify-center' : ''
-            }`}
-          >
-            <Icon name="inbox" />
-            <span className={labelClass(collapsed)}>{t('admin.nav.feedback')}</span>
-          </Link>
+          {(
+            [
+              ['/admin/feedback', 'inbox', 'admin.nav.feedback'],
+              ['/admin/documents', 'doc', 'admin.nav.documents'],
+            ] as const
+          ).map(([to, icon, label]) => {
+            const current = pathname === to
+            return (
+              <Link
+                key={to}
+                to={to}
+                aria-current={current ? 'page' : undefined}
+                title={t(label)}
+                className={`flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-white no-underline hover:bg-white/10 ${
+                  current ? 'bg-white/15 font-normal' : ''
+                } ${collapsed ? 'md:justify-center' : ''}`}
+              >
+                <Icon name={icon} />
+                <span className={labelClass(collapsed)}>{t(label)}</span>
+              </Link>
+            )
+          })}
         </nav>
       </Sidebar>
 

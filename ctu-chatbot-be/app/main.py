@@ -11,6 +11,9 @@ from app.api.v1 import api_router
 from app.core.config import settings
 from app.services.chat.graph import build_chat_graph
 from app.services.llm.gemini import GeminiClient
+from app.services.ingest import storage
+from app.services.ingest.manager import JobManager
+from app.services.ingest.vision import GeminiVision
 from app.services.rag.embeddings import GeminiEmbedder
 from app.services.rag.store import Retriever, VectorStore, default_chroma_path, ensure_index
 
@@ -23,7 +26,16 @@ def build_retriever() -> Retriever | None:
     Lỗi ở đây (thiếu key embedding, mất mạng...) không được làm app chết: chatbot vẫn chạy nhưng không có ngữ cảnh.
     """
     try:
-        store = VectorStore(GeminiEmbedder.from_settings(), path=default_chroma_path())
+        embedder = GeminiEmbedder.from_settings()
+        active = storage.read_active()
+        if active is not None:
+            # Admin đã nạp tài liệu mới qua trang quản trị: dùng collection của phiên bản đó (đã vector hóa sẵn).
+            store = VectorStore(embedder, path=default_chroma_path(), collection=active["collection"])
+            if store.count() > 0:
+                logger.info("RAG sẵn sàng: %d Điều (phiên bản %s) trong ChromaDB", store.count(), active["version"])
+                return Retriever(store)
+            logger.warning("Collection của phiên bản %s trống, quay về tài liệu mặc định", active["version"])
+        store = VectorStore(embedder, path=default_chroma_path())
         count = ensure_index(store)
         logger.info("RAG sẵn sàng: %d Điều trong ChromaDB", count)
         return Retriever(store)
@@ -47,7 +59,9 @@ async def lifespan(app: FastAPI):
     checkpointer = PostgresSaver(pool)
     checkpointer.setup()  # tạo bảng checkpoint nếu chưa có (chạy an toàn nhiều lần)
 
-    app.state.chat_graph = build_chat_graph(GeminiClient.from_settings(), checkpointer, build_retriever())
+    retriever = build_retriever()
+    app.state.chat_graph = build_chat_graph(GeminiClient.from_settings(), checkpointer, retriever)
+    app.state.ingest_manager = JobManager(retriever, GeminiVision.from_settings, GeminiEmbedder.from_settings)
     try:
         yield
     finally:

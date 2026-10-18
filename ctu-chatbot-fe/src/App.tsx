@@ -5,6 +5,7 @@ import Chat from './pages/Chat'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Profile from './pages/Profile'
+import AdminDocuments from './pages/admin/AdminDocuments'
 import AdminFeedback from './pages/admin/AdminFeedback'
 
 function App() {
@@ -35,6 +36,14 @@ function App() {
           element={
             <RequireAdmin>
               <AdminFeedback />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/documents"
+          element={
+            <RequireAdmin>
+              <AdminDocuments />
             </RequireAdmin>
           }
         />

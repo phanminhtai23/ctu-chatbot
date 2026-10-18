@@ -49,7 +49,8 @@ def test_page_image_is_served_as_jpeg(client):
     assert res.status_code == 200
     assert res.headers["content-type"] == "image/jpeg"
     assert res.content[:2] == b"\xff\xd8"
-    assert "max-age" in res.headers["cache-control"]
+    assert res.headers["cache-control"] == "no-cache"  # tài liệu có thể được admin thay: luôn kiểm tra lại với ETag
+    assert res.headers.get("etag")
 
 
 def test_every_page_has_an_image(client, layout):

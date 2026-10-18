@@ -21,6 +21,8 @@ const paths = {
     </>
   ),
   clip: <path d="M21 12.5l-8.5 8.5a5.5 5.5 0 0 1-8-8L13 4.5a3.7 3.7 0 0 1 5.3 5.2L9.8 18.2a1.8 1.8 0 0 1-2.6-2.6l7.9-7.9" />,
+  upload: <path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" />,
+  minus: <path d="M6 12h12" />,
   arrow: <path d="M5 12h14M13 6l6 6-6 6" />,
   plus: <path d="M12 5v14M5 12h14" />,
   share: (

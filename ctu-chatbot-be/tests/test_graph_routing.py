@@ -97,3 +97,23 @@ def test_web_search_can_be_disabled(monkeypatch):
     reply, _, _ = _run(llm, monkeypatch, text="Mình bị cảnh báo học tập thì sao?")
     assert reply.additional_kwargs["route"] == scope.REGULATION
     assert "web_search" not in llm.tool_names[0]
+
+
+class QueryAwareRetriever:
+    """Câu ghép (có câu quy chế phía trước) giống quy chế rất nhiều; riêng câu ký túc xá thì giống rất ít."""
+
+    def retrieve(self, q):
+        high = "học bổng" in q
+        return [Hit(article=9, title="Học bổng", chapter="", text="Điều 9. Học bổng ...", score=0.82 if high else 0.58)]
+
+
+def test_follow_up_that_changes_topic_is_routed_by_the_latest_question_alone(monkeypatch):
+    session = WebSearchSession(WebSearcher(FakeBackend([OFFICIAL]), _TtlCache(), _MinuteBudget(100)))
+    monkeypatch.setattr(graph_module, "WebSearchSession", lambda: session)
+    monkeypatch.setattr(graph_module, "build_gpa_report", lambda *_: "")
+    llm = RoutedLLM(scope.EXTERNAL)
+    g = build_chat_graph(llm, InMemorySaver(), QueryAwareRetriever())
+    config = {"configurable": {"thread_id": "t2"}}
+    g.invoke({"messages": [HumanMessage(content="Học bổng xét theo ĐTBCHK thế nào?")]}, config)
+    out = g.invoke({"messages": [HumanMessage(content="Ký túc xá giá phòng bao nhiêu một tháng?")]}, config)
+    assert out["messages"][-1].additional_kwargs["route"] == scope.EXTERNAL

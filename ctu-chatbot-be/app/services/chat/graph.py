@@ -130,6 +130,22 @@ def retrieval_query(history: list[BaseMessage]) -> str:
     return "\n".join(questions[-2:])
 
 
+def router_score(retriever: DocumentRetriever, history: list[BaseMessage], hits: list) -> float | None:
+    """Điểm giống nhất giữa CÂU HỎI MỚI NHẤT và văn bản quy chế, dùng để chọn tuyến.
+
+    `hits` được tra cứu bằng câu mới ghép với câu trước đó (để câu nối tiếp vẫn đủ ý) nên điểm của nó bị kéo lên bởi câu
+    trước: hỏi quy chế xong hỏi sang chuyện ký túc xá sẽ bị coi là vẫn thuộc quy chế. Có từ hai câu hỏi trở lên thì tra
+    cứu lại riêng câu mới nhất để lấy điểm (một lần embedding thêm); lỗi thì dùng điểm của lần tra cứu chung."""
+    humans = [m for m in history if isinstance(m, HumanMessage)]
+    if len(humans) > 1:
+        try:
+            hits = retriever.retrieve(message_text(humans[-1]))
+        except Exception:  # noqa: BLE001
+            logger.warning("Không tra cứu riêng câu hỏi mới nhất để chọn tuyến", exc_info=True)
+    semantic = [h.score for h in hits if not h.explicit]
+    return max(semantic) if semantic else None
+
+
 def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retriever: DocumentRetriever | None = None):
     def generate(state: MessagesState, writer: StreamWriter) -> dict:
         started = time.monotonic()
@@ -146,8 +162,7 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
         # Guardrail phạm vi: thuộc quy chế (RAG) / ngoài quy chế (tìm web) / không liên quan / xã giao.
         # Không có kho văn bản (retriever) thì không có căn cứ để phân loại: giữ hành vi cũ.
         if retriever is not None and settings.web_search_enabled:
-            semantic = [h.score for h in hits if not h.explicit]
-            route = scope.classify(llm, history, max(semantic) if semantic else None)
+            route = scope.classify(llm, history, router_score(retriever, history, hits))
         logger.info("Tuyến câu hỏi: %s", route)
 
         tool_log: list[dict] = []

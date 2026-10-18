@@ -33,7 +33,7 @@ export default function Login() {
 
   // Admin luôn vào thẳng khu quản trị; user thường quay lại trang đang định vào (nếu bị chặn giữa chừng) hoặc /chat.
   const from = (location.state as { from?: string } | null)?.from
-  if (user) return <Navigate to={user.role === 'admin' ? '/admin/feedback' : (from ?? '/chat')} replace />
+  if (user) return <Navigate to={user.role === 'admin' ? '/admin/dashboard' : (from ?? '/chat')} replace />
 
   const reportError = (err: unknown) =>
     setError(t(err instanceof ApiError && err.status === 403 ? 'login.errDomain' : 'login.errGeneric'))

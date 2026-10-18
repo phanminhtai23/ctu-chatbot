@@ -36,6 +36,7 @@ export default function AdminDocuments() {
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState('')
   const [dragging, setDragging] = useState(false)
+  const [ready, setReady] = useState(false) // đã nạp xong tổng quan và lần nạp gần nhất: tránh nháy chữ "chưa có lần nạp nào"
   const [switching, setSwitching] = useState<string | null>(null)
   const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -57,13 +58,15 @@ export default function AdminDocuments() {
     let cancelled = false
     refreshOverview().then(async (data) => {
       const id = data?.running_job_id ?? data?.jobs[0]?.id
-      if (!id || cancelled) return
-      try {
-        const detail = await getJob(id)
-        if (!cancelled) setJob(detail)
-      } catch {
-        /* lần nạp bị xoá: bỏ qua */
+      if (id && !cancelled) {
+        try {
+          const detail = await getJob(id)
+          if (!cancelled) setJob(detail)
+        } catch {
+          /* lần nạp bị xoá: bỏ qua */
+        }
       }
+      if (!cancelled) setReady(true)
     })
     return () => {
       cancelled = true
@@ -327,7 +330,11 @@ export default function AdminDocuments() {
             <h2 id="doc-flow" className="m-0 mb-4 text-base">
               {t('admin.doc.flow')}
             </h2>
-            {job ? <IngestFlow job={job} /> : <p className="m-0 text-sm">{t('admin.doc.flowEmpty')}</p>}
+            {job ? (
+              <IngestFlow job={job} />
+            ) : (
+              <p className="m-0 text-sm">{ready || loadError ? t('admin.doc.flowEmpty') : t('admin.dash.loading')}</p>
+            )}
           </section>
         </div>
       )}

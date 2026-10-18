@@ -204,7 +204,13 @@ export default function Chat() {
             onToken: (piece) =>
               setMessages((list) => list.map((m) => (m.id === tempBotId ? { ...m, content: m.content + piece } : m))),
             onDone: ({ assistant_message, conversation }) => {
-              setMessages((list) => list.map((m) => (m.id === tempBotId ? assistant_message : m)))
+              // Con số cuối chính là con số đồng hồ đang chạy: tính từ lúc người dùng bấm gửi tới lúc nhận đủ câu trả lời
+              // (gồm cả thời gian chờ hàng đợi và mạng), không đổi sang số server đo nên không bị "nhảy".
+              const total = Math.round(((performance.now() - startedAtRef.current) / 1000) * 10) / 10
+              setElapsed(total)
+              setMessages((list) =>
+                list.map((m) => (m.id === tempBotId ? { ...assistant_message, duration_seconds: total } : m)),
+              )
               if (conversation) {
                 setConversations((list) => [conversation, ...list.filter((c) => c.id !== conversation.id)])
               }
@@ -351,7 +357,7 @@ export default function Chat() {
         onToggle={toggleSidebar}
         title={t('brand.app')}
         subtitle={t('brand.appSub')}
-        switchTo={user?.role === 'admin' ? { to: '/admin/dashboard', label: t('chat.adminLink'), icon: 'settings' } : undefined}
+        switchTo={user?.role === 'admin' ? { to: '/admin/dashboard', label: t('chat.adminLink'), icon: 'chart' } : undefined}
         footer={
           <div className={`flex items-center gap-3 ${collapsed ? 'md:justify-center' : ''}`}>
             <div className="flex size-10 flex-none items-center justify-center rounded-full bg-ctu-cyan font-semibold text-ctu-navy-dark">

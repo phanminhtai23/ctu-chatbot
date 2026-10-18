@@ -12,6 +12,8 @@ export type ChatMessage = {
   duration_seconds: number | null
   /** Tham chiếu quy định; chỉ tin của bot, tin cũ có thể không có */
   sources?: SourceRef[]
+  /** Câu trả lời có sẵn của câu hỏi gợi ý (trả ngay, không gọi LLM) */
+  cached?: boolean
 }
 
 export type Conversation = {

@@ -28,6 +28,7 @@ class ChatMessageOut(BaseModel):
     created_at: str | None
     duration_seconds: float | None = None  # thời gian chờ chatbot trả lời (chỉ tin của bot)
     sources: list[SourceOut] = Field(default_factory=list)  # tham chiếu quy định (chỉ tin của bot)
+    cached: bool = False  # câu trả lời có sẵn của câu hỏi gợi ý (không gọi LLM)
 
 
 class ConversationDetail(ConversationOut):

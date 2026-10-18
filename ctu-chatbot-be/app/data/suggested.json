@@ -1,0 +1,83 @@
+{
+ "version": 1,
+ "generated_at": "2026-10-18T07:25:32+00:00",
+ "model": "gemini-3.5-flash-lite",
+ "items": [
+  {
+   "id": "hb-so-sanh",
+   "category": "Học bổng",
+   "question": "Hai bạn: A có ĐTBCHK 3,8 và ĐRL 89; B có ĐTBCHK 3,6 và ĐRL 90. Ai được xét học bổng trước?",
+   "answer": "Bạn B được xét học bổng trước bạn A nhé bạn ơi! 😊 ✨\n\nDựa theo quy định tại Điều 9, thứ tự ưu tiên xét học bổng khuyến khích học tập là **B > A**. Cụ thể quy trình xét như sau:\n\n* **Bước 1 (Xác định mức học bổng theo Điều 9):**\n  - **Bạn B:** Điểm trung bình chung học kỳ (ĐTBCHK) là 3,60 (loại xuất sắc) và điểm rèn luyện (ĐRL) là 90 (loại xuất sắc). B đạt cả hai tiêu chí nên được xếp vào **mức xuất sắc**.\n  - **Bạn A:** ĐTBCHK là 3,80 (loại xuất sắc) nhưng ĐRL là 89 (thuộc loại tốt). Theo Thông tư 16/2015/TT-BGDĐT được viện dẫn, ĐRL từ 80 đến dưới 90 là loại tốt, nên A chỉ đủ điều kiện ở **mức giỏi** (vì mức xuất sắc yêu cầu ĐRL phải đạt loại xuất sắc từ 90 điểm trở lên).\n* **Bước 2 (Thứ tự xét):** Học bổng được cấp từ mức cao xuống thấp (theo Điều 9 khoản 1a). Do B đạt mức xuất sắc (cao hơn mức giỏi của A), nên B được đưa vào danh sách xét trước A mặc dù ĐTBCHK của B thấp hơn.\n\nThêm một lưu ý nhỏ là mức học bổng cụ thể và chỉ tiêu do Hiệu trưởng quyết định theo Điều 9 khoản 1e, bạn nhớ theo dõi các thông báo chính thức từ Trường nhé. \n\nBạn có muốn tìm hiểu thêm quy định nào khác không nè? 📚",
+   "sources": [
+    {
+     "article": 9,
+     "title": "Học bổng và trợ cấp xã hội"
+    }
+   ]
+  },
+  {
+   "id": "hb-dieu-kien",
+   "category": "Học bổng",
+   "question": "Điều kiện để được xét học bổng khuyến khích học tập là gì?",
+   "answer": "Dạ để được xét học bổng khuyến khích học tập, bạn cần đáp ứng đủ các điều kiện sau theo Điều 9 khoản 1c nhé 😊:\n\n- Có đăng ký số tín chỉ (TC) tối thiểu trong học kỳ trước đó là 12 TC (trừ trường hợp do Trường bố trí).\n- Kết quả học tập và rèn luyện của học kỳ trước đó đạt từ loại khá trở lên.\n- Trong học kỳ đó, không có học phần nào bị điểm dưới điểm D.\n- Không bị kỷ luật từ hình thức khiển trách cấp Trường trở lên.\n\nBạn có muốn mình chia sẻ thêm về tiêu chuẩn xếp mức học bổng hay cách xét chọn không nè? ✨📚",
+   "sources": [
+    {
+     "article": 9,
+     "title": "Học bổng và trợ cấp xã hội"
+    }
+   ]
+  },
+  {
+   "id": "hb-muc",
+   "category": "Học bổng",
+   "question": "ĐTBCHK của mình là 3,3 còn ĐRL là 79 thì mình thuộc mức học bổng nào?",
+   "answer": "Bạn đạt **mức học bổng loại khá** bạn nha 😊 ✨\n\nDựa theo quy định về xét học bổng khuyến khích học tập tại Điều 9, việc phân loại mức học bổng cần đáp ứng cả hai tiêu chí về điểm trung bình chung học kỳ (ĐTBCHK) và điểm rèn luyện (ĐRL):\n\n- **Mức xuất sắc:** ĐTBCHK từ 3,60 VÀ ĐRL loại xuất sắc.\n- **Mức giỏi:** ĐTBCHK từ 3,20 VÀ ĐRL từ loại tốt trở lên.\n- **Mức khá:** ĐTBCHK VÀ ĐRL đều từ loại khá trở lên.\n\nMặc dù ĐTBCHK của bạn là 3,30 (đạt chuẩn mức giỏi), nhưng ĐRL của bạn là 79 (xếp loại khá, dưới mức tốt là 80), nên bạn sẽ được xếp vào **mức khá** bạn nhé. \n\n*Lưu ý nhỏ:* Mức học bổng cụ thể bằng tiền và chỉ tiêu phân bổ sẽ do Hiệu trưởng quyết định, bạn nhớ theo dõi các thông báo mới nhất của Trường để nắm rõ hơn nha (Điều 9 khoản 1e) 📚\n\nBạn có muốn mình chia sẻ thêm thông tin gì khác nữa không nè?",
+   "sources": [
+    {
+     "article": 9,
+     "title": "Học bổng và trợ cấp xã hội"
+    }
+   ]
+  },
+  {
+   "id": "dtbctl-cach-tinh",
+   "category": "Điểm trung bình",
+   "question": "Điểm trung bình chung tích lũy (ĐTBCTL) được tính thế nào? Môn điểm F và học phần điều kiện có tính không?",
+   "answer": "Cách tính điểm trung bình chung tích lũy (ĐTBCTL) rất đơn giản bạn nhé! ✨\n\nTheo Điều 24 của quy định, ĐTBCTL là trung bình có trọng số của điểm các học phần đã tích lũy tính đến thời điểm xét. Cụ thể:\n- **Công thức tính:** ĐTBCTL = (tổng của [số tín chỉ × điểm số hệ 4 của từng học phần tích lũy]) / (tổng số tín chỉ tích lũy).\n- **Môn điểm F:** Điểm F (dưới 4,0 điểm) **không** được tính vào ĐTBCTL (theo Điều 24 khoản 4).\n- **Học phần điều kiện:** Các học phần điều kiện (gồm Giáo dục Quốc phòng và An ninh, Giáo dục thể chất, Ngoại ngữ căn bản, Tin học căn bản) **không** được dùng để tính ĐTBCTL (theo Điều 7 khoản 6 và Điều 24 khoản 4).\n\nBạn có muốn mình giải thích thêm phần nào nữa không nè? 😊",
+   "sources": [
+    {
+     "article": 24,
+     "title": "Điểm trung bình chung học kỳ, điểm trung bình chung năm học và điểm trung bình chung tích lũy"
+    },
+    {
+     "article": 7,
+     "title": "Học phần, lớp học phần và lớp chuyên ngành"
+    }
+   ]
+  },
+  {
+   "id": "dtbchk-vi-du",
+   "category": "Điểm trung bình",
+   "question": "Học kỳ này mình học 3 môn: môn A 3 tín chỉ được điểm A, môn B 2 tín chỉ được điểm B+, môn C 4 tín chỉ được điểm C. Tính giúp mình ĐTBCHK nhé!",
+   "answer": "Điểm trung bình chung học kỳ của bạn là **3,00** nha, tương ứng với xếp loại **Khá** theo Điều 24 đó bạn nhé 😊 ✨\n\nDựa trên kết quả các môn học kỳ này:\n- Tổng số tín chỉ là 9 tín chỉ.\n- Tổng số điểm quy đổi là 27 điểm.\n\nBạn còn muốn mình tính toán hay tra cứu thông tin gì thêm nữa không nè? 📚",
+   "sources": [
+    {
+     "article": 24,
+     "title": "Điểm trung bình chung học kỳ, điểm trung bình chung năm học và điểm trung bình chung tích lũy"
+    }
+   ]
+  },
+  {
+   "id": "xuat-sac",
+   "category": "Điểm trung bình",
+   "question": "Chương trình 151 tín chỉ, mình đã học 100 tín chỉ với ĐTBCTL 3,2. Mình có thể tốt nghiệp loại xuất sắc không?",
+   "answer": "Không thể bạn nhé 😊 Tối đa điểm trung bình chung tích lũy (ĐTBCTL) của bạn cũng chỉ đạt được là 3,47, thấp hơn mức 3,60 để được tốt nghiệp loại xuất sắc theo quy định tại Điều 34.\n\nDưới đây là chi tiết quá trình tính toán của mình:\n- **Tối đa hóa điểm số:** Giả sử trong 51 tín chỉ (TC) còn lại, bạn đều đạt điểm A (4,0), tổng điểm hệ 4 tích lũy cuối cùng sẽ là: `(320 + 51 * 4,0) / 151 = 3,47`. Do kết quả này nhỏ hơn 3,60 nên mục tiêu xuất sắc không thể đạt được.\n- **Cách duy nhất:** Nếu vẫn muốn cải thiện xếp hạng, cách duy nhất là bạn đăng ký học cải thiện điểm các học phần cũ để thay thế bằng điểm cao hơn (theo Điều 17 và 24). Cứ mỗi TC nâng từ C (2,0) lên A (4,0), bạn sẽ được cộng thêm 2,0 điểm vào tổng điểm hệ 4.\n\n*Lưu ý nhỏ:* Phép tính trên đang dựa trên giả định tạm thời là tất cả số TC bạn đã học đều được tính vào ĐTBCTL. Để mình tính lại chính xác hơn cho bạn, bạn cho mình biết thêm 2 thông tin này nhé:\n1. Trong 100 TC đã học, có bao nhiêu TC là học phần điều kiện hoặc điểm M (không tính vào ĐTBCTL)?\n2. Tổng số TC học phần điều kiện của toàn chương trình là bao nhiêu?\n\nBạn có muốn mình tính thử xem bạn cần điểm trung bình bao nhiêu ở các kỳ tới để chắc suất tốt nghiệp loại giỏi không nè? ✨",
+   "sources": [
+    {
+     "article": 34,
+     "title": "Bằng tốt nghiệp và hạng tốt nghiệp"
+    }
+   ]
+  }
+ ]
+}

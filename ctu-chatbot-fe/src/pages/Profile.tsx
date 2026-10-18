@@ -5,18 +5,13 @@ import Icon from '../components/Icon'
 import Logo from '../components/Logo'
 import { useI18n } from '../i18n'
 import type { TranslationKey } from '../i18n/vi'
-import type { Language, ThemeMode } from '../lib/me'
+import type { ThemeMode } from '../lib/me'
 import { useTheme } from '../theme'
 
 const themeOptions: { value: ThemeMode; label: TranslationKey }[] = [
   { value: 'system', label: 'profile.theme.system' },
   { value: 'light', label: 'profile.theme.light' },
   { value: 'dark', label: 'profile.theme.dark' },
-]
-
-const languageOptions: { value: Language; label: string }[] = [
-  { value: 'vi', label: 'Tiếng Việt' },
-  { value: 'en', label: 'English' },
 ]
 
 const FALLBACK_TIMEZONES = ['Asia/Ho_Chi_Minh', 'UTC']
@@ -40,14 +35,13 @@ const fieldClass =
 const labelClass = 'mb-1.5 block text-sm font-normal text-heading'
 
 export default function Profile() {
-  const { t, lang, setLang } = useI18n()
+  const { t } = useI18n()
   const { setMode } = useTheme()
   const { user, updateProfile, logout } = useAuth()
   const navigate = useNavigate()
 
   const [name, setName] = useState(user?.name ?? '')
   const [birthday, setBirthday] = useState(user?.birthday ?? '')
-  const [language, setLanguage] = useState<Language>(user?.language ?? 'vi')
   const [theme, setTheme] = useState<ThemeMode>(user?.theme ?? 'system')
   const [timezone, setTimezone] = useState(user?.timezone ?? 'Asia/Ho_Chi_Minh')
   const [saveState, setSaveState] = useState<SaveState>('idle')
@@ -63,7 +57,7 @@ export default function Profile() {
 
   const timePreview = useMemo(() => {
     try {
-      return new Intl.DateTimeFormat(lang === 'vi' ? 'vi-VN' : 'en-GB', {
+      return new Intl.DateTimeFormat('vi-VN', {
         dateStyle: 'medium',
         timeStyle: 'short',
         timeZone: timezone,
@@ -71,7 +65,7 @@ export default function Profile() {
     } catch {
       return ''
     }
-  }, [now, timezone, lang])
+  }, [now, timezone])
 
   if (!user) return null // RequireAuth đã chặn; giữ cho TypeScript.
 
@@ -85,11 +79,9 @@ export default function Profile() {
         name: name.trim(),
         birthday: birthday || null,
         timezone,
-        language,
         theme,
       })
-      // Áp ngay ngôn ngữ/giao diện vừa lưu cho phiên hiện tại.
-      setLang(language)
+      // Áp ngay giao diện vừa lưu cho phiên hiện tại.
       setMode(theme)
       setSaveState('saved')
     } catch {
@@ -166,18 +158,6 @@ export default function Profile() {
 
           <section className="rounded-2xl border border-line bg-surface p-6">
             <h2 className="mb-4 mt-0 text-lg">{t('profile.sectionPrefs')}</h2>
-
-            <label htmlFor="profile-language" className={labelClass}>{t('profile.language')}</label>
-            <select
-              id="profile-language"
-              value={language}
-              onChange={(e) => setLanguage(e.target.value as Language)}
-              className={`${fieldClass} mb-4 sm:max-w-[240px]`}
-            >
-              {languageOptions.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
-              ))}
-            </select>
 
             <fieldset className="m-0 mb-4 border-0 p-0">
               <legend className={`${labelClass} p-0`}>{t('profile.theme')}</legend>

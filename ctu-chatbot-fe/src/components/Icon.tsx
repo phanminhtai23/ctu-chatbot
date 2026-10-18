@@ -2,6 +2,18 @@ import type { SVGProps } from 'react'
 
 const paths = {
   chat: <path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1-4.6A8 8 0 1 1 21 12z" />,
+  calc: (
+    <>
+      <rect x="5" y="3" width="14" height="18" rx="2" />
+      <path d="M8 7h8M8 12h2M12 12h2M8 16h2M12 16h2" />
+    </>
+  ),
+  shield: (
+    <>
+      <path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6z" />
+      <path d="M9 12l2 2 4-4" />
+    </>
+  ),
   doc: (
     <>
       <path d="M6 3h9l4 4v14H6z" />

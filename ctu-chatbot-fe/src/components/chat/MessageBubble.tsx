@@ -45,7 +45,7 @@ function linkifyArticles(text: string, articles: Set<number>): string {
 }
 
 export default function MessageBubble({ message, liveElapsed, onReport, onOpenReference, activeArticle }: Props) {
-  const { t, lang } = useI18n()
+  const { t } = useI18n()
   const sources = useMemo(() => message.sources ?? [], [message.sources])
   const content = useMemo(
     () => (message.pending ? message.content : linkifyArticles(message.content, new Set(sources.map((s) => s.article)))),
@@ -112,11 +112,17 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
         )}
 
         <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px]">
-          {seconds != null && (
+          {message.cached && !message.pending && (
+            <span className="inline-flex items-center gap-1.5" title={t('chat.cached')}>
+              <Icon name="clock" size={14} />
+              {t('chat.cached')}
+            </span>
+          )}
+          {seconds != null && !message.cached && (
             <span className="inline-flex items-center gap-1.5 tabular-nums" title={t('chat.waited')}>
               <Icon name="clock" size={14} />
               <span className="sr-only">{t('chat.waited')}: </span>
-              {formatSeconds(lang, seconds)}
+              {formatSeconds(seconds)}
             </span>
           )}
           {!message.pending && (

@@ -1,5 +1,4 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { useI18n } from '../i18n'
 import { UNAUTHORIZED_EVENT, clearToken, getRefreshToken, getToken, setTokens } from '../lib/auth'
 import {
   devLogin,
@@ -30,7 +29,6 @@ type AuthValue = {
 const AuthContext = createContext<AuthValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { setLang } = useI18n()
   const { setMode } = useTheme()
   const [user, setUser] = useState<UserProfile | null>(null)
   const [loggedOut, setLoggedOut] = useState(false)
@@ -41,10 +39,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Cài đặt lưu theo user: áp lại ngôn ngữ + theme của tài khoản mỗi khi nạp/đổi user.
   const applyPreferences = useCallback(
     (u: UserProfile) => {
-      setLang(u.language)
       setMode(u.theme)
     },
-    [setLang, setMode],
+    [setMode],
   )
 
   useEffect(() => {

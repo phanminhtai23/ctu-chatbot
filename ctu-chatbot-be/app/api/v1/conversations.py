@@ -22,7 +22,8 @@ from app.schemas.conversation import (
     SendMessageIn,
     SendMessageOut,
 )
-from app.services.chat.service import delete_thread, get_history, run_turn, stream_turn
+from app.services.chat import suggested
+from app.services.chat.service import cached_turn, delete_thread, get_history, run_turn, stream_cached_turn, stream_turn
 from app.services.llm.gemini import LLMError, LLMNotConfigured, LLMUnavailable
 from app.services.rate_limit import chat_limiter
 
@@ -131,10 +132,16 @@ def send_message(
     conv = _owned(db, user, conversation_id)
     conv_id = conv.id
     db.rollback()  # trả kết nối DB về pool trong lúc chờ LLM (có thể mất vài chục giây)
-    _enforce_rate_limit(user)
+    # Câu hỏi gợi ý: trả lời có sẵn, không gọi LLM và không tính vào giới hạn chat.
+    hit = suggested.lookup(body.content)
+    if hit is None:
+        _enforce_rate_limit(user)
 
     try:
-        user_msg, bot_msg = run_turn(graph, conv_id, body.content)
+        if hit is not None:
+            user_msg, bot_msg = cached_turn(graph, conv_id, body.content, hit)
+        else:
+            user_msg, bot_msg = run_turn(graph, conv_id, body.content)
     except LLMNotConfigured:
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, detail="LLM_NOT_CONFIGURED") from None
     except LLMUnavailable as exc:
@@ -180,11 +187,17 @@ def stream_message(
     conv = _owned(db, user, conversation_id)
     conv_id = conv.id
     db.rollback()
-    _enforce_rate_limit(user)
+    hit = suggested.lookup(body.content)  # câu hỏi gợi ý: trả lời có sẵn, không gọi LLM, không tính giới hạn chat
+    if hit is None:
+        _enforce_rate_limit(user)
 
     def events() -> Iterator[str]:
         try:
-            for event in stream_turn(graph, conv_id, body.content):
+            if hit is not None:
+                turn = stream_cached_turn(graph, conv_id, body.content, hit)
+            else:
+                turn = stream_turn(graph, conv_id, body.content)
+            for event in turn:
                 kind = event["type"]
                 if kind == "user_message":
                     yield _sse("start", {"user_message": ChatMessageOut(**asdict(event["message"])).model_dump()})

@@ -12,7 +12,6 @@ import Logo from '../components/Logo'
 import PrefToggles from '../components/PrefToggles'
 import Sidebar, { labelClass, useSidebarCollapsed } from '../components/Sidebar'
 import { useI18n } from '../i18n'
-import type { TranslationKey } from '../i18n/vi'
 import { ApiError } from '../lib/api'
 import {
   ChatStreamError,
@@ -26,8 +25,8 @@ import {
   type SourceRef,
 } from '../lib/conversations'
 import type { FeedbackType } from '../lib/feedback'
+import { getSuggestions, type Suggestion } from '../lib/suggestions'
 
-const SUGGESTIONS: TranslationKey[] = ['chat.suggest1', 'chat.suggest2', 'chat.suggest3']
 const STICK_THRESHOLD_PX = 120
 
 type FeedbackTarget = { type: FeedbackType; messageId: string | null }
@@ -289,6 +288,20 @@ export default function Chat() {
   })
   const closeFeedback = () => setFeedback((prev) => ({ ...prev, open: false }))
 
+  // Câu hỏi gợi ý khi mới mở chat: bấm là trả lời ngay từ cache của server, không gọi LLM.
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([])
+  useEffect(() => {
+    let alive = true
+    getSuggestions()
+      .then((items) => {
+        if (alive) setSuggestions(items)
+      })
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [])
+
   // Điều đang xem trong cửa sổ tham chiếu bên phải (null = đóng)
   const [reference, setReference] = useState<{ article: number; sources: SourceRef[] } | null>(null)
   const openReference = useCallback(
@@ -460,18 +473,24 @@ export default function Chat() {
               <Logo size={64} fill="#0D47A1" />
               <h2 className="m-0 text-2xl">{t('chat.emptyTitle')}</h2>
               <p className="m-0">{t('chat.emptyHint')}</p>
-              <div className="mt-2 flex w-full flex-col gap-2">
-                {SUGGESTIONS.map((key) => (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => send(t(key))}
-                    className="min-h-11 cursor-pointer rounded-xl border border-line bg-surface px-4 py-3 text-left font-sans text-[15px] font-normal text-heading hover:bg-tint"
-                  >
-                    {t(key)}
-                  </button>
-                ))}
-              </div>
+              {suggestions.length > 0 && (
+                <div className="mt-2 w-full text-left">
+                  <p className="mb-3 mt-0 text-center text-sm">{t('chat.suggestHeading')}</p>
+                  <div className="grid w-full grid-cols-1 gap-3 md:grid-cols-2">
+                    {suggestions.map((s) => (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => send(s.question)}
+                        className="flex min-h-11 cursor-pointer flex-col items-start gap-1.5 rounded-xl border border-line bg-surface px-4 py-3 text-left font-sans text-[15px] font-normal leading-snug text-heading hover:border-ctu-cyan hover:bg-tint"
+                      >
+                        <span className="rounded-full bg-bubble-user px-2.5 text-xs font-normal text-accent">{s.category}</span>
+                        {s.question}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

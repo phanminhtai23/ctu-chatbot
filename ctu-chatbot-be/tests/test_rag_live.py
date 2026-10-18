@@ -18,6 +18,7 @@ from app.services.chat.graph import build_chat_graph
 from app.services.llm.gemini import GeminiClient
 from app.services.rag.embeddings import EmbeddingError, GeminiEmbedder
 from app.services.rag.store import Retriever, VectorStore, default_source_path, ensure_index
+from tests.answer_checks import EMOJI, assert_case, assert_friendly, normalize
 from tests.live_gemini import CachedEmbedder, ThrottledLLM
 from tests.rag_cases import ARTICLE_CASES, FEASIBILITY_CASES, FORMULA_CASES, OFF_TOPIC, UNKNOWN_CASES, Case
 from tests.rag_cases_hard import HARD_CASES
@@ -26,8 +27,6 @@ from tests.rag_cases_scholarship import SCHOLARSHIP_CASES
 pytestmark = pytest.mark.live
 
 ALL_CASES = ARTICLE_CASES + FORMULA_CASES + UNKNOWN_CASES + FEASIBILITY_CASES + SCHOLARSHIP_CASES + HARD_CASES
-EMOJI = re.compile("[\U0001f300-\U0001faff\u2600-\u27bf\u2b50\u2728]")
-LATEX = re.compile(r"\$\$|\\frac|\\sum|\\times|\\cdot|\\text|\\begin|\\\(|\\\[")
 _answers: dict[str, tuple[str, list[int]]] = {}
 
 
@@ -62,33 +61,6 @@ def ask(graph, question: str) -> tuple[str, list[int]]:
         sources = [s["article"] for s in reply.additional_kwargs.get("retrieved", [])]
         _answers[question] = (str(reply.content), sources)
     return _answers[question]
-
-
-def normalize(text: str) -> str:
-    text = text.lower().replace("\u00a0", " ")
-    return re.sub(r"[*_`]", "", text)
-
-
-def assert_friendly(answer: str) -> None:
-    assert not LATEX.search(answer), f"còn ký hiệu LaTeX trong câu trả lời:\n{answer}"
-    assert re.search(r"\bbạn\b|\bmình\b", answer.lower()), f"giọng chưa thân thiện (không xưng mình/bạn):\n{answer}"
-    assert len(answer) < 2500, "trả lời quá dài, khó đọc"
-
-
-def assert_case(case: Case, answer: str) -> None:
-    text = normalize(answer)
-    if case.lead:
-        assert re.search(case.lead, text[:260], flags=re.IGNORECASE), (
-            f"[{case.id}] câu trả lời chưa mở đầu bằng Có/Không rõ ràng ({case.lead!r})\n--- trả lời:\n{answer}"
-        )
-    for group in case.must:
-        assert any(re.search(p, text, flags=re.IGNORECASE) for p in group), (
-            f"[{case.id}] thiếu một trong {group}\n--- câu hỏi: {case.question}\n--- trả lời:\n{answer}"
-        )
-    for pattern in case.forbid:
-        assert not re.search(pattern, text, flags=re.IGNORECASE), (
-            f"[{case.id}] có nội dung không được phép {pattern!r}\n--- trả lời:\n{answer}"
-        )
 
 
 # ---- 1. Truy xuất: Điều chứa đáp án phải nằm trong các Điều được lấy ra ----

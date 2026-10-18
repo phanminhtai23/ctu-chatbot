@@ -17,7 +17,7 @@ export type UserProfile = {
   theme: ThemeMode
 }
 
-export type UserUpdate = Partial<Pick<UserProfile, 'name' | 'birthday' | 'timezone' | 'language' | 'theme'>>
+export type UserUpdate = Partial<Pick<UserProfile, 'name' | 'birthday' | 'timezone' | 'theme'>>
 
 export type TokenResponse = { access_token: string; refresh_token: string; user: UserProfile }
 

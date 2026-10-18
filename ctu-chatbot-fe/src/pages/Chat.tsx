@@ -28,6 +28,7 @@ import {
   type SourceRef,
 } from '../lib/conversations'
 import type { FeedbackType } from '../lib/feedback'
+import { fillTemplate, parseRateLimit } from '../lib/format'
 import { listSharedWithMe, type SharedWithMe } from '../lib/shares'
 import { getSuggestions, type Suggestion } from '../lib/suggestions'
 
@@ -198,7 +199,12 @@ export default function Chat() {
       if (err instanceof ApiError && err.status === 403 && err.message.includes('READ_ONLY')) return t('chat.errReadOnly')
       if (err instanceof ApiError && err.status === 409 && err.message.includes('CONVERSATION_BUSY')) return t('chat.errConvBusy')
       if (err instanceof ApiError && err.status === 429 && err.message.includes('TURN_IN_PROGRESS')) return t('chat.errTurnInProgress')
-      if (err instanceof ApiError && err.status === 429) return t('chat.errTooManyMessages')
+      if (err instanceof ApiError && err.status === 429) {
+        const info = parseRateLimit(err.message)
+        return info
+          ? fillTemplate(t('chat.errTooManyMessagesLimit'), { limit: info.limit, amount: info.amount, unit: t(`chat.unit.${info.unit}`) })
+          : t('chat.errTooManyMessages')
+      }
       if (err instanceof ApiError) return t('chat.errLlm')
       return t('chat.errNetwork')
     },

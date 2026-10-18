@@ -10,6 +10,7 @@ import PrefToggles from '../components/PrefToggles'
 import { useI18n } from '../i18n'
 import { ApiError } from '../lib/api'
 import { ChatStreamError, streamTo, type SourceRef } from '../lib/conversations'
+import { fillTemplate, parseRateLimit } from '../lib/format'
 import { getSharedLink, sharedLinkStreamPath, type SharedLinkView } from '../lib/shares'
 
 const POLL_MS = 6000
@@ -101,7 +102,12 @@ export default function SharedView() {
     if (err instanceof ApiError) {
       if (err.status === 403) return t('chat.errReadOnly')
       if (err.status === 409) return t('chat.errConvBusy')
-      if (err.status === 429) return t('chat.errTooManyMessages')
+      if (err.status === 429) {
+        const info = parseRateLimit(err.message)
+        return info
+          ? fillTemplate(t('chat.errTooManyMessagesLimit'), { limit: info.limit, amount: info.amount, unit: t(`chat.unit.${info.unit}`) })
+          : t('chat.errTooManyMessages')
+      }
       if (err.status === 503) return t('chat.errBusy')
     }
     return t('chat.errNetwork')

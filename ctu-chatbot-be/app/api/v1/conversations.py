@@ -27,7 +27,7 @@ from app.services.chat import suggested
 from app.services.chat.queue import QueueFull, QueueTimeout, Ticket, UserBusy, conversation_guard, get_turn_queue
 from app.services.chat.service import cached_turn, delete_thread, get_history, run_turn, stream_cached_turn, stream_turn
 from app.services.llm.gemini import LLMError, LLMNotConfigured, LLMUnavailable
-from app.services.rate_limit import chat_limiter
+from app.services.rate_limit import chat_limiter, describe_window
 from app.services.usage import record_usage
 
 logger = logging.getLogger("app.chat")
@@ -68,11 +68,14 @@ def _author(user: User, level: str) -> str | None:
 
 def _enforce_rate_limit(user: User) -> None:
     """Mỗi user tối đa N tin trong M giây (mặc định 10 tin / 5 phút). Quá thì 429 kèm Retry-After."""
+    if chat_limiter is None:  # CHAT_RATE_LIMIT=off
+        return
     allowed, retry_after = chat_limiter.hit(str(user.id))
     if not allowed:
+        # `limit` và `window` cho giao diện hiện đúng "tối đa N tin trong M phút" theo cấu hình hiện tại.
         raise HTTPException(
             status.HTTP_429_TOO_MANY_REQUESTS,
-            detail="RATE_LIMITED",
+            detail={"code": "RATE_LIMITED", "limit": chat_limiter.max_events, "window": describe_window(chat_limiter.window_seconds)},
             headers={"Retry-After": str(retry_after)},
         )
 

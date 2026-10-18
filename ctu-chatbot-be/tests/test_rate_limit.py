@@ -1,7 +1,7 @@
 import pytest
 
 from app.services import rate_limit
-from app.services.rate_limit import SlidingWindowLimiter, chat_limiter
+from app.services.rate_limit import RateLimit, SlidingWindowLimiter, chat_limiter, describe_window, parse_rate_limit
 
 
 class FakeClock:
@@ -85,7 +85,7 @@ def test_11th_message_in_5_minutes_is_rejected(client, auth_headers):
 
     res = _send(client, auth_headers, conv_id, "câu thứ 11")
     assert res.status_code == 429
-    assert res.json()["detail"] == "RATE_LIMITED"
+    assert res.json()["detail"] == {"code": "RATE_LIMITED", "limit": 10, "window": {"amount": 5, "unit": "m"}}
     assert 1 <= int(res.headers["Retry-After"]) <= 300
 
 
@@ -131,7 +131,7 @@ def test_streaming_endpoint_shares_the_same_budget(client, auth_headers):
         assert res.status_code == 200
     res = client.post(f"/api/v1/conversations/{conv_id}/messages/stream", headers=auth_headers, json={"content": "11"})
     assert res.status_code == 429
-    assert res.json()["detail"] == "RATE_LIMITED"
+    assert res.json()["detail"]["code"] == "RATE_LIMITED"
 
 
 def test_allowed_again_after_5_minutes(client, auth_headers, monkeypatch):
@@ -169,3 +169,58 @@ def test_llm_failure_still_counts_so_errors_cannot_be_used_to_spam(client, auth_
 
 def test_module_exposes_singleton():
     assert rate_limit.chat_limiter is chat_limiter
+
+
+# ---- biến cấu hình CHAT_RATE_LIMIT ----
+
+
+@pytest.mark.parametrize(
+    "text,expected",
+    [
+        ("10/5m", RateLimit(10, 300)),
+        ("30/1h", RateLimit(30, 3600)),
+        ("5/30s", RateLimit(5, 30)),
+        ("20/m", RateLimit(20, 60)),  # thiếu số = 1 đơn vị
+        (" 3 / 2 H ", RateLimit(3, 7200)),  # khoảng trắng và hoa thường
+    ],
+)
+def test_parse_rate_limit(text, expected):
+    assert parse_rate_limit(text) == expected
+
+
+@pytest.mark.parametrize("text", ["off", "OFF", "none", "unlimited", "0", ""])
+def test_rate_limit_can_be_turned_off(text):
+    assert parse_rate_limit(text) is None
+
+
+@pytest.mark.parametrize("text", ["10", "10/5", "abc", "10/5d", "-1/5m", "0/5m", "10/0m", "10 per 5 minutes"])
+def test_invalid_rate_limit_is_rejected_with_a_clear_message(text):
+    with pytest.raises(ValueError, match="CHAT_RATE_LIMIT"):
+        parse_rate_limit(text)
+
+
+def test_describe_window_picks_the_largest_whole_unit():
+    assert describe_window(300) == {"amount": 5, "unit": "m"}
+    assert describe_window(7200) == {"amount": 2, "unit": "h"}
+    assert describe_window(90) == {"amount": 90, "unit": "s"}
+
+
+def test_no_limit_when_turned_off(client, auth_headers, monkeypatch):
+    from app.api.v1 import conversations
+
+    monkeypatch.setattr(conversations, "chat_limiter", None)
+    conv_id = _new_conversation(client, auth_headers)
+    for i in range(15):  # nhiều hơn mặc định 10
+        assert _send(client, auth_headers, conv_id, f"câu hỏi {i}").status_code == 200
+
+
+def test_custom_limit_is_applied_and_reported(client, auth_headers, monkeypatch):
+    from app.api.v1 import conversations
+
+    monkeypatch.setattr(conversations, "chat_limiter", SlidingWindowLimiter(2, 3600))
+    conv_id = _new_conversation(client, auth_headers)
+    assert _send(client, auth_headers, conv_id, "một").status_code == 200
+    assert _send(client, auth_headers, conv_id, "hai").status_code == 200
+    res = _send(client, auth_headers, conv_id, "ba")
+    assert res.status_code == 429 and res.json()["detail"]["limit"] == 2
+    assert res.json()["detail"]["window"] == {"amount": 1, "unit": "h"}

@@ -1,3 +1,8 @@
+import os
+
+# Test không phụ thuộc .env của máy: ép giới hạn chat mặc định TRƯỚC khi import app (bộ đếm được tạo lúc import).
+os.environ["CHAT_RATE_LIMIT"] = "10/5m"
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine

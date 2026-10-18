@@ -143,13 +143,7 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
         )}
 
         <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px]">
-          {message.cached && !message.pending && (
-            <span className="inline-flex items-center gap-1.5" title={t('chat.cached')}>
-              <Icon name="clock" size={14} />
-              {t('chat.cached')}
-            </span>
-          )}
-          {seconds != null && !message.cached && (
+          {seconds != null && (
             <span className="inline-flex items-center gap-1.5 tabular-nums" title={t('chat.waited')}>
               <Icon name="clock" size={14} />
               <span className="sr-only">{t('chat.waited')}: </span>

@@ -1,4 +1,6 @@
+import random
 import re
+import time
 import uuid
 from collections.abc import Iterator
 from dataclasses import dataclass, field
@@ -8,6 +10,10 @@ from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, Remove
 from app.services.chat import suggested
 from app.services.chat.graph import now_iso
 from app.services.chat.text import message_text
+
+
+CACHED_DELAY_SECONDS = (1.0, 3.0)  # câu trả lời có sẵn cũng "trả lời" mất 1-3 giây để trông như bot đang gõ
+_sleep = time.sleep  # test thay bằng hàm không làm gì
 
 
 def _mentioned_sources(stored: list, text: str) -> list[dict]:
@@ -97,7 +103,9 @@ def run_turn(graph, conversation_id: uuid.UUID, text: str) -> tuple[ChatMessage,
     return user_msg, bot_msg  # type: ignore[return-value]
 
 
-def cached_turn(graph, conversation_id: uuid.UUID, text: str, hit: suggested.SuggestedAnswer) -> tuple[ChatMessage, ChatMessage]:
+def cached_turn(
+    graph, conversation_id: uuid.UUID, text: str, hit: suggested.SuggestedAnswer, duration: float | None = None
+) -> tuple[ChatMessage, ChatMessage]:
     """Trả lời câu hỏi gợi ý bằng câu trả lời có sẵn: KHÔNG gọi LLM, embedding hay công cụ.
 
     Hai tin nhắn vẫn được ghi vào checkpoint của cuộc trò chuyện như một lượt chat bình thường, nên mở lại
@@ -109,6 +117,7 @@ def cached_turn(graph, conversation_id: uuid.UUID, text: str, hit: suggested.Sug
         id=str(uuid.uuid4()),
         additional_kwargs={
             "created_at": now_iso(),
+            "duration_seconds": round(duration, 1) if duration is not None else None,
             "retrieved": [],
             "sources": list(hit.sources),
             "tools": [],
@@ -121,9 +130,12 @@ def cached_turn(graph, conversation_id: uuid.UUID, text: str, hit: suggested.Sug
 
 def stream_cached_turn(graph, conversation_id: uuid.UUID, text: str, hit: suggested.SuggestedAnswer) -> Iterator[dict]:
     """Như cached_turn nhưng trả các sự kiện giống stream_turn (user_message, nhiều token, done) để FE không phải khác đi."""
-    user_msg, bot_msg = cached_turn(graph, conversation_id, text, hit)
+    duration = random.uniform(*CACHED_DELAY_SECONDS)
+    user_msg, bot_msg = cached_turn(graph, conversation_id, text, hit, duration)
     yield {"type": "user_message", "message": user_msg}
-    for piece in suggested.chunks(hit.answer):
+    pieces = suggested.chunks(hit.answer)
+    for piece in pieces:
+        _sleep(duration / len(pieces))  # rải đều trong 1-3 giây, giống đang stream thật
         yield {"type": "token", "text": piece}
     yield {"type": "done", "message": bot_msg}
 

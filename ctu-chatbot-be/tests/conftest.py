@@ -36,6 +36,13 @@ def _reset_chat_limiter():
 
 
 @pytest.fixture(autouse=True)
+def _no_cached_delay(monkeypatch):
+    from app.services.chat import service
+
+    monkeypatch.setattr(service, "_sleep", lambda _s: None)
+
+
+@pytest.fixture(autouse=True)
 def _reset_turn_queue():
     # Hàng đợi lượt chat cũng nằm trong bộ nhớ process; tạo lại cho mỗi test.
     from app.services.chat import queue

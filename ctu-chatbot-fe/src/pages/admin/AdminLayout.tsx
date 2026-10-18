@@ -73,6 +73,7 @@ export default function AdminLayout({ title, subtitle, children }: Props) {
               ['/admin/users', 'users', 'admin.nav.users'],
               ['/admin/feedback', 'inbox', 'admin.nav.feedback'],
               ['/admin/documents', 'doc', 'admin.nav.documents'],
+              ['/admin/knowledge', 'book', 'admin.nav.knowledge'],
               ['/admin/donate', 'heart', 'admin.nav.donate'],
             ] as const
           ).map(([to, icon, label]) => {

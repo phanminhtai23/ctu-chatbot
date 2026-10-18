@@ -27,6 +27,29 @@ class EmbeddingError(Exception):
     pass
 
 
+class CachedQueryEmbedder:
+    """Bọc một embedder: nhớ vector của các câu hỏi vừa nhúng. Một lượt chat tra cứu cả văn bản quy chế lẫn kiến thức
+    bổ sung (và có khi tra cứu lại riêng câu mới nhất để chọn tuyến), nên cùng một câu hỏi được nhúng nhiều lần;
+    cache giúp chỉ tốn MỘT lần gọi API embedding cho mỗi câu."""
+
+    def __init__(self, inner: Embedder, size: int = 64):
+        self._inner = inner
+        self._size = size
+        self._cache: dict[str, list[float]] = {}
+
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        return self._inner.embed_documents(texts)
+
+    def embed_query(self, text: str) -> list[float]:
+        cached = self._cache.get(text)
+        if cached is None:
+            cached = self._inner.embed_query(text)
+            if len(self._cache) >= self._size:
+                self._cache.pop(next(iter(self._cache)))  # bỏ câu cũ nhất
+            self._cache[text] = cached
+        return cached
+
+
 def _normalize(vector: list[float]) -> list[float]:
     norm = math.sqrt(sum(v * v for v in vector)) or 1.0
     return [v / norm for v in vector]

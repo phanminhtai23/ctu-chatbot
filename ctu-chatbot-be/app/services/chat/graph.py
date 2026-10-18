@@ -87,11 +87,21 @@ def build_route_prompt(route: str) -> str:
     return {scope.EXTERNAL: WEB_PROMPT, scope.OFFTOPIC: OFFTOPIC_PROMPT}.get(route, SMALLTALK_PROMPT)
 
 
-def build_system_prompt(hits: list, calculation: str = "") -> str:
+KNOWLEDGE_INTRO = (
+    "KIẾN THỨC BỔ SUNG do quản trị viên của hệ thống cập nhật (các cặp hỏi-đáp đã được duyệt). Nếu một mục khớp ý câu hỏi thì "
+    "ưu tiên dùng nó để trả lời, kể cả khi phần NGỮ CẢNH ở trên không có Điều nào liên quan; khi dùng hãy nói rõ đó là "
+    "\"thông tin bổ sung của hệ thống\" và KHÔNG gán nó cho một Điều nào. Mục không liên quan tới câu hỏi thì bỏ qua."
+)
+
+
+def build_system_prompt(hits: list, calculation: str = "", knowledge: list | None = None) -> str:
     """Ghép prompt hệ thống với các Điều đã truy xuất (mỗi Điều là một chunk nguyên vẹn) và, nếu có,
     kết quả tính điểm đã được máy tính tính sẵn."""
     context = "\n\n---\n\n".join(hit.text for hit in hits) if hits else NO_CONTEXT
     prompt = f"{SYSTEM_PROMPT}\n\nNGỮ CẢNH (các Điều liên quan của Quy định):\n\n{context}"
+    if knowledge:
+        entries = "\n\n".join(f"[Mục {i}] Hỏi: {k.question}\nĐáp: {k.answer}" for i, k in enumerate(knowledge, 1))
+        prompt += f"\n\n{KNOWLEDGE_INTRO}\n\n{entries}"
     if calculation:
         prompt += f"\n\n{calculation}"
     return prompt
@@ -146,6 +156,19 @@ def router_score(retriever: DocumentRetriever, history: list[BaseMessage], hits:
     return max(semantic) if semantic else None
 
 
+def retrieve_knowledge(retriever, history: list[BaseMessage]) -> list:
+    """Kiến thức bổ sung (hỏi-đáp admin nhập) khớp với CÂU HỎI MỚI NHẤT. Lỗi thì bỏ qua, không làm hỏng lượt chat."""
+    search = getattr(retriever, "retrieve_knowledge", None)
+    humans = [m for m in history if isinstance(m, HumanMessage)]
+    if search is None or not humans:
+        return []
+    try:
+        return list(search(message_text(humans[-1])))
+    except Exception:  # noqa: BLE001
+        logger.warning("Không tra cứu được kiến thức bổ sung", exc_info=True)
+        return []
+
+
 def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retriever: DocumentRetriever | None = None):
     def generate(state: MessagesState, writer: StreamWriter) -> dict:
         started = time.monotonic()
@@ -159,10 +182,15 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
             except Exception:  # noqa: BLE001 - lỗi tra cứu (hết hạn mức embedding...) không làm hỏng cả lượt chat
                 logger.exception("Không tra cứu được văn bản quy định, trả lời không kèm ngữ cảnh")
 
+        kb_hits = retrieve_knowledge(retriever, history) if retriever is not None else []
+
         # Guardrail phạm vi: thuộc quy chế (RAG) / ngoài quy chế (tìm web) / không liên quan / xã giao.
         # Không có kho văn bản (retriever) thì không có căn cứ để phân loại: giữ hành vi cũ.
         if retriever is not None and settings.web_search_enabled:
-            route = scope.classify(llm, history, router_score(retriever, history, hits))
+            if kb_hits and kb_hits[0].score >= settings.kb_strong_score:
+                route = scope.REGULATION  # có kiến thức bổ sung khớp rõ: trả lời theo đó, khỏi phân loại / tìm web
+            else:
+                route = scope.classify(llm, history, router_score(retriever, history, hits))
         logger.info("Tuyến câu hỏi: %s", route)
 
         tool_log: list[dict] = []
@@ -172,9 +200,9 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
         if route == scope.REGULATION:
             # Phép tính ĐTBCTL/hạng tốt nghiệp làm bằng mã (LLM nhỏ hay chia sai); LLM chỉ diễn giải kết quả.
             calculation = build_gpa_report(llm, history)
-            system = build_system_prompt(hits, calculation)
+            system = build_system_prompt(hits, calculation, kb_hits)
         else:
-            hits, calculation = [], ""  # ngữ cảnh quy chế không liên quan, đưa vào chỉ làm model lạc đề
+            hits, calculation, kb_hits = [], "", []  # ngữ cảnh quy chế không liên quan, đưa vào chỉ làm model lạc đề
             system = build_route_prompt(route)
             tools = []
             if route == scope.EXTERNAL:
@@ -217,6 +245,8 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
                 # `retrieved`: các Điều đã đưa cho LLM làm ngữ cảnh (để kiểm thử/gỡ lỗi).
                 # `sources`: các Điều câu trả lời thực sự nhắc tới, hiện cho người dùng làm tham chiếu.
                 "retrieved": [{"article": h.article, "title": h.title} for h in hits],
+                # Các mục kiến thức bổ sung đã đưa cho LLM (để kiểm thử/gỡ lỗi).
+                "knowledge": [{"id": k.id, "question": k.question, "score": k.score} for k in kb_hits],
                 "sources": web.sources_for(answer) if web is not None else cited_sources(answer, hits),
                 # Tuyến đã chọn (regulation | external | offtopic | smalltalk), để kiểm thử/gỡ lỗi.
                 "route": route,

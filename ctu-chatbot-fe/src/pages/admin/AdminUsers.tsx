@@ -283,12 +283,12 @@ export default function AdminUsers() {
                       {u.is_active ? t('admin.users.active') : t('admin.users.disabled')}
                     </span>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3 text-heading">{formatDate(u.created_at)}</td>
+                  <td className="max-w-[7.5rem] px-3 py-3 text-heading">{formatDate(u.created_at)}</td>
                   <td className="px-3 py-3 text-right tabular-nums text-heading">{u.messages}</td>
                   <td className={`whitespace-nowrap px-3 py-3 text-right tabular-nums ${u.storage_bytes >= u.storage_quota_bytes * 0.9 ? 'font-semibold text-[#B42318] dark:text-[#F5A3A3]' : 'text-heading'}`} title={`${formatBytes(u.storage_bytes)} / ${formatBytes(u.storage_quota_bytes)}`}>
                     {formatBytes(u.storage_bytes)}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-3 text-heading">{u.last_active ? formatDate(u.last_active) : '—'}</td>
+                  <td className="max-w-[7.5rem] px-3 py-3 text-heading">{u.last_active ? formatDate(u.last_active) : '—'}</td>
                   <td className="whitespace-nowrap px-4 py-3 text-right">
                     <button type="button" onClick={() => setDetailId(u.id)} className="mr-2 min-h-9 cursor-pointer rounded-md border border-line bg-surface px-3 font-sans text-[13px] text-accent hover:bg-tint">
                       {t('admin.users.view')}

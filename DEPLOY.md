@@ -21,6 +21,7 @@ Ngoài ra cần: **API key Gemini** (LLM + embedding) và **OAuth Client ID củ
    - `ctu-chatbot-be/chroma_db/` — kho vector ChromaDB.
    - `ctu-chatbot-be/data/documents/` — các phiên bản tài liệu admin đã nạp.
    - `ctu-chatbot-be/data/donate/` — ảnh QR ủng hộ.
+   - (`chroma_db/` cũng chứa vector của "Kiến thức bổ sung" do admin nhập; nội dung các mục nằm trong Postgres. Mất `chroma_db/` thì vào trang quản trị bấm "Embedding lại tất cả".)
 3. **Lịch sử chat nằm trong Postgres** (bảng checkpoint của LangGraph, tự tạo khi khởi động) nên phải sao lưu database.
 4. Backend cần thấy file `vector-docs/qd3266-clean.md` (nằm ở thư mục gốc repo, cùng cấp `ctu-chatbot-be/`) để dựng kho vector lần đầu. Khi đóng gói riêng backend, nhớ copy file này hoặc đặt biến `RAG_SOURCE_PATH`.
 5. Lần khởi động đầu tiên, backend gọi API embedding để nhúng từng Điều của văn bản. Cần key Gemini hợp lệ và có mạng; các lần sau dùng lại `chroma_db/`.
@@ -79,6 +80,7 @@ Sao chép `.env.example` thành `.env` rồi chỉnh. **Không commit file này.
 | `CHAT_MAX_CONCURRENT` | Số lượt chat chạy đồng thời, mặc định 4; tăng lên 8 nếu hạn mức Gemini đủ. |
 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, `CLOUDINARY_FOLDER` | Nơi lưu ảnh đại diện và PDF/ảnh người dùng tải lên (Cloudinary Console → Dashboard → API Keys). Thiếu thì tính năng tải file trả 503. **API Secret là bí mật, chỉ để ở backend.** |
 | `USER_STORAGE_QUOTA_MB`, `USER_UPLOAD_MAX_MB` | Dung lượng tối đa mỗi người dùng (mặc định 20) và mỗi lần tải (mặc định 5), tính bằng MB. |
+| `KB_MIN_SCORE`, `KB_STRONG_SCORE` | Ngưỡng tra cứu "Kiến thức bổ sung" do admin nhập (mặc định 0,72 và 0,80; đo bằng embedding Gemini thật). Thường không cần đổi. |
 | `DOCUMENT_INGEST_ENABLED` | `true` để admin tải PDF mới lên và nạp (cần ổ đĩa bền); `false` tắt hẳn các endpoint này. |
 | `WEB_SEARCH_ENABLED` | `true` cho phép bot tìm web (DuckDuckGo) với câu hỏi ngoài quy chế. |
 

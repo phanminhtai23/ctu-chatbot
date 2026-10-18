@@ -36,6 +36,12 @@ class Settings(BaseSettings):
     chroma_path: str = "chroma_db"  # tương đối so với thư mục ctu-chatbot-be
     rag_top_k: int = 5
 
+    # Kiến thức bổ sung do admin nhập (hỏi-đáp), embedding vào collection riêng của ChromaDB và tra cứu cùng với văn bản quy chế.
+    kb_top_k: int = 3  # tối đa chừng này mục kiến thức bổ sung đưa vào prompt
+    # Ngưỡng đo với embedding Gemini thật: câu cùng ý 0,80-0,95; cùng chủ đề nhưng khác ý ~0,78; quy chế / lạc đề 0,59-0,70.
+    kb_min_score: float = 0.72  # độ giống (cosine) tối thiểu của câu hỏi với câu hỏi đã nhập để mục đó được đưa vào prompt
+    kb_strong_score: float = 0.8  # từ ngưỡng này trở lên coi là khớp rõ: trả lời theo kiến thức bổ sung, khỏi phân loại / tìm web
+
     # Guardrail phạm vi + tìm web: câu hỏi ngoài quy chế thì bot tự tìm trên web (DuckDuckGo). false = luôn dùng RAG.
     web_search_enabled: bool = True
 

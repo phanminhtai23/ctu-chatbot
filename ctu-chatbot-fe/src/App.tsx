@@ -11,6 +11,7 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminDocuments from './pages/admin/AdminDocuments'
 import AdminDonate from './pages/admin/AdminDonate'
 import AdminFeedback from './pages/admin/AdminFeedback'
+import AdminKnowledge from './pages/admin/AdminKnowledge'
 import AdminUsers from './pages/admin/AdminUsers'
 
 function App() {
@@ -61,6 +62,14 @@ function App() {
           element={
             <RequireAdmin>
               <AdminDocuments />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/knowledge"
+          element={
+            <RequireAdmin>
+              <AdminKnowledge />
             </RequireAdmin>
           }
         />

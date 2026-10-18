@@ -10,6 +10,7 @@ import chromadb
 from app.core.config import settings
 from app.services.rag.chunker import Chunk, split_into_articles
 from app.services.rag.embeddings import Embedder
+from app.services.rag.knowledge import KbHit, KnowledgeStore
 
 logger = logging.getLogger("app.rag")
 
@@ -159,10 +160,11 @@ class Retriever:
     """Lấy các Điều liên quan: Điều nêu thẳng trong câu hỏi + Điều giống nhất về ngữ nghĩa + Điều có tiêu đề
     trùng cụm từ trong câu hỏi (cứu những câu như "học phí bao nhiêu" mà embedding xếp Điều 10 quá thấp)."""
 
-    def __init__(self, store: VectorStore, top_k: int | None = None):
+    def __init__(self, store: VectorStore, top_k: int | None = None, knowledge: KnowledgeStore | None = None):
         self._store = store
         self._top_k = top_k or settings.rag_top_k
         self._phrases: dict[int, list[str]] | None = None
+        self._knowledge = knowledge
 
     def reset(self) -> None:
         """Xoá bộ nhớ đệm tiêu đề (gọi sau khi kho vector chuyển sang phiên bản tài liệu khác)."""
@@ -171,6 +173,16 @@ class Retriever:
     @property
     def store(self) -> VectorStore:
         return self._store
+
+    @property
+    def knowledge(self) -> KnowledgeStore | None:
+        return self._knowledge
+
+    def retrieve_knowledge(self, question: str) -> list[KbHit]:
+        """Các mục kiến thức bổ sung (hỏi-đáp do admin nhập) khớp với câu hỏi, từ cao xuống thấp."""
+        if self._knowledge is None or self._knowledge.count() == 0:
+            return []
+        return self._knowledge.search(question, settings.kb_top_k, settings.kb_min_score)
 
     def _title_matches(self, question: str, exclude: set[int]) -> list[int]:
         if self._phrases is None:

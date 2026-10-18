@@ -14,7 +14,8 @@ from app.services.llm.gemini import GeminiClient
 from app.services.ingest import storage
 from app.services.ingest.manager import JobManager
 from app.services.ingest.vision import GeminiVision
-from app.services.rag.embeddings import GeminiEmbedder
+from app.services.rag.embeddings import CachedQueryEmbedder, GeminiEmbedder
+from app.services.rag.knowledge import KnowledgeStore
 from app.services.rag.store import Retriever, VectorStore, default_chroma_path, ensure_index
 
 logger = logging.getLogger("app")
@@ -26,19 +27,20 @@ def build_retriever() -> Retriever | None:
     Lỗi ở đây (thiếu key embedding, mất mạng...) không được làm app chết: chatbot vẫn chạy nhưng không có ngữ cảnh.
     """
     try:
-        embedder = GeminiEmbedder.from_settings()
+        embedder = CachedQueryEmbedder(GeminiEmbedder.from_settings())  # cùng một câu hỏi chỉ nhúng một lần cho cả quy chế lẫn kiến thức bổ sung
+        knowledge = KnowledgeStore(embedder, path=default_chroma_path())
         active = storage.read_active()
         if active is not None:
             # Admin đã nạp tài liệu mới qua trang quản trị: dùng collection của phiên bản đó (đã vector hóa sẵn).
             store = VectorStore(embedder, path=default_chroma_path(), collection=active["collection"])
             if store.count() > 0:
                 logger.info("RAG sẵn sàng: %d Điều (phiên bản %s) trong ChromaDB", store.count(), active["version"])
-                return Retriever(store)
+                return Retriever(store, knowledge=knowledge)
             logger.warning("Collection của phiên bản %s trống, quay về tài liệu mặc định", active["version"])
         store = VectorStore(embedder, path=default_chroma_path())
         count = ensure_index(store)
         logger.info("RAG sẵn sàng: %d Điều trong ChromaDB", count)
-        return Retriever(store)
+        return Retriever(store, knowledge=knowledge)
     except Exception:  # noqa: BLE001
         logger.exception("Không dựng được RAG; chatbot chạy không có ngữ cảnh quy định")
         return None
@@ -60,6 +62,7 @@ async def lifespan(app: FastAPI):
     checkpointer.setup()  # tạo bảng checkpoint nếu chưa có (chạy an toàn nhiều lần)
 
     retriever = build_retriever()
+    app.state.retriever = retriever  # trang quản trị kiến thức bổ sung dùng chung kho vector này
     app.state.chat_graph = build_chat_graph(GeminiClient.from_settings(), checkpointer, retriever)
     app.state.ingest_manager = JobManager(retriever, GeminiVision.from_settings, GeminiEmbedder.from_settings)
     try:

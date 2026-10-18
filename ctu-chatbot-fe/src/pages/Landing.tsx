@@ -208,19 +208,26 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="bg-ctu-navy text-white">
-        <div className={`${container} flex flex-wrap items-center justify-between gap-x-10 gap-y-6 py-16`}>
-          <div className="min-w-0 flex-[1_1_420px]">
-            <h2 className="mb-2 text-[length:clamp(1.5rem,2.6vw,2rem)] !text-white">{t('cta.title')}</h2>
-            <p className="m-0 font-light text-white">{t('cta.sub')}</p>
+      {/* Lời kêu gọi: thẻ bo tròn nổi trên nền sáng, tách rõ với chân trang tối bên dưới (không còn hai dải xanh liền nhau). */}
+      <section className="bg-surface">
+        <div className={`${container} pb-16 pt-2 sm:pb-20`}>
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-ctu-navy to-[#1976d2] px-7 py-10 text-white shadow-[0_18px_40px_rgba(13,71,161,.28)] sm:px-14 sm:py-14">
+            <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 size-64 rounded-full bg-white/10" />
+            <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 right-40 size-52 rounded-full bg-white/[.07]" />
+            <div className="relative flex flex-wrap items-center justify-between gap-x-10 gap-y-6">
+              <div className="min-w-0 flex-[1_1_420px]">
+                <h2 className="mb-2 text-[length:clamp(1.5rem,2.6vw,2rem)] !text-white">{t('cta.title')}</h2>
+                <p className="m-0 font-light text-white">{t('cta.sub')}</p>
+              </div>
+              <Link
+                to="/login"
+                className="inline-flex min-h-[52px] items-center gap-3 rounded-[10px] bg-ctu-gold-active px-8 text-base font-semibold text-ctu-navy-dark no-underline hover:bg-ctu-gold"
+              >
+                {t('steps.cta')}
+                <Icon name="arrow" />
+              </Link>
+            </div>
           </div>
-          <Link
-            to="/login"
-            className="inline-flex min-h-[52px] items-center gap-3 rounded-[10px] bg-ctu-gold-active px-8 text-base font-semibold text-ctu-navy-dark no-underline hover:bg-ctu-gold"
-          >
-            {t('steps.cta')}
-            <Icon name="arrow" />
-          </Link>
         </div>
       </section>
 

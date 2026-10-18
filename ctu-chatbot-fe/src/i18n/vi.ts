@@ -364,6 +364,8 @@ const vi = {
   'share.inviteHint': 'Người được mời đăng nhập bằng đúng email này là xem được. Chỉ email CTU mới đăng nhập (và chat tiếp) được.',
   'share.peopleTitle': 'Đã chia sẻ với',
   'share.peopleEmpty': 'Chưa chia sẻ cho ai.',
+  'share.inviteLink': 'Liên kết tới cuộc trò chuyện',
+  'share.inviteLinkHint': 'Gửi liên kết này cho những người đã mời ở trên: họ mở ra, đăng nhập bằng đúng email được mời là thấy. Người khác mở thì không vào được.',
   'share.notRegistered': 'chưa đăng nhập lần nào',
   'share.remove': 'Gỡ quyền truy cập',
   'share.linkTitle': 'Liên kết chia sẻ',

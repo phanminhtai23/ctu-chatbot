@@ -3,6 +3,7 @@ import { useI18n } from '../i18n'
 import type { TranslationKey } from '../i18n/vi'
 import {
   addPerson,
+  chatUrl,
   deleteLink,
   getShares,
   putLink,
@@ -63,6 +64,7 @@ function Body({ conversationId }: { conversationId: string }) {
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [copied, setCopied] = useState(false)
+  const [copiedInvite, setCopiedInvite] = useState(false)
   const [linkBusy, setLinkBusy] = useState(false)
 
   const load = useCallback(async () => {
@@ -202,6 +204,18 @@ function Body({ conversationId }: { conversationId: string }) {
     }
   }
 
+  const copyInvite = async () => {
+    try {
+      await navigator.clipboard.writeText(chatUrl(conversationId))
+      setCopiedInvite(true)
+      setTimeout(() => setCopiedInvite(false), 2000)
+    } catch {
+      const input = document.getElementById('share-invite-link') as HTMLInputElement | null
+      input?.focus()
+      input?.select()
+    }
+  }
+
   if (loadError)
     return (
       <div role="alert" className="flex items-center gap-3 text-sm">
@@ -281,6 +295,30 @@ function Body({ conversationId }: { conversationId: string }) {
 
       <section aria-labelledby="share-people">
         <h3 id="share-people" className="m-0 mb-2 text-base">{t('share.peopleTitle')}</h3>
+        {state.people.length > 0 && (
+          <div className="mb-3 rounded-lg bg-tint p-3">
+            <div className="mb-1.5 text-sm font-semibold text-heading">{t('share.inviteLink')}</div>
+            <div className="flex flex-wrap gap-2">
+              <input
+                id="share-invite-link"
+                readOnly
+                value={chatUrl(conversationId)}
+                aria-label={t('share.inviteLink')}
+                onFocus={(e) => e.currentTarget.select()}
+                className="box-border min-h-11 min-w-[200px] flex-1 rounded-lg border border-field bg-surface px-3 font-mono text-xs text-heading"
+              />
+              <button
+                type="button"
+                onClick={copyInvite}
+                className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-ctu-navy bg-surface px-4 font-sans text-sm font-semibold text-accent hover:bg-tint"
+              >
+                <Icon name={copiedInvite ? 'check' : 'clip'} size={16} />
+                {copiedInvite ? t('share.copied') : t('share.copy')}
+              </button>
+            </div>
+            <p className="m-0 mt-1.5 text-xs text-muted">{t('share.inviteLinkHint')}</p>
+          </div>
+        )}
         {state.people.length === 0 ? (
           <p className="m-0 text-sm">{t('share.peopleEmpty')}</p>
         ) : (

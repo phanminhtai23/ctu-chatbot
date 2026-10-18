@@ -67,6 +67,9 @@ export const sharedLinkStreamPath = (token: string) => `/api/v1/shared-links/${e
 /** Liên kết đầy đủ để người nhận mở: trang /s/<token> của chính giao diện này. */
 export const shareUrl = (token: string) => `${window.location.origin}/s/${token}`
 
+/** Liên kết tới chính cuộc trò chuyện (trang chat): người được mời theo email mở liên kết này, đăng nhập bằng đúng email là vào được. */
+export const chatUrl = (conversationId: string) => `${window.location.origin}/chat/${conversationId}`
+
 /** Mã lỗi BE trả về trong `detail` (INVALID_EMAIL, EMAIL_NOT_ALLOWED, CANNOT_SHARE_WITH_SELF, READ_ONLY, ...). */
 export function shareErrorCode(err: unknown): string {
   if (!(err instanceof ApiError)) return 'NETWORK'

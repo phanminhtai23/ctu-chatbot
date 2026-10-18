@@ -4,6 +4,7 @@ import RequireAuth from './components/RequireAuth'
 import WelcomeDialog from './components/WelcomeDialog'
 import Chat from './pages/Chat'
 import Landing from './pages/Landing'
+import DevGifs from './pages/DevGifs'
 import Login from './pages/Login'
 import SharedView from './pages/SharedView'
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
+        {import.meta.env.DEV && <Route path="/dev/gifs" element={<DevGifs />} />}
         <Route path="/s/:token" element={<SharedView />} />
         <Route
           path="/chat/:conversationId?"

@@ -48,12 +48,12 @@ export default function FunDialog({ open, onClose, gif, tone, icon, title, messa
       aria-labelledby={labelId}
       onClose={onClose}
       onClick={(e) => e.target === ref.current && onClose()}
-      className={`m-auto w-[calc(100%-32px)] ${layout === 'center' ? 'max-w-[640px]' : 'max-w-[780px]'} overflow-visible rounded-3xl border border-line bg-surface p-0 text-muted shadow-[0_24px_60px_rgba(0,0,0,.4)] backdrop:bg-black/60`}
+      className={`m-auto w-[calc(100%-32px)] ${layout === 'center' ? 'max-w-[640px]' : 'max-w-[780px]'} max-h-[calc(100dvh-24px)] overflow-y-auto rounded-3xl border border-line bg-surface p-0 text-muted shadow-[0_24px_60px_rgba(0,0,0,.4)] backdrop:bg-black/60`}
     >
       {open && overlay}
       {layout === 'center' ? (
         <div className="flex flex-col items-center overflow-hidden rounded-3xl text-center">
-          <div className="flex h-[280px] w-full items-center justify-center bg-tint p-4 sm:h-[400px]">
+          <div className="flex h-[min(400px,40dvh)] w-full items-center justify-center bg-tint p-4">
             {gif ? <img src={gif} alt="" className="h-full w-full object-contain" /> : <Icon name={icon} size={96} className="text-accent" />}
           </div>
           <span className={`-mt-7 flex size-14 flex-none items-center justify-center rounded-full border-4 border-surface shadow-md ${badgeTone[tone]}`}>

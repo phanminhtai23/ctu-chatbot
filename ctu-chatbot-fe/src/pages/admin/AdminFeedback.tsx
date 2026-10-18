@@ -5,6 +5,7 @@ import StatusBadge from '../../components/StatusBadge'
 import { useFormatDate } from '../../hooks/useFormatDate'
 import { useI18n } from '../../i18n'
 import {
+  FEEDBACK_CHANGED_EVENT,
   feedbackStatuses,
   listFeedback,
   updateFeedbackStatus,
@@ -55,6 +56,7 @@ export default function AdminFeedback() {
 
   const handleSaveStatus = async (id: string, status: FeedbackStatus) => {
     await updateFeedbackStatus(id, status)
+    window.dispatchEvent(new Event(FEEDBACK_CHANGED_EVENT))
     setItems((prev) => prev.map((i) => (i.id === id ? { ...i, status } : i)))
   }
 

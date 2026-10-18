@@ -119,6 +119,7 @@ const vi = {
 
   'admin.nav': 'Điều hướng quản trị',
   'admin.nav.feedback': 'Phản hồi người dùng',
+  'admin.nav.feedback.unread': 'phản hồi chưa đọc',
   'admin.nav.documents': 'Tài liệu quy định',
   'admin.nav.dashboard': 'Thống kê',
   'admin.nav.users': 'Quản lý người dùng',

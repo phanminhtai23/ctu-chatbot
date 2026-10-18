@@ -37,6 +37,20 @@ def test_admin_lists_feedback_newest_first_with_user_email(client, auth_headers,
     assert all(i["status"] == "new" for i in items)
 
 
+def test_unread_count_only_counts_new_and_is_admin_only(client, auth_headers, admin_headers):
+    url = "/api/v1/admin/feedback/unread-count"
+    assert client.get(url).status_code == 401
+    assert client.get(url, headers=auth_headers).status_code == 403
+    assert client.get(url, headers=admin_headers).json() == {"count": 0}
+
+    a = _create_feedback(client, auth_headers)
+    _create_feedback(client, auth_headers)
+    assert client.get(url, headers=admin_headers).json() == {"count": 2}
+
+    client.patch(f"/api/v1/admin/feedback/{a}", headers=admin_headers, json={"status": "reviewed"})
+    assert client.get(url, headers=admin_headers).json() == {"count": 1}
+
+
 def test_admin_updates_status(client, auth_headers, admin_headers):
     fid = _create_feedback(client, auth_headers)
 

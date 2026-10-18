@@ -1,10 +1,11 @@
-import type { ReactNode } from 'react'
+import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../auth'
 import Icon from '../../components/Icon'
 import PrefToggles from '../../components/PrefToggles'
 import Sidebar, { labelClass, useSidebarCollapsed } from '../../components/Sidebar'
 import { useI18n } from '../../i18n'
+import { FEEDBACK_CHANGED_EVENT, getUnreadFeedbackCount } from '../../lib/adminFeedback'
 
 type Props = {
   title: string
@@ -19,6 +20,25 @@ export default function AdminLayout({ title, subtitle, children }: Props) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const [collapsed, toggleSidebar] = useSidebarCollapsed('ctu-admin-sidebar')
+  const [unread, setUnread] = useState(0)
+
+  const refreshUnread = useCallback(() => {
+    getUnreadFeedbackCount()
+      .then(setUnread)
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    refreshUnread()
+    const timer = window.setInterval(() => {
+      if (!document.hidden) refreshUnread()
+    }, 30000)
+    window.addEventListener(FEEDBACK_CHANGED_EVENT, refreshUnread)
+    return () => {
+      window.clearInterval(timer)
+      window.removeEventListener(FEEDBACK_CHANGED_EVENT, refreshUnread)
+    }
+  }, [refreshUnread])
 
   return (
     <div className="flex min-h-screen flex-col bg-surface md:flex-row">
@@ -57,6 +77,7 @@ export default function AdminLayout({ title, subtitle, children }: Props) {
             ] as const
           ).map(([to, icon, label]) => {
             const current = pathname === to
+            const badge = to === '/admin/feedback' ? unread : 0
             return (
               <Link
                 key={to}
@@ -67,8 +88,29 @@ export default function AdminLayout({ title, subtitle, children }: Props) {
                   current ? 'bg-white/15 font-normal' : ''
                 } ${collapsed ? 'md:justify-center' : ''}`}
               >
-                <Icon name={icon} />
+                <span className="relative flex">
+                  <Icon name={icon} />
+                  {badge > 0 && (
+                    <span
+                      aria-hidden="true"
+                      className={`absolute -right-1.5 -top-1.5 size-2.5 rounded-full bg-red-500 ring-2 ring-ctu-navy-dark ${
+                        collapsed ? 'md:block' : 'md:hidden'
+                      }`}
+                    />
+                  )}
+                </span>
                 <span className={labelClass(collapsed)}>{t(label)}</span>
+                {badge > 0 && (
+                  <span
+                    role="status"
+                    aria-label={`${badge} ${t('admin.nav.feedback.unread')}`}
+                    className={`ml-auto min-w-5 rounded-full bg-red-500 px-1.5 text-center text-xs font-semibold leading-5 text-white ${
+                      collapsed ? 'md:hidden' : ''
+                    }`}
+                  >
+                    {badge > 99 ? '99+' : badge}
+                  </span>
+                )}
               </Link>
             )
           })}

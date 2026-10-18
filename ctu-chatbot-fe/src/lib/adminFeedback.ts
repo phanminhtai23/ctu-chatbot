@@ -24,6 +24,14 @@ export async function listFeedback(): Promise<AdminFeedback[]> {
   return apiFetch('/api/v1/admin/feedback')
 }
 
+export async function getUnreadFeedbackCount(): Promise<number> {
+  const res: { count: number } = await apiFetch('/api/v1/admin/feedback/unread-count')
+  return res.count
+}
+
+/** Báo cho thanh điều hướng admin cập nhật lại huy hiệu số phản hồi chưa đọc. */
+export const FEEDBACK_CHANGED_EVENT = 'ctu:feedback-changed'
+
 export async function updateFeedbackStatus(id: string, status: FeedbackStatus): Promise<void> {
   await apiFetch(`/api/v1/admin/feedback/${encodeURIComponent(id)}`, {
     method: 'PATCH',

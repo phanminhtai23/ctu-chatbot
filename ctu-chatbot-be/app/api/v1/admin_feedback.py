@@ -1,7 +1,7 @@
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.api.deps import require_admin
@@ -34,6 +34,13 @@ def list_feedback(db: Session = Depends(get_db)):
         .order_by(Feedback.created_at.desc())
     ).all()
     return [_to_out(item, email) for item, email in rows]
+
+
+@router.get("/unread-count")
+def unread_feedback_count(db: Session = Depends(get_db)):
+    """Số phản hồi chưa đọc (status = new) để hiện huy hiệu trên tab admin."""
+    count = db.scalar(select(func.count()).select_from(Feedback).where(Feedback.status == "new"))
+    return {"count": count or 0}
 
 
 @router.patch("/{feedback_id}", response_model=AdminFeedbackOut)

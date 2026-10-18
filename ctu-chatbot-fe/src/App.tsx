@@ -4,7 +4,6 @@ import RequireAuth from './components/RequireAuth'
 import Chat from './pages/Chat'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
-import Profile from './pages/Profile'
 import AdminDocuments from './pages/admin/AdminDocuments'
 import AdminFeedback from './pages/admin/AdminFeedback'
 
@@ -22,14 +21,7 @@ function App() {
             </RequireAuth>
           }
         />
-        <Route
-          path="/profile"
-          element={
-            <RequireAuth>
-              <Profile />
-            </RequireAuth>
-          }
-        />
+        <Route path="/profile" element={<Navigate to="/chat" replace />} />
         <Route path="/admin" element={<Navigate to="/admin/feedback" replace />} />
         <Route
           path="/admin/feedback"

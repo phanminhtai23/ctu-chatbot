@@ -10,6 +10,7 @@ import FeedbackModal from '../components/FeedbackModal'
 import Icon from '../components/Icon'
 import Logo from '../components/Logo'
 import PrefToggles from '../components/PrefToggles'
+import ProfileDialog from '../components/ProfileDialog'
 import Sidebar, { labelClass, useSidebarCollapsed } from '../components/Sidebar'
 import { useI18n } from '../i18n'
 import { ApiError } from '../lib/api'
@@ -266,6 +267,7 @@ export default function Chat() {
 
   // --- Đổi tên / xoá ---
   const [deleteTarget, setDeleteTarget] = useState<Conversation | null>(null)
+  const [profileOpen, setProfileOpen] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const handleRename = async (id: string, title: string) => {
@@ -330,6 +332,7 @@ export default function Chat() {
         messageId={feedback.messageId}
         onClose={closeFeedback}
       />
+      <ProfileDialog open={profileOpen} onClose={() => setProfileOpen(false)} />
       <ConfirmDialog
         open={deleteTarget !== null}
         title={t('chat.deleteTitle')}
@@ -357,15 +360,17 @@ export default function Chat() {
               <div className="truncate text-sm font-normal">{displayName}</div>
               <div className="truncate text-xs opacity-80">{user?.email}</div>
             </div>
-            <Link
-              to="/profile"
+            <button
+              type="button"
+              onClick={() => setProfileOpen(true)}
               aria-label={t('chat.profile')}
-              className={`size-11 items-center justify-center rounded-lg text-white hover:bg-white/10 ${
+              title={t('chat.profile')}
+              className={`size-11 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-white hover:bg-white/10 ${
                 collapsed ? 'inline-flex md:hidden' : 'inline-flex'
               }`}
             >
               <Icon name="settings" />
-            </Link>
+            </button>
           </div>
         }
       >

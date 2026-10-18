@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../auth'
-import Composer from '../components/chat/Composer'
 import ConversationList from '../components/chat/ConversationList'
 import MessageBubble, { type UiMessage } from '../components/chat/MessageBubble'
 import ReferencePanel from '../components/chat/ReferencePanel'
@@ -18,7 +17,9 @@ import ShareDialog from '../components/ShareDialog'
 import Sidebar, { labelClass, useSidebarCollapsed } from '../components/Sidebar'
 import { useI18n } from '../i18n'
 import { ApiError } from '../lib/api'
-import { listFiles } from '../lib/files'
+import { deleteFile, fileErrorCode, listFiles, uploadFile } from '../lib/files'
+import { fileErrorMessage } from '../components/fileErrors'
+import Composer, { ATTACH_ACCEPT_TYPES, MAX_ATTACHMENTS, type PendingFile } from '../components/chat/Composer'
 import { fillTemplate, formatBytes } from '../lib/format'
 import {
   createConversation,
@@ -169,6 +170,12 @@ export default function Chat() {
     busyRef.current = busy
   }, [busy])
   const [chatError, setChatError] = useState<string | null>(null)
+  // Tệp (PDF / ảnh) đang chuẩn bị đính kèm: tải lên ngay khi chọn, gửi cùng tin nhắn kế tiếp.
+  const [pending, setPending] = useState<PendingFile[]>([])
+  const pendingRef = useRef<PendingFile[]>([])
+  useEffect(() => {
+    pendingRef.current = pending
+  }, [pending])
   // Lỗi khi gửi tin (bị giới hạn tốc độ, chatbot bận, lỗi LLM...) hiện trong hộp thoại có GIF; lỗi khác vẫn dùng banner.
   const [errorDialog, setErrorDialog] = useState<ChatErrorInfo | null>(null)
   const [elapsed, setElapsed] = useState(0)
@@ -185,7 +192,10 @@ export default function Chat() {
   const send = useCallback(
     async (text: string) => {
       const content = text.trim()
-      if (!content || busy) return
+      const files = pendingRef.current.filter((p) => p.status === 'ready' && p.file)
+      if ((!content && files.length === 0) || busy) return
+      setPending([]) // tệp đã được đính kèm vào tin này; còn lưu trong kho của người dùng
+      pendingRef.current = []
 
       const stamp = Date.now()
       const tempBotId = `tmp-bot-${stamp}`
@@ -202,7 +212,7 @@ export default function Chat() {
       stickRef.current = true
       setMessages((list) => [
         ...list,
-        { id: userMessageId, role: 'user', content, created_at: now, duration_seconds: null },
+        { id: userMessageId, role: 'user', content, created_at: now, duration_seconds: null, attachments: files.map((f) => f.file!) },
         { id: tempBotId, role: 'assistant', content: '', created_at: null, duration_seconds: null, pending: true },
       ])
 
@@ -246,13 +256,17 @@ export default function Chat() {
             },
           },
           controller.signal,
+          files.map((f) => f.file!.id),
         )
       } catch (err) {
         // Server đã gỡ tin của người dùng khỏi lịch sử nên giao diện cũng gỡ, và trả nội dung về ô nhập để gửi lại.
         setMessages((list) => list.filter((m) => m.id !== userMessageId && m.id !== tempBotId))
         const aborted = err instanceof DOMException && err.name === 'AbortError'
         const info = aborted ? null : classifyChatError(err, t)
-        if (info?.kind !== 'warning') setDraft((current) => current || content) // tin bị chặn vì chửi thề thì không trả lại ô nhập
+        if (info?.kind !== 'warning') {
+          setDraft((current) => current || content) // tin bị chặn vì chửi thề thì không trả lại ô nhập
+          setPending((current) => (current.length > 0 ? current : files)) // trả lại các tệp đã chọn để gửi lại
+        }
         if (info) setErrorDialog(info)
         if (createdId) {
           // Tin đầu tiên thất bại/bị dừng: đừng để lại cuộc trò chuyện trống trong danh sách.
@@ -307,15 +321,54 @@ export default function Chat() {
   const [profileOpen, setProfileOpen] = useState(false)
   const [profileToFiles, setProfileToFiles] = useState(false) // mở hồ sơ từ thanh dung lượng: cuộn tới mục tệp
   // Dung lượng file đã dùng / tối đa (hiện ở thanh bên); lấy lại mỗi khi đóng hộp thoại hồ sơ (nơi xoá bớt tệp).
-  const [usage, setUsage] = useState<{ used: number; quota: number } | null>(null)
+  const [usage, setUsage] = useState<{ used: number; quota: number; max: number } | null>(null)
   const refreshUsage = useCallback(() => {
     listFiles()
-      .then((l) => setUsage({ used: l.used_bytes, quota: l.quota_bytes }))
+      .then((l) => setUsage({ used: l.used_bytes, quota: l.quota_bytes, max: l.max_upload_bytes }))
       .catch(() => {}) // lỗi thì ẩn thanh dung lượng, không ảnh hưởng chat
   }, [])
   useEffect(() => {
     refreshUsage()
   }, [refreshUsage])
+
+  const maxUploadBytes = usage?.max ?? 5 * 1024 * 1024
+
+  const addFiles = (picked: File[]) => {
+    const room = MAX_ATTACHMENTS - pendingRef.current.length
+    if (picked.length > room) setChatError(fillTemplate(t('chat.attach.tooMany'), { count: MAX_ATTACHMENTS }))
+    for (const file of picked.slice(0, Math.max(room, 0))) {
+      const kind = file.type === 'application/pdf' ? 'pdf' : ATTACH_ACCEPT_TYPES.includes(file.type) ? 'image' : null
+      if (!kind) {
+        setChatError(t('chat.attach.errType'))
+        continue
+      }
+      if (file.size > maxUploadBytes) {
+        setChatError(fileErrorMessage('FILE_TOO_LARGE', t, maxUploadBytes))
+        continue
+      }
+      const key = `${Date.now()}-${Math.random().toString(36).slice(2)}`
+      setPending((list) => [...list, { key, name: file.name, size: file.size, kind, status: 'uploading' }])
+      uploadFile(file)
+        .then((res) => {
+          if (!pendingRef.current.some((p) => p.key === key)) {
+            deleteFile(res.file.id).then(refreshUsage, () => {}) // người dùng đã bỏ tệp trong lúc đang tải lên
+            return
+          }
+          setPending((list) => list.map((p) => (p.key === key ? { ...p, status: 'ready', file: res.file } : p)))
+          setUsage({ used: res.used_bytes, quota: res.quota_bytes, max: res.max_upload_bytes })
+        })
+        .catch((err) => {
+          const message = fileErrorMessage(fileErrorCode(err), t, maxUploadBytes)
+          setPending((list) => list.map((p) => (p.key === key ? { ...p, status: 'error', error: message } : p)))
+        })
+    }
+  }
+
+  const removePending = (key: string) => {
+    const item = pendingRef.current.find((p) => p.key === key)
+    setPending((list) => list.filter((p) => p.key !== key))
+    if (item?.status === 'ready' && item.file) deleteFile(item.file.id).then(refreshUsage, () => {}) // bỏ tệp chưa gửi thì xoá luôn cho đỡ tốn dung lượng
+  }
   const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const handleRename = async (id: string, title: string) => {
@@ -642,6 +695,10 @@ export default function Chat() {
           onStop={() => abortRef.current?.abort()}
           busy={busy}
           disabledReason={access === 'view' ? t('share.viewOnlyNotice') : undefined}
+          attachments={pending}
+          onAddFiles={addFiles}
+          onRemoveAttachment={removePending}
+          maxUploadBytes={maxUploadBytes}
         />
       </main>
 

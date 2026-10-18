@@ -2,7 +2,10 @@ import uuid
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
+MAX_ATTACHMENTS = 3  # số tệp tối đa kèm theo một tin nhắn
+DEFAULT_ATTACHMENT_PROMPT = "Hãy đọc tệp đính kèm và tóm tắt nội dung chính giúp mình."  # khi người dùng chỉ gửi tệp, không gõ chữ
 
 
 class ConversationOut(BaseModel):
@@ -23,6 +26,16 @@ class SourceOut(BaseModel):
     url: str | None = None  # chỉ có ở nguồn web (câu hỏi ngoài quy chế được tìm trên web)
 
 
+class AttachmentOut(BaseModel):
+    """Tệp (PDF / ảnh) đính kèm một tin nhắn của người dùng; `url` mở được trong tab mới để xem lại."""
+
+    id: str
+    filename: str
+    content_type: str
+    size_bytes: int
+    url: str
+
+
 class ChatMessageOut(BaseModel):
     id: str  # id tin nhắn trong LangGraph; dùng làm `message_id` khi gửi feedback
     role: Literal["user", "assistant"]
@@ -32,6 +45,7 @@ class ChatMessageOut(BaseModel):
     sources: list[SourceOut] = Field(default_factory=list)  # tham chiếu quy định (chỉ tin của bot)
     cached: bool = False  # câu trả lời có sẵn của câu hỏi gợi ý (không gọi LLM)
     author_name: str | None = None  # tin của người dùng do người khác gửi trong cuộc trò chuyện được chia sẻ
+    attachments: list[AttachmentOut] = Field(default_factory=list)  # tệp đính kèm (chỉ tin của người dùng)
 
 
 class ConversationDetail(ConversationOut):
@@ -42,15 +56,24 @@ class ConversationDetail(ConversationOut):
 
 
 class SendMessageIn(BaseModel):
-    content: str = Field(max_length=4000)
+    content: str = Field(default="", max_length=4000)
+    # Tệp đã tải lên qua POST /me/files (của chính người gửi). Chỉ gửi tệp, không gõ chữ cũng được.
+    attachment_ids: list[uuid.UUID] = Field(default_factory=list, max_length=MAX_ATTACHMENTS)
 
     @field_validator("content")
     @classmethod
-    def _not_blank(cls, v: str) -> str:
-        v = v.strip()
-        if not v:
+    def _strip(cls, v: str) -> str:
+        return v.strip()
+
+    @model_validator(mode="after")
+    def _not_empty(self) -> "SendMessageIn":
+        if not self.content and not self.attachment_ids:
             raise ValueError("content must not be blank")
-        return v
+        return self
+
+    @property
+    def text(self) -> str:
+        return self.content or DEFAULT_ATTACHMENT_PROMPT
 
 
 class SendMessageOut(BaseModel):

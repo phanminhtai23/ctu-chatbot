@@ -11,6 +11,7 @@ from langgraph.types import StreamWriter
 
 from app.core.config import settings
 from app.services.chat import scope
+from app.services.chat.attachments import ATTACHMENT_INTRO, build_llm_history, has_attachments
 from app.services.chat.gpa_assist import build_gpa_report
 from app.services.chat.tooling import stream_with_tools
 from app.services.chat.text import message_text
@@ -94,7 +95,7 @@ KNOWLEDGE_INTRO = (
 )
 
 
-def build_system_prompt(hits: list, calculation: str = "", knowledge: list | None = None) -> str:
+def build_system_prompt(hits: list, calculation: str = "", knowledge: list | None = None, attachments: bool = False) -> str:
     """Ghép prompt hệ thống với các Điều đã truy xuất (mỗi Điều là một chunk nguyên vẹn) và, nếu có,
     kết quả tính điểm đã được máy tính tính sẵn."""
     context = "\n\n---\n\n".join(hit.text for hit in hits) if hits else NO_CONTEXT
@@ -102,6 +103,8 @@ def build_system_prompt(hits: list, calculation: str = "", knowledge: list | Non
     if knowledge:
         entries = "\n\n".join(f"[Mục {i}] Hỏi: {k.question}\nĐáp: {k.answer}" for i, k in enumerate(knowledge, 1))
         prompt += f"\n\n{KNOWLEDGE_INTRO}\n\n{entries}"
+    if attachments:
+        prompt += f"\n\n{ATTACHMENT_INTRO}"
     if calculation:
         prompt += f"\n\n{calculation}"
     return prompt
@@ -183,11 +186,14 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
                 logger.exception("Không tra cứu được văn bản quy định, trả lời không kèm ngữ cảnh")
 
         kb_hits = retrieve_knowledge(retriever, history) if retriever is not None else []
+        attached = has_attachments(history)
 
         # Guardrail phạm vi: thuộc quy chế (RAG) / ngoài quy chế (tìm web) / không liên quan / xã giao.
         # Không có kho văn bản (retriever) thì không có căn cứ để phân loại: giữ hành vi cũ.
         if retriever is not None and settings.web_search_enabled:
-            if kb_hits and kb_hits[0].score >= settings.kb_strong_score:
+            if attached:
+                route = scope.REGULATION  # có tệp đính kèm: luôn đọc tệp (kèm quy chế nếu liên quan), không phân loại / tìm web
+            elif kb_hits and kb_hits[0].score >= settings.kb_strong_score:
                 route = scope.REGULATION  # có kiến thức bổ sung khớp rõ: trả lời theo đó, khỏi phân loại / tìm web
             else:
                 route = scope.classify(llm, history, router_score(retriever, history, hits))
@@ -200,7 +206,7 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
         if route == scope.REGULATION:
             # Phép tính ĐTBCTL/hạng tốt nghiệp làm bằng mã (LLM nhỏ hay chia sai); LLM chỉ diễn giải kết quả.
             calculation = build_gpa_report(llm, history)
-            system = build_system_prompt(hits, calculation, kb_hits)
+            system = build_system_prompt(hits, calculation, kb_hits, attached)
         else:
             hits, calculation, kb_hits = [], "", []  # ngữ cảnh quy chế không liên quan, đưa vào chỉ làm model lạc đề
             system = build_route_prompt(route)
@@ -208,7 +214,8 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
             if route == scope.EXTERNAL:
                 web = WebSearchSession()
                 tools = [web.as_tool()]
-        messages = [SystemMessage(content=system), *history]
+        llm_history = build_llm_history(history)  # tin có tệp đính kèm kèm nội dung tệp (chỉ dùng cho LLM, không lưu vào checkpoint)
+        messages = [SystemMessage(content=system), *llm_history]
         can_use_tools = can_use_tools and bool(tools)
 
         def run(msgs: list[BaseMessage], use_tools: bool) -> str:
@@ -232,7 +239,7 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
             if not answer.strip():
                 done = "\n".join(f"- {entry['result']}" for entry in tool_log)
                 extra = f"\n\nKẾT QUẢ CÔNG CỤ ĐÃ CHẠY (dùng nguyên, không tính lại):\n{done}" if done else ""
-                answer = run([SystemMessage(content=system + extra), *history], False)
+                answer = run([SystemMessage(content=system + extra), *llm_history], False)
         if not answer.strip():
             raise LLMError("Gemini returned an empty reply (có thể bị chặn nội dung)")
 

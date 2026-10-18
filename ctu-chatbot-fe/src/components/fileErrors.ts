@@ -9,6 +9,7 @@ const keys: Record<FileErrorCode, TranslationKey> = {
   EMPTY_FILE: 'files.err.empty',
   STORAGE_NOT_CONFIGURED: 'files.err.notConfigured',
   STORAGE_ERROR: 'files.err.storage',
+  UPLOAD_RATE_LIMITED: 'files.err.rate',
   UNKNOWN: 'files.err.unknown',
 }
 

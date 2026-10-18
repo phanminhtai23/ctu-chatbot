@@ -66,6 +66,8 @@ class Settings(BaseSettings):
     cloudinary_folder: str = "ctu-chatbot"  # thư mục gốc trên Cloudinary
     user_storage_quota_mb: float = 20  # tổng dung lượng tối đa mỗi người dùng (ảnh đại diện + tệp tải lên)
     user_upload_max_mb: float = 5  # dung lượng tối đa mỗi lần tải lên
+    # Giới hạn số lần tải lên của mỗi người (cùng định dạng CHAT_RATE_LIMIT): hạn mức dung lượng không chặn được chuyện tải rồi xoá liên tục.
+    upload_rate_limit: str = "10/1m,60/1h"
 
     # Ảnh QR ủng hộ do admin tải lên (hiện trong hộp thoại thông tin cá nhân của người dùng).
     donate_dir: str = "data/donate"  # tương đối so với ctu-chatbot-be

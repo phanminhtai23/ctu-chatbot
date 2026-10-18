@@ -16,6 +16,15 @@ export const articleSources = (sources: AnySourceRef[] = []): SourceRef[] =>
 export const webSources = (sources: AnySourceRef[] = []): WebSourceRef[] =>
   sources.filter((s): s is WebSourceRef => typeof s.url === 'string' && /^https?:\/\//i.test(s.url))
 
+/** Tệp (PDF / ảnh) đính kèm một tin nhắn của người dùng; `url` mở được trong tab mới để xem lại. */
+export type MessageAttachment = {
+  id: string
+  filename: string
+  content_type: string
+  size_bytes: number
+  url: string
+}
+
 export type ChatMessage = {
   id: string
   role: 'user' | 'assistant'
@@ -29,6 +38,8 @@ export type ChatMessage = {
   cached?: boolean
   /** Tin của người dùng do NGƯỜI KHÁC gửi trong cuộc trò chuyện được chia sẻ (tin của chủ thì không có) */
   author_name?: string | null
+  /** Tệp đính kèm (chỉ tin của người dùng) */
+  attachments?: MessageAttachment[]
 }
 
 export type Conversation = {
@@ -99,8 +110,13 @@ function parseBlock(block: string): { event: string; data: unknown } | null {
  * Ném ChatStreamError nếu server báo lỗi hoặc stream đứt giữa chừng; ném ApiError (404/422/401...)
  * nếu bị từ chối trước khi stream bắt đầu; AbortError nếu `signal` bị huỷ.
  */
-export const streamMessage = (conversationId: string, content: string, handlers: StreamHandlers, signal?: AbortSignal) =>
-  streamTo(`/api/v1/conversations/${conversationId}/messages/stream`, content, handlers, signal)
+export const streamMessage = (
+  conversationId: string,
+  content: string,
+  handlers: StreamHandlers,
+  signal?: AbortSignal,
+  attachmentIds: string[] = [],
+) => streamTo(`/api/v1/conversations/${conversationId}/messages/stream`, content, handlers, signal, attachmentIds)
 
 /** Như streamMessage nhưng gửi tới một đường dẫn stream bất kỳ (ví dụ chat tiếp qua liên kết chia sẻ). */
 export async function streamTo(
@@ -108,10 +124,11 @@ export async function streamTo(
   content: string,
   handlers: StreamHandlers,
   signal?: AbortSignal,
+  attachmentIds: string[] = [],
 ): Promise<void> {
   const res = await apiStream(path, {
     method: 'POST',
-    body: JSON.stringify({ content }),
+    body: JSON.stringify({ content, attachment_ids: attachmentIds }),
     signal,
   })
   if (!res.body) throw new ChatStreamError('STREAM_INTERRUPTED')

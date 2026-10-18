@@ -21,7 +21,9 @@ export type FileListing = {
 export const listFiles = (): Promise<FileListing> => apiFetch('/api/v1/me/files')
 
 /** Tải PDF hoặc ảnh lên: gửi nguyên file làm body, tên file ở `?name=` (cùng kiểu với tải ảnh QR). */
-export const uploadFile = (file: File): Promise<FileListing> =>
+export type UploadResult = FileListing & { file: UserFile }
+
+export const uploadFile = (file: File): Promise<UploadResult> =>
   apiFetch(`/api/v1/me/files?name=${encodeURIComponent(file.name)}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/octet-stream' },
@@ -41,7 +43,7 @@ export const uploadAvatar = (file: File): Promise<UserProfile> =>
 /** Bỏ ảnh đã tải lên và đổi sang một ảnh mặc định ngẫu nhiên mới. */
 export const randomAvatar = (): Promise<UserProfile> => apiFetch('/api/v1/me/avatar', { method: 'DELETE' })
 
-const CODES = ['FILE_TOO_LARGE', 'QUOTA_EXCEEDED', 'UNSUPPORTED_TYPE', 'EMPTY_FILE', 'STORAGE_NOT_CONFIGURED', 'STORAGE_ERROR'] as const
+const CODES = ['FILE_TOO_LARGE', 'QUOTA_EXCEEDED', 'UNSUPPORTED_TYPE', 'EMPTY_FILE', 'STORAGE_NOT_CONFIGURED', 'STORAGE_ERROR', 'UPLOAD_RATE_LIMITED'] as const
 export type FileErrorCode = (typeof CODES)[number] | 'UNKNOWN'
 
 export function fileErrorCode(err: unknown): FileErrorCode {

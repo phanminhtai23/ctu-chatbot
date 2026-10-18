@@ -142,6 +142,9 @@ class MultiWindowLimiter:
                 window.reset()
 
 
+upload_limiter: MultiWindowLimiter | None = (
+    MultiWindowLimiter(parse_rate_limits(settings.upload_rate_limit)) if parse_rate_limits(settings.upload_rate_limit) else None
+)
 _limits = parse_rate_limits(settings.chat_rate_limit)
 # Không giới hạn thì không có bộ đếm: `chat_limiter is None`.
 chat_limiter: MultiWindowLimiter | None = MultiWindowLimiter(_limits) if _limits else None

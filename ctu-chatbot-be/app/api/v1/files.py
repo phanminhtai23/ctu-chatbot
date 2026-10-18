@@ -8,7 +8,7 @@ from app.api.deps import get_current_user
 from app.db.session import get_db
 from app.models import User, UserFile
 from app.schemas.user import UserOut
-from app.services import user_files
+from app.services import rate_limit, user_files
 from app.services.storage import CloudStorage, get_storage
 
 router = APIRouter(prefix="/me", tags=["files"])
@@ -71,12 +71,18 @@ async def upload_file(
     storage: CloudStorage = Depends(get_storage),
 ) -> dict:
     """Tải PDF hoặc ảnh (PNG/JPEG/WebP) lên. Gửi nguyên file làm body (giống tải ảnh QR); tên file đặt ở `?name=`."""
+    limiter = rate_limit.upload_limiter
+    if limiter is not None:
+        allowed, retry_after, _ = limiter.hit_detail(str(user.id))
+        if not allowed:
+            raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, detail="UPLOAD_RATE_LIMITED", headers={"Retry-After": str(retry_after)})
     data = await _read_body(request)
     try:
-        await run_in_threadpool(user_files.add_attachment, db, storage, user, data, name)
+        row = await run_in_threadpool(user_files.add_attachment, db, storage, user, data, name)
     except user_files.UploadRejected as exc:
         raise _rejected(exc) from None
-    return await run_in_threadpool(_listing, db, user)
+    listing = await run_in_threadpool(_listing, db, user)
+    return {**listing, "file": _item(row)}  # `file` = tệp vừa tải lên (để đính kèm vào tin nhắn)
 
 
 @router.delete("/files/{file_id}", status_code=status.HTTP_204_NO_CONTENT)

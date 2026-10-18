@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_chat_graph, get_current_user
 from app.db.session import get_db, get_sessionmaker
-from app.models import Conversation, ConversationShare, User
+from app.models import Conversation, ConversationShare, User, UserFile
 from app.schemas.conversation import (
     ChatMessageOut,
     ConversationDetail,
@@ -98,7 +98,24 @@ def _enter_queue(user: User) -> Ticket:
         ) from None
 
 
-def _pre_screen(user: User, text: str):
+def _resolve_attachments(db: Session, user: User, ids: list[uuid.UUID]) -> list[dict]:
+    """Tệp đính kèm phải là tệp (attachment) của CHÍNH người gửi. Trả về dict thuần (không giữ đối tượng ORM) theo thứ tự đã chọn."""
+    if not ids:
+        return []
+    unique = list(dict.fromkeys(ids))
+    rows = {
+        f.id: f
+        for f in db.scalars(select(UserFile).where(UserFile.id.in_(unique), UserFile.user_id == user.id, UserFile.kind == "attachment"))
+    }
+    if len(rows) != len(unique):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="ATTACHMENT_NOT_FOUND")
+    return [
+        {"id": str(f.id), "filename": f.filename, "content_type": f.content_type, "size_bytes": f.size_bytes, "url": f.url}
+        for f in (rows[i] for i in unique)
+    ]
+
+
+def _pre_screen(user: User, text: str, has_attachments: bool = False):
     """Bước lọc trước mọi thứ khác (không hàng đợi, không LLM, không lưu lịch sử):
     - chửi thề -> HTTP 422 PROFANITY (CÓ tính vào giới hạn tốc độ, để không ai spam được);
     - chào hỏi xã giao -> trả lời có sẵn, không gọi LLM (cũng tính vào giới hạn tốc độ);
@@ -109,6 +126,8 @@ def _pre_screen(user: User, text: str):
         if chat_limiter is not None:
             chat_limiter.hit(str(user.id))
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="PROFANITY")
+    if has_attachments:
+        return None  # có tệp đính kèm thì luôn do LLM đọc tệp trả lời (không dùng câu trả lời có sẵn)
     hit = suggested.lookup(text)
     if hit is None:
         hit = smalltalk.lookup(text)
@@ -208,22 +227,24 @@ def send_message(
 ):
     conv, level = _accessible(db, user, conversation_id, need="chat")
     conv_id, user_id, author = conv.id, user.id, _author(user, level)
+    text = body.text
+    attachments = _resolve_attachments(db, user, body.attachment_ids)
     db.rollback()  # trả kết nối DB về pool trong lúc chờ LLM (có thể mất vài chục giây)
     # Câu hỏi gợi ý / chào hỏi: trả lời có sẵn, không gọi LLM và không tính vào giới hạn chat. Chửi thề: từ chối.
-    hit = _pre_screen(user, body.content)
+    hit = _pre_screen(user, text, bool(attachments))
     ticket = _admit(user, hit)
 
     holding = False
     try:
         if hit is not None:
-            user_msg, bot_msg = cached_turn(graph, conv_id, body.content, hit, author_name=author)
+            user_msg, bot_msg = cached_turn(graph, conv_id, text, hit, author_name=author)
         else:
             for _ in get_turn_queue().wait(ticket):  # chờ tới lượt (không có sự kiện để báo vì đây là request thường)
                 pass
             holding = conversation_guard.acquire(conv_id)
             if not holding:
                 raise HTTPException(status.HTTP_409_CONFLICT, detail="CONVERSATION_BUSY")
-            user_msg, bot_msg = run_turn(graph, conv_id, body.content, author)
+            user_msg, bot_msg = run_turn(graph, conv_id, text, author, attachments)
     except QueueTimeout as exc:
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE, detail="SERVER_BUSY", headers={"Retry-After": str(exc.retry_after)}
@@ -244,7 +265,7 @@ def send_message(
         if ticket is not None:
             get_turn_queue().release(ticket)
 
-    conv = _touch(db, conv_id, body.content)
+    conv = _touch(db, conv_id, text)
     if conv is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Conversation not found")
     record_usage(db, user_id, conv_id, cached=hit is not None)
@@ -285,15 +306,17 @@ def stream_response(
 ) -> StreamingResponse:
     """Phần dùng chung của mọi cách gửi tin có stream (chủ sở hữu, được chia sẻ theo email, liên kết chia sẻ có quyền chat)."""
     conv_id, user_id = conv.id, user.id
+    text = body.text
+    attachments = _resolve_attachments(db, user, body.attachment_ids)
     db.rollback()
-    hit = _pre_screen(user, body.content)  # chửi: 422; chào hỏi: trả lời có sẵn (cả hai tính giới hạn); câu gợi ý: có sẵn, không tính giới hạn
+    hit = _pre_screen(user, text, bool(attachments))  # chửi: 422; chào hỏi: trả lời có sẵn (cả hai tính giới hạn); câu gợi ý: có sẵn, không tính giới hạn
     ticket = _admit(user, hit)
 
     def events() -> Iterator[str]:
         holding = False
         try:
             if hit is not None:
-                turn = stream_cached_turn(graph, conv_id, body.content, hit, author_name=author)
+                turn = stream_cached_turn(graph, conv_id, text, hit, author_name=author)
             else:
                 for position in get_turn_queue().wait(ticket):  # đông người thì xếp hàng, báo vị trí cho client
                     yield _sse("queued", {"position": position})
@@ -301,7 +324,7 @@ def stream_response(
                 if not holding:
                     yield _sse("error", {"code": "CONVERSATION_BUSY"})
                     return
-                turn = stream_turn(graph, conv_id, body.content, author)
+                turn = stream_turn(graph, conv_id, text, author, attachments)
             for event in turn:
                 kind = event["type"]
                 if kind == "user_message":
@@ -310,7 +333,7 @@ def stream_response(
                     yield _sse("token", {"text": event["text"]})
                 elif kind == "done":
                     with sessionmaker() as session:
-                        conv_row = _touch(session, conv_id, body.content)
+                        conv_row = _touch(session, conv_id, text)
                         conv_out = ConversationOut.model_validate(conv_row).model_dump(mode="json") if conv_row else None
                         record_usage(session, user_id, conv_id, cached=hit is not None)
                     yield _sse(

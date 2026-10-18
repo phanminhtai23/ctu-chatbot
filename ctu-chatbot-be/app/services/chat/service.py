@@ -44,6 +44,7 @@ class ChatMessage:
     sources: list[dict] = field(default_factory=list)  # chỉ có ở tin của bot: [{article, title}] hoặc [{title, url}]
     cached: bool = False  # chỉ có ở tin của bot: câu trả lời có sẵn của câu hỏi gợi ý (không gọi LLM)
     author_name: str | None = None  # chỉ có ở tin của người dùng khi người gửi KHÔNG phải chủ cuộc trò chuyện
+    attachments: list[dict] = field(default_factory=list)  # chỉ có ở tin của người dùng: [{id, filename, content_type, size_bytes, url}]
 
 
 def to_chat_message(message: BaseMessage) -> ChatMessage | None:
@@ -66,6 +67,7 @@ def to_chat_message(message: BaseMessage) -> ChatMessage | None:
         sources=_mentioned_sources(list(extra.get("sources") or []), text) if role == "assistant" else [],
         cached=bool(extra.get("cached")) if role == "assistant" else False,
         author_name=extra.get("author_name") if role == "user" else None,
+        attachments=list(extra.get("attachments") or []) if role == "user" else [],
     )
 
 
@@ -73,8 +75,10 @@ def _config(conversation_id: uuid.UUID) -> dict:
     return {"configurable": {"thread_id": str(conversation_id)}}
 
 
-def _new_human_message(text: str, author_name: str | None = None) -> HumanMessage:
+def _new_human_message(text: str, author_name: str | None = None, attachments: list[dict] | None = None) -> HumanMessage:
     extra: dict = {"created_at": now_iso()}
+    if attachments:
+        extra["attachments"] = attachments  # chỉ lưu tham chiếu (id, tên, URL); nội dung tệp được nạp lúc gọi LLM, không nằm trong checkpoint
     if author_name:
         extra["author_name"] = author_name  # chỉ ghi khi người gửi không phải chủ cuộc trò chuyện
     return HumanMessage(content=text, id=str(uuid.uuid4()), additional_kwargs=extra)
@@ -101,14 +105,16 @@ def find_exchange(graph, conversation_id: str | None, message_id: str | None) ->
     return None, None
 
 
-def run_turn(graph, conversation_id: uuid.UUID, text: str, author_name: str | None = None) -> tuple[ChatMessage, ChatMessage]:
+def run_turn(
+    graph, conversation_id: uuid.UUID, text: str, author_name: str | None = None, attachments: list[dict] | None = None
+) -> tuple[ChatMessage, ChatMessage]:
     """Thêm tin của người dùng, chạy đồ thị, trả về (tin người dùng, câu trả lời của bot).
 
     Lịch sử lấy từ checkpoint của `thread_id`, nên bot nhớ các lượt trước kể cả sau khi khởi động lại server.
     Nếu LLM lỗi, tin của người dùng bị gỡ khỏi lịch sử để gửi lại không bị trùng.
     """
     config = _config(conversation_id)
-    human = _new_human_message(text, author_name)
+    human = _new_human_message(text, author_name, attachments)
     try:
         result = graph.invoke({"messages": [human]}, config)
     except Exception:
@@ -167,14 +173,16 @@ def stream_cached_turn(
     yield {"type": "done", "message": bot_msg}
 
 
-def stream_turn(graph, conversation_id: uuid.UUID, text: str, author_name: str | None = None) -> Iterator[dict]:
+def stream_turn(
+    graph, conversation_id: uuid.UUID, text: str, author_name: str | None = None, attachments: list[dict] | None = None
+) -> Iterator[dict]:
     """Như run_turn nhưng trả từng sự kiện: user_message, rồi nhiều token, cuối cùng done.
 
     Nếu LLM lỗi hoặc client ngắt kết nối giữa chừng, tin của người dùng bị gỡ khỏi lịch sử
     (không để lại tin "mồ côi" không có câu trả lời).
     """
     config = _config(conversation_id)
-    human = _new_human_message(text, author_name)
+    human = _new_human_message(text, author_name, attachments)
     yield {"type": "user_message", "message": to_chat_message(human)}
 
     completed = False

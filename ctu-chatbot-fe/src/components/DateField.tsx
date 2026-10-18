@@ -33,7 +33,8 @@ export default function DateField({ id, value, onChange, min, max, className = '
   const invalid = text !== '' && !(displayToIso(text) && (displayToIso(text) as string) >= min && (displayToIso(text) as string) <= max)
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={className}>
+      <div className="relative">
       <input
         id={id}
         type="text"
@@ -76,6 +77,7 @@ export default function DateField({ id, value, onChange, min, max, className = '
         onChange={(e) => e.target.value && apply(isoToDisplay(e.target.value))}
         className="pointer-events-none absolute bottom-0 right-1 size-0 opacity-0"
       />
+      </div>
       <p id={`${id}-hint`} className={`mb-0 mt-1.5 text-xs ${invalid ? 'text-[#8A1216] dark:text-[#FFB4B7]' : ''}`}>
         {t(invalid ? 'profile.birthdayInvalid' : 'profile.birthdayHint')}
       </p>

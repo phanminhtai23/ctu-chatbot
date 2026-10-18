@@ -417,7 +417,7 @@ const vi = {
   'chat.errTurnInProgress': 'Câu hỏi trước của bạn vẫn đang được trả lời. Bạn đợi xong rồi hỏi tiếp nhé!',
   'chat.queued': 'Đang xếp hàng, vị trí',
   'chat.errTooManyMessages': 'Bạn nhắn hơi nhanh rồi 😊 Nghỉ một chút rồi hỏi tiếp nhé!',
-  'chat.errTooManyMessagesLimit': 'Bạn nhắn hơi nhanh rồi 😊 Mỗi người chỉ được gửi tối đa {limit} tin trong {amount} {unit}. Nghỉ một chút rồi hỏi tiếp nhé!',
+  'chat.errTooManyMessagesLimit': 'Bạn nhắn hơi nhanh rồi 😊 Do giới hạn của hệ thống để mọi người đều dùng được mượt mà, mỗi bạn chỉ gửi được tối đa {limit} tin trong {amount} {unit}. Nghỉ một chút rồi hỏi tiếp nhé!',
   'chat.fun.rate.title': 'Bạn nhắn nhanh quá nè!',
   'chat.fun.busy.title': 'Chatbot đang hơi bận',
   'chat.fun.error.title': 'Ôi, có chút trục trặc!',

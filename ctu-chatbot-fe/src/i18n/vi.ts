@@ -424,6 +424,8 @@ const vi = {
   'chat.fun.retryIn': 'Thử lại sau',
   'chat.fun.ready': 'Bạn hỏi tiếp được rồi nè!',
   'chat.fun.ok': 'Mình hiểu rồi',
+  'chat.fun.warning.title': 'Nhắc nhẹ một chút nha!',
+  'chat.fun.warning.ok': 'Mình sẽ nói nhẹ nhàng hơn nè',
   'welcome.title': 'Chào mừng',
   'welcome.message': 'Chúc mừng bạn đã tham gia Trợ lý quy chế học vụ CTU! Từ giờ bạn có thể hỏi mình về điểm, tín chỉ, học bổng, cảnh báo học tập, tốt nghiệp... mình luôn sẵn lòng giúp bạn nhé.',
   'welcome.wish': 'Chúc bạn một hành trình học tập thật vui và thật nhiều điểm A!',

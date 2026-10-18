@@ -67,7 +67,7 @@ def test_stream_result_is_persisted_with_wait_time(client, auth_headers):
 
 def test_non_stream_endpoint_also_reports_wait_time(client, auth_headers):
     conv_id = _new_conversation(client, auth_headers)
-    res = client.post(f"/api/v1/conversations/{conv_id}/messages", headers=auth_headers, json={"content": "hi"})
+    res = client.post(f"/api/v1/conversations/{conv_id}/messages", headers=auth_headers, json={"content": "điểm D có đậu không"})
     assert res.json()["assistant_message"]["duration_seconds"] is not None
 
 

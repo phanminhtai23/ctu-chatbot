@@ -166,7 +166,7 @@ def test_slot_is_released_after_turn_and_after_llm_error(client, auth_headers, f
 
 def test_stream_releases_slot_when_done(client, auth_headers):
     conv_id = _new_conversation(client, auth_headers)
-    res = client.post(f"/api/v1/conversations/{conv_id}/messages/stream", headers=auth_headers, json={"content": "chào"})
+    res = client.post(f"/api/v1/conversations/{conv_id}/messages/stream", headers=auth_headers, json={"content": "điểm D có đậu không"})
     assert res.status_code == 200
     assert "event: done" in res.text
     assert queue_module.get_turn_queue().running == 0
@@ -184,6 +184,6 @@ def test_stream_emits_queued_event_while_waiting(client, auth_headers, monkeypat
     threading.Timer(0.3, q.release, args=(blocker,)).start()
 
     conv_id = _new_conversation(client, auth_headers)
-    res = client.post(f"/api/v1/conversations/{conv_id}/messages/stream", headers=auth_headers, json={"content": "chào"})
+    res = client.post(f"/api/v1/conversations/{conv_id}/messages/stream", headers=auth_headers, json={"content": "điểm D có đậu không"})
     assert res.text.index("event: queued") < res.text.index("event: start") < res.text.index("event: done")
     assert '"position": 1' in res.text

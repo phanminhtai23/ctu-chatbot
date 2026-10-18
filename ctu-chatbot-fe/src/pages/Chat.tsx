@@ -247,8 +247,10 @@ export default function Chat() {
       } catch (err) {
         // Server đã gỡ tin của người dùng khỏi lịch sử nên giao diện cũng gỡ, và trả nội dung về ô nhập để gửi lại.
         setMessages((list) => list.filter((m) => m.id !== userMessageId && m.id !== tempBotId))
-        setDraft((current) => current || content)
-        if (!(err instanceof DOMException && err.name === 'AbortError')) setErrorDialog(classifyChatError(err, t))
+        const aborted = err instanceof DOMException && err.name === 'AbortError'
+        const info = aborted ? null : classifyChatError(err, t)
+        if (info?.kind !== 'warning') setDraft((current) => current || content) // tin bị chặn vì chửi thề thì không trả lại ô nhập
+        if (info) setErrorDialog(info)
         if (createdId) {
           // Tin đầu tiên thất bại/bị dừng: đừng để lại cuộc trò chuyện trống trong danh sách.
           const orphanId = createdId

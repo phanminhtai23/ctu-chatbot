@@ -23,7 +23,8 @@ from app.schemas.conversation import (
     SendMessageOut,
 )
 from app.services import sharing
-from app.services.chat import suggested
+from app.services.chat import smalltalk, suggested
+from app.services.chat.moderation import is_profane
 from app.services.chat.queue import QueueFull, QueueTimeout, Ticket, UserBusy, conversation_guard, get_turn_queue
 from app.services.chat.service import cached_turn, delete_thread, get_history, run_turn, stream_cached_turn, stream_turn
 from app.services.llm.gemini import LLMError, LLMNotConfigured, LLMUnavailable
@@ -95,6 +96,22 @@ def _enter_queue(user: User) -> Ticket:
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE, detail="SERVER_BUSY", headers={"Retry-After": str(exc.retry_after)}
         ) from None
+
+
+def _pre_screen(user: User, text: str):
+    """Bước lọc trước mọi thứ khác (không hàng đợi, không LLM, không lưu lịch sử):
+    - chửi thề -> HTTP 422 PROFANITY (CÓ tính vào giới hạn tốc độ, để không ai spam được);
+    - chào hỏi xã giao -> trả lời có sẵn, không gọi LLM (cũng tính vào giới hạn tốc độ);
+    - câu hỏi gợi ý -> trả lời có sẵn, không tính giới hạn; còn lại -> None (đi đường bình thường)."""
+    if is_profane(text):
+        _enforce_rate_limit(user)
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="PROFANITY")
+    hit = suggested.lookup(text)
+    if hit is None:
+        hit = smalltalk.lookup(text)
+        if hit is not None:
+            _enforce_rate_limit(user)
+    return hit
 
 
 def _admit(user: User, hit) -> Ticket | None:
@@ -189,8 +206,8 @@ def send_message(
     conv, level = _accessible(db, user, conversation_id, need="chat")
     conv_id, user_id, author = conv.id, user.id, _author(user, level)
     db.rollback()  # trả kết nối DB về pool trong lúc chờ LLM (có thể mất vài chục giây)
-    # Câu hỏi gợi ý: trả lời có sẵn, không gọi LLM và không tính vào giới hạn chat.
-    hit = suggested.lookup(body.content)
+    # Câu hỏi gợi ý / chào hỏi: trả lời có sẵn, không gọi LLM và không tính vào giới hạn chat. Chửi thề: từ chối.
+    hit = _pre_screen(user, body.content)
     ticket = _admit(user, hit)
 
     holding = False
@@ -266,7 +283,7 @@ def stream_response(
     """Phần dùng chung của mọi cách gửi tin có stream (chủ sở hữu, được chia sẻ theo email, liên kết chia sẻ có quyền chat)."""
     conv_id, user_id = conv.id, user.id
     db.rollback()
-    hit = suggested.lookup(body.content)  # câu hỏi gợi ý: trả lời có sẵn, không gọi LLM, không tính giới hạn chat
+    hit = _pre_screen(user, body.content)  # chửi: 422; chào hỏi: trả lời có sẵn (cả hai tính giới hạn); câu gợi ý: có sẵn, không tính giới hạn
     ticket = _admit(user, hit)
 
     def events() -> Iterator[str]:

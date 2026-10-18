@@ -2,14 +2,16 @@ import type { TranslationKey } from '../i18n/vi'
 import { ApiError } from './api'
 import { ChatStreamError } from './conversations'
 import { fillTemplate, parseRateLimit } from './format'
+import { nextWarning } from './warnings'
 
 /**
  * Phân loại lỗi khi gửi tin để hiện hộp thoại phù hợp:
  * - rate: người dùng nhắn quá nhanh (vượt CHAT_RATE_LIMIT);
  * - busy: hệ thống đang đông / hết hạn mức LLM / người khác đang chat trong cuộc trò chuyện này, thử lại sau;
- * - error: lỗi khác (LLM lỗi, mất mạng, chỉ có quyền xem...).
+ * - error: lỗi khác (LLM lỗi, mất mạng, chỉ có quyền xem...);
+ * - warning: tin nhắn bị chặn vì chửi thề / lời lẽ thô tục (kèm tiêu đề riêng `title`).
  */
-export type ChatErrorInfo = { kind: 'rate' | 'busy' | 'error'; message: string; retryAfter?: number }
+export type ChatErrorInfo = { kind: 'rate' | 'busy' | 'error' | 'warning'; message: string; retryAfter?: number; title?: string }
 
 type T = (key: TranslationKey) => string
 
@@ -33,6 +35,10 @@ export function classifyChatError(err: unknown, t: T): ChatErrorInfo {
   if (err instanceof ApiError) {
     const retry = /"retry_after":\s*(\d+)/.exec(err.message)
     const retryAfter = retry ? Number(retry[1]) : undefined
+    if (err.status === 422 && err.message.includes('PROFANITY')) {
+      const warning = nextWarning()
+      return { kind: 'warning', title: warning.title, message: warning.message }
+    }
     if (err.status === 403 && err.message.includes('READ_ONLY')) return { kind: 'error', message: t('chat.errReadOnly') }
     if (err.status === 409 && err.message.includes('CONVERSATION_BUSY')) return { kind: 'busy', message: t('chat.errConvBusy') }
     if (err.status === 503 && err.message.includes('SERVER_BUSY')) return { kind: 'busy', message: t('chat.errBusy'), retryAfter }

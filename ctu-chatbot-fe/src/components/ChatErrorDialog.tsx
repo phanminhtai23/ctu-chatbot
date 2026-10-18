@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import warningGif from '../assets/warning.gif'
 import { useI18n } from '../i18n'
 import type { TranslationKey } from '../i18n/vi'
 import type { ChatErrorInfo } from '../lib/chatErrors'
@@ -10,6 +11,7 @@ const looks: Record<ChatErrorInfo['kind'], { icon: IconName; tone: FunTone; titl
   rate: { icon: 'hourglass', tone: 'warn', title: 'chat.fun.rate.title' },
   busy: { icon: 'sparkles', tone: 'warn', title: 'chat.fun.busy.title' },
   error: { icon: 'warn', tone: 'error', title: 'chat.fun.error.title' },
+  warning: { icon: 'warn', tone: 'warn', title: 'chat.fun.warning.title' },
 }
 
 const mmss = (seconds: number) => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
@@ -35,6 +37,7 @@ export default function ChatErrorDialog({ error, onClose }: { error: ChatErrorIn
   }, [error, remaining])
 
   const look = looks[error?.kind ?? 'error']
+  const isWarning = error?.kind === 'warning'
   const hasTimer = error?.retryAfter != null && error.retryAfter > 0
 
   return (
@@ -42,12 +45,13 @@ export default function ChatErrorDialog({ error, onClose }: { error: ChatErrorIn
       open={error !== null}
       onClose={onClose}
       labelId="chat-error-title"
-      gif={gif}
+      gif={isWarning ? warningGif : gif}
+      layout={isWarning ? 'center' : 'side'}
       tone={look.tone}
       icon={look.icon}
-      title={t(look.title)}
+      title={error?.title ?? t(look.title)}
       message={error?.message ?? ''}
-      actionLabel={t('chat.fun.ok')}
+      actionLabel={t(isWarning ? 'chat.fun.warning.ok' : 'chat.fun.ok')}
       extra={
         hasTimer ? (
           <p role="timer" aria-live="off" className="m-0 rounded-xl bg-tint px-4 py-2.5 text-sm text-heading">

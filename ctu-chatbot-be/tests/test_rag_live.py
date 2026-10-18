@@ -20,10 +20,11 @@ from app.services.rag.embeddings import EmbeddingError, GeminiEmbedder
 from app.services.rag.store import Retriever, VectorStore, default_source_path, ensure_index
 from tests.live_gemini import CachedEmbedder, ThrottledLLM
 from tests.rag_cases import ARTICLE_CASES, FEASIBILITY_CASES, FORMULA_CASES, OFF_TOPIC, UNKNOWN_CASES, Case
+from tests.rag_cases_scholarship import SCHOLARSHIP_CASES
 
 pytestmark = pytest.mark.live
 
-ALL_CASES = ARTICLE_CASES + FORMULA_CASES + UNKNOWN_CASES + FEASIBILITY_CASES
+ALL_CASES = ARTICLE_CASES + FORMULA_CASES + UNKNOWN_CASES + FEASIBILITY_CASES + SCHOLARSHIP_CASES
 EMOJI = re.compile("[\U0001f300-\U0001faff\u2600-\u27bf\u2b50\u2728]")
 LATEX = re.compile(r"\$\$|\\frac|\\sum|\\times|\\cdot|\\text|\\begin|\\\(|\\\[")
 _answers: dict[str, tuple[str, list[int]]] = {}
@@ -163,6 +164,17 @@ def test_feasibility_recomputes_after_user_gives_the_counted_credits(graph):
     assert re.search(r"\b121\b", text), f"chưa dùng T = 151 - 30 = 121:\n{second}"
     assert re.search(r"3[,.]7[1-4]", text), f"chưa ra kết quả tính lại (3,71 / 3,74):\n{second}"
     assert_friendly(second)
+
+
+# ---- 3c. Học bổng: xếp MỨC (ĐTBCHK và ĐRL) trước rồi mới so ĐTBCHK, rồi ĐRL ----
+
+
+@pytest.mark.parametrize("case", SCHOLARSHIP_CASES, ids=lambda c: c.id)
+def test_scholarship_ranking_follows_level_then_gpa_then_conduct(graph, case):
+    answer, retrieved = ask(graph, case.question)
+    assert 9 in retrieved, f"[{case.id}] Điều 9 không nằm trong ngữ cảnh: {retrieved}"
+    assert_case(case, answer)
+    assert_friendly(answer)
 
 
 # ---- 4. Không bịa khi văn bản không có ----

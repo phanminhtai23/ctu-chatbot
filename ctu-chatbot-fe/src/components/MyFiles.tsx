@@ -26,9 +26,9 @@ export function UsageBar({ used, quota, variant = 'card' }: { used: number; quot
         aria-valuemax={quota}
         aria-valuenow={used}
         aria-label={t('files.usage')}
-        className={`overflow-hidden rounded-full ${sidebar ? 'h-1.5 bg-white/20' : 'h-2.5 bg-tint'}`}
+        className={`overflow-hidden rounded-full ${sidebar ? 'h-1.5 bg-white/20' : 'h-2.5 bg-line'}`}
       >
-        <div className={`h-full rounded-full ${tone}`} style={{ width: `${percent}%` }} />
+        <div className={`h-full rounded-full ${tone}`} style={{ width: used > 0 ? `max(${percent}%, 8px)` : 0 }} />
       </div>
     </div>
   )

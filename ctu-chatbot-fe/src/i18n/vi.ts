@@ -442,7 +442,6 @@ const vi = {
   'chat.errRename': 'Không đổi được tên.',
   'chat.errDelete': 'Không xoá được cuộc trò chuyện. Hãy thử lại.',
   'chat.dismiss': 'Đóng thông báo',
-  'chat.suggestHeading': 'Thử hỏi một trong những câu này (trả lời ngay)',
   'chat.cached': 'Trả lời có sẵn',
   'chat.reportAnswer': 'Báo câu trả lời sai',
   'ref.title': 'Tham chiếu văn bản quy định',

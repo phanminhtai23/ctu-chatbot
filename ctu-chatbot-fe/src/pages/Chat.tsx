@@ -557,22 +557,21 @@ export default function Chat() {
           )}
 
           {isEmpty && !busy && (
-            <div className="my-auto flex w-full max-w-[860px] flex-col items-center gap-4 py-8 text-center">
-              <Logo size={64} fill="#0D47A1" />
+            <div className="mb-auto mt-[min(4vh,40px)] flex w-full max-w-[860px] flex-col items-center gap-2 text-center">
+              <Logo size={48} fill="#0D47A1" />
               <h2 className="m-0 text-2xl">{t('chat.emptyTitle')}</h2>
               <p className="m-0">{t('chat.emptyHint')}</p>
               {suggestions.length > 0 && (
                 <div className="mt-2 w-full text-left">
-                  <p className="mb-3 mt-0 text-center text-sm">{t('chat.suggestHeading')}</p>
-                  <div className="flex w-full flex-col gap-3">
+                  <div className="flex w-full flex-col gap-2">
                     {suggestions.map((s) => (
                       <button
                         key={s.id}
                         type="button"
                         onClick={() => send(s.question)}
-                        className="flex min-h-11 cursor-pointer flex-col items-start gap-1.5 rounded-xl border border-line bg-surface px-4 py-3 text-left font-sans text-[15px] font-normal leading-snug text-heading hover:border-ctu-cyan hover:bg-tint"
+                        className="flex min-h-11 cursor-pointer items-start gap-3 rounded-xl border border-line bg-surface px-4 py-2.5 text-left font-sans text-[15px] font-normal leading-snug text-heading hover:border-ctu-cyan hover:bg-tint"
                       >
-                        <span className="rounded-full bg-bubble-user px-2.5 text-xs font-normal text-accent">{s.category}</span>
+                        <span className="mt-0.5 flex-none whitespace-nowrap rounded-full bg-bubble-user px-2.5 text-xs font-normal text-accent">{s.category}</span>
                         {s.question}
                       </button>
                     ))}

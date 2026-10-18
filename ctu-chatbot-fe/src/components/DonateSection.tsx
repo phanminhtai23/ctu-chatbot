@@ -36,7 +36,7 @@ export default function DonateSection({ info: provided, className = 'mt-6', band
   if (!info?.has_qr || (info.version !== null && info.version === brokenVersion)) return null
 
   const card = (
-    <section aria-labelledby="donate-title" className={`${band ? 'mx-auto max-w-[760px]' : className} rounded-2xl border border-line bg-tint p-4 sm:p-5`}>
+    <section aria-labelledby="donate-title" className={`${band ? 'mx-auto max-w-[880px]' : className} rounded-2xl border border-line bg-tint p-4 sm:p-5`}>
       <div className="mb-2 flex items-center gap-2 text-heading">
         <Icon name="heart" size={20} className="flex-none text-[#C2185B] dark:text-[#F48FB1]" />
         <h3 id="donate-title" className="m-0 text-base">
@@ -45,19 +45,19 @@ export default function DonateSection({ info: provided, className = 'mt-6', band
       </div>
       <p className="mb-4 mt-0 text-sm">{t('donate.text')}</p>
 
-      <div className="flex flex-wrap items-center justify-center gap-4">
+      <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
         <figure className="m-0 flex flex-col items-center gap-2">
           {/* Nền trắng cố định: mã QR nằm trên nền tối (dark mode) rất khó quét. */}
           <img
             src={donateQrUrl(info.version)}
             alt={t('donate.qrAlt')}
             onError={() => setBrokenVersion(info.version)}
-            className="size-40 rounded-xl border border-line bg-white object-contain p-2 sm:size-44"
+            className="size-48 rounded-[28px] border border-line bg-white object-contain p-3 shadow-sm sm:size-64"
           />
-          <figcaption className="max-w-44 text-center text-xs">{t('donate.scan')}</figcaption>
+          <figcaption className="max-w-60 text-center text-xs">{t('donate.scan')}</figcaption>
         </figure>
         {/* GIF chỉ để trang trí nên không có chữ thay thế. */}
-        <img src={donateGif} alt="" className="h-40 w-auto max-w-full rounded-xl object-cover sm:h-44" />
+        <img src={donateGif} alt="" className="h-60 w-auto max-w-full rounded-[28px] object-cover sm:h-[22rem]" />
       </div>
 
       <p className="mb-0 mt-3 text-center text-xs">{t('donate.thanks')}</p>

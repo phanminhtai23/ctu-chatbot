@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../auth'
 import Composer from '../components/chat/Composer'
 import ConversationList from '../components/chat/ConversationList'
@@ -351,6 +351,7 @@ export default function Chat() {
         onToggle={toggleSidebar}
         title={t('brand.app')}
         subtitle={t('brand.appSub')}
+        switchTo={user?.role === 'admin' ? { to: '/admin/dashboard', label: t('chat.adminLink'), icon: 'settings' } : undefined}
         footer={
           <div className={`flex items-center gap-3 ${collapsed ? 'md:justify-center' : ''}`}>
             <div className="flex size-10 flex-none items-center justify-center rounded-full bg-ctu-cyan font-semibold text-ctu-navy-dark">
@@ -385,18 +386,6 @@ export default function Chat() {
           <Icon name="plus" size={18} strokeWidth={2.4} />
           <span className={labelClass(collapsed)}>{t('chat.new')}</span>
         </button>
-
-        {user?.role === 'admin' && (
-          <Link
-            to="/admin/feedback"
-            title={t('chat.adminLink')}
-            aria-label={t('chat.adminLink')}
-            className="flex min-h-11 items-center justify-center gap-2.5 rounded-lg border border-white/30 px-4 py-2 text-sm text-white no-underline hover:bg-white/10"
-          >
-            <Icon name="inbox" size={18} />
-            <span className={labelClass(collapsed)}>{t('chat.adminLink')}</span>
-          </Link>
-        )}
 
         <nav aria-label={t('chat.recent')} className={`flex flex-col gap-1 ${collapsed ? 'md:hidden' : ''}`}>
           <div className="px-2 pb-1.5 text-xs uppercase tracking-wider opacity-75">{t('chat.recent')}</div>

@@ -27,6 +27,7 @@ export default function AdminLayout({ title, subtitle, children }: Props) {
         onToggle={toggleSidebar}
         title={t('admin.title')}
         subtitle={t('brand.app')}
+        switchTo={{ to: '/chat', label: t('admin.nav.chat'), icon: 'chat' }}
         footer={
           <button
             type="button"
@@ -46,18 +47,10 @@ export default function AdminLayout({ title, subtitle, children }: Props) {
         }
       >
         <nav aria-label={t('admin.nav')} className="flex flex-col gap-1">
-          <Link
-            to="/chat"
-            title={t('admin.nav.chat')}
-            className={`flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-white no-underline hover:bg-white/10 ${
-              collapsed ? 'md:justify-center' : ''
-            }`}
-          >
-            <Icon name="chat" />
-            <span className={labelClass(collapsed)}>{t('admin.nav.chat')}</span>
-          </Link>
           {(
             [
+              ['/admin/dashboard', 'chart', 'admin.nav.dashboard'],
+              ['/admin/users', 'users', 'admin.nav.users'],
               ['/admin/feedback', 'inbox', 'admin.nav.feedback'],
               ['/admin/documents', 'doc', 'admin.nav.documents'],
             ] as const

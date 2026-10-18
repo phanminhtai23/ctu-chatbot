@@ -4,8 +4,10 @@ import RequireAuth from './components/RequireAuth'
 import Chat from './pages/Chat'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
+import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminDocuments from './pages/admin/AdminDocuments'
 import AdminFeedback from './pages/admin/AdminFeedback'
+import AdminUsers from './pages/admin/AdminUsers'
 
 function App() {
   return (
@@ -22,12 +24,28 @@ function App() {
           }
         />
         <Route path="/profile" element={<Navigate to="/chat" replace />} />
-        <Route path="/admin" element={<Navigate to="/admin/feedback" replace />} />
+        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
         <Route
           path="/admin/feedback"
           element={
             <RequireAdmin>
               <AdminFeedback />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <RequireAdmin>
+              <AdminDashboard />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <RequireAdmin>
+              <AdminUsers />
             </RequireAdmin>
           }
         />

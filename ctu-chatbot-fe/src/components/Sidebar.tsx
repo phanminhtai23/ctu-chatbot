@@ -1,6 +1,7 @@
 import { useCallback, useState, type ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 import { useI18n } from '../i18n'
-import Icon from './Icon'
+import Icon, { type IconName } from './Icon'
 import Logo from './Logo'
 
 /**
@@ -41,12 +42,14 @@ type Props = {
   /** Phần thân (cuộn được). Ẩn hoàn toàn khi thu gọn trên mobile, chỉ còn icon trên desktop. */
   children: ReactNode
   footer?: ReactNode
+  /** Nút nhỏ chuyển nhanh giữa khu vực chat và khu vực quản trị (chỉ admin); đặt bên trái nút thu gọn */
+  switchTo?: { to: string; label: string; icon: IconName }
 }
 
 /** Class cho chữ/nhãn: ẩn trên desktop khi sidebar thu gọn thành cột icon. */
 export const labelClass = (collapsed: boolean) => (collapsed ? 'md:hidden' : '')
 
-export default function Sidebar({ collapsed, onToggle, title, subtitle, children, footer }: Props) {
+export default function Sidebar({ collapsed, onToggle, title, subtitle, children, footer, switchTo }: Props) {
   const { t } = useI18n()
 
   return (
@@ -61,6 +64,16 @@ export default function Sidebar({ collapsed, onToggle, title, subtitle, children
           <div className="truncate text-[15px] font-semibold">{title}</div>
           <div className="truncate text-xs opacity-85">{subtitle}</div>
         </div>
+        {switchTo && (
+          <Link
+            to={switchTo.to}
+            aria-label={switchTo.label}
+            title={switchTo.label}
+            className="inline-flex size-9 flex-none items-center justify-center rounded-lg border border-white/30 text-white no-underline hover:bg-white/10"
+          >
+            <Icon name={switchTo.icon} size={17} />
+          </Link>
+        )}
         <button
           type="button"
           onClick={onToggle}

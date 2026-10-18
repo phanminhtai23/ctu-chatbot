@@ -27,6 +27,7 @@ from app.services.chat.queue import QueueFull, QueueTimeout, Ticket, UserBusy, g
 from app.services.chat.service import cached_turn, delete_thread, get_history, run_turn, stream_cached_turn, stream_turn
 from app.services.llm.gemini import LLMError, LLMNotConfigured, LLMUnavailable
 from app.services.rate_limit import chat_limiter
+from app.services.usage import record_usage
 
 logger = logging.getLogger("app.chat")
 
@@ -157,7 +158,7 @@ def send_message(
     graph=Depends(get_chat_graph),
 ):
     conv = _owned(db, user, conversation_id)
-    conv_id = conv.id
+    conv_id, user_id = conv.id, user.id
     db.rollback()  # trả kết nối DB về pool trong lúc chờ LLM (có thể mất vài chục giây)
     # Câu hỏi gợi ý: trả lời có sẵn, không gọi LLM và không tính vào giới hạn chat.
     hit = suggested.lookup(body.content)
@@ -191,6 +192,7 @@ def send_message(
     conv = _touch(db, conv_id, body.content)
     if conv is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Conversation not found")
+    record_usage(db, user_id, conv_id, cached=hit is not None)
 
     return SendMessageOut(
         user_message=ChatMessageOut(**asdict(user_msg)),
@@ -220,7 +222,7 @@ def stream_message(
     vẫn là HTTP 404/422/429 bình thường.
     """
     conv = _owned(db, user, conversation_id)
-    conv_id = conv.id
+    conv_id, user_id = conv.id, user.id
     db.rollback()
     hit = suggested.lookup(body.content)  # câu hỏi gợi ý: trả lời có sẵn, không gọi LLM, không tính giới hạn chat
     ticket = _admit(user, hit)
@@ -243,6 +245,7 @@ def stream_message(
                     with sessionmaker() as session:
                         conv_row = _touch(session, conv_id, body.content)
                         conv_out = ConversationOut.model_validate(conv_row).model_dump(mode="json") if conv_row else None
+                        record_usage(session, user_id, conv_id, cached=hit is not None)
                     yield _sse(
                         "done",
                         {

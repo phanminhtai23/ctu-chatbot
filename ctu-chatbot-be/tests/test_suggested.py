@@ -37,10 +37,10 @@ def first():
 
 def test_cache_has_scholarship_and_gpa_questions():
     items = suggested.load()
-    assert len(items) >= 6
+    assert len(items) >= 4
     categories = {item.category for item in items}
     assert categories == {"Học bổng", "Điểm trung bình"}
-    assert sum(1 for i in items if i.category == "Học bổng") >= 3
+    assert sum(1 for i in items if i.category == "Học bổng") >= 2
     assert len({i.id for i in items}) == len(items)
     assert len({suggested.normalize(i.question) for i in items}) == len(items)
 

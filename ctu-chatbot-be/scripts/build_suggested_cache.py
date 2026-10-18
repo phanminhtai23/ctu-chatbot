@@ -57,21 +57,11 @@ SUGGESTIONS = [
             forbid=(r"\ba\b[^.\n]{0,40}(được xét trước|được ưu tiên|giành được học bổng)",),
         ),
     ),
-    ("hb-dieu-kien", "Học bổng", pick(ARTICLE_CASES, "d09").question, pick(ARTICLE_CASES, "d09")),
     (
         "hb-muc",
         "Học bổng",
         "ĐTBCHK của mình là 3,3 còn ĐRL là 79 thì mình thuộc mức học bổng nào?",
         pick(SCHOLARSHIP_HARD, "s04"),
-    ),
-    (
-        "dtbctl-cach-tinh",
-        "Điểm trung bình",
-        "Điểm trung bình chung tích lũy (ĐTBCTL) được tính thế nào? Môn điểm F và học phần điều kiện có tính không?",
-        c(
-            "b09x", 24, "Điểm trung bình chung tích lũy (ĐTBCTL) được tính thế nào? Môn điểm F và học phần điều kiện có tính không?",
-            r"trọng số|tín chỉ", r"điểm f|\bf\b", r"điều kiện", r"không (được )?tính|không bao gồm|loại",
-        ),
     ),
     (
         "dtbchk-vi-du",

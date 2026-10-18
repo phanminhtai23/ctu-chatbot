@@ -476,7 +476,7 @@ export default function Chat() {
               {suggestions.length > 0 && (
                 <div className="mt-2 w-full text-left">
                   <p className="mb-3 mt-0 text-center text-sm">{t('chat.suggestHeading')}</p>
-                  <div className="grid w-full grid-cols-1 gap-3 md:grid-cols-2">
+                  <div className="flex w-full flex-col gap-3">
                     {suggestions.map((s) => (
                       <button
                         key={s.id}

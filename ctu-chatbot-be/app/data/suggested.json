@@ -16,18 +16,6 @@
    ]
   },
   {
-   "id": "hb-dieu-kien",
-   "category": "Học bổng",
-   "question": "Điều kiện để được xét học bổng khuyến khích học tập là gì?",
-   "answer": "Dạ để được xét học bổng khuyến khích học tập, bạn cần đáp ứng đủ các điều kiện sau theo Điều 9 khoản 1c nhé 😊:\n\n- Có đăng ký số tín chỉ (TC) tối thiểu trong học kỳ trước đó là 12 TC (trừ trường hợp do Trường bố trí).\n- Kết quả học tập và rèn luyện của học kỳ trước đó đạt từ loại khá trở lên.\n- Trong học kỳ đó, không có học phần nào bị điểm dưới điểm D.\n- Không bị kỷ luật từ hình thức khiển trách cấp Trường trở lên.\n\nBạn có muốn mình chia sẻ thêm về tiêu chuẩn xếp mức học bổng hay cách xét chọn không nè? ✨📚",
-   "sources": [
-    {
-     "article": 9,
-     "title": "Học bổng và trợ cấp xã hội"
-    }
-   ]
-  },
-  {
    "id": "hb-muc",
    "category": "Học bổng",
    "question": "ĐTBCHK của mình là 3,3 còn ĐRL là 79 thì mình thuộc mức học bổng nào?",
@@ -36,22 +24,6 @@
     {
      "article": 9,
      "title": "Học bổng và trợ cấp xã hội"
-    }
-   ]
-  },
-  {
-   "id": "dtbctl-cach-tinh",
-   "category": "Điểm trung bình",
-   "question": "Điểm trung bình chung tích lũy (ĐTBCTL) được tính thế nào? Môn điểm F và học phần điều kiện có tính không?",
-   "answer": "Cách tính điểm trung bình chung tích lũy (ĐTBCTL) rất đơn giản bạn nhé! ✨\n\nTheo Điều 24 của quy định, ĐTBCTL là trung bình có trọng số của điểm các học phần đã tích lũy tính đến thời điểm xét. Cụ thể:\n- **Công thức tính:** ĐTBCTL = (tổng của [số tín chỉ × điểm số hệ 4 của từng học phần tích lũy]) / (tổng số tín chỉ tích lũy).\n- **Môn điểm F:** Điểm F (dưới 4,0 điểm) **không** được tính vào ĐTBCTL (theo Điều 24 khoản 4).\n- **Học phần điều kiện:** Các học phần điều kiện (gồm Giáo dục Quốc phòng và An ninh, Giáo dục thể chất, Ngoại ngữ căn bản, Tin học căn bản) **không** được dùng để tính ĐTBCTL (theo Điều 7 khoản 6 và Điều 24 khoản 4).\n\nBạn có muốn mình giải thích thêm phần nào nữa không nè? 😊",
-   "sources": [
-    {
-     "article": 24,
-     "title": "Điểm trung bình chung học kỳ, điểm trung bình chung năm học và điểm trung bình chung tích lũy"
-    },
-    {
-     "article": 7,
-     "title": "Học phần, lớp học phần và lớp chuyên ngành"
     }
    ]
   },

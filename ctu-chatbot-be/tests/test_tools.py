@@ -271,3 +271,63 @@ def test_graph_still_works_with_clients_without_tool_support():
     config = {"configurable": {"thread_id": str(uuid.uuid4())}}
     result = graph.invoke({"messages": [HumanMessage(content="xin chào")]}, config)
     assert result["messages"][-1].additional_kwargs["tools"] == []
+
+
+# =====================================================================================================
+# Câu trả lời rỗng của Gemini: thử lại
+# =====================================================================================================
+
+
+class FlakyLLM:
+    """Client gọi được công cụ nhưng trả về RỖNG (không chữ, không gọi công cụ) trong `empty_with_tools` lần đầu có công cụ."""
+
+    supports_tools = True
+
+    def __init__(self, empty_with_tools: int, plain_text: str = "trả lời không công cụ"):
+        self.empty_with_tools = empty_with_tools
+        self.plain_text = plain_text
+        self.with_tools = 0
+        self.plain = 0
+
+    def stream(self, messages, tools=None):
+        if tools:
+            self.with_tools += 1
+            if self.with_tools <= self.empty_with_tools:
+                return
+            yield AIMessageChunk(content="đã hồi phục")
+        else:
+            self.plain += 1
+            if self.plain_text:
+                yield AIMessageChunk(content=self.plain_text)
+
+
+def ask_graph(llm):
+    graph = build_chat_graph(llm, InMemorySaver())
+    config = {"configurable": {"thread_id": str(uuid.uuid4())}}
+    return graph.invoke({"messages": [HumanMessage(content="xin chào")]}, config)["messages"][-1].content
+
+
+def test_empty_reply_is_retried_once_with_tools():
+    llm = FlakyLLM(empty_with_tools=1)
+    assert ask_graph(llm) == "đã hồi phục"
+    assert (llm.with_tools, llm.plain) == (2, 0)
+
+
+def test_two_empty_replies_fall_back_to_a_plain_answer_without_tools():
+    llm = FlakyLLM(empty_with_tools=2)
+    assert ask_graph(llm) == "trả lời không công cụ"
+    assert (llm.with_tools, llm.plain) == (2, 1)
+
+
+def test_reply_that_stays_empty_raises_an_llm_error():
+    from app.services.llm.gemini import LLMError
+
+    llm = FlakyLLM(empty_with_tools=5, plain_text="")
+    with pytest.raises(LLMError):
+        ask_graph(llm)
+
+
+def test_non_empty_reply_is_not_retried():
+    llm = FlakyLLM(empty_with_tools=0)
+    assert ask_graph(llm) == "đã hồi phục"
+    assert llm.with_tools == 1

@@ -20,7 +20,7 @@ from app.services.llm.gemini import LLMError, LLMUnavailable
 QUOTA_FILE = Path(__file__).with_name(".live_quota.json")
 MIN_INTERVAL_SECONDS = 7.0
 MAX_CALLS_PER_RUN = 200
-MAX_CALLS_PER_DAY = 420
+MAX_CALLS_PER_DAY = 520
 
 
 def _load_daily_count() -> int:

@@ -117,25 +117,35 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
             except Exception:  # noqa: BLE001 - lỗi tra cứu (hết hạn mức embedding...) không làm hỏng cả lượt chat
                 logger.exception("Không tra cứu được văn bản quy định, trả lời không kèm ngữ cảnh")
 
-        parts: list[str] = []
         # Phép tính ĐTBCTL/hạng tốt nghiệp làm bằng mã (LLM nhỏ hay chia sai); LLM chỉ diễn giải kết quả.
         calculation = build_gpa_report(llm, history)
 
         messages = [SystemMessage(content=build_system_prompt(hits, calculation)), *history]
         tool_log: list[dict] = []
-        # Client nào gọi được công cụ (máy tính, so sánh số) thì dùng vòng lặp công cụ; còn lại stream thẳng.
-        if getattr(llm, "supports_tools", False):
-            answer_stream = stream_with_tools(llm, messages, tool_log=tool_log)
-        else:
-            answer_stream = llm.stream(messages)
+        can_use_tools = getattr(llm, "supports_tools", False)
 
-        for chunk in answer_stream:
-            text = message_text(chunk)
-            if text:
-                parts.append(text)
-                writer({"token": text})  # đẩy từng đoạn ra cho client (chỉ có tác dụng khi stream_mode="custom")
+        def run(msgs: list[BaseMessage], use_tools: bool) -> str:
+            # Client nào gọi được công cụ (máy tính, so sánh số) thì dùng vòng lặp công cụ; còn lại stream thẳng.
+            answer_stream = stream_with_tools(llm, msgs, tool_log=tool_log) if use_tools else llm.stream(msgs)
+            collected: list[str] = []
+            for chunk in answer_stream:
+                text = message_text(chunk)
+                if text:
+                    collected.append(text)
+                    writer({"token": text})  # đẩy từng đoạn ra cho client (chỉ có tác dụng khi stream_mode="custom")
+            return "".join(collected)
 
-        answer = "".join(parts)
+        answer = run(messages, can_use_tools)
+        if not answer.strip() and can_use_tools:
+            # Gemini thỉnh thoảng trả về rỗng (nhất là sau nhiều lượt gọi công cụ). Chưa có chữ nào gửi cho người
+            # dùng nên thử lại được: lần một thử lại bình thường, lần hai không dùng công cụ nhưng đưa sẵn kết quả
+            # các phép tính đã chạy vào prompt.
+            logger.warning("Câu trả lời rỗng sau %d lần gọi công cụ, thử lại", len(tool_log))
+            answer = run(messages, True)
+            if not answer.strip():
+                done = "\n".join(f"- {entry['result']}" for entry in tool_log)
+                extra = f"\n\nKẾT QUẢ CÔNG CỤ ĐÃ CHẠY (dùng nguyên, không tính lại):\n{done}" if done else ""
+                answer = run([SystemMessage(content=build_system_prompt(hits, calculation) + extra), *history], False)
         if not answer.strip():
             raise LLMError("Gemini returned an empty reply (có thể bị chặn nội dung)")
 

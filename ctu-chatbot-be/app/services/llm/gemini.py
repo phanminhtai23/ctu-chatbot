@@ -111,14 +111,20 @@ class GeminiClient:
             )
         return self._clients[idx]
 
-    def stream(self, messages: Sequence[BaseMessage]) -> Iterator[AIMessageChunk]:
+    # Báo cho đồ thị chat biết client này gọi được công cụ (xem app.services.chat.tooling).
+    supports_tools = True
+
+    def stream(self, messages: Sequence[BaseMessage], tools: Sequence | None = None) -> Iterator[AIMessageChunk]:
         """Trả lời từng đoạn. Xoay key được khi lỗi xảy ra trước đoạn đầu tiên (lúc đó chưa gửi gì cho
         người dùng); lỗi giữa chừng thì không đổi key được nên báo LLMError."""
         if len(self._pool) == 0:
             raise LLMNotConfigured("No GEMINI_API_KEY_* is set")
 
         for idx, key in self._pool.candidates():
-            chunks = self._client(idx, key).stream(list(messages))
+            model = self._client(idx, key)
+            if tools:
+                model = model.bind_tools(list(tools))
+            chunks = model.stream(list(messages))
             try:
                 first = next(chunks)
             except StopIteration:

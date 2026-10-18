@@ -11,6 +11,7 @@ from langgraph.types import StreamWriter
 
 from app.core.config import settings
 from app.services.chat.gpa_assist import build_gpa_report
+from app.services.chat.tooling import stream_with_tools
 from app.services.chat.text import message_text
 from app.services.llm.gemini import LLMError
 from app.services.rag.citations import cited_sources
@@ -30,7 +31,8 @@ Cách trả lời:
 - Nếu NGỮ CẢNH không có thông tin để trả lời: nói thẳng là mình chưa thấy quy định này trong văn bản đang có, và gợi ý bạn hỏi Phòng Đào tạo hoặc cố vấn học tập (CVHT).
 - Công thức và bảng: viết bằng chữ và ký hiệu thường, KHÔNG dùng LaTeX hay ký hiệu như $$, \\frac, \\sum (giao diện không hiển thị được). Ví dụ: ĐTBCHK = (tổng của [số TC × điểm số hệ 4]) / (tổng số TC).
 - Khi bạn đưa số liệu cụ thể (điểm, số tín chỉ, khoá...): tính từng bước, ghi rõ phép tính và kết quả cuối cùng; đối chiếu bảng quy đổi/xếp loại trong NGỮ CẢNH. Điểm số hệ 4 lấy theo bảng quy đổi điểm chữ trong quy định.
-- Nếu cuối prompt có phần "KẾT QUẢ TÍNH SẴN" thì đó là kết quả đã tính bằng máy: dùng NGUYÊN các con số và kết luận trong đó, KHÔNG tự tính lại và không đổi kết luận; chỉ việc diễn giải thật dễ hiểu (nêu rõ giả định nếu có, và hỏi thêm số liệu nếu được yêu cầu).
+- Nếu cuối prompt có phần "KẾT QUẢ TÍNH SẴN" thì đó là kết quả đã tính/kiểm tra bằng máy (điểm trung bình, hạng tốt nghiệp, cảnh báo học tập, thứ tự học bổng...): dùng NGUYÊN các con số và kết luận trong đó, KHÔNG tự tính lại và không đổi kết luận; chỉ việc diễn giải thật dễ hiểu (nêu rõ giả định nếu có, và hỏi thêm số liệu nếu được yêu cầu).
+- CÔNG CỤ: bạn có `calculate` (tính toán chính xác) và `compare_numbers` (so sánh với ngưỡng). MỌI phép tính (cộng, trừ, nhân, chia, trung bình có trọng số, phần trăm) PHẢI gọi `calculate`; MỌI phép so sánh với một ngưỡng hay giới hạn (vượt quá, dưới, từ...trở lên, tối đa, đúng bằng) PHẢI gọi `compare_numbers`. Không tự tính nhẩm hay tự so sánh. Đúng bằng ngưỡng thì "vượt quá" và "dưới" đều SAI. Nếu đã có "KẾT QUẢ TÍNH SẴN" thì dùng nó, chỉ gọi công cụ cho phần chưa có.
 - Câu hỏi dạng "có đạt được mục tiêu X không / có thể ... không": TÍNH TRƯỚC giá trị tối đa có thể đạt, rồi MỞ ĐẦU câu trả lời bằng "Có" hoặc "Không" kèm con số đó (ví dụ "Không thể bạn nhé, tối đa chỉ đạt 3,47"). Tuyệt đối không nói mơ hồ kiểu "cần nỗ lực" khi về mặt toán học đã không thể.
   + ĐTBCTL tối đa = (tổng điểm hệ 4 hiện có + số TC còn lại × 4,0) / tổng số TC. Điểm trung bình cần đạt ở phần còn lại = (mục tiêu × tổng TC − tổng điểm hệ 4 hiện có) / số TC còn lại; nếu kết quả lớn hơn 4,0 thì mục tiêu không thể đạt chỉ bằng phần còn lại.
   + Nếu không thể chỉ bằng phần còn lại thì nói rõ cách duy nhất là học cải thiện điểm (điểm cũ được thay bằng điểm cao nhất), và ước lượng cần bù thêm bao nhiêu điểm hệ 4 (mỗi TC nâng từ C lên A được thêm 2,0 điểm).
@@ -119,7 +121,15 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
         # Phép tính ĐTBCTL/hạng tốt nghiệp làm bằng mã (LLM nhỏ hay chia sai); LLM chỉ diễn giải kết quả.
         calculation = build_gpa_report(llm, history)
 
-        for chunk in llm.stream([SystemMessage(content=build_system_prompt(hits, calculation)), *history]):
+        messages = [SystemMessage(content=build_system_prompt(hits, calculation)), *history]
+        tool_log: list[dict] = []
+        # Client nào gọi được công cụ (máy tính, so sánh số) thì dùng vòng lặp công cụ; còn lại stream thẳng.
+        if getattr(llm, "supports_tools", False):
+            answer_stream = stream_with_tools(llm, messages, tool_log=tool_log)
+        else:
+            answer_stream = llm.stream(messages)
+
+        for chunk in answer_stream:
             text = message_text(chunk)
             if text:
                 parts.append(text)
@@ -139,6 +149,8 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
                 # `sources`: các Điều câu trả lời thực sự nhắc tới, hiện cho người dùng làm tham chiếu.
                 "retrieved": [{"article": h.article, "title": h.title} for h in hits],
                 "sources": cited_sources(answer, hits),
+                # Các lần gọi công cụ máy tính/so sánh trong lượt này (để kiểm thử/gỡ lỗi).
+                "tools": tool_log,
             },
         )
         return {"messages": [reply]}

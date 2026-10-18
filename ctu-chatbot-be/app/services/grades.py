@@ -10,6 +10,7 @@ Căn cứ QĐ 3266/QĐ-ĐHCT:
 from dataclasses import dataclass
 
 MAX_POINT = 4.0
+LOWEST_PASSING_POINT = 1.0  # điểm D: thấp nhất mà học phần vẫn được tích lũy (Điều 22 khoản 3)
 RANKS: list[tuple[str, float]] = [("xuất sắc", 3.60), ("giỏi", 3.20), ("khá", 2.50), ("trung bình", 2.00)]
 _EPS = 1e-9
 
@@ -50,6 +51,7 @@ class RankPlan:
     threshold: float
     needed_average: float | None  # điểm trung bình cần đạt ở phần còn lại; None nếu không còn TC nào
     achievable: bool
+    guaranteed: bool = False  # đã CHẮC CHẮN đạt: kể cả khi phần còn lại chỉ được điểm D (thấp nhất vẫn tích lũy)
 
 
 @dataclass(frozen=True)
@@ -59,6 +61,7 @@ class GpaAnalysis:
     remaining: float  # T - C
     points_now: float  # C x ĐTBCTL hiện tại
     max_gpa: float  # nếu phần còn lại toàn A (4,0)
+    min_gpa: float  # nếu phần còn lại chỉ được điểm D (1,0): thấp nhất mà học phần vẫn được tích lũy
     current_rank: str | None
     max_rank: str | None
     plans: list[RankPlan]
@@ -85,13 +88,20 @@ def analyze(facts: GpaFacts) -> GpaAnalysis | None:
     remaining = max(0.0, counted_total - counted_done)
     points_now = counted_done * facts.current_gpa
     max_gpa = (points_now + MAX_POINT * remaining) / counted_total
+    min_gpa = (points_now + LOWEST_PASSING_POINT * remaining) / counted_total
 
     def plan(name: str, threshold: float) -> RankPlan:
         if remaining <= _EPS:
             achievable = round(facts.current_gpa + _EPS, 2) >= threshold
-            return RankPlan(name, threshold, None, achievable)
+            return RankPlan(name, threshold, None, achievable, achievable)
         needed = (threshold * counted_total - points_now) / remaining
-        return RankPlan(name, threshold, max(needed, 0.0), round(max_gpa + _EPS, 2) >= threshold)
+        return RankPlan(
+            name,
+            threshold,
+            max(needed, 0.0),
+            round(max_gpa + _EPS, 2) >= threshold,
+            round(min_gpa + _EPS, 2) >= threshold,
+        )
 
     plans = [plan(name, threshold) for name, threshold in RANKS]
 
@@ -112,6 +122,7 @@ def analyze(facts: GpaFacts) -> GpaAnalysis | None:
         remaining=remaining,
         points_now=points_now,
         max_gpa=max_gpa,
+        min_gpa=min_gpa,
         current_rank=rank_of(facts.current_gpa),
         max_rank=rank_of(max_gpa),
         plans=plans,
@@ -180,6 +191,18 @@ def format_report(facts: GpaFacts, result: GpaAnalysis) -> str:
             f"- ĐIỀU NGƯỜI DÙNG HỎI ({tgt.rank}, ngưỡng {_g(tgt.threshold)}): kết luận = {verdict}. "
             "Mở đầu câu trả lời bằng kết luận này kèm con số ĐTBCTL tối đa."
         )
+        if tgt.achievable and result.remaining > _EPS:
+            if tgt.guaranteed:
+                lines.append(
+                    f"- ĐỘ CHẮC CHẮN: ĐÃ CHẮC CHẮN đạt loại {tgt.rank}: kể cả khi {_n(result.remaining)} TC còn lại chỉ được điểm D (1,0), "
+                    f"ĐTBCTL tối thiểu vẫn là {_g(result.min_gpa)}, không thấp hơn {_g(tgt.threshold)}."
+                )
+            else:
+                lines.append(
+                    f"- ĐỘ CHẮC CHẮN: CHƯA CHẮC CHẮN. Nếu {_n(result.remaining)} TC còn lại chỉ được điểm D (1,0) thì ĐTBCTL chỉ còn "
+                    f"{_g(result.min_gpa)}, thấp hơn {_g(tgt.threshold)}. Phải giữ điểm trung bình từ {_g(tgt.needed_average)} trở lên ở phần còn lại. "
+                    "Nếu người dùng hỏi \"đã chắc chắn chưa/giữ được không\" thì mở đầu bằng \"Chưa chắc chắn\"."
+                )
         if not tgt.achievable:
             lines.append(
                 "- Khi KHÔNG THỂ: cách duy nhất là học cải thiện điểm (điểm cũ được thay bằng điểm cao nhất, Điều 17 và 24); "

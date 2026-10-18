@@ -19,8 +19,8 @@ from app.services.llm.gemini import LLMError, LLMUnavailable
 
 QUOTA_FILE = Path(__file__).with_name(".live_quota.json")
 MIN_INTERVAL_SECONDS = 7.0
-MAX_CALLS_PER_RUN = 90
-MAX_CALLS_PER_DAY = 250
+MAX_CALLS_PER_RUN = 200
+MAX_CALLS_PER_DAY = 420
 
 
 def _load_daily_count() -> int:
@@ -41,12 +41,13 @@ def _save_daily_count(count: int) -> None:
 class ThrottledLLM:
     def __init__(self, inner, min_interval: float = MIN_INTERVAL_SECONDS):
         self._inner = inner
+        self.supports_tools = getattr(inner, "supports_tools", False)  # để đồ thị chat dùng vòng lặp công cụ
         self._min_interval = min_interval
         self._last_call = 0.0
         self.calls = 0
         self._stopped: str | None = None
 
-    def stream(self, messages: list[BaseMessage]) -> Iterator[AIMessageChunk]:
+    def stream(self, messages: list[BaseMessage], tools=None) -> Iterator[AIMessageChunk]:
         if self._stopped:
             pytest.skip(self._stopped)
         if self.calls >= MAX_CALLS_PER_RUN:
@@ -67,7 +68,7 @@ class ThrottledLLM:
             _save_daily_count(daily)
 
             try:
-                yield from self._inner.stream(messages)
+                yield from (self._inner.stream(messages, tools=tools) if tools else self._inner.stream(messages))
                 return
             except LLMUnavailable as exc:
                 self._stopped = f"Gemini báo hết hạn mức (429), dừng để không gọi thêm; thử lại sau {exc.retry_after}s"

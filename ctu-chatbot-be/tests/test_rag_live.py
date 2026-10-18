@@ -20,11 +20,12 @@ from app.services.rag.embeddings import EmbeddingError, GeminiEmbedder
 from app.services.rag.store import Retriever, VectorStore, default_source_path, ensure_index
 from tests.live_gemini import CachedEmbedder, ThrottledLLM
 from tests.rag_cases import ARTICLE_CASES, FEASIBILITY_CASES, FORMULA_CASES, OFF_TOPIC, UNKNOWN_CASES, Case
+from tests.rag_cases_hard import HARD_CASES
 from tests.rag_cases_scholarship import SCHOLARSHIP_CASES
 
 pytestmark = pytest.mark.live
 
-ALL_CASES = ARTICLE_CASES + FORMULA_CASES + UNKNOWN_CASES + FEASIBILITY_CASES + SCHOLARSHIP_CASES
+ALL_CASES = ARTICLE_CASES + FORMULA_CASES + UNKNOWN_CASES + FEASIBILITY_CASES + SCHOLARSHIP_CASES + HARD_CASES
 EMOJI = re.compile("[\U0001f300-\U0001faff\u2600-\u27bf\u2b50\u2728]")
 LATEX = re.compile(r"\$\$|\\frac|\\sum|\\times|\\cdot|\\text|\\begin|\\\(|\\\[")
 _answers: dict[str, tuple[str, list[int]]] = {}
@@ -173,6 +174,16 @@ def test_feasibility_recomputes_after_user_gives_the_counted_credits(graph):
 def test_scholarship_ranking_follows_level_then_gpa_then_conduct(graph, case):
     answer, retrieved = ask(graph, case.question)
     assert 9 in retrieved, f"[{case.id}] Điều 9 không nằm trong ngữ cảnh: {retrieved}"
+    assert_case(case, answer)
+    assert_friendly(answer)
+
+
+# ---- 3d. Câu hỏi KHÓ theo từng mảng (học bổng, điểm trung bình, hạng tốt nghiệp, còn lại/khả năng, cảnh báo...) ----
+
+
+@pytest.mark.parametrize("case", HARD_CASES, ids=lambda c: c.id)
+def test_hard_questions(graph, case):
+    answer, retrieved = ask(graph, case.question)
     assert_case(case, answer)
     assert_friendly(answer)
 

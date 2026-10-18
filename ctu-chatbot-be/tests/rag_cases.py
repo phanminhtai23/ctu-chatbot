@@ -61,7 +61,7 @@ ARTICLE_CASES: list[Case] = [
     c("d29", 29, "Đơn vị quản lý học phần phải lưu bài thi viết ít nhất bao nhiêu năm?", r"\b0?5 năm|năm năm"),
     c("d30", 30, "Sinh viên khóa 47 tích lũy được 141 tín chỉ thì được xếp trình độ năm thứ mấy?", r"năm (thứ )?(tư|4|bốn)"),
     c("d31", 31, "Hội đồng bảo vệ luận văn tốt nghiệp gồm bao nhiêu thành viên?", r"\b0?3 thành viên|ba thành viên"),
-    c("d32", 32, "Sinh viên được xét tốt nghiệp vào những tháng nào trong năm?", r"tháng 0?1\b", r"tháng 0?5\b", r"tháng 0?9\b"),
+    c("d32", 32, "Sinh viên được xét tốt nghiệp vào những tháng nào trong năm?", r"tháng[^.\n]{0,25}\b0?1\b", r"tháng[^.\n]{0,25}\b0?5\b", r"tháng[^.\n]{0,30}\b0?9\b"),
     c("d33", 33, "Sinh viên khóa 47 đã hết thời gian học tối đa nhưng chưa xong GDTC thì có bao lâu để quay lại trường hoàn thiện điều kiện?", r"\b0?3 năm|ba năm"),
     c("d34", 34, "Hạng tốt nghiệp loại giỏi ứng với ĐTBCTL trong khoảng nào?", r"3[,.]20?", r"3[,.]59"),
     c("d35", 35, "Sau khi có quyết định tốt nghiệp, sinh viên làm thủ tục thanh toán ra trường ở đâu?", r"đơn vị đào tạo"),

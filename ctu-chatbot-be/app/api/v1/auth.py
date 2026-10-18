@@ -20,14 +20,19 @@ def _login(
 ) -> TokenOut:
     """Chung cho mọi cách đăng nhập: chặn domain lạ, tạo user nếu chưa có, cấp JWT."""
     email = email.lower()
+    is_admin_email = email in settings.admin_email_set  # khai báo trong .env (ADMIN_EMAILS)
 
     user = db.scalar(select(User).where(User.email == email))
     if user is None:
-        # Tài khoản mới luôn là 'user' nên phải thuộc tên miền được phép.
-        if not is_domain_allowed(email):
+        # Tài khoản mới là 'user' nên phải thuộc tên miền được phép; email admin trong .env được miễn.
+        if not is_admin_email and not is_domain_allowed(email):
             raise HTTPException(status.HTTP_403_FORBIDDEN, detail=DOMAIN_NOT_ALLOWED)
-        user = User(email=email, name=name, avatar_url=avatar_url)
+        user = User(email=email, name=name, avatar_url=avatar_url, role="admin" if is_admin_email else "user")
         db.add(user)
+        db.commit()
+        db.refresh(user)
+    elif is_admin_email and user.role != "admin":
+        user.role = "admin"  # nâng quyền theo .env; bỏ email khỏi .env KHÔNG tự hạ quyền (tránh tự khoá mình)
         db.commit()
         db.refresh(user)
     elif not can_access(user.email, user.role):

@@ -57,6 +57,15 @@ class Settings(BaseSettings):
     ingest_min_retrieval_pass: float = 0.9  # tỉ lệ Điều tự truy xuất lại đúng ở bước test để được kích hoạt
 
 
+    # Email của quản trị viên, cách nhau bằng dấu phẩy (ví dụ ADMIN_EMAILS=a@gmail.com,b@ctu.edu.vn). Ai đăng nhập thành công
+    # bằng email trong danh sách này sẽ có quyền admin (tài khoản chưa có thì được tạo luôn; được miễn giới hạn tên miền).
+    admin_emails: str = ""
+
+    @property
+    def admin_email_set(self) -> frozenset[str]:
+        parts = self.admin_emails.replace(";", ",").replace(" ", ",").split(",")
+        return frozenset(p.strip().lower() for p in parts if p.strip())
+
     # OAuth Client ID (Web application) tạo ở Google Cloud Console. Rỗng = tắt đăng nhập Google.
     google_client_id: str = ""
 

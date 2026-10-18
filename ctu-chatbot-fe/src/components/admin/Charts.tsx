@@ -16,7 +16,7 @@ function useWidth(initial = 640) {
   useEffect(() => {
     const el = ref.current
     if (!el || typeof ResizeObserver === 'undefined') return
-    const observer = new ResizeObserver(([entry]) => setWidth(Math.max(260, Math.floor(entry.contentRect.width))))
+    const observer = new ResizeObserver(([entry]) => setWidth(Math.max(180, Math.floor(entry.contentRect.width))))
     observer.observe(el)
     return () => observer.disconnect()
   }, [])

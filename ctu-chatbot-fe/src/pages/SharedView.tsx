@@ -34,6 +34,7 @@ export default function SharedView() {
   const startedAtRef = useRef(0)
   const busyRef = useRef(false)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const stickRef = useRef(true) // đang ở cuối khung chat thì tự cuộn theo tin mới; cuộn lên đọc thì thôi
 
   useEffect(() => {
     busyRef.current = busy
@@ -82,8 +83,13 @@ export default function SharedView() {
 
   useEffect(() => {
     const el = scrollRef.current
-    if (el) el.scrollTop = el.scrollHeight
-  }, [messages.length, view?.title])
+    if (el && stickRef.current) el.scrollTop = el.scrollHeight
+  }, [messages, view?.title])
+
+  const handleScroll = () => {
+    const el = scrollRef.current
+    if (el) stickRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80
+  }
 
   const describeError = (err: unknown): string => {
     if (err instanceof ChatStreamError) {
@@ -114,6 +120,7 @@ export default function SharedView() {
     setBusy(true)
     setChatError(null)
     setDraft('')
+    stickRef.current = true
     setMessages((list) => [
       ...list,
       { id: userId, role: 'user', content, created_at: new Date().toISOString(), duration_seconds: null },
@@ -231,7 +238,7 @@ export default function SharedView() {
             </div>
           )}
 
-          <div ref={scrollRef} role="log" aria-live="polite" className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-4 py-6 sm:p-8">
+          <div ref={scrollRef} onScroll={handleScroll} role="log" aria-live="polite" className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-4 py-6 sm:p-8">
             {!view && <p role="status">{t('chat.loadingConversation')}</p>}
             {messages.length > 0 && (
               <div className="flex w-full max-w-[860px] flex-col gap-6">

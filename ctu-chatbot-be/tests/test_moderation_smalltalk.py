@@ -114,3 +114,18 @@ def test_calling_someone_dumb_is_caught(text):
 )
 def test_self_deprecation_and_lookalikes_pass(text):
     assert not is_profane(text)
+
+
+def test_admin_sees_spam_and_profanity_counts_per_user(client, auth_headers, admin_headers):
+    conv_id = client.post("/api/v1/conversations", headers=auth_headers).json()["id"]
+    url = f"/api/v1/conversations/{conv_id}/messages"
+    for _ in range(3):
+        assert client.post(url, headers=auth_headers, json={"content": "đm"}).status_code == 422
+    for _ in range(7):  # 10/5m: 3 tin chửi + 7 chào = 10 lượt, các lần sau bị giới hạn
+        client.post(url, headers=auth_headers, json={"content": "xin chào"})
+    for _ in range(2):
+        assert client.post(url, headers=auth_headers, json={"content": "xin chào"}).status_code == 429
+    row = next(u for u in client.get("/api/v1/admin/users", headers=admin_headers).json()["items"] if u["email"] == "b2100001@student.ctu.edu.vn")
+    assert row["profanity_count"] == 3 and row["spam_count"] == 2
+    detail = client.get(f"/api/v1/admin/users/{row['id']}", headers=admin_headers).json()
+    assert detail["profanity_count"] == 3 and detail["spam_count"] == 2

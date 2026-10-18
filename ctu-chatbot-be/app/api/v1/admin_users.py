@@ -33,6 +33,8 @@ def _row(user: User, messages: int, conversations: int, last_active: datetime | 
         "role": user.role,
         "admin_by_env": user.email in settings.admin_email_set,
         "is_active": user.is_active,
+        "spam_count": user.spam_count or 0,
+        "profanity_count": user.profanity_count or 0,
         "created_at": user.created_at.isoformat(),
         "messages": messages,
         "conversations": conversations,
@@ -40,17 +42,22 @@ def _row(user: User, messages: int, conversations: int, last_active: datetime | 
     }
 
 
+SortKey = Literal["name", "role", "state", "created", "last_active", "messages", "storage", "spam", "profanity"]
+
+
 @router.get("")
 def list_users(
     q: str = Query("", max_length=100),
     role: Literal["all", "user", "admin"] = "all",
     state: Literal["all", "active", "disabled"] = "all",
+    sort: SortKey = "created",
+    order: Literal["asc", "desc"] = "desc",
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
     _: User = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> dict:
-    """Danh sách tài khoản (mới đăng ký lên đầu) kèm số lượt hỏi, số cuộc trò chuyện và lần dùng gần nhất."""
+    """Danh sách tài khoản kèm số lượt hỏi, số cuộc trò chuyện, dung lượng và lần dùng gần nhất; sắp xếp theo cột được chọn."""
     conditions = []
     if q.strip():
         like = f"%{q.strip().lower()}%"
@@ -60,8 +67,40 @@ def list_users(
     if state != "all":
         conditions.append(User.is_active.is_(state == "active"))
 
+    usage = (
+        select(UsageEvent.user_id.label("uid"), func.count().label("msgs"), func.max(UsageEvent.created_at).label("last"))
+        .group_by(UsageEvent.user_id)
+        .subquery()
+    )
+    files = (
+        select(UserFile.user_id.label("uid"), func.sum(UserFile.size_bytes).label("bytes")).group_by(UserFile.user_id).subquery()
+    )
+    sort_columns = {
+        "name": func.lower(func.coalesce(func.nullif(User.name, ""), User.email)),
+        "role": User.role,
+        "state": User.is_active,
+        "created": User.created_at,
+        "last_active": usage.c.last,
+        "messages": func.coalesce(usage.c.msgs, 0),
+        "storage": func.coalesce(files.c.bytes, 0),
+        "spam": User.spam_count,
+        "profanity": User.profanity_count,
+    }
+    column = sort_columns[sort]
+    direction = column.asc() if order == "asc" else column.desc()
+    if sort == "last_active":
+        direction = direction.nulls_last()  # người chưa từng dùng luôn xuống cuối, dù tăng hay giảm
+
     total = db.scalar(select(func.count()).select_from(User).where(*conditions)) or 0
-    users = db.scalars(select(User).where(*conditions).order_by(User.created_at.desc()).offset(offset).limit(limit)).all()
+    users = db.scalars(
+        select(User)
+        .outerjoin(usage, usage.c.uid == User.id)
+        .outerjoin(files, files.c.uid == User.id)
+        .where(*conditions)
+        .order_by(direction, User.created_at.desc(), User.id)
+        .offset(offset)
+        .limit(limit)
+    ).all()
     ids = [u.id for u in users]
     msgs = {
         r[0]: (r[1], r[2])

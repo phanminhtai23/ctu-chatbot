@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import StreamingResponse
-from sqlalchemy import func, select
+from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_chat_graph, get_current_user
@@ -67,12 +67,23 @@ def _author(user: User, level: str) -> str | None:
     return None if level == sharing.OWNER else sharing.display_name(user)
 
 
-def _enforce_rate_limit(user: User) -> None:
+def _record_abuse(db: Session, user: User, column) -> None:
+    """Cộng 1 vào bộ đếm vi phạm của user (spam / chửi thề) để admin thống kê. Lỗi ghi thống kê không được chặn luồng chat."""
+    try:
+        db.execute(update(User).where(User.id == user.id).values({column: column + 1}))
+        db.commit()
+    except Exception:  # noqa: BLE001
+        db.rollback()
+        logger.warning("could not record abuse counter", exc_info=True)
+
+
+def _enforce_rate_limit(db: Session, user: User) -> None:
     """Mỗi user tối đa N tin trong M giây (mặc định 10 tin / 5 phút). Quá thì 429 kèm Retry-After."""
     if chat_limiter is None:  # CHAT_RATE_LIMIT=off
         return
     allowed, retry_after, blocked = chat_limiter.hit_detail(str(user.id))
     if not allowed and blocked is not None:
+        _record_abuse(db, user, User.spam_count)
         # `limit` và `window` cho giao diện hiện đúng "tối đa N tin trong M phút" theo cấu hình hiện tại.
         raise HTTPException(
             status.HTTP_429_TOO_MANY_REQUESTS,
@@ -115,7 +126,7 @@ def _resolve_attachments(db: Session, user: User, ids: list[uuid.UUID]) -> list[
     ]
 
 
-def _pre_screen(user: User, text: str, has_attachments: bool = False):
+def _pre_screen(db: Session, user: User, text: str, has_attachments: bool = False):
     """Bước lọc trước mọi thứ khác (không hàng đợi, không LLM, không lưu lịch sử):
     - chửi thề -> HTTP 422 PROFANITY (CÓ tính vào giới hạn tốc độ, để không ai spam được);
     - chào hỏi xã giao -> trả lời có sẵn, không gọi LLM (cũng tính vào giới hạn tốc độ);
@@ -125,6 +136,7 @@ def _pre_screen(user: User, text: str, has_attachments: bool = False):
         # (nếu đang bị giới hạn thì tin chửi không được ghi thêm, tin bình thường kế tiếp mới nhận 429).
         if chat_limiter is not None:
             chat_limiter.hit(str(user.id))
+        _record_abuse(db, user, User.profanity_count)
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="PROFANITY")
     if has_attachments:
         return None  # có tệp đính kèm thì luôn do LLM đọc tệp trả lời (không dùng câu trả lời có sẵn)
@@ -132,18 +144,18 @@ def _pre_screen(user: User, text: str, has_attachments: bool = False):
     if hit is None:
         hit = smalltalk.lookup(text)
         if hit is not None:
-            _enforce_rate_limit(user)
+            _enforce_rate_limit(db, user)
     return hit
 
 
-def _admit(user: User, hit) -> Ticket | None:
+def _admit(db: Session, user: User, hit) -> Ticket | None:
     """Vào hàng đợi rồi kiểm tra giới hạn tốc độ (theo thứ tự này để lượt bị từ chối vì hàng đầy không mất lượt hỏi).
     Câu hỏi gợi ý có sẵn đáp án nên không cần hàng đợi và không tính giới hạn."""
     if hit is not None:
         return None
     ticket = _enter_queue(user)
     try:
-        _enforce_rate_limit(user)
+        _enforce_rate_limit(db, user)
     except HTTPException:
         get_turn_queue().release(ticket)
         raise
@@ -231,8 +243,8 @@ def send_message(
     attachments = _resolve_attachments(db, user, body.attachment_ids)
     db.rollback()  # trả kết nối DB về pool trong lúc chờ LLM (có thể mất vài chục giây)
     # Câu hỏi gợi ý / chào hỏi: trả lời có sẵn, không gọi LLM và không tính vào giới hạn chat. Chửi thề: từ chối.
-    hit = _pre_screen(user, text, bool(attachments))
-    ticket = _admit(user, hit)
+    hit = _pre_screen(db, user, text, bool(attachments))
+    ticket = _admit(db, user, hit)
 
     holding = False
     try:
@@ -309,8 +321,8 @@ def stream_response(
     text = body.text
     attachments = _resolve_attachments(db, user, body.attachment_ids)
     db.rollback()
-    hit = _pre_screen(user, text, bool(attachments))  # chửi: 422; chào hỏi: trả lời có sẵn (cả hai tính giới hạn); câu gợi ý: có sẵn, không tính giới hạn
-    ticket = _admit(user, hit)
+    hit = _pre_screen(db, user, text, bool(attachments))  # chửi: 422; chào hỏi: trả lời có sẵn (cả hai tính giới hạn); câu gợi ý: có sẵn, không tính giới hạn
+    ticket = _admit(db, user, hit)
 
     def events() -> Iterator[str]:
         holding = False

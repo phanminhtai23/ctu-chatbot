@@ -566,8 +566,8 @@ export default function Chat() {
       </Sidebar>
 
       <main className="flex min-h-0 min-w-0 flex-1 flex-col bg-surface">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-8 sm:py-4">
-          <div className="flex min-w-0 basis-full items-center gap-3 lg:flex-1 lg:basis-auto">
+        <div className="flex items-center justify-between gap-2 border-b border-line px-3 py-3 sm:gap-3 sm:px-8 sm:py-4">
+          <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
             <MobileNavButton onClick={() => setNavOpen(true)} />
             <div className="min-w-0 flex-1">
             <h1 className="m-0 truncate text-lg">{activeTitle || sharedList.find((s) => s.id === conversationId)?.title || t('chat.untitled')}</h1>
@@ -583,7 +583,7 @@ export default function Chat() {
             )}
             </div>
           </div>
-          <div className="ml-auto flex flex-wrap items-center gap-3">
+          <div className="flex flex-none items-center gap-1.5 sm:gap-3">
             {/* Trên điện thoại sidebar thu gọn nên cần lối tắt để mở cuộc trò chuyện mới. */}
             <button
               type="button"
@@ -591,7 +591,7 @@ export default function Chat() {
               onClick={startNewConversation}
               aria-label={t('chat.new')}
               title={t('chat.new')}
-              className="inline-flex size-11 cursor-pointer items-center justify-center rounded-lg border-0 bg-ctu-gold-active text-ctu-navy-dark hover:bg-ctu-gold disabled:cursor-not-allowed disabled:opacity-60 md:hidden"
+              className="inline-flex size-10 cursor-pointer items-center justify-center rounded-lg border-0 bg-ctu-gold-active text-ctu-navy-dark hover:bg-ctu-gold disabled:cursor-not-allowed disabled:opacity-60 md:hidden"
             >
               <Icon name="plus" size={18} strokeWidth={2.4} />
             </button>
@@ -602,7 +602,7 @@ export default function Chat() {
                 onClick={() => setShareOpen(true)}
                 title={t('chat.share')}
                 aria-label={t('chat.share')}
-                className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 rounded-lg border border-accent bg-transparent px-3 py-2 font-sans text-sm font-normal text-accent hover:bg-tint disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
+                className="inline-flex size-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-accent bg-transparent p-0 font-sans text-sm font-normal text-accent hover:bg-tint disabled:cursor-not-allowed disabled:opacity-50 sm:size-auto sm:min-h-11 sm:min-w-11 sm:px-4 sm:py-2"
               >
                 <Icon name="share" size={16} strokeWidth={2} />
                 <span className="hidden sm:inline">{t('chat.share')}</span>
@@ -614,7 +614,7 @@ export default function Chat() {
               onClick={() => setFeedback({ open: true, type: 'general', messageId: null })}
               aria-label={t('chat.feedback')}
               title={t('chat.feedback')}
-              className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 rounded-lg border border-field bg-transparent px-3 py-2 font-sans text-sm font-normal text-heading hover:bg-tint sm:px-4"
+              className="inline-flex size-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-field bg-transparent p-0 font-sans text-sm font-normal text-heading hover:bg-tint sm:size-auto sm:min-h-11 sm:min-w-11 sm:px-4 sm:py-2"
             >
               <Icon name="flag" size={16} strokeWidth={2} />
               <span className="hidden sm:inline">{t('chat.feedback')}</span>

@@ -10,11 +10,12 @@ import { useI18n } from '../../i18n'
 import type { TranslationKey } from '../../i18n/vi'
 import { ApiError } from '../../lib/api'
 import { formatBytes } from '../../lib/format'
-import { getUser, listUsers, updateUser, type AdminUser, type AdminUserDetail, type UserFilters } from '../../lib/adminStats'
+import { getUser, listUsers, updateUser, type AdminUser, type AdminUserDetail, type UserFilters, type UserSort } from '../../lib/adminStats'
 import AdminLayout from './AdminLayout'
 
 const PAGE = 15
 const selectClass = 'min-h-11 rounded-lg border border-field bg-surface px-3 py-2 font-sans text-[15px] text-heading outline-accent'
+const numTh = 'px-3 py-3 text-right font-normal'
 const badge = 'inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold'
 
 const errorKeys: Record<string, TranslationKey> = {
@@ -99,6 +100,8 @@ function DetailDialog({ id, onClose }: { id: string | null; onClose: () => void 
                 [t('admin.users.col.messages'), String(detail.messages)],
                 [t('admin.users.col.conversations'), String(detail.conversations)],
                 [t('admin.users.col.storage'), `${formatBytes(detail.storage_bytes)} / ${formatBytes(detail.storage_quota_bytes)}`],
+                [t('admin.users.col.spam'), String(detail.spam_count)],
+                [t('admin.users.col.profanity'), String(detail.profanity_count)],
                 [t('profile.timezone'), detail.timezone],
               ] as const
             ).map(([label, value]) => (
@@ -132,6 +135,8 @@ export default function AdminUsers() {
   const [debounced, setDebounced] = useState(initialQuery.trim())
   const [role, setRole] = useState<UserFilters['role']>('all')
   const [state, setState] = useState<UserFilters['state']>('all')
+  const [sort, setSort] = useState<UserSort>('created')
+  const [order, setOrder] = useState<'asc' | 'desc'>('desc')
   const [offset, setOffset] = useState(0)
   const [data, setData] = useState<{ total: number; items: AdminUser[] } | null>(null)
   const [loadError, setLoadError] = useState(false)
@@ -151,11 +156,11 @@ export default function AdminUsers() {
   const load = useCallback(async () => {
     setLoadError(false)
     try {
-      setData(await listUsers({ q: debounced, role, state, limit: PAGE, offset }))
+      setData(await listUsers({ q: debounced, role, state, sort, order, limit: PAGE, offset }))
     } catch {
       setLoadError(true)
     }
-  }, [debounced, role, state, offset])
+  }, [debounced, role, state, sort, order, offset])
 
   useEffect(() => {
     load()
@@ -184,6 +189,33 @@ export default function AdminUsers() {
     } catch (err) {
       setDialogError(errorText(err, t))
     }
+  }
+
+  const toggleSort = (key: UserSort) => {
+    if (key === sort) setOrder(order === 'asc' ? 'desc' : 'asc')
+    else {
+      setSort(key)
+      // Tên/vai trò/trạng thái xếp tăng dần trước; các cột số và ngày xếp giảm dần trước (nhiều nhất / mới nhất lên đầu).
+      setOrder(key === 'name' || key === 'role' || key === 'state' ? 'asc' : 'desc')
+    }
+    setOffset(0)
+  }
+
+  const SortTh = ({ k, label, className }: { k: UserSort; label: string; className: string }) => {
+    const active = sort === k
+    const right = className.includes('text-right')
+    return (
+      <th className={className} aria-sort={active ? (order === 'asc' ? 'ascending' : 'descending') : 'none'}>
+        <button
+          type="button"
+          onClick={() => toggleSort(k)}
+          className={`inline-flex cursor-pointer items-center gap-1 whitespace-nowrap border-0 bg-transparent p-0 font-sans text-xs hover:text-heading ${right ? 'flex-row-reverse' : ''} ${active ? 'font-semibold text-heading' : 'text-muted'}`}
+        >
+          {label}
+          <span aria-hidden="true" className={`inline-block w-3 text-center ${active ? '' : 'opacity-40'}`}>{active ? (order === 'asc' ? '▲' : '▼') : '↕'}</span>
+        </button>
+      </th>
+    )
   }
 
   const total = data?.total ?? 0
@@ -240,13 +272,15 @@ export default function AdminUsers() {
         <table className="w-full min-w-[960px] border-collapse text-sm">
           <thead>
             <tr className="border-b border-line text-left text-xs text-muted">
-              <th className="px-4 py-3 font-normal">{t('admin.users.col.user')}</th>
-              <th className="px-3 py-3 font-normal">{t('admin.users.col.role')}</th>
-              <th className="px-3 py-3 font-normal">{t('admin.users.col.state')}</th>
-              <th className="px-3 py-3 font-normal">{t('admin.users.col.created')}</th>
-              <th className="px-3 py-3 text-right font-normal">{t('admin.users.col.messages')}</th>
-              <th className="px-3 py-3 text-right font-normal">{t('admin.users.col.storage')}</th>
-              <th className="px-3 py-3 font-normal">{t('admin.users.col.lastActive')}</th>
+              <SortTh k="name" label={t('admin.users.col.user')} className="px-4 py-3 font-normal" />
+              <SortTh k="role" label={t('admin.users.col.role')} className="px-3 py-3 font-normal" />
+              <SortTh k="state" label={t('admin.users.col.state')} className="px-3 py-3 font-normal" />
+              <SortTh k="created" label={t('admin.users.col.created')} className="px-3 py-3 font-normal" />
+              <SortTh k="last_active" label={t('admin.users.col.lastActive')} className="px-3 py-3 font-normal" />
+              <SortTh k="messages" label={t('admin.users.col.messages')} className={numTh} />
+              <SortTh k="storage" label={t('admin.users.col.storage')} className={numTh} />
+              <SortTh k="spam" label={t('admin.users.col.spam')} className={numTh} />
+              <SortTh k="profanity" label={t('admin.users.col.profanity')} className={numTh} />
               <th className="px-4 py-3 text-right font-normal">{t('admin.users.col.actions')}</th>
             </tr>
           </thead>
@@ -284,11 +318,16 @@ export default function AdminUsers() {
                     </span>
                   </td>
                   <td className="max-w-[7.5rem] px-3 py-3 text-heading">{formatDate(u.created_at)}</td>
+                  <td className="max-w-[7.5rem] px-3 py-3 text-heading">{u.last_active ? formatDate(u.last_active) : '—'}</td>
                   <td className="px-3 py-3 text-right tabular-nums text-heading">{u.messages}</td>
                   <td className={`whitespace-nowrap px-3 py-3 text-right tabular-nums ${u.storage_bytes >= u.storage_quota_bytes * 0.9 ? 'font-semibold text-[#B42318] dark:text-[#F5A3A3]' : 'text-heading'}`} title={`${formatBytes(u.storage_bytes)} / ${formatBytes(u.storage_quota_bytes)}`}>
                     {formatBytes(u.storage_bytes)}
                   </td>
-                  <td className="max-w-[7.5rem] px-3 py-3 text-heading">{u.last_active ? formatDate(u.last_active) : '—'}</td>
+                  {([u.spam_count, u.profanity_count] as const).map((n, i) => (
+                    <td key={i} className={`px-3 py-3 text-right tabular-nums ${n > 0 ? 'font-semibold text-[#B42318] dark:text-[#F5A3A3]' : 'text-muted'}`}>
+                      {n}
+                    </td>
+                  ))}
                   <td className="whitespace-nowrap px-4 py-3 text-right">
                     <button type="button" onClick={() => setDetailId(u.id)} className="mr-2 min-h-9 cursor-pointer rounded-md border border-line bg-surface px-3 font-sans text-[13px] text-accent hover:bg-tint">
                       {t('admin.users.view')}
@@ -307,7 +346,7 @@ export default function AdminUsers() {
             })}
             {data && data.items.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center">{t('admin.users.empty')}</td>
+                <td colSpan={10} className="px-4 py-8 text-center">{t('admin.users.empty')}</td>
               </tr>
             )}
           </tbody>

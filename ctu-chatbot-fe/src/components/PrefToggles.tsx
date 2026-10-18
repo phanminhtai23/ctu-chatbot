@@ -28,7 +28,7 @@ export default function PrefToggles({ tone = 'default' }: Props) {
       type="button"
       onClick={handleTheme}
       aria-label={theme === 'dark' ? t('toggle.toLight') : t('toggle.toDark')}
-      className={`inline-flex size-11 cursor-pointer items-center justify-center rounded-lg border bg-transparent ${frame}`}
+      className={`inline-flex size-10 cursor-pointer sm:size-11 items-center justify-center rounded-lg border bg-transparent ${frame}`}
     >
       <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
     </button>

@@ -1,7 +1,7 @@
 import uuid
 from datetime import date, datetime
 
-from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, String, Uuid, func
+from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, Integer, String, Uuid, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.avatar import default_avatar_url
@@ -34,6 +34,9 @@ class User(Base):
     role: Mapped[str] = mapped_column(String(10), default="user", server_default="user")
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    # Thống kê vi phạm cho admin: số lần vượt giới hạn tốc độ (spam) và số tin chứa lời chửi thề.
+    spam_count: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    profanity_count: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     # Lúc người dùng được chào mừng lần đầu (hộp thoại pháo hoa sau khi đăng ký). None = chưa chào mừng.
     welcomed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

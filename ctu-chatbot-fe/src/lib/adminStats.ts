@@ -96,6 +96,9 @@ export type AdminUser = {
   /** Dung lượng file đã tải lên (byte) và hạn mức mỗi người */
   storage_bytes: number
   storage_quota_bytes: number
+  /** Số lần vượt giới hạn tốc độ (spam) và số tin chửi thề */
+  spam_count: number
+  profanity_count: number
 }
 
 export type AdminUserDetail = AdminUser & {
@@ -105,10 +108,14 @@ export type AdminUserDetail = AdminUser & {
   daily: { date: string; messages: number }[]
 }
 
+export type UserSort = 'name' | 'role' | 'state' | 'created' | 'last_active' | 'messages' | 'storage' | 'spam' | 'profanity'
+
 export type UserFilters = {
   q: string
   role: 'all' | 'user' | 'admin'
   state: 'all' | 'active' | 'disabled'
+  sort: UserSort
+  order: 'asc' | 'desc'
   limit: number
   offset: number
 }
@@ -118,6 +125,8 @@ export function listUsers(f: UserFilters): Promise<{ total: number; items: Admin
     q: f.q,
     role: f.role,
     state: f.state,
+    sort: f.sort,
+    order: f.order,
     limit: String(f.limit),
     offset: String(f.offset),
   })

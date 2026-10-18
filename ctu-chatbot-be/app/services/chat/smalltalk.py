@@ -38,9 +38,9 @@ _PATTERNS: dict[str, re.Pattern[str]] = {
 # Mỗi loại có nhiều biến thể ngắn gọn, mỗi lần chọn ngẫu nhiên một câu cho đỡ nhàm.
 _REPLIES: dict[str, list[str]] = {
     "greeting": [
-        "Xin chào bạn! 👋 Mình là trợ lý học vụ của Trường Đại học Cần Thơ. Bạn muốn hỏi gì về quy chế đào tạo, điểm số, tín chỉ hay tốt nghiệp?",
+        "Xin chào bạn! 👋 Mình là trợ lý học vụ của Trường Đại học Cần Thơ. Bạn muốn hỏi gì về quy chế học vụ, điểm số, tín chỉ hay tốt nghiệp?",
         "Chào bạn nha! 😊 Cần tra cứu quy chế học vụ (điểm, học phần, cảnh báo học tập, học bổng...) cứ hỏi mình nhé.",
-        "Hello bạn! Mình sẵn sàng giải đáp thắc mắc về quy chế đào tạo của CTU. Bạn hỏi đi nào!",
+        "Hello bạn! Mình sẵn sàng giải đáp thắc mắc về quy chế học vụ của CTU. Bạn hỏi đi nào!",
         "Ê, chào bạn hiền! 🌟 Hôm nay bạn muốn tra cứu điều gì về học vụ?",
         "Chào mừng bạn ghé thăm! Điểm số, tín chỉ hay học bổng, bạn cứ hỏi, mình trả lời liền tay 💪",
         "Alo alo! 📞 Trợ lý học vụ CTU nghe đây. Bạn cần mình giúp gì nào?",
@@ -48,7 +48,7 @@ _REPLIES: dict[str, list[str]] = {
         "Chào bạn, chúc bạn một ngày học tập thật hiệu quả! 📚 Có gì cần hỏi cứ nhắn mình nha.",
         "Dạ, mình chào bạn! 🙌 Bạn muốn biết về điểm, học phần, cảnh báo học tập hay tốt nghiệp?",
         "Chào bạn nè! 🐾 Quy chế dài dòng để mình đọc giúp, bạn chỉ cần hỏi thôi.",
-        "Xin chào! Rất vui được gặp bạn. Bạn cứ đặt câu hỏi về quy chế đào tạo của Trường nhé 😄",
+        "Xin chào! Rất vui được gặp bạn. Bạn cứ đặt câu hỏi về quy chế học vụ của Trường nhé 😄",
         "Hế lô! 🎓 Mình sẵn sàng rồi, bạn hỏi đi!",
     ],
     "thanks": [
@@ -68,13 +68,13 @@ _REPLIES: dict[str, list[str]] = {
         "Tạm biệt! Khi nào cần mình cứ ghé lại, mình không đi đâu cả 😄",
     ],
     "who": [
-        "Mình là chatbot học vụ của Trường Đại học Cần Thơ 🤖 Mình trả lời các câu hỏi về Quy chế đào tạo trình độ đại học (QĐ 3266/QĐ-ĐHCT) và có thể giúp tính điểm trung bình, kèm trích dẫn Điều khoản.",
-        "Mình là trợ lý ảo giúp sinh viên CTU tra cứu quy chế đào tạo đại học 📘 Hỏi mình về điểm, tín chỉ, cảnh báo học tập, học bổng, tốt nghiệp... mình sẽ trả lời kèm Điều khoản liên quan.",
+        "Mình là chatbot học vụ của Trường Đại học Cần Thơ 🤖 Mình trả lời các câu hỏi về Quy chế học vụ (QĐ 3266/QĐ-ĐHCT) và có thể giúp tính điểm trung bình, kèm trích dẫn Điều khoản.",
+        "Mình là trợ lý ảo giúp sinh viên CTU tra cứu quy chế học vụ 📘 Hỏi mình về điểm, tín chỉ, cảnh báo học tập, học bổng, tốt nghiệp... mình sẽ trả lời kèm Điều khoản liên quan.",
         "Mình là bạn đồng hành học vụ của sinh viên CTU ✨ Chuyên đọc quy chế (QĐ 3266/QĐ-ĐHCT) thay bạn và giải thích cho dễ hiểu.",
     ],
     "capabilities": [
-        "Mình có thể giúp bạn:\n- Tra cứu Quy chế đào tạo đại học của CTU (điểm, tín chỉ, đăng ký học phần, cảnh báo học tập, học bổng, tốt nghiệp...) và trích dẫn Điều khoản.\n- Tính điểm trung bình học kỳ / tích lũy.\n- Tìm thông tin ngoài quy chế của Trường (học phí, ký túc xá, lịch...) khi cần.\n\nBạn cứ đặt câu hỏi nhé!",
-        "Mình làm được khá nhiều thứ nè 💡\n- Giải thích quy chế đào tạo đại học của CTU, có trích Điều khoản.\n- Tính ĐTBCHK, ĐTBCTL giúp bạn.\n- Tra thêm thông tin của Trường trên web khi quy chế không đề cập.\n\nBạn thử hỏi một câu đi!",
+        "Mình có thể giúp bạn:\n- Tra cứu Quy chế học vụ của CTU (điểm, tín chỉ, đăng ký học phần, cảnh báo học tập, học bổng, tốt nghiệp...) và trích dẫn Điều khoản.\n- Tính điểm trung bình học kỳ / tích lũy.\n- Tìm thông tin ngoài quy chế của Trường (học phí, ký túc xá, lịch...) khi cần.\n\nBạn cứ đặt câu hỏi nhé!",
+        "Mình làm được khá nhiều thứ nè 💡\n- Giải thích quy chế học vụ của CTU, có trích Điều khoản.\n- Tính ĐTBCHK, ĐTBCTL giúp bạn.\n- Tra thêm thông tin của Trường trên web khi quy chế không đề cập.\n\nBạn thử hỏi một câu đi!",
     ],
     "ack": [
         "Ok bạn! Cần hỏi thêm gì cứ nhắn mình nhé 😊",

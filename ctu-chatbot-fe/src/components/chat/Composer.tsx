@@ -8,11 +8,13 @@ type Props = {
   onSend: () => void
   onStop: () => void
   busy: boolean
+  /** Có giá trị = không cho gửi (ví dụ chỉ có quyền xem): hiện câu giải thích thay cho ô nhập */
+  disabledReason?: string
 }
 
 const MAX_LENGTH = 4000
 
-export default function Composer({ value, onChange, onSend, onStop, busy }: Props) {
+export default function Composer({ value, onChange, onSend, onStop, busy, disabledReason }: Props) {
   const { t } = useI18n()
   const ref = useRef<HTMLTextAreaElement>(null)
 
@@ -33,6 +35,16 @@ export default function Composer({ value, onChange, onSend, onStop, busy }: Prop
   }
 
   const canSend = !busy && value.trim().length > 0
+
+  if (disabledReason) {
+    return (
+      <div className="flex justify-center px-4 pb-6 pt-2 sm:px-8">
+        <p role="status" className="m-0 w-full max-w-[860px] rounded-2xl border border-line bg-tint px-5 py-3.5 text-center text-sm text-heading">
+          {disabledReason}
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col items-center gap-2.5 px-4 pb-6 pt-2 sm:px-8">

@@ -4,6 +4,7 @@ import RequireAuth from './components/RequireAuth'
 import Chat from './pages/Chat'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
+import SharedView from './pages/SharedView'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminDocuments from './pages/admin/AdminDocuments'
 import AdminFeedback from './pages/admin/AdminFeedback'
@@ -15,6 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/s/:token" element={<SharedView />} />
         <Route
           path="/chat/:conversationId?"
           element={

@@ -58,10 +58,12 @@ def _daterange(end: date, days: int) -> list[date]:
     return [end - timedelta(days=i) for i in range(days - 1, -1, -1)]
 
 
-def resolve_range(date_from: date | None, date_to: date | None, today: date) -> tuple[date, date]:
-    """Khoảng ngày [start, end] (gồm cả hai đầu) để thống kê. Mặc định 30 ngày gần nhất; không vượt quá hôm nay."""
+def resolve_range(date_from: date | None, date_to: date | None, today: date, days: int | None = None) -> tuple[date, date]:
+    """Khoảng ngày [start, end] (gồm cả hai đầu) để thống kê. `days` = N ngày gần nhất (tính theo ngày hôm nay của server,
+    nên "hôm nay" luôn là ngày giờ Việt Nam bất kể múi giờ của trình duyệt). Mặc định 30 ngày; không vượt quá hôm nay."""
     end = min(date_to or today, today)
-    start = date_from or end - timedelta(days=DEFAULT_RANGE_DAYS - 1)
+    span = days if days and date_from is None else DEFAULT_RANGE_DAYS
+    start = date_from or end - timedelta(days=span - 1)
     if start > end:
         raise ValueError("from must not be after to")
     if (end - start).days + 1 > MAX_RANGE_DAYS:
@@ -123,10 +125,11 @@ def compute_stats(
     date_to: date | None = None,
     granularity: Granularity = "auto",
     now: datetime | None = None,
+    days: int | None = None,
 ) -> dict:
     now = _aware(now) if now else datetime.now(timezone.utc)
     today = _local_day(now)
-    start, end = resolve_range(date_from, date_to, today)
+    start, end = resolve_range(date_from, date_to, today, days)
     days = (end - start).days + 1
     gran = resolve_granularity(granularity, days)
     prev_end = start - timedelta(days=1)

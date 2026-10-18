@@ -16,7 +16,8 @@ type Props = {
   message: UiMessage
   /** Giây đã chờ tính đến hiện tại — chỉ dùng cho tin đang trả lời */
   liveElapsed: number
-  onReport: (message: UiMessage) => void
+  /** Không truyền = ẩn nút "Báo câu trả lời sai" (ví dụ khách xem qua liên kết chia sẻ) */
+  onReport?: (message: UiMessage) => void
   /** Mở cửa sổ xem Điều được tham chiếu; kèm danh sách tham chiếu của tin này để chuyển qua lại trong cửa sổ */
   onOpenReference: (article: number, sources: SourceRef[]) => void
   /** Điều đang mở trong cửa sổ tham chiếu (null nếu đang đóng) */
@@ -62,8 +63,11 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
 
   if (message.role === 'user') {
     return (
-      <div className="max-w-[85%] self-end whitespace-pre-wrap break-words rounded-2xl rounded-br-sm bg-bubble-user px-[18px] py-3 text-[15px] font-normal text-heading">
-        {message.content}
+      <div className="flex max-w-[85%] flex-col items-end gap-1 self-end">
+        {message.author_name && <span className="px-1 text-xs text-muted">{message.author_name}</span>}
+        <div className="whitespace-pre-wrap break-words rounded-2xl rounded-br-sm bg-bubble-user px-[18px] py-3 text-[15px] font-normal text-heading">
+          {message.content}
+        </div>
       </div>
     )
   }
@@ -132,7 +136,11 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
                     title={source.url}
                     className="flex min-h-9 w-full items-center gap-2 rounded-md border border-ctu-cyan bg-surface px-3 py-1.5 text-left font-sans text-[13px] font-normal text-accent no-underline hover:bg-tint"
                   >
-                    <Icon name="doc" size={14} className="flex-none" />
+                    {source.n != null ? (
+                      <span className="flex-none rounded bg-tint px-1.5 text-xs font-semibold text-accent">[{source.n}]</span>
+                    ) : (
+                      <Icon name="doc" size={14} className="flex-none" />
+                    )}
                     <span className="min-w-0 flex-1 truncate">{source.title || source.url}</span>
                     <span className="flex-none text-xs text-muted">{new URL(source.url).hostname}</span>
                   </a>
@@ -150,7 +158,7 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
               {formatSeconds(seconds)}
             </span>
           )}
-          {!message.pending && (
+          {!message.pending && onReport && (
             <button
               type="button"
               onClick={() => onReport(message)}

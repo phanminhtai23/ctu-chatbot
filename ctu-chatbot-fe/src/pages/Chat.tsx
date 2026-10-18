@@ -11,6 +11,7 @@ import Icon from '../components/Icon'
 import Logo from '../components/Logo'
 import PrefToggles from '../components/PrefToggles'
 import ProfileDialog from '../components/ProfileDialog'
+import ShareDialog from '../components/ShareDialog'
 import Sidebar, { labelClass, useSidebarCollapsed } from '../components/Sidebar'
 import { useI18n } from '../i18n'
 import { ApiError } from '../lib/api'
@@ -22,10 +23,12 @@ import {
   listConversations,
   renameConversation,
   streamMessage,
+  type Access,
   type Conversation,
   type SourceRef,
 } from '../lib/conversations'
 import type { FeedbackType } from '../lib/feedback'
+import { listSharedWithMe, type SharedWithMe } from '../lib/shares'
 import { getSuggestions, type Suggestion } from '../lib/suggestions'
 
 const STICK_THRESHOLD_PX = 120
@@ -72,6 +75,12 @@ export default function Chat() {
   // --- Nội dung cuộc trò chuyện đang mở ---
   const [messages, setMessages] = useState<UiMessage[]>([])
   const [loadingConversation, setLoadingConversation] = useState(false)
+  // Quyền của người đang xem: cuộc trò chuyện của mình ('owner') hoặc được người khác chia sẻ ('chat' / 'view').
+  const [access, setAccess] = useState<Access>('owner')
+  const [ownerName, setOwnerName] = useState('')
+  const [sharedFlag, setSharedFlag] = useState(false)
+  const [shareOpen, setShareOpen] = useState(false)
+  const [sharedList, setSharedList] = useState<SharedWithMe[]>([])
   const [loadError, setLoadError] = useState(false)
   // Cuộc trò chuyện vừa tự tạo khi gửi tin đầu tiên: tin nhắn đang nằm sẵn trong state nên đừng nạp lại từ server.
   const skipLoadRef = useRef<string | null>(null)
@@ -81,6 +90,9 @@ export default function Chat() {
     if (!conversationId) {
       setMessages([])
       setLoadingConversation(false)
+      setAccess('owner')
+      setOwnerName('')
+      setSharedFlag(false)
       return
     }
     if (skipLoadRef.current === conversationId) {
@@ -95,6 +107,9 @@ export default function Chat() {
         if (cancelled) return
         stickRef.current = true
         setMessages(detail.messages)
+        setAccess(detail.access)
+        setOwnerName(detail.owner_name)
+        setSharedFlag(detail.shared)
         setLoadingConversation(false)
       })
       .catch((err) => {
@@ -113,9 +128,42 @@ export default function Chat() {
     if (el && stickRef.current) el.scrollTop = el.scrollHeight
   }, [messages, loadingConversation])
 
+  // Cuộc trò chuyện đang được chia sẻ: người khác có thể vừa chat thêm, nên cứ vài giây (khi tab đang mở và mình
+  // không đang chờ trả lời) tải lại để thấy tin mới.
+  const busyRef = useRef(false)
+  useEffect(() => {
+    if (!conversationId || (access === 'owner' && !sharedFlag)) return
+    const id = setInterval(async () => {
+      if (document.hidden || busyRef.current) return
+      try {
+        const d = await getConversation(conversationId)
+        setAccess(d.access)
+        setSharedFlag(d.shared)
+        setMessages((cur) =>
+          cur.some((m) => m.pending) || (d.messages.length === cur.length && d.messages.at(-1)?.id === cur.at(-1)?.id)
+            ? cur
+            : d.messages,
+        )
+      } catch {
+        /* mất mạng thoáng qua: lần sau thử lại */
+      }
+    }, 6000)
+    return () => clearInterval(id)
+  }, [conversationId, access, sharedFlag])
+
+  // Danh sách các cuộc trò chuyện người khác chia sẻ cho mình (làm mới khi đổi cuộc trò chuyện).
+  useEffect(() => {
+    listSharedWithMe()
+      .then(setSharedList)
+      .catch(() => {})
+  }, [conversationId])
+
   // --- Gửi tin & nhận câu trả lời theo từng đoạn ---
   const [draft, setDraft] = useState('')
   const [busy, setBusy] = useState(false)
+  useEffect(() => {
+    busyRef.current = busy
+  }, [busy])
   const [chatError, setChatError] = useState<string | null>(null)
   const [elapsed, setElapsed] = useState(0)
   const abortRef = useRef<AbortController | null>(null)
@@ -136,6 +184,8 @@ export default function Chat() {
             return `${t('chat.errRateLimited')}${err.retryAfter ?? ''}${t('chat.errRateLimitedSuffix')}`
           case 'SERVER_BUSY':
             return t('chat.errBusy')
+          case 'CONVERSATION_BUSY':
+            return t('chat.errConvBusy')
           case 'LLM_NOT_CONFIGURED':
             return t('chat.errNotConfigured')
           case 'STREAM_INTERRUPTED':
@@ -145,6 +195,8 @@ export default function Chat() {
         }
       }
       if (err instanceof ApiError && err.status === 503 && err.message.includes('SERVER_BUSY')) return t('chat.errBusy')
+      if (err instanceof ApiError && err.status === 403 && err.message.includes('READ_ONLY')) return t('chat.errReadOnly')
+      if (err instanceof ApiError && err.status === 409 && err.message.includes('CONVERSATION_BUSY')) return t('chat.errConvBusy')
       if (err instanceof ApiError && err.status === 429 && err.message.includes('TURN_IN_PROGRESS')) return t('chat.errTurnInProgress')
       if (err instanceof ApiError && err.status === 429) return t('chat.errTooManyMessages')
       if (err instanceof ApiError) return t('chat.errLlm')
@@ -339,6 +391,14 @@ export default function Chat() {
         onClose={closeFeedback}
       />
       <ProfileDialog open={profileOpen} onClose={() => setProfileOpen(false)} />
+      <ShareDialog
+        open={shareOpen}
+        conversationId={conversationId ?? null}
+        onClose={() => {
+          setShareOpen(false)
+          if (conversationId) getConversation(conversationId).then((d) => setSharedFlag(d.shared)).catch(() => {})
+        }}
+      />
       <ConfirmDialog
         open={deleteTarget !== null}
         title={t('chat.deleteTitle')}
@@ -405,11 +465,49 @@ export default function Chat() {
             onRetry={loadList}
           />
         </nav>
+
+        {sharedList.length > 0 && (
+          <nav aria-label={t('share.withMe')} className={`flex flex-col gap-1 ${collapsed ? 'md:hidden' : ''}`}>
+            <div className="px-2 pb-1.5 text-xs uppercase tracking-wider opacity-75">{t('share.withMe')}</div>
+            <ul className="m-0 flex list-none flex-col gap-1 p-0">
+              {sharedList.map((item) => (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => navigate(`/chat/${item.id}`)}
+                    aria-current={item.id === conversationId ? 'page' : undefined}
+                    className={`flex min-h-11 w-full cursor-pointer flex-col items-start gap-0.5 rounded-lg border-0 px-3 py-2 text-left font-sans text-white hover:bg-white/10 disabled:cursor-not-allowed ${
+                      item.id === conversationId ? 'bg-white/15' : 'bg-transparent'
+                    }`}
+                  >
+                    <span className="w-full truncate text-sm">{item.title || t('chat.untitled')}</span>
+                    <span className="w-full truncate text-xs opacity-75">
+                      {t('share.fromOwner')} {item.owner_name} · {item.permission === 'chat' ? t('share.badge.chat') : t('share.badge.view')}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
       </Sidebar>
 
       <main className="flex min-h-0 min-w-0 flex-1 flex-col bg-surface">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-8 sm:py-4">
-          <h1 className="m-0 min-w-0 basis-full truncate text-lg lg:flex-1 lg:basis-auto">{activeTitle || t('chat.untitled')}</h1>
+          <div className="min-w-0 basis-full lg:flex-1 lg:basis-auto">
+            <h1 className="m-0 truncate text-lg">{activeTitle || sharedList.find((s) => s.id === conversationId)?.title || t('chat.untitled')}</h1>
+            {access !== 'owner' && (
+              <p className="m-0 mt-0.5 flex flex-wrap items-center gap-2 text-xs">
+                <span>
+                  {t('share.sharedBy')} <strong className="text-heading">{ownerName}</strong>
+                </span>
+                <span className="rounded-full bg-tint px-2 py-0.5 font-semibold text-accent">
+                  {access === 'chat' ? t('share.badge.chat') : t('share.badge.view')}
+                </span>
+              </p>
+            )}
+          </div>
           <div className="ml-auto flex flex-wrap items-center gap-3">
             {/* Trên điện thoại sidebar thu gọn nên cần lối tắt để mở cuộc trò chuyện mới. */}
             <button
@@ -422,15 +520,20 @@ export default function Chat() {
             >
               <Icon name="plus" size={18} strokeWidth={2.4} />
             </button>
-            <button
-              type="button"
-              disabled
-              title={t('chat.shareSoon')}
-              className="hidden min-h-11 cursor-not-allowed items-center gap-2 rounded-lg border border-accent bg-transparent px-4 py-2 font-sans text-sm font-normal text-accent opacity-60 sm:inline-flex"
-            >
-              <Icon name="share" size={16} strokeWidth={2} />
-              {t('chat.share')}
-            </button>
+            {access === 'owner' && (
+              <button
+                type="button"
+                disabled={!conversationId || messages.length === 0}
+                onClick={() => setShareOpen(true)}
+                title={t('chat.share')}
+                aria-label={t('chat.share')}
+                className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 rounded-lg border border-accent bg-transparent px-3 py-2 font-sans text-sm font-normal text-accent hover:bg-tint disabled:cursor-not-allowed disabled:opacity-50 sm:px-4"
+              >
+                <Icon name="share" size={16} strokeWidth={2} />
+                <span className="hidden sm:inline">{t('chat.share')}</span>
+                {sharedFlag && <span className="size-2 rounded-full bg-ctu-gold-active" aria-hidden="true" />}
+              </button>
+            )}
             <button
               type="button"
               onClick={() => setFeedback({ open: true, type: 'general', messageId: null })}
@@ -524,6 +627,7 @@ export default function Chat() {
           onSend={() => send(draft)}
           onStop={() => abortRef.current?.abort()}
           busy={busy}
+          disabledReason={access === 'view' ? t('share.viewOnlyNotice') : undefined}
         />
       </main>
 

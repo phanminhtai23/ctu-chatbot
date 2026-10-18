@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import StreamingResponse
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_chat_graph, get_current_user
@@ -152,6 +152,7 @@ def get_conversation(
         messages=[ChatMessageOut(**asdict(m)) for m in messages],
         access=level,
         owner_name=sharing.display_name(owner) if owner else "",
+        shared=db.scalar(select(func.count()).select_from(ConversationShare).where(ConversationShare.conversation_id == conv.id)) > 0,
     )
 
 

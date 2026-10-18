@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { BarChart } from '../../components/admin/Charts'
 import ConfirmDialog from '../../components/ConfirmDialog'
 import Icon from '../../components/Icon'
@@ -113,7 +114,8 @@ function DetailDialog({ id, onClose }: { id: string | null; onClose: () => void 
             <h3 className="m-0 mb-1 text-sm">{t('admin.users.daily30')}</h3>
             <BarChart
               label={t('admin.users.daily30')}
-              data={detail.daily.map((d) => ({ label: `${d.date.slice(8, 10)}/${d.date.slice(5, 7)}`, value: d.messages }))}
+              labels={detail.daily.map((d) => `${d.date.slice(8, 10)}/${d.date.slice(5, 7)}`)}
+              series={[{ name: t('admin.dash.messages'), color: 'var(--accent)', values: detail.daily.map((d) => d.messages) }]}
             />
           </div>
         </div>
@@ -126,8 +128,10 @@ export default function AdminUsers() {
   const { t } = useI18n()
   const formatDate = useFormatDate()
   const { user: me } = useAuth()
-  const [query, setQuery] = useState('')
-  const [debounced, setDebounced] = useState('')
+  const [searchParams] = useSearchParams()
+  const initialQuery = searchParams.get('q') ?? ''
+  const [query, setQuery] = useState(initialQuery)
+  const [debounced, setDebounced] = useState(initialQuery.trim())
   const [role, setRole] = useState<UserFilters['role']>('all')
   const [state, setState] = useState<UserFilters['state']>('all')
   const [offset, setOffset] = useState(0)

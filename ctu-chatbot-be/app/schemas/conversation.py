@@ -38,6 +38,7 @@ class ConversationDetail(ConversationOut):
     messages: list[ChatMessageOut]
     access: str = "owner"  # quyền của người đang xem: owner | chat | view
     owner_name: str = ""  # tên chủ cuộc trò chuyện (hiện khi xem cuộc trò chuyện được chia sẻ)
+    shared: bool = False  # cuộc trò chuyện đang được chia sẻ cho ai đó (để FE cập nhật tin mới của người khác)
 
 
 class SendMessageIn(BaseModel):

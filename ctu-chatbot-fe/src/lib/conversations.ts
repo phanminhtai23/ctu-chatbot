@@ -4,10 +4,10 @@ import { apiFetch, apiStream } from './api'
 export type SourceRef = { article: number; title: string }
 
 /** Một trang web mà câu trả lời (về chuyện ngoài quy chế) đã tra cứu. */
-export type WebSourceRef = { title: string; url: string }
+export type WebSourceRef = { title: string; url: string; n?: number | null }
 
 /** Nguồn BE trả về: có `article` là Điều của quy chế, có `url` là trang web. */
-export type AnySourceRef = { article?: number | null; title: string; url?: string | null }
+export type AnySourceRef = { article?: number | null; title: string; url?: string | null; n?: number | null }
 
 export const articleSources = (sources: AnySourceRef[] = []): SourceRef[] =>
   sources.filter((s): s is SourceRef => typeof s.article === 'number')
@@ -27,6 +27,8 @@ export type ChatMessage = {
   sources?: AnySourceRef[]
   /** Câu trả lời có sẵn của câu hỏi gợi ý (trả ngay, không gọi LLM) */
   cached?: boolean
+  /** Tin của người dùng do NGƯỜI KHÁC gửi trong cuộc trò chuyện được chia sẻ (tin của chủ thì không có) */
+  author_name?: string | null
 }
 
 export type Conversation = {
@@ -36,7 +38,16 @@ export type Conversation = {
   updated_at: string
 }
 
-export type ConversationDetail = Conversation & { messages: ChatMessage[] }
+/** Quyền của người đang xem: chủ sở hữu, được chat tiếp, hoặc chỉ xem */
+export type Access = 'owner' | 'chat' | 'view'
+
+export type ConversationDetail = Conversation & {
+  messages: ChatMessage[]
+  access: Access
+  owner_name: string
+  /** Đang được chia sẻ cho ai đó: có thể có tin mới của người khác */
+  shared: boolean
+}
 
 export const listConversations = (): Promise<Conversation[]> => apiFetch('/api/v1/conversations')
 
@@ -88,13 +99,17 @@ function parseBlock(block: string): { event: string; data: unknown } | null {
  * Ném ChatStreamError nếu server báo lỗi hoặc stream đứt giữa chừng; ném ApiError (404/422/401...)
  * nếu bị từ chối trước khi stream bắt đầu; AbortError nếu `signal` bị huỷ.
  */
-export async function streamMessage(
-  conversationId: string,
+export const streamMessage = (conversationId: string, content: string, handlers: StreamHandlers, signal?: AbortSignal) =>
+  streamTo(`/api/v1/conversations/${conversationId}/messages/stream`, content, handlers, signal)
+
+/** Như streamMessage nhưng gửi tới một đường dẫn stream bất kỳ (ví dụ chat tiếp qua liên kết chia sẻ). */
+export async function streamTo(
+  path: string,
   content: string,
   handlers: StreamHandlers,
   signal?: AbortSignal,
 ): Promise<void> {
-  const res = await apiStream(`/api/v1/conversations/${conversationId}/messages/stream`, {
+  const res = await apiStream(path, {
     method: 'POST',
     body: JSON.stringify({ content }),
     signal,

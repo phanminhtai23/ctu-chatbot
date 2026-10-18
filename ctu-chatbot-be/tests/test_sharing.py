@@ -53,6 +53,12 @@ def test_nothing_is_visible_to_others_before_sharing(client, conv, friend):
     assert client.get("/api/v1/shares/with-me", headers=friend).json() == []
 
 
+def test_detail_reports_whether_the_conversation_is_shared(client, auth_headers, conv):
+    assert client.get(f"/api/v1/conversations/{conv}", headers=auth_headers).json()["shared"] is False
+    _share(client, auth_headers, conv, FRIEND)
+    assert client.get(f"/api/v1/conversations/{conv}", headers=auth_headers).json()["shared"] is True
+
+
 def test_read_only_share_lets_the_friend_view_but_not_chat(client, auth_headers, conv, friend):
     assert _share(client, auth_headers, conv, FRIEND, "view").status_code == 200
     detail = client.get(f"/api/v1/conversations/{conv}", headers=friend).json()

@@ -90,6 +90,15 @@ def test_weekly_and_monthly_granularity_group_the_range(seeded):
     assert monthly["series"][-1]["total_users"] == 6 and monthly["series"][0]["total_users"] == 3
 
 
+def test_last_n_days_shorthand_ends_today_in_vietnam_time(seeded):
+    stats = _stats(seeded, days=1)
+    assert stats["range"]["from"] == stats["range"]["to"] == "2026-10-18" and stats["period"]["messages"] == 2
+    week = _stats(seeded, days=7)
+    assert week["range"]["from"] == "2026-10-12" and week["range"]["granularity"] == "day"
+    # from/to cụ thể thắng `days`
+    assert _stats(seeded, date_from=date(2026, 10, 1), days=3)["range"]["from"] == "2026-10-01"
+
+
 def test_auto_granularity_switches_with_range_length(seeded):
     assert _stats(seeded, date_from=date(2026, 8, 1))["range"]["granularity"] == "week"
     assert _stats(seeded, date_from=date(2025, 10, 19))["range"]["granularity"] == "month"
@@ -162,6 +171,8 @@ def test_stats_endpoint_is_admin_only_and_validates_the_range(client, auth_heade
     assert client.get("/api/v1/admin/stats?from=2026-10-18&to=2026-10-01", headers=admin_headers).status_code == 422
     assert client.get("/api/v1/admin/stats?from=not-a-date", headers=admin_headers).status_code == 422
     assert client.get("/api/v1/admin/stats?granularity=hour", headers=admin_headers).status_code == 422
+    assert client.get("/api/v1/admin/stats?days=0", headers=admin_headers).status_code == 422
+    assert client.get("/api/v1/admin/stats?days=7", headers=admin_headers).json()["range"]["days"] == 7
 
 
 def test_csv_export_endpoint(client, auth_headers, admin_headers):

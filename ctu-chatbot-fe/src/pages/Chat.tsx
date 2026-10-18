@@ -563,15 +563,15 @@ export default function Chat() {
               <p className="m-0">{t('chat.emptyHint')}</p>
               {suggestions.length > 0 && (
                 <div className="mt-2 w-full text-left">
-                  <div className="flex w-full flex-col gap-2">
+                  <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
                     {suggestions.map((s) => (
                       <button
                         key={s.id}
                         type="button"
                         onClick={() => send(s.question)}
-                        className="flex min-h-11 cursor-pointer flex-col items-start gap-1.5 rounded-xl border border-line bg-surface px-4 py-2.5 text-left sm:flex-row sm:gap-3 font-sans text-[15px] font-normal leading-snug text-heading hover:border-ctu-cyan hover:bg-tint"
+                        className="flex min-h-11 cursor-pointer flex-col items-start gap-2 rounded-xl border border-line bg-surface px-4 py-3 text-left font-sans text-[15px] font-normal leading-snug text-heading hover:border-ctu-cyan hover:bg-tint"
                       >
-                        <span className="sm:mt-0.5 sm:w-[8.5rem] flex-none whitespace-nowrap rounded-full bg-bubble-user px-2.5 py-0.5 text-center text-xs font-normal text-accent">{s.category}</span>
+                        <span className="rounded-full bg-bubble-user px-2.5 text-xs font-normal text-accent">{s.category}</span>
                         {s.question}
                       </button>
                     ))}

@@ -133,7 +133,11 @@ def make_pdf(pages: int = 3) -> bytes:
 
 
 @pytest.fixture(autouse=True)
-def _ingest_settings(monkeypatch):
+def _ingest_settings(monkeypatch, tmp_path):
+    from app.services.rag import store as store_module
+
+    # Không có tài liệu mặc định trên đĩa -> lần nạp đầu tiên không có bản cũ để so sánh (không phụ thuộc máy dev).
+    monkeypatch.setattr(store_module, "default_source_path", lambda: tmp_path / "khong-co.md")
     monkeypatch.setattr(settings, "embedding_dim", DIM)
     monkeypatch.setattr(settings, "ingest_ocr_pages_per_call", 2)
     monkeypatch.setattr(settings, "document_ingest_enabled", True)
@@ -166,7 +170,7 @@ def test_happy_path_runs_every_step_and_activates_the_new_version():
     assert job.status == "activated" and job.activated
     status = steps(job)
     assert status["render"] == "done" and status["ocr"] == "done" and status["normalize"] == "done"
-    assert status["chunk"] == "done" and status["embed"] == "done" and status["layout"] == "done"
+    assert status["chunk"] == "done" and status["diff"] in ("done", "warning") and status["embed"] == "done" and status["layout"] == "done"
     assert status["test"] in ("done", "warning") and status["activate"] == "done"
 
     active = storage.read_active()
@@ -240,16 +244,30 @@ def test_empty_ocr_fails_the_ocr_step():
     assert job.status == "failed" and job.step("ocr").status == "failed"
 
 
-def test_comparison_with_the_active_version_lists_changed_articles():
+def test_diff_step_shows_what_changed_against_the_active_version():
+    manager = make_manager()
+    first = manager.start("v1.pdf", make_pdf())
+    assert first.step("diff").changes == [] and "bản đầu tiên" in first.step("diff").summary
+
+    same = manager.start("v2.pdf", make_pdf())  # cùng nội dung -> không đổi
+    assert {c["kind"] for c in same.step("diff").changes} == {"same"}
+    assert "đổi nội dung 0" in same.step("diff").summary
+
+    job = make_manager(vision=FakeVision(RAW.replace("quá thấp", "dưới 1,00"))).start("v3.pdf", make_pdf())
+    changes = {c["article"]: c for c in job.step("diff").changes}
+    assert changes[4]["kind"] == "changed" and all(changes[n]["kind"] == "same" for n in (1, 2, 3))
+    ops = {(line["op"], line["text"]) for line in changes[4]["lines"]}
+    assert ("-", "1. Sinh viên bị cảnh báo học tập khi điểm trung bình học kỳ quá thấp.") in ops
+    assert ("+", "1. Sinh viên bị cảnh báo học tập khi điểm trung bình học kỳ dưới 1,00.") in ops
+
+
+def test_diff_step_reports_added_and_removed_articles():
     manager = make_manager()
     manager.start("v1.pdf", make_pdf())
-    changed = RAW.replace("quá thấp", "dưới 1,00")
-    job = manager.start("v2.pdf", make_pdf())  # cùng nội dung -> không đổi
-    notes = " ".join(r["note"] for r in job.step("test").rows)
-    assert "nội dung đổi 0 Điều" in notes
-    job = make_manager(vision=FakeVision(changed)).start("v3.pdf", make_pdf())
-    notes = " ".join(r["note"] for r in job.step("test").rows)
-    assert "nội dung đổi 1 Điều" in notes and "4" in notes
+    shorter = RAW.split("Điều 4. Cảnh báo học tập")[0]  # bản mới bỏ mất Điều 4
+    job = make_manager(vision=FakeVision(shorter)).start("v2.pdf", make_pdf())
+    kinds = {c["article"]: c["kind"] for c in job.step("diff").changes}
+    assert kinds[4] == "removed" and "bỏ 1" in job.step("diff").summary
 
 
 def test_interrupted_job_is_reported_as_failed():

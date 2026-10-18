@@ -33,6 +33,7 @@ STEP_DEFS = [
     ("ocr", "Nhận dạng chữ (OCR) bằng Gemini"),
     ("normalize", "Chuẩn hóa văn bản"),
     ("chunk", "Tách theo từng Điều"),
+    ("diff", "So sánh thay đổi với tài liệu đang dùng"),
     ("embed", "Vector hóa (embedding) từng Điều"),
     ("layout", "Xác định vị trí từng Điều trên trang"),
     ("test", "Kiểm thử bản mới"),
@@ -62,6 +63,8 @@ class Step:
     progress: dict | None = None  # {"done": 3, "total": 19, "unit": "trang"}
     metrics: list[dict] = field(default_factory=list)  # [{"label": "Số trang", "value": "21"}]
     rows: list[dict] = field(default_factory=list)  # [{"label": ..., "status": ok|warn|fail|info, "note": ...}]
+    # Bước so sánh: [{article, title, kind: added|removed|changed|same, lines: [{op: '+'|'-', text}], more}]
+    changes: list[dict] = field(default_factory=list)
     preview: str = ""
     error: str = ""
 
@@ -125,6 +128,7 @@ class IngestPipeline:
             ("ocr", self._ocr),
             ("normalize", self._normalize),
             ("chunk", self._chunk),
+            ("diff", self._diff),
             ("embed", self._embed),
             ("layout", self._layout),
             ("test", self._test),
@@ -292,7 +296,48 @@ class IngestPipeline:
         if short:
             step.status = "warning"
 
-    # ---- 5. embedding ----
+    # ---- 5. so sánh thay đổi ----
+
+    def _diff(self, step: Step) -> None:
+        chunks: list[Chunk] = self.state["chunks"]
+        old = _load_active_chunks()
+        if old is None:
+            step.summary = "Không có tài liệu đang dùng để so sánh (đây là bản đầu tiên)"
+            self.state["changed_articles"] = set()
+            return
+        new = {c.article: c for c in chunks}
+        changes: list[dict] = []
+        counts = {"added": 0, "removed": 0, "changed": 0, "same": 0}
+        for number in sorted(set(new) | set(old)):
+            if number not in old:
+                kind, lines, more = "added", _preview_lines(new[number].text, "+"), 0
+            elif number not in new:
+                kind, lines, more = "removed", _preview_lines(old[number].text, "-"), 0
+            elif _squash(new[number].text) == _squash(old[number].text):
+                kind, lines, more = "same", [], 0
+            else:
+                kind = "changed"
+                lines, more = _line_diff(old[number].text, new[number].text)
+            counts[kind] += 1
+            title = (new.get(number) or old[number]).title
+            changes.append({"article": number, "title": title, "kind": kind, "lines": lines, "more": more})
+        step.changes = changes
+        for label, key in (("Điều mới", "added"), ("Điều bị bỏ", "removed"), ("Điều có nội dung khác", "changed"), ("Điều giữ nguyên", "same")):
+            step.metric(label, counts[key])
+        self.state["changed_articles"] = {c["article"] for c in changes if c["kind"] in ("removed", "changed")}
+        step.summary = (
+            f"Thêm {counts['added']}, bỏ {counts['removed']}, đổi nội dung {counts['changed']}, giữ nguyên {counts['same']} Điều"
+        )
+        stale = _suggested_articles() & self.state["changed_articles"]
+        if stale:
+            step.row(
+                "Câu hỏi gợi ý có sẵn cần soát lại",
+                "warn",
+                "Các câu trả lời lưu sẵn dựa vào Điều " + ", ".join(str(n) for n in sorted(stale)) + " đã đổi",
+            )
+            step.status = "warning"
+
+    # ---- 6. embedding ----
 
     def _embed(self, step: Step) -> None:
         chunks: list[Chunk] = self.state["chunks"]
@@ -315,7 +360,7 @@ class IngestPipeline:
         step.metric("Collection", collection)
         step.summary = f"Đã lưu {len(vectors)} vector vào ChromaDB (chưa áp dụng cho chatbot)"
 
-    # ---- 6. vị trí Điều trên trang ----
+    # ---- 7. vị trí Điều trên trang ----
 
     def _layout(self, step: Step) -> None:
         count, first = self.state["page_count"], self.state["first_page"]
@@ -344,7 +389,7 @@ class IngestPipeline:
         if missing:
             step.status = "warning"
 
-    # ---- 7. kiểm thử ----
+    # ---- 8. kiểm thử ----
 
     def _test(self, step: Step) -> None:
         chunks: list[Chunk] = self.state["chunks"]
@@ -393,9 +438,6 @@ class IngestPipeline:
         if layout_status == "fail":
             failures.append("Quá nhiều Điều chưa xác định được vị trí trên trang")
 
-        # d) So với bản đang dùng.
-        self._compare_with_active(step, chunks)
-
         step.metric("Truy xuất đúng", f"{rate:.0%}")
         step.metric("Điều có vị trí", f"{covered}/{len(chunks)}")
         self.state["tests_passed"] = not failures
@@ -407,29 +449,7 @@ class IngestPipeline:
             step.status = "warning" if any(r["status"] == "warn" for r in step.rows) else "done"
             step.summary = f"Đạt: truy xuất đúng {rate:.0%}, {covered}/{len(chunks)} Điều có vị trí"
 
-    def _compare_with_active(self, step: Step, chunks: list[Chunk]) -> None:
-        old = _load_active_chunks()
-        if old is None:
-            step.row("So sánh với bản đang dùng", "info", "Không có bản cũ để so sánh")
-            return
-        new = {c.article: c for c in chunks}
-        added = sorted(set(new) - set(old))
-        removed = sorted(set(old) - set(new))
-        changed = sorted(n for n in set(new) & set(old) if _squash(new[n].text) != _squash(old[n].text))
-        step.row("So với bản đang dùng", "info", f"thêm {len(added)} Điều, bỏ {len(removed)} Điều, nội dung đổi {len(changed)} Điều")
-        for label, numbers in (("Điều mới", added), ("Điều bị bỏ", removed), ("Điều có nội dung khác", changed)):
-            if numbers:
-                step.row(f"  {label}", "info", ", ".join(str(n) for n in numbers))
-        self.state["changed_articles"] = set(changed) | set(removed)
-        stale = _suggested_articles() & self.state["changed_articles"]
-        if stale:
-            step.row(
-                "Câu hỏi gợi ý có sẵn cần soát lại",
-                "warn",
-                "Các câu trả lời lưu sẵn dựa vào Điều " + ", ".join(str(n) for n in sorted(stale)) + " đã đổi",
-            )
-
-    # ---- 8. áp dụng ----
+    # ---- 9. áp dụng ----
 
     def _activate(self, step: Step) -> None:
         if not self.state.get("tests_passed"):
@@ -473,6 +493,30 @@ def _document_title(markdown: str) -> str:
 
 def _squash(text: str) -> str:
     return " ".join(text.split())
+
+
+_MAX_DIFF_LINES = 40
+_MAX_LINE_CHARS = 400
+
+
+def _preview_lines(text: str, op: str, limit: int = 6) -> list[dict]:
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+    return [{"op": op, "text": ln[:_MAX_LINE_CHARS]} for ln in lines[:limit]]
+
+
+def _line_diff(old_text: str, new_text: str) -> tuple[list[dict], int]:
+    """Các dòng bị xoá (-) và dòng thêm vào (+) giữa hai bản của một Điều. Trả về (dòng, số dòng bị cắt bớt)."""
+    import difflib
+
+    old = [" ".join(ln.split()) for ln in old_text.splitlines() if ln.strip()]
+    new = [" ".join(ln.split()) for ln in new_text.splitlines() if ln.strip()]
+    out: list[dict] = []
+    for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(None, old, new, autojunk=False).get_opcodes():
+        if tag == "equal":
+            continue
+        out.extend({"op": "-", "text": ln[:_MAX_LINE_CHARS]} for ln in old[i1:i2])
+        out.extend({"op": "+", "text": ln[:_MAX_LINE_CHARS]} for ln in new[j1:j2])
+    return out[:_MAX_DIFF_LINES], max(0, len(out) - _MAX_DIFF_LINES)
 
 
 def _load_active_chunks() -> dict[int, Chunk] | None:

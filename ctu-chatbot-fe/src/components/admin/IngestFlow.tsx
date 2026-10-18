@@ -1,6 +1,6 @@
 import { useI18n } from '../../i18n'
 import type { TranslationKey } from '../../i18n/vi'
-import type { IngestJob, IngestStep, JobStatus, RowStatus, StepStatus } from '../../lib/adminDocuments'
+import type { ArticleChange, ChangeKind, IngestJob, IngestStep, JobStatus, RowStatus, StepStatus } from '../../lib/adminDocuments'
 import Icon from '../Icon'
 
 export const fill = (template: string, vars: Record<string, string | number>) =>
@@ -62,6 +62,73 @@ function StepCircle({ status, index }: { status: StepStatus; index: number }) {
   )
 }
 
+const changeLabel: Record<ChangeKind, TranslationKey> = {
+  added: 'admin.doc.change.added',
+  removed: 'admin.doc.change.removed',
+  changed: 'admin.doc.change.changed',
+  same: 'admin.doc.change.same',
+}
+
+const changeChip: Record<ChangeKind, string> = {
+  added: 'bg-[#E3F4EA] text-[#14602F] dark:bg-[#12301F] dark:text-[#8AD9A8]',
+  removed: 'bg-[#FDE7E7] text-[#9B1C1C] dark:bg-[#3B1414] dark:text-[#F5A3A3]',
+  changed: 'bg-[#FFF3D6] text-[#7A5200] dark:bg-[#3A2D0B] dark:text-[#F2CB74]',
+  same: 'bg-tint text-muted border border-line',
+}
+
+/** Danh sách thay đổi theo từng Điều: dòng bị xoá màu đỏ (-), dòng thêm màu xanh (+). */
+function ChangeList({ changes }: { changes: ArticleChange[] }) {
+  const { t } = useI18n()
+  const differing = changes.filter((c) => c.kind !== 'same')
+  const same = changes.filter((c) => c.kind === 'same')
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-wrap gap-2">
+        {(['added', 'removed', 'changed', 'same'] as const).map((kind) => (
+          <span key={kind} className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${changeChip[kind]}`}>
+            {t(changeLabel[kind])}: {changes.filter((c) => c.kind === kind).length}
+          </span>
+        ))}
+      </div>
+      {differing.map((change) => (
+        <details key={change.article} className="rounded-md border border-line bg-surface" open={differing.length <= 4}>
+          <summary className="flex cursor-pointer flex-wrap items-center gap-2 px-3 py-2 text-[13px] text-heading">
+            <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${changeChip[change.kind]}`}>{t(changeLabel[change.kind])}</span>
+            <span className="min-w-0 break-words">
+              Điều {change.article}. {change.title}
+            </span>
+          </summary>
+          <div className="max-h-72 overflow-auto border-t border-line font-mono text-xs">
+            {change.lines.map((line, i) => (
+              <div
+                key={i}
+                className={`flex gap-2 whitespace-pre-wrap break-words px-3 py-1 ${
+                  line.op === '+'
+                    ? 'bg-[#E3F4EA] text-[#14602F] dark:bg-[#12301F] dark:text-[#8AD9A8]'
+                    : 'bg-[#FDE7E7] text-[#9B1C1C] dark:bg-[#3B1414] dark:text-[#F5A3A3]'
+                }`}
+              >
+                <span aria-hidden="true">{line.op}</span>
+                <span className="min-w-0 flex-1">{line.text}</span>
+              </div>
+            ))}
+            {change.more > 0 && (
+              <div className="px-3 py-1 text-muted">
+                … {change.more} {t('admin.doc.change.more')}
+              </div>
+            )}
+          </div>
+        </details>
+      ))}
+      {same.length > 0 && (
+        <p className="m-0 text-xs text-muted">
+          {t('admin.doc.change.sameList')}: {same.map((c) => c.article).join(', ')}
+        </p>
+      )}
+    </div>
+  )
+}
+
 function seconds(step: IngestStep): number | null {
   if (!step.started_at) return null
   const end = step.finished_at ? new Date(step.finished_at).getTime() : Date.now()
@@ -70,7 +137,8 @@ function seconds(step: IngestStep): number | null {
 
 function StepBody({ step }: { step: IngestStep }) {
   const { t } = useI18n()
-  const hasDetails = step.metrics.length > 0 || step.rows.length > 0 || step.preview
+  const hasChanges = (step.changes?.length ?? 0) > 0
+  const hasDetails = step.metrics.length > 0 || step.rows.length > 0 || step.preview || hasChanges
   return (
     <div className="min-w-0 flex-1 pb-6">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -111,9 +179,10 @@ function StepBody({ step }: { step: IngestStep }) {
       )}
 
       {hasDetails && (
-        <details className="mt-2 rounded-lg border border-line bg-surface" open={step.status === 'failed' || step.status === 'warning'}>
+        <details className="mt-2 rounded-lg border border-line bg-surface" open={step.status === 'failed' || step.status === 'warning' || hasChanges}>
           <summary className="cursor-pointer select-none px-3 py-2 text-[13px] text-accent">{t('admin.doc.details')}</summary>
           <div className="flex flex-col gap-3 border-t border-line px-3 py-3">
+            {hasChanges && <ChangeList changes={step.changes ?? []} />}
             {step.metrics.length > 0 && (
               <dl className="m-0 grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
                 {step.metrics.map((m) => (

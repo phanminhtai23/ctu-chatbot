@@ -4,6 +4,17 @@ export type StepStatus = 'pending' | 'running' | 'done' | 'warning' | 'failed' |
 export type JobStatus = 'running' | 'activated' | 'rejected' | 'failed'
 export type RowStatus = 'ok' | 'warn' | 'fail' | 'info'
 
+export type ChangeKind = 'added' | 'removed' | 'changed' | 'same'
+
+/** Thay đổi của một Điều so với tài liệu đang dùng (bước "So sánh"). */
+export type ArticleChange = {
+  article: number
+  title: string
+  kind: ChangeKind
+  lines: { op: '+' | '-'; text: string }[]
+  more: number
+}
+
 export type IngestStep = {
   key: string
   title: string
@@ -15,6 +26,7 @@ export type IngestStep = {
   metrics: { label: string; value: string }[]
   rows: { label: string; status: RowStatus; note: string }[]
   preview: string
+  changes?: ArticleChange[]
   error: string
 }
 

@@ -5,6 +5,7 @@ import { useI18n } from '../i18n'
 import type { TranslationKey } from '../i18n/vi'
 import type { ThemeMode } from '../lib/me'
 import { useTheme } from '../theme'
+import DonateSection from './DonateSection'
 import Icon from './Icon'
 
 const themeOptions: { value: ThemeMode; label: TranslationKey }[] = [
@@ -231,6 +232,7 @@ export default function ProfileDialog({ open, onClose }: Props) {
         </button>
       </div>
       {open && <ProfileForm onClose={onClose} />}
+      {open && <DonateSection />}
     </dialog>
   )
 }

@@ -9,6 +9,7 @@ import Login from './pages/Login'
 import SharedView from './pages/SharedView'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminDocuments from './pages/admin/AdminDocuments'
+import AdminDonate from './pages/admin/AdminDonate'
 import AdminFeedback from './pages/admin/AdminFeedback'
 import AdminUsers from './pages/admin/AdminUsers'
 
@@ -60,6 +61,14 @@ function App() {
           element={
             <RequireAdmin>
               <AdminDocuments />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/donate"
+          element={
+            <RequireAdmin>
+              <AdminDonate />
             </RequireAdmin>
           }
         />

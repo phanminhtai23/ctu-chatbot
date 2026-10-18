@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import DonateSection from '../components/DonateSection'
 import Icon, { type IconName } from '../components/Icon'
 import Logo from '../components/Logo'
 import PrefToggles from '../components/PrefToggles'
@@ -222,6 +223,9 @@ export default function Landing() {
           </Link>
         </div>
       </section>
+
+      {/* Mã QR ủng hộ + GIF ở cuối trang (chỉ hiện khi admin đã tải QR lên). */}
+      <DonateSection band />
 
       <footer id="lien-he" className="bg-ctu-navy-dark text-white">
         <div className={`${container} flex flex-wrap justify-between gap-10 pb-8 pt-14`}>

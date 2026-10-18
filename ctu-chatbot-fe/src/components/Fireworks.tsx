@@ -11,8 +11,8 @@ const COLORS = ['#ffd23f', '#22b8f0', '#ff4d8d', '#7ee081', '#ffffff', '#ff9f1c'
  * Pháo hoa thật sự: tên lửa bay lên từ cạnh dưới, nổ thành chùm tia sáng có vệt đuôi, kèm giấy confetti rơi.
  * Vẽ bằng canvas (không dùng thư viện), phủ toàn màn hình và không chặn chuột. Phải đặt BÊN TRONG <dialog> đang mở vì
  * dialog nằm ở "top layer" của trình duyệt, nội dung ngoài nó bị che.
- * Máy bật "giảm chuyển động" (Windows: tắt Hiệu ứng động) thì KHÔNG tắt hẳn mà chỉ bắn ngắn khoảng 4 giây rồi dừng
- * (đây là màn chào mừng một lần duy nhất; tắt hẳn thì người dùng sẽ không thấy pháo hoa nào).
+ * Chủ ý KHÔNG tắt khi máy bật "giảm chuyển động" (Windows: tắt Hiệu ứng động): đây là màn chào mừng một lần duy nhất và
+ * yêu cầu của sản phẩm là pháo hoa bắn liên tục cho tới khi người dùng đóng hộp thoại.
  */
 export default function Fireworks({ durationMs = 7500, sides = false }: { durationMs?: number; sides?: boolean }) {
   const ref = useRef<HTMLCanvasElement>(null)
@@ -20,9 +20,7 @@ export default function Fireworks({ durationMs = 7500, sides = false }: { durati
   useEffect(() => {
     const canvas = ref.current
     if (!canvas) return
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const limit = reducedMotion ? Math.min(durationMs, 4000) : durationMs // giảm chuyển động: chỉ bắn ngắn
-    const continuous = sides && !reducedMotion
+    const continuous = sides // chế độ hai bên: bắn liên tục tới khi component bị gỡ (hộp thoại đóng)
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
@@ -74,7 +72,7 @@ export default function Fireworks({ durationMs = 7500, sides = false }: { durati
       const elapsed = now - start
       const w = window.innerWidth
       const h = window.innerHeight
-      const spawning = continuous || elapsed < limit
+      const spawning = continuous || elapsed < durationMs
       if (spawning && now >= nextLaunch) {
         launch()
         if (!sides && Math.random() < 0.5) launch()

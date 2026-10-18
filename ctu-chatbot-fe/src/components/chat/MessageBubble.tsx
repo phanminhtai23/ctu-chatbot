@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useI18n } from '../../i18n'
-import type { ChatMessage, SourceRef } from '../../lib/conversations'
+import { articleSources, webSources, type ChatMessage, type SourceRef } from '../../lib/conversations'
 import { formatSeconds } from '../../lib/format'
 import Icon from '../Icon'
 import Markdown from './Markdown'
@@ -8,6 +8,8 @@ import Markdown from './Markdown'
 export type UiMessage = ChatMessage & {
   /** Bot đang trả lời (tin tạm, nội dung tăng dần theo từng đoạn stream) */
   pending?: boolean
+  /** Đang xếp hàng chờ tới lượt (server đông); undefined khi không phải chờ */
+  queuePosition?: number
 }
 
 type Props = {
@@ -21,10 +23,10 @@ type Props = {
   activeArticle: number | null
 }
 
-function TypingDots() {
+function TypingDots({ queuePosition }: { queuePosition?: number }) {
   const { t } = useI18n()
   return (
-    <span role="status" className="inline-flex items-center gap-1.5 py-1" aria-label={t('chat.thinking')}>
+    <span role="status" className="inline-flex items-center gap-2 py-1" aria-label={t('chat.thinking')}>
       {[0, 150, 300].map((delay) => (
         <span
           key={delay}
@@ -32,6 +34,11 @@ function TypingDots() {
           style={{ animationDelay: `${delay}ms` }}
         />
       ))}
+      {queuePosition != null && (
+        <span className="text-[13px] text-muted">
+          {t('chat.queued')} {queuePosition}
+        </span>
+      )}
     </span>
   )
 }
@@ -46,7 +53,8 @@ function linkifyArticles(text: string, articles: Set<number>): string {
 
 export default function MessageBubble({ message, liveElapsed, onReport, onOpenReference, activeArticle }: Props) {
   const { t } = useI18n()
-  const sources = useMemo(() => message.sources ?? [], [message.sources])
+  const sources = useMemo(() => articleSources(message.sources), [message.sources])
+  const web = useMemo(() => webSources(message.sources), [message.sources])
   const content = useMemo(
     () => (message.pending ? message.content : linkifyArticles(message.content, new Set(sources.map((s) => s.article)))),
     [message.content, message.pending, sources],
@@ -74,7 +82,7 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
               {content}
             </Markdown>
           ) : (
-            <TypingDots />
+            <TypingDots queuePosition={message.queuePosition} />
           )}
         </div>
 
@@ -107,6 +115,29 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
                   </li>
                 )
               })}
+            </ul>
+          </div>
+        )}
+
+        {!message.pending && web.length > 0 && (
+          <div className="mt-2 flex flex-col gap-1.5" aria-label={t('ref.webLabel')}>
+            <span className="text-[13px] text-muted">{t('ref.webLabel')}</span>
+            <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
+              {web.map((source) => (
+                <li key={source.url}>
+                  <a
+                    href={source.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={source.url}
+                    className="flex min-h-9 w-full items-center gap-2 rounded-md border border-ctu-cyan bg-surface px-3 py-1.5 text-left font-sans text-[13px] font-normal text-accent no-underline hover:bg-tint"
+                  >
+                    <Icon name="doc" size={14} className="flex-none" />
+                    <span className="min-w-0 flex-1 truncate">{source.title || source.url}</span>
+                    <span className="flex-none text-xs text-muted">{new URL(source.url).hostname}</span>
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         )}

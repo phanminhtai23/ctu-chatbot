@@ -3,6 +3,19 @@ import { apiFetch, apiStream } from './api'
 /** Một Điều của quy định mà câu trả lời đã dựa vào (bấm để xem trong PDF). */
 export type SourceRef = { article: number; title: string }
 
+/** Một trang web mà câu trả lời (về chuyện ngoài quy chế) đã tra cứu. */
+export type WebSourceRef = { title: string; url: string }
+
+/** Nguồn BE trả về: có `article` là Điều của quy chế, có `url` là trang web. */
+export type AnySourceRef = { article?: number | null; title: string; url?: string | null }
+
+export const articleSources = (sources: AnySourceRef[] = []): SourceRef[] =>
+  sources.filter((s): s is SourceRef => typeof s.article === 'number')
+
+/** Chỉ nhận http(s): không để `javascript:` hay scheme lạ lọt vào href. */
+export const webSources = (sources: AnySourceRef[] = []): WebSourceRef[] =>
+  sources.filter((s): s is WebSourceRef => typeof s.url === 'string' && /^https?:\/\//i.test(s.url))
+
 export type ChatMessage = {
   id: string
   role: 'user' | 'assistant'
@@ -11,7 +24,7 @@ export type ChatMessage = {
   /** Thời gian chờ chatbot trả lời (giây); chỉ tin của bot, tin cũ có thể không có */
   duration_seconds: number | null
   /** Tham chiếu quy định; chỉ tin của bot, tin cũ có thể không có */
-  sources?: SourceRef[]
+  sources?: AnySourceRef[]
   /** Câu trả lời có sẵn của câu hỏi gợi ý (trả ngay, không gọi LLM) */
   cached?: boolean
 }
@@ -37,7 +50,7 @@ export const renameConversation = (id: string, title: string): Promise<Conversat
 export const deleteConversation = (id: string): Promise<null> =>
   apiFetch(`/api/v1/conversations/${id}`, { method: 'DELETE' })
 
-/** Lỗi trong lúc stream; `code` khớp với BE: LLM_RATE_LIMITED | LLM_NOT_CONFIGURED | LLM_ERROR | INTERNAL_ERROR | STREAM_INTERRUPTED */
+/** Lỗi trong lúc stream; `code` khớp với BE: LLM_RATE_LIMITED | SERVER_BUSY | LLM_NOT_CONFIGURED | LLM_ERROR | INTERNAL_ERROR | STREAM_INTERRUPTED */
 export class ChatStreamError extends Error {
   code: string
   retryAfter?: number
@@ -51,6 +64,8 @@ export class ChatStreamError extends Error {
 }
 
 export type StreamHandlers = {
+  /** Server đang đông: lượt này xếp hàng, `position` = vị trí trong hàng (1 = kế tiếp) */
+  onQueued?: (position: number) => void
   onStart: (userMessage: ChatMessage) => void
   onToken: (text: string) => void
   onDone: (result: { assistant_message: ChatMessage; conversation: Conversation | null }) => void
@@ -95,7 +110,8 @@ export async function streamMessage(
     const parsed = parseBlock(block)
     if (!parsed) return
     const data = parsed.data as Record<string, unknown>
-    if (parsed.event === 'start') handlers.onStart(data.user_message as ChatMessage)
+    if (parsed.event === 'queued') handlers.onQueued?.(Number(data.position))
+    else if (parsed.event === 'start') handlers.onStart(data.user_message as ChatMessage)
     else if (parsed.event === 'token') handlers.onToken(data.text as string)
     else if (parsed.event === 'done') {
       finished = true

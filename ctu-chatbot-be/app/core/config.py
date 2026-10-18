@@ -36,6 +36,15 @@ class Settings(BaseSettings):
     chroma_path: str = "chroma_db"  # tương đối so với thư mục ctu-chatbot-be
     rag_top_k: int = 5
 
+    # Guardrail phạm vi + tìm web: câu hỏi ngoài quy chế thì bot tự tìm trên web (DuckDuckGo). false = luôn dùng RAG.
+    web_search_enabled: bool = True
+
+    # Hàng đợi lượt chat: tối đa `chat_max_concurrent` lượt chạy cùng lúc (mỗi lượt giữ 1 luồng + gọi LLM),
+    # tối đa `chat_queue_max_waiting` lượt xếp hàng chờ; vượt quá thì trả 503 kèm Retry-After thay vì làm sập server.
+    chat_max_concurrent: int = 4
+    chat_queue_max_waiting: int = 30
+    chat_queue_wait_seconds: int = 120  # chờ quá lâu trong hàng thì bỏ cuộc (báo QUEUE_TIMEOUT)
+
 
     # OAuth Client ID (Web application) tạo ở Google Cloud Console. Rỗng = tắt đăng nhập Google.
     google_client_id: str = ""

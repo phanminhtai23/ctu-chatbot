@@ -23,6 +23,7 @@ from app.schemas.conversation import (
     SendMessageOut,
 )
 from app.services.chat import suggested
+from app.services.chat.queue import QueueFull, QueueTimeout, Ticket, UserBusy, get_turn_queue
 from app.services.chat.service import cached_turn, delete_thread, get_history, run_turn, stream_cached_turn, stream_turn
 from app.services.llm.gemini import LLMError, LLMNotConfigured, LLMUnavailable
 from app.services.rate_limit import chat_limiter
@@ -56,6 +57,32 @@ def _enforce_rate_limit(user: User) -> None:
             detail="RATE_LIMITED",
             headers={"Retry-After": str(retry_after)},
         )
+
+
+def _enter_queue(user: User) -> Ticket:
+    """Xin chỗ trong hàng đợi lượt chat. Đầy thì 503, người dùng đang có lượt khác chạy thì 429."""
+    try:
+        return get_turn_queue().enter(str(user.id))
+    except UserBusy:
+        raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, detail="TURN_IN_PROGRESS", headers={"Retry-After": "5"}) from None
+    except QueueFull as exc:
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE, detail="SERVER_BUSY", headers={"Retry-After": str(exc.retry_after)}
+        ) from None
+
+
+def _admit(user: User, hit) -> Ticket | None:
+    """Vào hàng đợi rồi kiểm tra giới hạn tốc độ (theo thứ tự này để lượt bị từ chối vì hàng đầy không mất lượt hỏi).
+    Câu hỏi gợi ý có sẵn đáp án nên không cần hàng đợi và không tính giới hạn."""
+    if hit is not None:
+        return None
+    ticket = _enter_queue(user)
+    try:
+        _enforce_rate_limit(user)
+    except HTTPException:
+        get_turn_queue().release(ticket)
+        raise
+    return ticket
 
 
 def _touch(db: Session, conversation_id: uuid.UUID, first_text: str) -> Conversation | None:
@@ -134,14 +161,19 @@ def send_message(
     db.rollback()  # trả kết nối DB về pool trong lúc chờ LLM (có thể mất vài chục giây)
     # Câu hỏi gợi ý: trả lời có sẵn, không gọi LLM và không tính vào giới hạn chat.
     hit = suggested.lookup(body.content)
-    if hit is None:
-        _enforce_rate_limit(user)
+    ticket = _admit(user, hit)
 
     try:
         if hit is not None:
             user_msg, bot_msg = cached_turn(graph, conv_id, body.content, hit)
         else:
+            for _ in get_turn_queue().wait(ticket):  # chờ tới lượt (không có sự kiện để báo vì đây là request thường)
+                pass
             user_msg, bot_msg = run_turn(graph, conv_id, body.content)
+    except QueueTimeout as exc:
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE, detail="SERVER_BUSY", headers={"Retry-After": str(exc.retry_after)}
+        ) from None
     except LLMNotConfigured:
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, detail="LLM_NOT_CONFIGURED") from None
     except LLMUnavailable as exc:
@@ -152,6 +184,9 @@ def send_message(
         ) from None
     except LLMError:
         raise HTTPException(status.HTTP_502_BAD_GATEWAY, detail="LLM_ERROR") from None
+    finally:
+        if ticket is not None:
+            get_turn_queue().release(ticket)
 
     conv = _touch(db, conv_id, body.content)
     if conv is None:
@@ -179,8 +214,8 @@ def stream_message(
 ):
     """Gửi tin và nhận câu trả lời dạng stream (Server-Sent Events).
 
-    Sự kiện: `start` {user_message} → nhiều `token` {text} → `done` {assistant_message, conversation}.
-    Lỗi giữa chừng: `error` {code, retry_after?} với code LLM_RATE_LIMITED | LLM_NOT_CONFIGURED | LLM_ERROR | INTERNAL_ERROR.
+    Sự kiện: (`queued` {position} nếu phải xếp hàng) → `start` {user_message} → nhiều `token` {text} → `done` {assistant_message, conversation}.
+    Lỗi giữa chừng: `error` {code, retry_after?} với code LLM_RATE_LIMITED | SERVER_BUSY | LLM_NOT_CONFIGURED | LLM_ERROR | INTERNAL_ERROR.
     Kiểm tra quyền sở hữu, nội dung và giới hạn tốc độ được làm TRƯỚC khi bắt đầu stream nên các lỗi đó
     vẫn là HTTP 404/422/429 bình thường.
     """
@@ -188,14 +223,15 @@ def stream_message(
     conv_id = conv.id
     db.rollback()
     hit = suggested.lookup(body.content)  # câu hỏi gợi ý: trả lời có sẵn, không gọi LLM, không tính giới hạn chat
-    if hit is None:
-        _enforce_rate_limit(user)
+    ticket = _admit(user, hit)
 
     def events() -> Iterator[str]:
         try:
             if hit is not None:
                 turn = stream_cached_turn(graph, conv_id, body.content, hit)
             else:
+                for position in get_turn_queue().wait(ticket):  # đông người thì xếp hàng, báo vị trí cho client
+                    yield _sse("queued", {"position": position})
                 turn = stream_turn(graph, conv_id, body.content)
             for event in turn:
                 kind = event["type"]
@@ -214,6 +250,8 @@ def stream_message(
                             "conversation": conv_out,
                         },
                     )
+        except QueueTimeout as exc:
+            yield _sse("error", {"code": "SERVER_BUSY", "retry_after": exc.retry_after})
         except LLMNotConfigured:
             yield _sse("error", {"code": "LLM_NOT_CONFIGURED"})
         except LLMUnavailable as exc:
@@ -223,6 +261,9 @@ def stream_message(
         except Exception:  # noqa: BLE001 - không để stream đứt không báo gì cho client
             logger.exception("Lỗi không mong đợi khi stream câu trả lời")
             yield _sse("error", {"code": "INTERNAL_ERROR"})
+        finally:
+            if ticket is not None:
+                get_turn_queue().release(ticket)  # luôn trả chỗ, kể cả khi client ngắt kết nối giữa chừng
 
     return StreamingResponse(
         events(),

@@ -36,7 +36,7 @@ export default function Composer({ value, onChange, onSend, onStop, busy }: Prop
 
   return (
     <div className="flex flex-col items-center gap-2.5 px-4 pb-6 pt-2 sm:px-8">
-      <div className="box-border flex w-full max-w-[780px] items-end gap-2 rounded-2xl border border-field bg-surface px-3 py-2.5 focus-within:border-accent">
+      <div className="box-border flex w-full max-w-[860px] items-end gap-2 rounded-2xl border border-field bg-surface px-3 py-2.5 focus-within:border-accent">
         <button
           type="button"
           disabled

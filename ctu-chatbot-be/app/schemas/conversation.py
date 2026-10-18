@@ -17,8 +17,9 @@ class ConversationOut(BaseModel):
 class SourceOut(BaseModel):
     """Một tham chiếu tới văn bản quy định: bấm vào để xem đúng đoạn trong PDF."""
 
-    article: int
+    article: int | None = None  # số Điều của quy chế; None nếu là nguồn web
     title: str
+    url: str | None = None  # chỉ có ở nguồn web (câu hỏi ngoài quy chế được tìm trên web)
 
 
 class ChatMessageOut(BaseModel):

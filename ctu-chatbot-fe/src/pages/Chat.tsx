@@ -133,6 +133,8 @@ export default function Chat() {
         switch (err.code) {
           case 'LLM_RATE_LIMITED':
             return `${t('chat.errRateLimited')}${err.retryAfter ?? ''}${t('chat.errRateLimitedSuffix')}`
+          case 'SERVER_BUSY':
+            return t('chat.errBusy')
           case 'LLM_NOT_CONFIGURED':
             return t('chat.errNotConfigured')
           case 'STREAM_INTERRUPTED':
@@ -141,6 +143,8 @@ export default function Chat() {
             return t('chat.errLlm')
         }
       }
+      if (err instanceof ApiError && err.status === 503 && err.message.includes('SERVER_BUSY')) return t('chat.errBusy')
+      if (err instanceof ApiError && err.status === 429 && err.message.includes('TURN_IN_PROGRESS')) return t('chat.errTurnInProgress')
       if (err instanceof ApiError && err.status === 429) return t('chat.errTooManyMessages')
       if (err instanceof ApiError) return t('chat.errLlm')
       return t('chat.errNetwork')
@@ -187,10 +191,14 @@ export default function Chat() {
           id,
           content,
           {
+            onQueued: (position) =>
+              setMessages((list) => list.map((m) => (m.id === tempBotId ? { ...m, queuePosition: position } : m))),
             onStart: (saved) => {
               const previousId = userMessageId
               userMessageId = saved.id
-              setMessages((list) => list.map((m) => (m.id === previousId ? saved : m)))
+              setMessages((list) =>
+                list.map((m) => (m.id === previousId ? saved : m.id === tempBotId ? { ...m, queuePosition: undefined } : m)),
+              )
             },
             onToken: (piece) =>
               setMessages((list) => list.map((m) => (m.id === tempBotId ? { ...m, content: m.content + piece } : m))),
@@ -469,7 +477,7 @@ export default function Chat() {
           )}
 
           {isEmpty && !busy && (
-            <div className="my-auto flex w-full max-w-[640px] flex-col items-center gap-4 py-8 text-center">
+            <div className="my-auto flex w-full max-w-[860px] flex-col items-center gap-4 py-8 text-center">
               <Logo size={64} fill="#0D47A1" />
               <h2 className="m-0 text-2xl">{t('chat.emptyTitle')}</h2>
               <p className="m-0">{t('chat.emptyHint')}</p>
@@ -495,7 +503,7 @@ export default function Chat() {
           )}
 
           {messages.length > 0 && (
-            <div className="flex w-full max-w-[780px] flex-col gap-6">
+            <div className="flex w-full max-w-[860px] flex-col gap-6">
               {messages.map((m) => (
                 <MessageBubble
                   key={m.id}

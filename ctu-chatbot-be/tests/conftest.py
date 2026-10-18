@@ -22,6 +22,7 @@ from tests.fakes import FakeLLM
 def _isolated_settings(monkeypatch):
     # Test không được phụ thuộc .env của máy (Client ID thật, mở domain...): ép cấu hình cố định.
     monkeypatch.setattr(settings, "env", "dev")
+    monkeypatch.setattr(settings, "web_search_enabled", False)  # bộ phân loại phạm vi thêm một lần gọi LLM; test nào cần thì bật
     monkeypatch.setattr(settings, "google_client_id", "")
     monkeypatch.setattr(settings, "allowed_email_domains", ["ctu.edu.vn", "edu.ctu.vn"])
 
@@ -32,6 +33,16 @@ def _reset_chat_limiter():
     chat_limiter.reset()
     yield
     chat_limiter.reset()
+
+
+@pytest.fixture(autouse=True)
+def _reset_turn_queue():
+    # Hàng đợi lượt chat cũng nằm trong bộ nhớ process; tạo lại cho mỗi test.
+    from app.services.chat import queue
+
+    queue.turn_queue = None
+    yield
+    queue.turn_queue = None
 
 
 @pytest.fixture()

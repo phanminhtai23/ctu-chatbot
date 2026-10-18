@@ -18,6 +18,9 @@ def _mentioned_sources(stored: list, text: str) -> list[dict]:
     """
     kept = []
     for item in stored:
+        if isinstance(item, dict) and isinstance(item.get('url'), str) and item.get('title'):
+            kept.append({"title": item["title"], "url": item["url"]})  # nguồn web: đã lọc theo [n] lúc tạo câu trả lời
+            continue
         if not isinstance(item, dict) or not isinstance(item.get('article'), int):
             continue
         if re.search(rf'điều\s+{item["article"]}\b', text, flags=re.IGNORECASE):
@@ -32,7 +35,7 @@ class ChatMessage:
     content: str
     created_at: str | None
     duration_seconds: float | None = None  # chỉ có ở tin của bot: thời gian chờ chatbot trả lời
-    sources: list[dict] = field(default_factory=list)  # chỉ có ở tin của bot: [{article, title}]
+    sources: list[dict] = field(default_factory=list)  # chỉ có ở tin của bot: [{article, title}] hoặc [{title, url}]
     cached: bool = False  # chỉ có ở tin của bot: câu trả lời có sẵn của câu hỏi gợi ý (không gọi LLM)
 
 

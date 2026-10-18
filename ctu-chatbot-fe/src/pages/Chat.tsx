@@ -569,9 +569,9 @@ export default function Chat() {
                         key={s.id}
                         type="button"
                         onClick={() => send(s.question)}
-                        className="flex min-h-11 cursor-pointer items-start gap-3 rounded-xl border border-line bg-surface px-4 py-2.5 text-left font-sans text-[15px] font-normal leading-snug text-heading hover:border-ctu-cyan hover:bg-tint"
+                        className="flex min-h-11 cursor-pointer flex-col items-start gap-1.5 rounded-xl border border-line bg-surface px-4 py-2.5 text-left sm:flex-row sm:gap-3 font-sans text-[15px] font-normal leading-snug text-heading hover:border-ctu-cyan hover:bg-tint"
                       >
-                        <span className="mt-0.5 flex-none whitespace-nowrap rounded-full bg-bubble-user px-2.5 text-xs font-normal text-accent">{s.category}</span>
+                        <span className="sm:mt-0.5 sm:w-[8.5rem] flex-none whitespace-nowrap rounded-full bg-bubble-user px-2.5 py-0.5 text-center text-xs font-normal text-accent">{s.category}</span>
                         {s.question}
                       </button>
                     ))}

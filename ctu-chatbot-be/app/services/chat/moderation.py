@@ -26,6 +26,14 @@ _ANY = [
 _UNACCENTED_ONLY = [r"dit(?:\s+(?:me|con\s+me|cu))?", r"du\s+(?:ma|me)", r"deo", r"con\s+cac", r"cai\s+lon", r"lon\s+me"]
 
 
+# Chê "ngu / ngố / ngáo / đần / khùng": chặn khi là lời chê người khác (hoặc bot), KHÔNG chặn khi người dùng tự nhận
+# ("mình ngu quá không hiểu điều 14"). Khi gõ có dấu thì từ đứng riêng đã đủ rõ; khi gõ không dấu thì "ngu" có thể là "ngủ",
+# "ngao" là con ngao... nên chỉ chặn khi đi kèm đại từ chê bai (bot ngu, mày ngu, thằng ngố...).
+_INSULT_WORDS = r"(?:ngu(?:\s+(?:ngốc|xuẩn|si|dốt))?|ngố|ngáo|đần(?:\s+độn)?|khùng|thiểu\s+năng|não\s+cá\s+vàng)"
+_SELF_BEFORE = re.compile(r"(?<!\w)(?:mình|tôi|tui|tớ|em|mik|mk|tao|con|anh|chị)\s+(?:\w+\s+)?$")
+_DIRECTED_FOLDED = [r"(?:bot|chatbot|may|ban|ong|ba|thang|do|tui\s+may|cai\s+bot)\s+(?:ngu|ngo|ngao|khung|dan\s+don)"]
+
+
 def _compile(patterns: list[str]) -> re.Pattern[str]:
     return re.compile(r"(?<!\w)(?:" + "|".join(patterns) + r")(?!\w)")
 
@@ -33,6 +41,16 @@ def _compile(patterns: list[str]) -> re.Pattern[str]:
 _RE_ACCENTED = _compile(_ACCENTED)
 _RE_ANY = _compile(_ANY)
 _RE_UNACCENTED_ONLY = _compile(_UNACCENTED_ONLY)
+_RE_INSULT = re.compile(r"(?<!\w)" + _INSULT_WORDS + r"(?!\w)")
+_RE_DIRECTED = _compile(_DIRECTED_FOLDED)
+
+
+def _insults_someone(lowered: str) -> bool:
+    for match in _RE_INSULT.finditer(lowered):
+        if _SELF_BEFORE.search(lowered[: match.start()]):
+            continue  # tự nhận ("mình ngu quá") thì không chặn
+        return True
+    return False
 
 
 def fold(text: str) -> str:
@@ -54,4 +72,11 @@ def is_profane(text: str) -> bool:
         return True
     if _RE_ANY.search(folded):
         return True
-    return not _has_accents(lowered) and bool(_RE_UNACCENTED_ONLY.search(folded))
+    if _RE_DIRECTED.search(folded) or re.fullmatch(r"\s*ngu\W*", folded):
+        return True
+    if _has_accents(lowered):
+        if _insults_someone(lowered):
+            return True
+    elif _RE_UNACCENTED_ONLY.search(folded):
+        return True
+    return False

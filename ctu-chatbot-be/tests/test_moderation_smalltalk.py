@@ -97,3 +97,20 @@ def test_every_smalltalk_kind_has_several_variants():
 
     assert set(_PATTERNS) == set(_REPLIES)
     assert len(_REPLIES["greeting"]) >= 8 and all(len(v) >= 2 for v in _REPLIES.values())
+
+
+@pytest.mark.parametrize(
+    "text",
+    ["mày ngu thật", "bot ngáo vl", "đồ ngố", "ngu quá đi", "con bot khùng", "bot đần", "may ngu qua", "thang ngao", "Trả lời gì mà ngu vậy", "mình thấy bot ngu", "ngu", "bạn đần độn quá"],
+)
+def test_calling_someone_dumb_is_caught(text):
+    assert is_profane(text)
+
+
+@pytest.mark.parametrize(
+    "text",
+    ["mình ngu quá không hiểu điều 14", "tôi cũng ngu toán lắm", "em ngố quá, giải thích giúp em", "tui ngáo thật, điểm D là gì", "ngủ nghỉ có tính vào học phần không",
+     "con ngao", "ngao du học tập", "toi di ngu day, hoi sau nhe", "ngô khoai có trong ký túc xá không", "đần"[:0] + "điểm danh vắng mấy buổi bị cấm thi"],
+)
+def test_self_deprecation_and_lookalikes_pass(text):
+    assert not is_profane(text)

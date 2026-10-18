@@ -35,8 +35,7 @@ def test_google_login_creates_user_with_role_user(client, google_enabled, monkey
     user = res.json()["user"]
     assert user["email"] == "b2100001@student.ctu.edu.vn"
     assert user["name"] == "Nguyen Van A"
-    # Tài khoản mới nhận ảnh đại diện mặc định ngẫu nhiên, không dùng ảnh Google.
-    assert user["avatar_url"].startswith("https://api.dicebear.com/")
+    assert user["avatar_url"] == "https://pic/a.png"  # ảnh Google gốc là ảnh mặc định
     assert user["role"] == "user"
     assert res.json()["access_token"]
 
@@ -85,3 +84,27 @@ def test_verify_rejects_unconfigured_client_id():
 
     with pytest.raises(GoogleAuthError):
         verify_google_id_token("anything")
+
+
+def test_default_avatar_is_the_google_picture_and_the_button_returns_to_it(client, google_enabled, monkeypatch):
+    identity = GoogleIdentity(email="b2100001@student.ctu.edu.vn", name="A", picture="https://lh3.googleusercontent.com/a/me")
+    monkeypatch.setattr(auth_module, "verify_google_id_token", _fake_verifier(identity))
+    headers = {"Authorization": "Bearer " + client.post("/api/v1/auth/google", json={"credential": "t"}).json()["access_token"]}
+    assert client.get("/api/v1/me", headers=headers).json()["avatar_url"] == "https://lh3.googleusercontent.com/a/me"
+
+    rolled = client.delete("/api/v1/me/avatar", headers=headers).json()["avatar_url"]  # quay ảnh ngẫu nhiên
+    assert rolled.startswith("https://api.dicebear.com/")
+    back = client.delete("/api/v1/me/avatar", params={"random": "false"}, headers=headers)
+    assert back.json()["avatar_url"] == "https://lh3.googleusercontent.com/a/me"  # "Mặc định" về lại ảnh Google, không mất
+
+
+def test_google_picture_is_refreshed_on_every_login_and_kept_when_google_sends_none(client, google_enabled, monkeypatch):
+    def login(picture):
+        identity = GoogleIdentity(email="b2100001@student.ctu.edu.vn", name="A", picture=picture)
+        monkeypatch.setattr(auth_module, "verify_google_id_token", _fake_verifier(identity))
+        token = client.post("/api/v1/auth/google", json={"credential": "t"}).json()["access_token"]
+        return client.get("/api/v1/me", headers={"Authorization": f"Bearer {token}"}).json()["avatar_url"]
+
+    assert login("https://pic/1.png") == "https://pic/1.png"
+    assert login("https://pic/2.png") == "https://pic/2.png"  # Google đổi ảnh -> ảnh mặc định đổi theo
+    assert login(None) == "https://pic/2.png"  # lần này Google không gửi ảnh: giữ ảnh đã biết

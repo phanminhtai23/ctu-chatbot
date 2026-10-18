@@ -20,8 +20,10 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(320), unique=True, index=True)
     name: Mapped[str] = mapped_column(String(100), default="")
     birthday: Mapped[date | None] = mapped_column(Date, nullable=True)
-    # Ảnh đại diện: URL ảnh người dùng tải lên (Cloudinary) hoặc ảnh ngẫu nhiên mặc định (DiceBear). NULL = dùng ảnh mặc định theo id.
+    # Ảnh đại diện người dùng ĐÃ CHỌN: ảnh tải lên (Cloudinary) hoặc ảnh ngẫu nhiên (DiceBear). NULL = dùng ảnh mặc định (xem `default_avatar`).
     avatar_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    # Ảnh gốc của tài khoản Google, cập nhật mỗi lần đăng nhập Google. Là ảnh MẶC ĐỊNH nếu có (nút "Mặc định" quay về ảnh này).
+    google_picture: Mapped[str | None] = mapped_column(String(500), nullable=True)
 
     # Cài đặt cá nhân, lưu theo user.
     timezone: Mapped[str] = mapped_column(String(64), default="Asia/Ho_Chi_Minh")
@@ -37,8 +39,13 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     @property
+    def default_avatar(self) -> str:
+        """Ảnh mặc định của tài khoản: ảnh Google gốc nếu có, không thì ảnh ngộ nghĩnh cố định theo id."""
+        return self.google_picture or default_avatar_url(str(self.id))
+
+    @property
     def avatar(self) -> str:
-        return self.avatar_url or default_avatar_url(str(self.id))
+        return self.avatar_url or self.default_avatar
 
     @property
     def welcomed(self) -> bool:

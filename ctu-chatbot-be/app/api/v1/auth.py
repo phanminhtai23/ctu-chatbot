@@ -16,7 +16,7 @@ DOMAIN_NOT_ALLOWED = "Email domain is not allowed"
 
 
 def _login(
-    db: Session, email: str, *, name: str, avatar_url: str | None = None
+    db: Session, email: str, *, name: str, picture: str | None = None
 ) -> TokenOut:
     """Chung cho mọi cách đăng nhập: chặn domain lạ, tạo user nếu chưa có, cấp JWT."""
     email = email.lower()
@@ -27,9 +27,9 @@ def _login(
         # Tài khoản mới là 'user' nên phải thuộc tên miền được phép; email admin trong .env được miễn.
         if not is_admin_email and not is_domain_allowed(email):
             raise HTTPException(status.HTTP_403_FORBIDDEN, detail=DOMAIN_NOT_ALLOWED)
-        # Tài khoản mới dùng ảnh đại diện mặc định (ngộ nghĩnh, cố định theo id: avatar_url để trống, xem User.avatar); ảnh Google không
-        # dùng. Muốn đổi thì tự tải ảnh riêng, và luôn quay về đúng ảnh mặc định này được.
-        user = User(email=email, name=name, avatar_url=None, role="admin" if is_admin_email else "user")
+        # Ảnh đại diện mặc định = ảnh Google gốc (nếu có), không thì ảnh ngộ nghĩnh cố định theo id (xem User.default_avatar);
+        # avatar_url để trống cho tới khi người dùng tự chọn ảnh khác, và nút "Mặc định" luôn quay về được.
+        user = User(email=email, name=name, avatar_url=None, google_picture=picture, role="admin" if is_admin_email else "user")
         db.add(user)
         db.commit()
         db.refresh(user)
@@ -39,6 +39,11 @@ def _login(
         db.refresh(user)
     elif not can_access(user.email, user.role):
         raise HTTPException(status.HTTP_403_FORBIDDEN, detail=DOMAIN_NOT_ALLOWED)
+
+    if picture and user.google_picture != picture:
+        user.google_picture = picture  # ảnh Google có thể đổi: luôn giữ bản mới nhất làm ảnh gốc
+        db.commit()
+        db.refresh(user)
 
     if not user.is_active:
         raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Account is disabled")
@@ -67,7 +72,7 @@ def google_login(body: GoogleLoginIn, db: Session = Depends(get_db)):
         identity = verify_google_id_token(body.credential)
     except GoogleAuthError as exc:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail=str(exc)) from exc
-    return _login(db, identity.email, name=identity.name, avatar_url=identity.picture)
+    return _login(db, identity.email, name=identity.name, picture=identity.picture)
 
 
 @router.post("/dev-login", response_model=TokenOut)

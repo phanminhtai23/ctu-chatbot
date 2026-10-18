@@ -69,6 +69,7 @@ export default function MyFiles({ listing, onChange }: { listing: FileListing | 
         {t('files.title')}
       </h3>
       <UsageBar used={listing.used_bytes} quota={listing.quota_bytes} />
+      <p className="mb-0 mt-2.5 text-xs">{t('files.limitNote')}</p>
 
       {attachments.length === 0 ? (
         <p className="mb-0 mt-4 text-sm">{t('files.empty')}</p>

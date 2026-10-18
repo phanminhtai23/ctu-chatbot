@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -11,6 +13,16 @@ router = APIRouter(prefix="/me", tags=["users"])
 
 @router.get("", response_model=UserOut)
 def read_me(user: User = Depends(get_current_user)):
+    return user
+
+
+@router.post("/welcome", response_model=UserOut)
+def mark_welcomed(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Đánh dấu đã chào mừng người dùng mới (gọi khi hộp thoại chào mừng hiện ra); gọi lại không đổi gì."""
+    if user.welcomed_at is None:
+        user.welcomed_at = datetime.now(timezone.utc)
+        db.commit()
+        db.refresh(user)
     return user
 
 

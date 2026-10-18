@@ -52,6 +52,10 @@ class Settings(BaseSettings):
     ingest_ocr_pages_per_call: int = 5  # Gemini hay từ chối khi gửi cả file dài: chia nhóm trang nhỏ
     ingest_call_interval_seconds: float = 4.0  # giãn cách giữa các lần gọi Gemini để không vượt hạn mức free
     ingest_max_pdf_mb: int = 30
+
+    # Ảnh QR ủng hộ do admin tải lên (hiện trong hộp thoại thông tin cá nhân của người dùng).
+    donate_dir: str = "data/donate"  # tương đối so với ctu-chatbot-be
+    donate_qr_max_mb: float = 2
     ingest_keep_versions: int = 10  # giữ tối đa chừng này phiên bản đã nạp (để chuyển qua lại); bản đang dùng luôn được giữ
     ingest_max_pages: int = 80
     ingest_min_retrieval_pass: float = 0.9  # tỉ lệ Điều tự truy xuất lại đúng ở bước test để được kích hoạt

@@ -75,7 +75,12 @@ def _enforce_rate_limit(user: User) -> None:
         # `limit` và `window` cho giao diện hiện đúng "tối đa N tin trong M phút" theo cấu hình hiện tại.
         raise HTTPException(
             status.HTTP_429_TOO_MANY_REQUESTS,
-            detail={"code": "RATE_LIMITED", "limit": chat_limiter.max_events, "window": describe_window(chat_limiter.window_seconds)},
+            detail={
+                "code": "RATE_LIMITED",
+                "limit": chat_limiter.max_events,
+                "window": describe_window(chat_limiter.window_seconds),
+                "retry_after": retry_after,
+            },
             headers={"Retry-After": str(retry_after)},
         )
 

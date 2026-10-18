@@ -10,3 +10,6 @@ scripts/.layout_raw/
 
 # tài liệu admin đã nạp (PDF gốc, ảnh trang, phiên bản)
 data/documents/
+
+# ảnh QR ủng hộ do admin tải lên
+data/donate/

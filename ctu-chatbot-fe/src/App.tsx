@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import RequireAdmin from './components/RequireAdmin'
 import RequireAuth from './components/RequireAuth'
+import WelcomeDialog from './components/WelcomeDialog'
 import Chat from './pages/Chat'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
@@ -13,6 +14,7 @@ import AdminUsers from './pages/admin/AdminUsers'
 function App() {
   return (
     <BrowserRouter>
+      <WelcomeDialog />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />

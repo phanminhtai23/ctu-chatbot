@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { useAuth } from '../auth'
+import ChatErrorDialog from '../components/ChatErrorDialog'
 import Composer from '../components/chat/Composer'
 import MessageBubble, { type UiMessage } from '../components/chat/MessageBubble'
 import ReferencePanel from '../components/chat/ReferencePanel'
@@ -9,8 +10,8 @@ import Logo from '../components/Logo'
 import PrefToggles from '../components/PrefToggles'
 import { useI18n } from '../i18n'
 import { ApiError } from '../lib/api'
-import { ChatStreamError, streamTo, type SourceRef } from '../lib/conversations'
-import { fillTemplate, parseRateLimit } from '../lib/format'
+import { streamTo, type SourceRef } from '../lib/conversations'
+import { classifyChatError, type ChatErrorInfo } from '../lib/chatErrors'
 import { getSharedLink, sharedLinkStreamPath, type SharedLinkView } from '../lib/shares'
 
 const POLL_MS = 6000
@@ -30,6 +31,7 @@ export default function SharedView() {
   const [busy, setBusy] = useState(false)
   const [elapsed, setElapsed] = useState(0)
   const [chatError, setChatError] = useState<string | null>(null)
+  const [errorDialog, setErrorDialog] = useState<ChatErrorInfo | null>(null)
   const [reference, setReference] = useState<{ article: number; sources: SourceRef[] } | null>(null)
   const abortRef = useRef<AbortController | null>(null)
   const startedAtRef = useRef(0)
@@ -92,27 +94,6 @@ export default function SharedView() {
     if (el) stickRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80
   }
 
-  const describeError = (err: unknown): string => {
-    if (err instanceof ChatStreamError) {
-      if (err.code === 'CONVERSATION_BUSY') return t('chat.errConvBusy')
-      if (err.code === 'SERVER_BUSY') return t('chat.errBusy')
-      if (err.code === 'STREAM_INTERRUPTED') return t('chat.errInterrupted')
-      return t('chat.errLlm')
-    }
-    if (err instanceof ApiError) {
-      if (err.status === 403) return t('chat.errReadOnly')
-      if (err.status === 409) return t('chat.errConvBusy')
-      if (err.status === 429) {
-        const info = parseRateLimit(err.message)
-        return info
-          ? fillTemplate(t('chat.errTooManyMessagesLimit'), { limit: info.limit, amount: info.amount, unit: t(`chat.unit.${info.unit}`) })
-          : t('chat.errTooManyMessages')
-      }
-      if (err.status === 503) return t('chat.errBusy')
-    }
-    return t('chat.errNetwork')
-  }
-
   const send = async (text: string) => {
     const content = text.trim()
     if (!content || busy || !view?.can_chat) return
@@ -155,7 +136,7 @@ export default function SharedView() {
     } catch (err) {
       setMessages((list) => list.filter((m) => m.id !== userId && m.id !== tempBotId))
       setDraft((current) => current || content)
-      if (!(err instanceof DOMException && err.name === 'AbortError')) setChatError(describeError(err))
+      if (!(err instanceof DOMException && err.name === 'AbortError')) setErrorDialog(classifyChatError(err, t))
     } finally {
       abortRef.current = null
       setBusy(false)
@@ -221,6 +202,7 @@ export default function SharedView() {
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-surface">
       {header}
+      <ChatErrorDialog error={errorDialog} onClose={() => setErrorDialog(null)} />
       <div className="flex min-h-0 flex-1">
         <main className="flex min-h-0 min-w-0 flex-1 flex-col">
           <div className="border-b border-line px-4 py-3 sm:px-8">

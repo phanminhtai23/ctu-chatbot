@@ -85,7 +85,9 @@ def test_11th_message_in_5_minutes_is_rejected(client, auth_headers):
 
     res = _send(client, auth_headers, conv_id, "câu thứ 11")
     assert res.status_code == 429
-    assert res.json()["detail"] == {"code": "RATE_LIMITED", "limit": 10, "window": {"amount": 5, "unit": "m"}}
+    detail = res.json()["detail"]
+    assert detail["code"] == "RATE_LIMITED" and detail["limit"] == 10 and detail["window"] == {"amount": 5, "unit": "m"}
+    assert detail["retry_after"] == int(res.headers["Retry-After"])
     assert 1 <= int(res.headers["Retry-After"]) <= 300
 
 

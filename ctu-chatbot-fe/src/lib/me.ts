@@ -15,6 +15,8 @@ export type UserProfile = {
   timezone: string // IANA, ví dụ Asia/Ho_Chi_Minh
   language: Language
   theme: ThemeMode
+  /** false = tài khoản mới, chưa hiện hộp thoại chào mừng */
+  welcomed: boolean
 }
 
 export type UserUpdate = Partial<Pick<UserProfile, 'name' | 'birthday' | 'timezone' | 'theme'>>
@@ -33,6 +35,11 @@ export function devLogin(email: string): Promise<TokenResponse> {
 /** Thu hồi refresh token ở server (đăng xuất thật sự). */
 export function revokeSession(refreshToken: string): Promise<null> {
   return apiFetch('/api/v1/auth/logout', { method: 'POST', body: JSON.stringify({ refresh_token: refreshToken }) })
+}
+
+/** Báo server đã chào mừng người dùng mới (hộp thoại pháo hoa chỉ hiện một lần). */
+export function markWelcomed(): Promise<UserProfile> {
+  return apiFetch('/api/v1/me/welcome', { method: 'POST' })
 }
 
 export function getMe(): Promise<UserProfile> {

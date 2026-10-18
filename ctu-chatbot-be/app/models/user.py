@@ -31,7 +31,14 @@ class User(Base):
     role: Mapped[str] = mapped_column(String(10), default="user", server_default="user")
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    # Lúc người dùng được chào mừng lần đầu (hộp thoại pháo hoa sau khi đăng ký). None = chưa chào mừng.
+    welcomed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    @property
+    def welcomed(self) -> bool:
+        return self.welcomed_at is not None
+
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )

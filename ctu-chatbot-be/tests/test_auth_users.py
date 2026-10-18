@@ -81,3 +81,33 @@ def test_update_me_rejects_invalid_values(client, auth_headers):
     ):
         res = client.patch("/api/v1/me", headers=auth_headers, json=bad)
         assert res.status_code == 422, bad
+
+
+# ---- chào mừng người dùng mới ----
+
+
+def test_new_account_is_not_welcomed_until_the_welcome_is_marked(client, auth_headers):
+    assert client.get("/api/v1/me", headers=auth_headers).json()["welcomed"] is False
+    res = client.post("/api/v1/me/welcome", headers=auth_headers)
+    assert res.status_code == 200 and res.json()["welcomed"] is True
+    assert client.get("/api/v1/me", headers=auth_headers).json()["welcomed"] is True
+
+
+def test_marking_welcomed_twice_changes_nothing(client, auth_headers, session_factory):
+    from app.models import User
+
+    client.post("/api/v1/me/welcome", headers=auth_headers)
+    with session_factory() as db:
+        first = db.query(User).one().welcomed_at
+    client.post("/api/v1/me/welcome", headers=auth_headers)
+    with session_factory() as db:
+        assert db.query(User).one().welcomed_at == first
+
+
+def test_welcome_requires_login(client):
+    assert client.post("/api/v1/me/welcome").status_code == 401
+
+
+def test_login_response_carries_the_welcomed_flag(client):
+    res = client.post("/api/v1/auth/dev-login", json={"email": "b2100077@student.ctu.edu.vn"})
+    assert res.json()["user"]["welcomed"] is False

@@ -5,6 +5,7 @@ import Composer from '../components/chat/Composer'
 import ConversationList from '../components/chat/ConversationList'
 import MessageBubble, { type UiMessage } from '../components/chat/MessageBubble'
 import ReferencePanel from '../components/chat/ReferencePanel'
+import ChatErrorDialog from '../components/ChatErrorDialog'
 import ConfirmDialog from '../components/ConfirmDialog'
 import FeedbackModal from '../components/FeedbackModal'
 import Icon from '../components/Icon'
@@ -16,7 +17,6 @@ import Sidebar, { labelClass, useSidebarCollapsed } from '../components/Sidebar'
 import { useI18n } from '../i18n'
 import { ApiError } from '../lib/api'
 import {
-  ChatStreamError,
   createConversation,
   deleteConversation,
   getConversation,
@@ -28,7 +28,7 @@ import {
   type SourceRef,
 } from '../lib/conversations'
 import type { FeedbackType } from '../lib/feedback'
-import { fillTemplate, parseRateLimit } from '../lib/format'
+import { classifyChatError, type ChatErrorInfo } from '../lib/chatErrors'
 import { listSharedWithMe, type SharedWithMe } from '../lib/shares'
 import { getSuggestions, type Suggestion } from '../lib/suggestions'
 
@@ -166,6 +166,8 @@ export default function Chat() {
     busyRef.current = busy
   }, [busy])
   const [chatError, setChatError] = useState<string | null>(null)
+  // Lỗi khi gửi tin (bị giới hạn tốc độ, chatbot bận, lỗi LLM...) hiện trong hộp thoại có GIF; lỗi khác vẫn dùng banner.
+  const [errorDialog, setErrorDialog] = useState<ChatErrorInfo | null>(null)
   const [elapsed, setElapsed] = useState(0)
   const abortRef = useRef<AbortController | null>(null)
   const startedAtRef = useRef(0)
@@ -176,40 +178,6 @@ export default function Chat() {
     const id = setInterval(() => setElapsed((performance.now() - startedAtRef.current) / 1000), 100)
     return () => clearInterval(id)
   }, [busy])
-
-  const describeError = useCallback(
-    (err: unknown): string => {
-      if (err instanceof ChatStreamError) {
-        switch (err.code) {
-          case 'LLM_RATE_LIMITED':
-            return `${t('chat.errRateLimited')}${err.retryAfter ?? ''}${t('chat.errRateLimitedSuffix')}`
-          case 'SERVER_BUSY':
-            return t('chat.errBusy')
-          case 'CONVERSATION_BUSY':
-            return t('chat.errConvBusy')
-          case 'LLM_NOT_CONFIGURED':
-            return t('chat.errNotConfigured')
-          case 'STREAM_INTERRUPTED':
-            return t('chat.errInterrupted')
-          default:
-            return t('chat.errLlm')
-        }
-      }
-      if (err instanceof ApiError && err.status === 503 && err.message.includes('SERVER_BUSY')) return t('chat.errBusy')
-      if (err instanceof ApiError && err.status === 403 && err.message.includes('READ_ONLY')) return t('chat.errReadOnly')
-      if (err instanceof ApiError && err.status === 409 && err.message.includes('CONVERSATION_BUSY')) return t('chat.errConvBusy')
-      if (err instanceof ApiError && err.status === 429 && err.message.includes('TURN_IN_PROGRESS')) return t('chat.errTurnInProgress')
-      if (err instanceof ApiError && err.status === 429) {
-        const info = parseRateLimit(err.message)
-        return info
-          ? fillTemplate(t('chat.errTooManyMessagesLimit'), { limit: info.limit, amount: info.amount, unit: t(`chat.unit.${info.unit}`) })
-          : t('chat.errTooManyMessages')
-      }
-      if (err instanceof ApiError) return t('chat.errLlm')
-      return t('chat.errNetwork')
-    },
-    [t],
-  )
 
   const send = useCallback(
     async (text: string) => {
@@ -280,7 +248,7 @@ export default function Chat() {
         // Server đã gỡ tin của người dùng khỏi lịch sử nên giao diện cũng gỡ, và trả nội dung về ô nhập để gửi lại.
         setMessages((list) => list.filter((m) => m.id !== userMessageId && m.id !== tempBotId))
         setDraft((current) => current || content)
-        if (!(err instanceof DOMException && err.name === 'AbortError')) setChatError(describeError(err))
+        if (!(err instanceof DOMException && err.name === 'AbortError')) setErrorDialog(classifyChatError(err, t))
         if (createdId) {
           // Tin đầu tiên thất bại/bị dừng: đừng để lại cuộc trò chuyện trống trong danh sách.
           const orphanId = createdId
@@ -293,7 +261,7 @@ export default function Chat() {
         setBusy(false)
       }
     },
-    [busy, conversationId, describeError, navigate],
+    [busy, conversationId, navigate, t],
   )
 
   // --- Tạo cuộc trò chuyện mới: bấm nút là gọi API tạo ngay ---
@@ -397,6 +365,7 @@ export default function Chat() {
         onClose={closeFeedback}
       />
       <ProfileDialog open={profileOpen} onClose={() => setProfileOpen(false)} />
+      <ChatErrorDialog error={errorDialog} onClose={() => setErrorDialog(null)} />
       <ShareDialog
         open={shareOpen}
         conversationId={conversationId ?? null}

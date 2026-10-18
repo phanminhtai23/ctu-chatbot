@@ -22,6 +22,7 @@ class UserOut(BaseModel):
     timezone: str
     language: Language
     theme: Theme
+    welcomed: bool = False  # đã hiện hộp thoại chào mừng lần đầu chưa (false = tài khoản mới, cần chào mừng)
 
 
 class UserUpdate(BaseModel):

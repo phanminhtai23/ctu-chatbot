@@ -45,6 +45,7 @@ def _isolated_documents(monkeypatch, tmp_path):
     # Tài liệu admin đã nạp nằm trong documents_dir: test không được đọc/ghi dữ liệu thật của máy dev.
     monkeypatch.setattr(settings, "documents_dir", str(tmp_path / "documents"))
     monkeypatch.setattr(settings, "chroma_path", str(tmp_path / "chroma"))
+    monkeypatch.setattr(settings, "donate_dir", str(tmp_path / "donate"))  # ảnh QR admin tải lên
 
 
 @pytest.fixture(autouse=True)

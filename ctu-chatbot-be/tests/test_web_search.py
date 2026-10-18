@@ -92,11 +92,11 @@ def test_session_numbers_continue_across_searches_without_duplicates():
 def test_sources_follow_citations_and_fall_back_to_official():
     session, _ = _session()
     session.search("x")
-    assert session.sources_for("Học phí là ... [2]") == [{"title": "Blog", "url": OTHER.url}]
+    assert session.sources_for("Học phí là ... [2]") == [{"title": "Blog", "url": OTHER.url, "n": 2}]
     both = session.sources_for("Giá 220.000 [1, 2].")
-    assert [x["url"] for x in both] == [OFFICIAL.url, OTHER.url]
-    assert session.sources_for("Không đánh số") == [{"title": "Học phí", "url": OFFICIAL.url}]
-    assert session.sources_for("Số lạ [9]") == [{"title": "Học phí", "url": OFFICIAL.url}]
+    assert [(x["n"], x["url"]) for x in both] == [(1, OFFICIAL.url), (2, OTHER.url)]
+    assert session.sources_for("Không đánh số") == [{"title": "Học phí", "url": OFFICIAL.url, "n": 1}]
+    assert session.sources_for("Số lạ [9]") == [{"title": "Học phí", "url": OFFICIAL.url, "n": 1}]
 
 
 def test_tool_is_named_web_search_and_runs():

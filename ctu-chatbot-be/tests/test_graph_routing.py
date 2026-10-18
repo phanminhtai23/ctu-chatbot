@@ -68,7 +68,7 @@ def test_external_question_uses_web_search_and_returns_web_sources(monkeypatch):
     llm = RoutedLLM(scope.EXTERNAL)
     reply, session, _ = _run(llm, monkeypatch)
     assert reply.additional_kwargs["route"] == scope.EXTERNAL
-    assert reply.additional_kwargs["sources"] == [{"title": "Học phí CTU", "url": OFFICIAL.url}]
+    assert reply.additional_kwargs["sources"] == [{"title": "Học phí CTU", "url": OFFICIAL.url, "n": 1}]
     assert llm.tool_names[0] == ["web_search"]
     assert "Điều 14. Cảnh báo" not in llm.systems[0]  # không nhồi ngữ cảnh quy chế vào câu hỏi ngoài quy chế
     assert len(session.results) == 1

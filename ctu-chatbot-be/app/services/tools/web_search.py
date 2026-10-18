@@ -178,10 +178,10 @@ class WebSearchSession:
         cited = sorted(
             {int(n) for group in re.findall(r"\[(\d{1,2}(?:\s*[,;]\s*\d{1,2})*)\]", answer) for n in re.findall(r"\d+", group)}
         )  # nhận cả "[1]" lẫn "[1, 2]"
-        chosen = [self.results[n - 1] for n in cited if 1 <= n <= len(self.results)]
+        chosen = [(n, self.results[n - 1]) for n in cited if 1 <= n <= len(self.results)]
         if not chosen:
-            chosen = [r for r in self.results if r.official][:3]
-        return [{"title": r.title, "url": r.url} for r in chosen]
+            chosen = [(i, r) for i, r in enumerate(self.results, 1) if r.official][:3]
+        return [{"title": r.title, "url": r.url, "n": n} for n, r in chosen]
 
     def as_tool(self) -> StructuredTool:
         return StructuredTool.from_function(

@@ -278,7 +278,7 @@ def test_message_api_returns_sources_for_the_assistant_reply(client, auth_header
     body = res.json()
     assert body["user_message"]["sources"] == []
     assert body["assistant_message"]["sources"] == [
-        {"article": 14, "title": "Số tín chỉ đăng ký trong một học kỳ", "url": None}
+        {"article": 14, "title": "Số tín chỉ đăng ký trong một học kỳ", "url": None, "n": None}
     ]
 
     # mở lại cuộc trò chuyện (đọc từ checkpoint) vẫn còn tham chiếu

@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_chat_graph, get_current_user
 from app.db.session import get_db, get_sessionmaker
-from app.models import Conversation, User
+from app.models import Conversation, ConversationShare, User
 from app.schemas.conversation import (
     ChatMessageOut,
     ConversationDetail,
@@ -22,8 +22,9 @@ from app.schemas.conversation import (
     SendMessageIn,
     SendMessageOut,
 )
+from app.services import sharing
 from app.services.chat import suggested
-from app.services.chat.queue import QueueFull, QueueTimeout, Ticket, UserBusy, get_turn_queue
+from app.services.chat.queue import QueueFull, QueueTimeout, Ticket, UserBusy, conversation_guard, get_turn_queue
 from app.services.chat.service import cached_turn, delete_thread, get_history, run_turn, stream_cached_turn, stream_turn
 from app.services.llm.gemini import LLMError, LLMNotConfigured, LLMUnavailable
 from app.services.rate_limit import chat_limiter
@@ -47,6 +48,22 @@ def _owned(db: Session, user: User, conversation_id: uuid.UUID) -> Conversation:
     if conv is None or conv.user_id != user.id:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Conversation not found")
     return conv
+
+
+def _accessible(db: Session, user: User, conversation_id: uuid.UUID, need: str = "view") -> tuple[Conversation, str]:
+    """Cuộc trò chuyện của mình hoặc được chia sẻ cho mình. need='chat' đòi quyền chat tiếp; không đủ quyền thì 404/403."""
+    conv = db.get(Conversation, conversation_id)
+    level = sharing.access_level(db, user, conv) if conv is not None else None
+    if level is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Conversation not found")
+    if need == "chat" and level == sharing.VIEW:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="READ_ONLY")
+    return conv, level
+
+
+def _author(user: User, level: str) -> str | None:
+    """Tên người gửi để gắn vào tin nhắn khi KHÔNG phải chủ cuộc trò chuyện."""
+    return None if level == sharing.OWNER else sharing.display_name(user)
 
 
 def _enforce_rate_limit(user: User) -> None:
@@ -124,14 +141,17 @@ def get_conversation(
     db: Session = Depends(get_db),
     graph=Depends(get_chat_graph),
 ):
-    conv = _owned(db, user, conversation_id)
+    conv, level = _accessible(db, user, conversation_id)
     messages = get_history(graph, conv.id)
+    owner = db.get(User, conv.user_id)
     return ConversationDetail(
         id=conv.id,
         title=conv.title,
         created_at=conv.created_at,
         updated_at=conv.updated_at,
         messages=[ChatMessageOut(**asdict(m)) for m in messages],
+        access=level,
+        owner_name=sharing.display_name(owner) if owner else "",
     )
 
 
@@ -157,20 +177,24 @@ def send_message(
     db: Session = Depends(get_db),
     graph=Depends(get_chat_graph),
 ):
-    conv = _owned(db, user, conversation_id)
-    conv_id, user_id = conv.id, user.id
+    conv, level = _accessible(db, user, conversation_id, need="chat")
+    conv_id, user_id, author = conv.id, user.id, _author(user, level)
     db.rollback()  # trả kết nối DB về pool trong lúc chờ LLM (có thể mất vài chục giây)
     # Câu hỏi gợi ý: trả lời có sẵn, không gọi LLM và không tính vào giới hạn chat.
     hit = suggested.lookup(body.content)
     ticket = _admit(user, hit)
 
+    holding = False
     try:
         if hit is not None:
-            user_msg, bot_msg = cached_turn(graph, conv_id, body.content, hit)
+            user_msg, bot_msg = cached_turn(graph, conv_id, body.content, hit, author_name=author)
         else:
             for _ in get_turn_queue().wait(ticket):  # chờ tới lượt (không có sự kiện để báo vì đây là request thường)
                 pass
-            user_msg, bot_msg = run_turn(graph, conv_id, body.content)
+            holding = conversation_guard.acquire(conv_id)
+            if not holding:
+                raise HTTPException(status.HTTP_409_CONFLICT, detail="CONVERSATION_BUSY")
+            user_msg, bot_msg = run_turn(graph, conv_id, body.content, author)
     except QueueTimeout as exc:
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE, detail="SERVER_BUSY", headers={"Retry-After": str(exc.retry_after)}
@@ -186,6 +210,8 @@ def send_message(
     except LLMError:
         raise HTTPException(status.HTTP_502_BAD_GATEWAY, detail="LLM_ERROR") from None
     finally:
+        if holding:
+            conversation_guard.release(conv_id)
         if ticket is not None:
             get_turn_queue().release(ticket)
 
@@ -217,24 +243,36 @@ def stream_message(
     """Gửi tin và nhận câu trả lời dạng stream (Server-Sent Events).
 
     Sự kiện: (`queued` {position} nếu phải xếp hàng) → `start` {user_message} → nhiều `token` {text} → `done` {assistant_message, conversation}.
-    Lỗi giữa chừng: `error` {code, retry_after?} với code LLM_RATE_LIMITED | SERVER_BUSY | LLM_NOT_CONFIGURED | LLM_ERROR | INTERNAL_ERROR.
-    Kiểm tra quyền sở hữu, nội dung và giới hạn tốc độ được làm TRƯỚC khi bắt đầu stream nên các lỗi đó
-    vẫn là HTTP 404/422/429 bình thường.
+    Lỗi giữa chừng: `error` {code, retry_after?} với code LLM_RATE_LIMITED | SERVER_BUSY | CONVERSATION_BUSY | LLM_NOT_CONFIGURED | LLM_ERROR | INTERNAL_ERROR.
+    Kiểm tra quyền truy cập, nội dung và giới hạn tốc độ được làm TRƯỚC khi bắt đầu stream nên các lỗi đó
+    vẫn là HTTP 404/403/422/429 bình thường. Người được chia sẻ quyền 'chat' cũng gửi tin vào đây.
     """
-    conv = _owned(db, user, conversation_id)
+    conv, level = _accessible(db, user, conversation_id, need="chat")
+    return stream_response(db, user, conv, body, graph, sessionmaker, author=_author(user, level))
+
+
+def stream_response(
+    db: Session, user: User, conv: Conversation, body: SendMessageIn, graph, sessionmaker, author: str | None
+) -> StreamingResponse:
+    """Phần dùng chung của mọi cách gửi tin có stream (chủ sở hữu, được chia sẻ theo email, liên kết chia sẻ có quyền chat)."""
     conv_id, user_id = conv.id, user.id
     db.rollback()
     hit = suggested.lookup(body.content)  # câu hỏi gợi ý: trả lời có sẵn, không gọi LLM, không tính giới hạn chat
     ticket = _admit(user, hit)
 
     def events() -> Iterator[str]:
+        holding = False
         try:
             if hit is not None:
-                turn = stream_cached_turn(graph, conv_id, body.content, hit)
+                turn = stream_cached_turn(graph, conv_id, body.content, hit, author_name=author)
             else:
                 for position in get_turn_queue().wait(ticket):  # đông người thì xếp hàng, báo vị trí cho client
                     yield _sse("queued", {"position": position})
-                turn = stream_turn(graph, conv_id, body.content)
+                holding = conversation_guard.acquire(conv_id)  # hai người cùng chat vào một cuộc trò chuyện: lần lượt
+                if not holding:
+                    yield _sse("error", {"code": "CONVERSATION_BUSY"})
+                    return
+                turn = stream_turn(graph, conv_id, body.content, author)
             for event in turn:
                 kind = event["type"]
                 if kind == "user_message":
@@ -265,6 +303,8 @@ def stream_message(
             logger.exception("Lỗi không mong đợi khi stream câu trả lời")
             yield _sse("error", {"code": "INTERNAL_ERROR"})
         finally:
+            if holding:
+                conversation_guard.release(conv_id)
             if ticket is not None:
                 get_turn_queue().release(ticket)  # luôn trả chỗ, kể cả khi client ngắt kết nối giữa chừng
 
@@ -284,6 +324,8 @@ def delete_conversation(
 ):
     conv = _owned(db, user, conversation_id)
     delete_thread(graph, conv.id)  # xoá cả lịch sử trong checkpoint
+    for share in db.scalars(select(ConversationShare).where(ConversationShare.conversation_id == conv.id)):
+        db.delete(share)  # SQLite (test) không tự xoá dây chuyền như Postgres
     db.delete(conv)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)

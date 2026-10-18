@@ -40,6 +40,17 @@ def get_current_user(
     return user
 
 
+def get_optional_user(
+    credentials: HTTPAuthorizationCredentials | None = Depends(bearer),
+    db: Session = Depends(get_db),
+) -> User | None:
+    """Người dùng đã đăng nhập hợp lệ, hoặc None (khách). Dùng cho trang công khai có thêm tính năng khi đã đăng nhập."""
+    try:
+        return get_current_user(credentials, db)
+    except HTTPException:
+        return None
+
+
 def get_ingest_manager(request: Request):
     """Bộ điều phối các lần nạp tài liệu (dựng một lần lúc khởi động app)."""
     return request.app.state.ingest_manager

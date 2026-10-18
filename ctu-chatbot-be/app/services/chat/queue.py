@@ -155,6 +155,27 @@ class TurnQueue:
             self._finish(ticket)
 
 
+class ConversationGuard:
+    """Mỗi cuộc trò chuyện chỉ chạy MỘT lượt tại một thời điểm: khi được chia sẻ cho nhiều người chat, hai lượt cùng lúc
+    sẽ ghi lẫn vào lịch sử (checkpoint) của nhau."""
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._active: set = set()
+
+    def acquire(self, conversation_id) -> bool:
+        with self._lock:
+            if conversation_id in self._active:
+                return False
+            self._active.add(conversation_id)
+            return True
+
+    def release(self, conversation_id) -> None:
+        with self._lock:
+            self._active.discard(conversation_id)
+
+
+conversation_guard = ConversationGuard()
 turn_queue: TurnQueue | None = None
 
 

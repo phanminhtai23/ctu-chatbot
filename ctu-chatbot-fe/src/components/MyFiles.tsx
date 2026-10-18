@@ -1,54 +1,49 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useI18n } from '../i18n'
-import { deleteFile, fileErrorCode, uploadFile, type FileListing } from '../lib/files'
-import { fillTemplate, formatBytes } from '../lib/format'
+import { deleteFile, fileErrorCode, type FileListing } from '../lib/files'
+import { formatBytes } from '../lib/format'
 import { useFormatDate } from '../hooks/useFormatDate'
 import { fileErrorMessage } from './fileErrors'
 import Icon from './Icon'
 
-/** Thanh dung lượng đã dùng / tối đa. Đổi màu khi gần đầy. */
-export function UsageBar({ used, quota }: { used: number; quota: number }) {
+/** Thanh dung lượng đã dùng / tối đa. Đổi màu khi gần đầy. `sidebar` = bản gọn chữ trắng cho thanh bên tối. */
+export function UsageBar({ used, quota, variant = 'card' }: { used: number; quota: number; variant?: 'card' | 'sidebar' }) {
   const { t } = useI18n()
   const percent = quota > 0 ? Math.min(100, Math.round((used / quota) * 100)) : 0
-  const tone = percent >= 90 ? 'bg-[#D64545]' : percent >= 70 ? 'bg-ctu-gold-active' : 'bg-accent'
+  const sidebar = variant === 'sidebar'
+  const tone = percent >= 90 ? 'bg-[#FF6B6B]' : percent >= 70 ? 'bg-ctu-gold-active' : sidebar ? 'bg-ctu-cyan' : 'bg-accent'
   return (
     <div>
-      <div className="mb-1.5 flex items-baseline justify-between gap-3 text-sm">
+      <div className={`flex items-baseline justify-between gap-3 ${sidebar ? 'mb-1 text-xs text-white/85' : 'mb-1.5 text-sm'}`}>
         <span>{t('files.usage')}</span>
-        <strong className="font-semibold tabular-nums text-heading">
+        <strong className={`font-semibold tabular-nums ${sidebar ? 'text-white' : 'text-heading'}`}>
           {formatBytes(used)} / {formatBytes(quota)}
         </strong>
       </div>
-      <div role="progressbar" aria-valuemin={0} aria-valuemax={quota} aria-valuenow={used} aria-label={t('files.usage')} className="h-2.5 overflow-hidden rounded-full bg-tint">
+      <div
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={quota}
+        aria-valuenow={used}
+        aria-label={t('files.usage')}
+        className={`overflow-hidden rounded-full ${sidebar ? 'h-1.5 bg-white/20' : 'h-2.5 bg-tint'}`}
+      >
         <div className={`h-full rounded-full ${tone}`} style={{ width: `${percent}%` }} />
       </div>
     </div>
   )
 }
 
-/** Tệp (PDF / ảnh) người dùng đã tải lên: xem dung lượng đã dùng, tải thêm, xoá bớt. */
+/** Tệp (PDF / ảnh) người dùng đã gửi trong lúc trò chuyện: xem dung lượng đã dùng và xoá bớt. Không có nút tải lên ở đây. */
 export default function MyFiles({ listing, onChange }: { listing: FileListing | null; onChange: (next: FileListing) => void }) {
   const { t } = useI18n()
   const formatDate = useFormatDate()
-  const inputRef = useRef<HTMLInputElement>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [confirmId, setConfirmId] = useState<string | null>(null)
 
   if (!listing) return null
   const attachments = listing.items.filter((f) => f.kind === 'attachment')
-
-  const handleUpload = async (file: File) => {
-    setBusy(true)
-    setError(null)
-    try {
-      onChange(await uploadFile(file))
-    } catch (err) {
-      setError(fileErrorMessage(fileErrorCode(err), t, listing.max_upload_bytes))
-    } finally {
-      setBusy(false)
-    }
-  }
 
   const handleDelete = async (id: string) => {
     if (confirmId !== id) {
@@ -110,34 +105,11 @@ export default function MyFiles({ listing, onChange }: { listing: FileListing | 
         </ul>
       )}
 
-      <div className="mt-4 flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          disabled={busy || listing.used_bytes >= listing.quota_bytes}
-          onClick={() => inputRef.current?.click()}
-          className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-lg border-0 bg-ctu-navy px-4 py-2 font-sans text-sm font-semibold text-white hover:bg-ctu-navy-dark disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <Icon name="upload" size={18} />
-          {t(busy ? 'files.uploading' : 'files.upload')}
-        </button>
-        <span className="text-xs">{fillTemplate(t('files.uploadHint'), { max: formatBytes(listing.max_upload_bytes) })}</span>
-      </div>
       {error && (
         <p role="alert" className="mb-0 mt-3 text-sm text-[#8A1216] dark:text-[#FFB4B7]">
           {error}
         </p>
       )}
-      <input
-        ref={inputRef}
-        type="file"
-        accept="application/pdf,image/png,image/jpeg,image/webp"
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0]
-          e.target.value = ''
-          if (file) handleUpload(file)
-        }}
-      />
     </section>
   )
 }

@@ -12,11 +12,13 @@ import FeedbackModal from '../components/FeedbackModal'
 import Icon from '../components/Icon'
 import Logo from '../components/Logo'
 import PrefToggles from '../components/PrefToggles'
+import { UsageBar } from '../components/MyFiles'
 import ProfileDialog from '../components/ProfileDialog'
 import ShareDialog from '../components/ShareDialog'
 import Sidebar, { labelClass, useSidebarCollapsed } from '../components/Sidebar'
 import { useI18n } from '../i18n'
 import { ApiError } from '../lib/api'
+import { listFiles } from '../lib/files'
 import {
   createConversation,
   deleteConversation,
@@ -302,6 +304,16 @@ export default function Chat() {
   // --- Đổi tên / xoá ---
   const [deleteTarget, setDeleteTarget] = useState<Conversation | null>(null)
   const [profileOpen, setProfileOpen] = useState(false)
+  // Dung lượng file đã dùng / tối đa (hiện ở thanh bên); lấy lại mỗi khi đóng hộp thoại hồ sơ (nơi xoá bớt tệp).
+  const [usage, setUsage] = useState<{ used: number; quota: number } | null>(null)
+  const refreshUsage = useCallback(() => {
+    listFiles()
+      .then((l) => setUsage({ used: l.used_bytes, quota: l.quota_bytes }))
+      .catch(() => {}) // lỗi thì ẩn thanh dung lượng, không ảnh hưởng chat
+  }, [])
+  useEffect(() => {
+    refreshUsage()
+  }, [refreshUsage])
   const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const handleRename = async (id: string, title: string) => {
@@ -366,7 +378,13 @@ export default function Chat() {
         messageId={feedback.messageId}
         onClose={closeFeedback}
       />
-      <ProfileDialog open={profileOpen} onClose={() => setProfileOpen(false)} />
+      <ProfileDialog
+        open={profileOpen}
+        onClose={() => {
+          setProfileOpen(false)
+          refreshUsage()
+        }}
+      />
       <ChatErrorDialog error={errorDialog} onClose={() => setErrorDialog(null)} />
       <ShareDialog
         open={shareOpen}
@@ -396,6 +414,12 @@ export default function Chat() {
         subtitle={t('brand.appSub')}
         switchTo={user?.role === 'admin' ? { to: '/admin/dashboard', label: t('chat.adminLink'), icon: 'chart' } : undefined}
         footer={
+          <div>
+            {usage && (
+              <div className={`mb-3 px-1 ${labelClass(collapsed)}`}>
+                <UsageBar used={usage.used} quota={usage.quota} variant="sidebar" />
+              </div>
+            )}
           <div className={`flex items-center gap-3 ${collapsed ? 'md:justify-center' : ''}`}>
             <Avatar src={user?.avatar_url} name={displayName} />
             <div className={`min-w-0 flex-1 leading-snug ${labelClass(collapsed)}`}>
@@ -413,6 +437,7 @@ export default function Chat() {
             >
               <Icon name="settings" />
             </button>
+          </div>
           </div>
         }
       >

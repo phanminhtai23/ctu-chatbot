@@ -39,7 +39,12 @@ Ngoài ra cần: **API key Gemini** (LLM + embedding) và **OAuth Client ID củ
 2. Mục **Authorized JavaScript origins**: thêm địa chỉ frontend (ví dụ `https://chatbot.example.edu.vn`).
 3. Lấy **Client ID**, dùng cho cả backend (`GOOGLE_CLIENT_ID`) và frontend (`VITE_GOOGLE_CLIENT_ID`).
 
-### 2.3. PostgreSQL
+### 2.3. Cloudinary (lưu file người dùng)
+- Tạo tài khoản Cloudinary (gói miễn phí đủ để thử), lấy Cloud name, API Key, API Secret ở Dashboard.
+- Ảnh đại diện lưu công khai; PDF/ảnh tải lên lưu dạng `authenticated` (URL có chữ ký). Không cần cấu hình gì thêm trên Cloudinary.
+- Ảnh đại diện mặc định ngẫu nhiên lấy từ DiceBear (`api.dicebear.com`), máy người dùng phải truy cập được tên miền này.
+
+### 2.4. PostgreSQL
 - Tạo database và user riêng, ví dụ `ctu_chatbot`.
 - Chuỗi kết nối dạng `postgresql://USER:PASSWORD@HOST:5432/ctu_chatbot` (dịch vụ ngoài thường yêu cầu thêm `?sslmode=require`).
 - Chạy thử cục bộ bằng `docker compose up -d db` (xem `docker-compose.yml`, cổng 5433). **Đừng dùng mật khẩu mẫu trong file đó ở production.**
@@ -63,7 +68,7 @@ Sao chép `.env.example` thành `.env` rồi chỉnh. **Không commit file này.
 |---|---|
 | `ENV` | Đặt **`prod`** (khác `dev`). Khi đó endpoint `/auth/dev-login` (đăng nhập không cần Google) bị tắt. |
 | `SECRET_KEY` | **Bắt buộc đổi** thành chuỗi ngẫu nhiên dài: `python -c "import secrets; print(secrets.token_urlsafe(64))"`. Đổi key này sẽ làm mọi người phải đăng nhập lại. |
-| `DATABASE_URL` | Chuỗi kết nối Postgres ở 2.3. |
+| `DATABASE_URL` | Chuỗi kết nối Postgres ở 2.4. |
 | `GEMINI_API_KEY_1..9` | Key Gemini (2.1). Cần ít nhất 1 key. |
 | `LLM_MODEL` | Mặc định `gemini-3.5-flash-lite`. |
 | `GOOGLE_CLIENT_ID` | Client ID ở 2.2. Để trống thì tắt đăng nhập Google. |
@@ -72,6 +77,8 @@ Sao chép `.env.example` thành `.env` rồi chỉnh. **Không commit file này.
 | `CORS_ORIGINS` | Danh sách JSON các địa chỉ frontend được gọi API, ví dụ `["https://chatbot.example.edu.vn"]`. Mặc định chỉ có localhost, quên chỉnh là trình duyệt sẽ báo lỗi CORS. |
 | `CHAT_RATE_LIMIT` | Giới hạn mỗi người dùng. Khuyến nghị `10/5m,40/1d` (xem mục 6). |
 | `CHAT_MAX_CONCURRENT` | Số lượt chat chạy đồng thời, mặc định 4; tăng lên 8 nếu hạn mức Gemini đủ. |
+| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, `CLOUDINARY_FOLDER` | Nơi lưu ảnh đại diện và PDF/ảnh người dùng tải lên (Cloudinary Console → Dashboard → API Keys). Thiếu thì tính năng tải file trả 503. **API Secret là bí mật, chỉ để ở backend.** |
+| `USER_STORAGE_QUOTA_MB`, `USER_UPLOAD_MAX_MB` | Dung lượng tối đa mỗi người dùng (mặc định 20) và mỗi lần tải (mặc định 5), tính bằng MB. |
 | `DOCUMENT_INGEST_ENABLED` | `true` để admin tải PDF mới lên và nạp (cần ổ đĩa bền); `false` tắt hẳn các endpoint này. |
 | `WEB_SEARCH_ENABLED` | `true` cho phép bot tìm web (DuckDuckGo) với câu hỏi ngoài quy chế. |
 

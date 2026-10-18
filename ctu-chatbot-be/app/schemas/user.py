@@ -3,7 +3,7 @@ from datetime import date
 from typing import Literal
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_validator
 
 Language = Literal["vi", "en"]
 Theme = Literal["system", "light", "dark"]
@@ -17,7 +17,7 @@ class UserOut(BaseModel):
     email: str
     name: str
     birthday: date | None
-    avatar_url: str | None
+    avatar_url: str = Field(validation_alias=AliasChoices("avatar", "avatar_url"))  # luôn có ảnh (mặc định ngẫu nhiên nếu chưa đặt)
     role: Role
     timezone: str
     language: Language

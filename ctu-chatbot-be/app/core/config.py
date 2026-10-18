@@ -53,6 +53,14 @@ class Settings(BaseSettings):
     ingest_call_interval_seconds: float = 4.0  # giãn cách giữa các lần gọi Gemini để không vượt hạn mức free
     ingest_max_pdf_mb: int = 30
 
+    # Lưu file người dùng (ảnh đại diện, PDF/ảnh tải lên) trên Cloudinary. Thiếu thông tin thì các endpoint tải file trả 503.
+    cloudinary_cloud_name: str = ""
+    cloudinary_api_key: str = ""
+    cloudinary_api_secret: str = ""
+    cloudinary_folder: str = "ctu-chatbot"  # thư mục gốc trên Cloudinary
+    user_storage_quota_mb: float = 20  # tổng dung lượng tối đa mỗi người dùng (ảnh đại diện + tệp tải lên)
+    user_upload_max_mb: float = 5  # dung lượng tối đa mỗi lần tải lên
+
     # Ảnh QR ủng hộ do admin tải lên (hiện trong hộp thoại thông tin cá nhân của người dùng).
     donate_dir: str = "data/donate"  # tương đối so với ctu-chatbot-be
     donate_qr_max_mb: float = 2
@@ -90,6 +98,10 @@ class Settings(BaseSettings):
         "http://127.0.0.1:5174",
     ]
 
+
+    @property
+    def cloudinary_configured(self) -> bool:
+        return bool(self.cloudinary_cloud_name and self.cloudinary_api_key and self.cloudinary_api_secret)
 
     @property
     def gemini_api_keys(self) -> list[str]:

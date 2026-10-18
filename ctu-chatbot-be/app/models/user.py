@@ -4,6 +4,7 @@ from datetime import date, datetime
 from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, String, Uuid, func
 from sqlalchemy.orm import Mapped, mapped_column
 
+from app.core.avatar import default_avatar_url
 from app.db.base import Base
 
 
@@ -19,7 +20,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(320), unique=True, index=True)
     name: Mapped[str] = mapped_column(String(100), default="")
     birthday: Mapped[date | None] = mapped_column(Date, nullable=True)
-    # Cột sẵn cho avatar; upload chưa làm (chưa chốt nơi lưu file).
+    # Ảnh đại diện: URL ảnh người dùng tải lên (Cloudinary) hoặc ảnh ngẫu nhiên mặc định (DiceBear). NULL = dùng ảnh mặc định theo id.
     avatar_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
 
     # Cài đặt cá nhân, lưu theo user.
@@ -34,6 +35,10 @@ class User(Base):
     # Lúc người dùng được chào mừng lần đầu (hộp thoại pháo hoa sau khi đăng ký). None = chưa chào mừng.
     welcomed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    @property
+    def avatar(self) -> str:
+        return self.avatar_url or default_avatar_url(str(self.id))
 
     @property
     def welcomed(self) -> bool:

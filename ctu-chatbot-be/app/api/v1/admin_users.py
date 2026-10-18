@@ -10,7 +10,8 @@ from sqlalchemy.orm import Session
 from app.api.deps import require_admin
 from app.core.config import settings
 from app.db.session import get_db
-from app.models import Conversation, RefreshToken, UsageEvent, User
+from app.models import Conversation, RefreshToken, UsageEvent, User, UserFile
+from app.services import user_files
 from app.services.usage import user_activity
 
 router = APIRouter(prefix="/admin/users", tags=["admin"])
@@ -21,12 +22,14 @@ class UserPatch(BaseModel):
     role: Literal["user", "admin"] | None = None
 
 
-def _row(user: User, messages: int, conversations: int, last_active: datetime | None) -> dict:
+def _row(user: User, messages: int, conversations: int, last_active: datetime | None, storage_bytes: int = 0) -> dict:
     return {
         "id": str(user.id),
         "email": user.email,
         "name": user.name,
-        "avatar_url": user.avatar_url,
+        "avatar_url": user.avatar,
+        "storage_bytes": storage_bytes,
+        "storage_quota_bytes": user_files.quota_bytes(),
         "role": user.role,
         "admin_by_env": user.email in settings.admin_email_set,
         "is_active": user.is_active,
@@ -73,9 +76,17 @@ def list_users(
             select(Conversation.user_id, func.count()).where(Conversation.user_id.in_(ids)).group_by(Conversation.user_id)
         ).all()
     )
+    storage = dict(
+        db.execute(
+            select(UserFile.user_id, func.sum(UserFile.size_bytes)).where(UserFile.user_id.in_(ids)).group_by(UserFile.user_id)
+        ).all()
+    )
     return {
         "total": total,
-        "items": [_row(u, msgs.get(u.id, (0, None))[0], convs.get(u.id, 0), msgs.get(u.id, (0, None))[1]) for u in users],
+        "items": [
+            _row(u, msgs.get(u.id, (0, None))[0], convs.get(u.id, 0), msgs.get(u.id, (0, None))[1], int(storage.get(u.id, 0)))
+            for u in users
+        ],
     }
 
 
@@ -86,7 +97,7 @@ def get_user(user_id: uuid.UUID, _: User = Depends(require_admin), db: Session =
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="User not found")
     activity = user_activity(db, user.id)
     return {
-        **_row(user, activity["messages"], activity["conversations"], None),
+        **_row(user, activity["messages"], activity["conversations"], None, user_files.used_bytes(db, user.id)),
         "last_active": activity["last_active"],
         "first_active": activity["first_active"],
         "daily": activity["daily"],

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BarChart } from '../../components/admin/Charts'
+import Avatar from '../../components/Avatar'
 import ConfirmDialog from '../../components/ConfirmDialog'
 import Icon from '../../components/Icon'
 import { useAuth } from '../../auth'
@@ -8,6 +9,7 @@ import { useFormatDate } from '../../hooks/useFormatDate'
 import { useI18n } from '../../i18n'
 import type { TranslationKey } from '../../i18n/vi'
 import { ApiError } from '../../lib/api'
+import { formatBytes } from '../../lib/format'
 import { getUser, listUsers, updateUser, type AdminUser, type AdminUserDetail, type UserFilters } from '../../lib/adminStats'
 import AdminLayout from './AdminLayout'
 
@@ -29,13 +31,8 @@ function errorText(err: unknown, t: (k: TranslationKey) => string): string {
   return t('admin.users.errGeneric')
 }
 
-function Avatar({ user }: { user: AdminUser }) {
-  const initial = (user.name || user.email).trim().charAt(0).toUpperCase()
-  return (
-    <span className="flex size-9 flex-none items-center justify-center rounded-full bg-ctu-cyan text-sm font-semibold text-ctu-navy-dark">
-      {initial}
-    </span>
-  )
+function UserAvatar({ user }: { user: AdminUser }) {
+  return <Avatar src={user.avatar_url} name={user.name || user.email} className="size-9" />
 }
 
 function DetailDialog({ id, onClose }: { id: string | null; onClose: () => void }) {
@@ -85,7 +82,7 @@ function DetailDialog({ id, onClose }: { id: string | null; onClose: () => void 
       {detail && (
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-3">
-            <Avatar user={detail} />
+            <UserAvatar user={detail} />
             <div className="min-w-0">
               <div className="break-words font-semibold text-heading">{detail.name || detail.email}</div>
               <div className="break-all text-sm">{detail.email}</div>
@@ -101,6 +98,7 @@ function DetailDialog({ id, onClose }: { id: string | null; onClose: () => void 
                 [t('admin.users.firstActive'), detail.first_active ? formatDate(detail.first_active) : '—'],
                 [t('admin.users.col.messages'), String(detail.messages)],
                 [t('admin.users.col.conversations'), String(detail.conversations)],
+                [t('admin.users.col.storage'), `${formatBytes(detail.storage_bytes)} / ${formatBytes(detail.storage_quota_bytes)}`],
                 [t('profile.timezone'), detail.timezone],
               ] as const
             ).map(([label, value]) => (
@@ -239,7 +237,7 @@ export default function AdminUsers() {
       )}
 
       <div className="overflow-x-auto rounded-xl border border-line bg-surface">
-        <table className="w-full min-w-[860px] border-collapse text-sm">
+        <table className="w-full min-w-[960px] border-collapse text-sm">
           <thead>
             <tr className="border-b border-line text-left text-xs text-muted">
               <th className="px-4 py-3 font-normal">{t('admin.users.col.user')}</th>
@@ -247,6 +245,7 @@ export default function AdminUsers() {
               <th className="px-3 py-3 font-normal">{t('admin.users.col.state')}</th>
               <th className="px-3 py-3 font-normal">{t('admin.users.col.created')}</th>
               <th className="px-3 py-3 text-right font-normal">{t('admin.users.col.messages')}</th>
+              <th className="px-3 py-3 text-right font-normal">{t('admin.users.col.storage')}</th>
               <th className="px-3 py-3 font-normal">{t('admin.users.col.lastActive')}</th>
               <th className="px-4 py-3 text-right font-normal">{t('admin.users.col.actions')}</th>
             </tr>
@@ -258,7 +257,7 @@ export default function AdminUsers() {
                 <tr key={u.id} className="border-b border-line last:border-0">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <Avatar user={u} />
+                      <UserAvatar user={u} />
                       <div className="min-w-0">
                         <div className="truncate font-semibold text-heading">{u.name || u.email}{isMe && <span className="ml-2 text-xs font-normal text-muted">({t('admin.users.you')})</span>}</div>
                         <div className="truncate text-xs text-muted">{u.email}</div>
@@ -286,6 +285,9 @@ export default function AdminUsers() {
                   </td>
                   <td className="whitespace-nowrap px-3 py-3 text-heading">{formatDate(u.created_at)}</td>
                   <td className="px-3 py-3 text-right tabular-nums text-heading">{u.messages}</td>
+                  <td className={`whitespace-nowrap px-3 py-3 text-right tabular-nums ${u.storage_bytes >= u.storage_quota_bytes * 0.9 ? 'font-semibold text-[#B42318] dark:text-[#F5A3A3]' : 'text-heading'}`} title={`${formatBytes(u.storage_bytes)} / ${formatBytes(u.storage_quota_bytes)}`}>
+                    {formatBytes(u.storage_bytes)}
+                  </td>
                   <td className="whitespace-nowrap px-3 py-3 text-heading">{u.last_active ? formatDate(u.last_active) : '—'}</td>
                   <td className="whitespace-nowrap px-4 py-3 text-right">
                     <button type="button" onClick={() => setDetailId(u.id)} className="mr-2 min-h-9 cursor-pointer rounded-md border border-line bg-surface px-3 font-sans text-[13px] text-accent hover:bg-tint">

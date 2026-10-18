@@ -24,6 +24,8 @@ type AuthValue = {
   /** true khi người dùng tự bấm đăng xuất (khác với phiên hết hạn) — để không "quay lại trang cũ" ở lần đăng nhập sau */
   loggedOut: boolean
   updateProfile: (patch: UserUpdate) => Promise<UserProfile>
+  /** Cập nhật hồ sơ trong bộ nhớ khi một API khác (đổi ảnh đại diện...) đã trả về hồ sơ mới */
+  replaceUser: (user: UserProfile) => void
 }
 
 const AuthContext = createContext<AuthValue | null>(null)
@@ -106,9 +108,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return updated
   }, [])
 
+  const replaceUser = useCallback((updated: UserProfile) => setUser(updated), [])
+
   const value = useMemo(
-    () => ({ user, status, loginWithGoogle, login, logout, loggedOut, updateProfile }),
-    [user, status, loginWithGoogle, login, logout, loggedOut, updateProfile],
+    () => ({ user, status, loginWithGoogle, login, logout, loggedOut, updateProfile, replaceUser }),
+    [user, status, loginWithGoogle, login, logout, loggedOut, updateProfile, replaceUser],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

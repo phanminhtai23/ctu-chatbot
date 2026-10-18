@@ -35,7 +35,8 @@ def test_google_login_creates_user_with_role_user(client, google_enabled, monkey
     user = res.json()["user"]
     assert user["email"] == "b2100001@student.ctu.edu.vn"
     assert user["name"] == "Nguyen Van A"
-    assert user["avatar_url"] == "https://pic/a.png"
+    # Tài khoản mới nhận ảnh đại diện mặc định ngẫu nhiên, không dùng ảnh Google.
+    assert user["avatar_url"].startswith("https://api.dicebear.com/")
     assert user["role"] == "user"
     assert res.json()["access_token"]
 

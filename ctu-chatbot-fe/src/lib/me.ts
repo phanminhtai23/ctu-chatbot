@@ -10,7 +10,8 @@ export type UserProfile = {
   email: string
   name: string
   birthday: string | null // YYYY-MM-DD
-  avatar_url: string | null
+  /** Luôn có ảnh: ảnh người dùng tải lên hoặc ảnh ngẫu nhiên mặc định */
+  avatar_url: string
   role: Role
   timezone: string // IANA, ví dụ Asia/Ho_Chi_Minh
   language: Language

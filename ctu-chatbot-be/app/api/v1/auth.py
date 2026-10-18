@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.avatar import random_avatar_url
 from app.core.access import can_access, is_domain_allowed
 from app.core.config import settings
 from app.db.session import get_db
@@ -27,7 +28,8 @@ def _login(
         # Tài khoản mới là 'user' nên phải thuộc tên miền được phép; email admin trong .env được miễn.
         if not is_admin_email and not is_domain_allowed(email):
             raise HTTPException(status.HTTP_403_FORBIDDEN, detail=DOMAIN_NOT_ALLOWED)
-        user = User(email=email, name=name, avatar_url=avatar_url, role="admin" if is_admin_email else "user")
+        # Tài khoản mới nhận một ảnh đại diện mặc định ngẫu nhiên (ngộ nghĩnh); ảnh Google không dùng. Muốn đổi thì tự tải ảnh riêng.
+        user = User(email=email, name=name, avatar_url=random_avatar_url(), role="admin" if is_admin_email else "user")
         db.add(user)
         db.commit()
         db.refresh(user)

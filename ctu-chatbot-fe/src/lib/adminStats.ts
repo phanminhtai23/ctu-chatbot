@@ -84,7 +84,7 @@ export type AdminUser = {
   id: string
   email: string
   name: string
-  avatar_url: string | null
+  avatar_url: string
   role: 'user' | 'admin'
   /** Quyền admin khai báo trong ADMIN_EMAILS (.env): không hạ quyền được từ giao diện */
   admin_by_env: boolean
@@ -93,6 +93,9 @@ export type AdminUser = {
   messages: number
   conversations: number
   last_active: string | null
+  /** Dung lượng file đã tải lên (byte) và hạn mức mỗi người */
+  storage_bytes: number
+  storage_quota_bytes: number
 }
 
 export type AdminUserDetail = AdminUser & {

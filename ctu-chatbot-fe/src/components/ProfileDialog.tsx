@@ -1,12 +1,15 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth'
 import { useI18n } from '../i18n'
 import type { TranslationKey } from '../i18n/vi'
+import { listFiles, type FileListing } from '../lib/files'
 import type { ThemeMode } from '../lib/me'
 import { useTheme } from '../theme'
+import AvatarEditor from './AvatarEditor'
 import DonateSection from './DonateSection'
 import Icon from './Icon'
+import MyFiles from './MyFiles'
 
 const themeOptions: { value: ThemeMode; label: TranslationKey }[] = [
   { value: 'system', label: 'profile.theme.system' },
@@ -194,6 +197,34 @@ function ProfileForm({ onClose }: { onClose: () => void }) {
   )
 }
 
+/** Ảnh đại diện + biểu mẫu thông tin + tệp đã tải lên. Dung lượng đã dùng lấy từ server mỗi lần mở hộp thoại. */
+function ProfileBody({ onClose }: { onClose: () => void }) {
+  const [listing, setListing] = useState<FileListing | null>(null)
+  const { user } = useAuth()
+
+  const refresh = useCallback(() => {
+    listFiles()
+      .then(setListing)
+      .catch(() => {}) // không lấy được thì ẩn mục tệp, phần chỉnh hồ sơ vẫn dùng được
+  }, [])
+  useEffect(() => {
+    refresh()
+  }, [refresh])
+  // Đổi ảnh đại diện làm thay đổi dung lượng đã dùng: tải lại khi ảnh đổi.
+  const avatar = user?.avatar_url
+  useEffect(() => {
+    if (avatar) refresh()
+  }, [avatar, refresh])
+
+  return (
+    <>
+      <AvatarEditor maxBytes={listing?.max_upload_bytes ?? 5 * 1024 * 1024} />
+      <ProfileForm onClose={onClose} />
+      <MyFiles listing={listing} onChange={setListing} />
+    </>
+  )
+}
+
 type Props = { open: boolean; onClose: () => void }
 
 /** Hộp thoại chỉnh thông tin cá nhân (thay cho trang /profile cũ). */
@@ -231,7 +262,7 @@ export default function ProfileDialog({ open, onClose }: Props) {
           <Icon name="close" />
         </button>
       </div>
-      {open && <ProfileForm onClose={onClose} />}
+      {open && <ProfileBody onClose={onClose} />}
       {open && <DonateSection />}
     </dialog>
   )

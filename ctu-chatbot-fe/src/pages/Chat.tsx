@@ -5,6 +5,7 @@ import Composer from '../components/chat/Composer'
 import ConversationList from '../components/chat/ConversationList'
 import MessageBubble, { type UiMessage } from '../components/chat/MessageBubble'
 import ReferencePanel from '../components/chat/ReferencePanel'
+import Avatar from '../components/Avatar'
 import ChatErrorDialog from '../components/ChatErrorDialog'
 import ConfirmDialog from '../components/ConfirmDialog'
 import FeedbackModal from '../components/FeedbackModal'
@@ -43,7 +44,6 @@ export default function Chat() {
   const { conversationId } = useParams<{ conversationId?: string }>()
 
   const displayName = user?.name || user?.email || ''
-  const initials = displayName.trim().split(/\s+/).slice(-2).map((w) => w[0]?.toUpperCase() ?? '').join('')
   const [collapsed, toggleSidebar] = useSidebarCollapsed('ctu-chat-sidebar')
 
   // --- Danh sách cuộc trò chuyện ---
@@ -397,9 +397,7 @@ export default function Chat() {
         switchTo={user?.role === 'admin' ? { to: '/admin/dashboard', label: t('chat.adminLink'), icon: 'chart' } : undefined}
         footer={
           <div className={`flex items-center gap-3 ${collapsed ? 'md:justify-center' : ''}`}>
-            <div className="flex size-10 flex-none items-center justify-center rounded-full bg-ctu-cyan font-semibold text-ctu-navy-dark">
-              {initials}
-            </div>
+            <Avatar src={user?.avatar_url} name={displayName} />
             <div className={`min-w-0 flex-1 leading-snug ${labelClass(collapsed)}`}>
               <div className="truncate text-sm font-normal">{displayName}</div>
               <div className="truncate text-xs opacity-80">{user?.email}</div>

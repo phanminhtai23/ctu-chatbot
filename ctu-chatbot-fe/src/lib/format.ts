@@ -11,6 +11,14 @@ export function formatSeconds(seconds: number): string {
 export const fillTemplate = (template: string, vars: Record<string, string | number>) =>
   template.replace(/\{(\w+)\}/g, (_, key: string) => String(vars[key] ?? ''))
 
+/** Dung lượng dễ đọc, dấu thập phân kiểu Việt Nam: "850 KB", "3,2 MB". */
+export function formatBytes(bytes: number): string {
+  const number = (n: number) => new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 1 }).format(n)
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${number(bytes / 1024)} KB`
+  return `${number(bytes / (1024 * 1024))} MB`
+}
+
 export type RateLimitInfo = { limit: number; amount: number; unit: 's' | 'm' | 'h' | 'd' }
 
 /** Đọc giới hạn chat từ lỗi 429 của server ("tối đa N tin trong M phút"); null nếu lỗi không kèm thông tin này. */

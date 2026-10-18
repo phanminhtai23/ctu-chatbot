@@ -89,12 +89,19 @@ def collection_name(version: str) -> str:
 
 
 def prune_versions(keep: set[str], max_total: int) -> list[str]:
-    """Giữ `max_total` phiên bản mới nhất (mã phiên bản bắt đầu bằng thời gian nên sắp theo tên là sắp theo thời gian)
+    """Giữ `max_total` phiên bản mới nhất (sắp theo thời gian tạo)
     cộng các phiên bản trong `keep`; xoá phần còn lại. Trả về tên đã xoá."""
     root = versions_root()
     if not root.exists():
         return []
-    names = sorted((d.name for d in root.iterdir() if d.is_dir()), reverse=True)
+    def age_key(name: str) -> tuple[str, int]:
+        # Mã có độ phân giải giây; hai lần nạp cùng giây thì phân biệt bằng lúc ghi source.pdf (chỉ ghi một lần khi tạo).
+        try:
+            return name[:14], (root / name / "source.pdf").stat().st_mtime_ns
+        except OSError:
+            return name[:14], 0
+
+    names = sorted((d.name for d in root.iterdir() if d.is_dir()), key=age_key, reverse=True)
     survivors = set(names[: max(1, max_total)]) | keep
     removed = []
     for name in names:

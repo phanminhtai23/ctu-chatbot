@@ -1,3 +1,7 @@
+import os
+import re
+
+from dotenv import dotenv_values
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -8,7 +12,7 @@ class Settings(BaseSettings):
     database_url: str = "postgresql://ctu:ctu_dev_password@localhost:5433/ctu_chatbot"
     deepseek_api_key: str = ""
 
-    # LLM (Gemini). Điền key vào GEMINI_API_KEY_1..9 trong .env; hết hạn mức thì tự xoay sang key kế tiếp.
+    # LLM (Gemini). Điền GEMINI_API_KEY hoặc GEMINI_API_KEY_N (không giới hạn N) trong .env.
     llm_model: str = "gemini-3.5-flash-lite"
     gemini_api_key: str = ""  # key đơn (tuỳ chọn, được tính như key đầu tiên)
     gemini_api_key_1: str = ""
@@ -113,19 +117,26 @@ class Settings(BaseSettings):
 
     @property
     def gemini_api_keys(self) -> list[str]:
-        """Các key đã điền, theo thứ tự, bỏ trùng và bỏ ô trống."""
-        candidates = [
-            self.gemini_api_key,
-            self.gemini_api_key_1,
-            self.gemini_api_key_2,
-            self.gemini_api_key_3,
-            self.gemini_api_key_4,
-            self.gemini_api_key_5,
-            self.gemini_api_key_6,
-            self.gemini_api_key_7,
-            self.gemini_api_key_8,
-            self.gemini_api_key_9,
-        ]
+        """Các key đã điền theo thứ tự số, từ .env hoặc environment."""
+        numbered: dict[int, str] = {
+            i: getattr(self, f"gemini_api_key_{i}")
+            for i in range(1, 10)
+            if getattr(self, f"gemini_api_key_{i}")
+        }
+        pattern = re.compile(r"^gemini_api_key_(\d+)$", re.IGNORECASE)
+        env_file = self.model_config.get("env_file")
+        env_files = [env_file] if isinstance(env_file, str) else env_file or []
+        for path in env_files:
+            for name, value in dotenv_values(path).items():
+                match = pattern.match(name)
+                if match and value:
+                    numbered.setdefault(int(match.group(1)), value)
+        for name, value in os.environ.items():
+            match = pattern.match(name)
+            if match and value.strip():
+                numbered[int(match.group(1))] = value
+
+        candidates = [self.gemini_api_key, *(numbered[i] for i in sorted(numbered))]
         return list(dict.fromkeys(k.strip() for k in candidates if k and k.strip()))
 
 

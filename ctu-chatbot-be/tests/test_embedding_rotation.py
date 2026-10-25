@@ -112,7 +112,8 @@ def test_requires_at_least_one_key():
         GeminiEmbedder([" ", ""], "m", 768)
 
 
-def test_from_settings_prefers_embedding_key_then_shared_gemini_keys(monkeypatch):
+def test_from_settings_prefers_embedding_key_then_shared_gemini_keys(monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(settings, "embedding_model_api_key", "EMB")
     monkeypatch.setattr(settings, "gemini_api_key", "")
     for i in range(1, 10):

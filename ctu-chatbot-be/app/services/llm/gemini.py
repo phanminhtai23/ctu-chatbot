@@ -1,6 +1,9 @@
 import logging
+import math
 import re
 from collections.abc import Iterator, Sequence
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from langchain_core.messages import AIMessage, AIMessageChunk, BaseMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -11,7 +14,7 @@ from app.services.llm.key_pool import KeyPool
 logger = logging.getLogger("app.llm")
 
 INVALID_KEY_COOLDOWN = 3600  # key sai/bị thu hồi: bỏ qua 1 giờ rồi thử lại (phòng khi bạn vừa sửa key)
-DAILY_QUOTA_COOLDOWN = 3600  # hết hạn mức theo NGÀY: đừng gọi lại liên tục
+DAILY_QUOTA_MAX_COOLDOWN = 24 * 60 * 60
 
 
 class LLMNotConfigured(Exception):
@@ -69,14 +72,29 @@ def classify_error(exc: BaseException) -> str:
     return "other"
 
 
+def _daily_quota_cooldown(now: datetime | None = None) -> int:
+    """Chờ tới lần reset quota ngày tiếp theo (00:00 giờ Pacific)."""
+    pacific = ZoneInfo("America/Los_Angeles")
+    current = (now or datetime.now(pacific)).astimezone(pacific)
+    next_reset = (current + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    return max(1, math.ceil(next_reset.timestamp() - current.timestamp()))
+
+
 def retry_delay_seconds(exc: BaseException, default: int) -> int:
-    """Lấy thời gian chờ Gemini yêu cầu (ví dụ "retryDelay": "34s"), không có thì dùng mặc định."""
+    """Ưu tiên retryDelay của Gemini, nếu thiếu thì ước lượng theo cửa sổ quota."""
     text = _error_text(exc)
-    if "perday" in text.lower().replace("_", "").replace(" ", ""):
-        return DAILY_QUOTA_COOLDOWN
     match = re.search(r"retry(?:delay)?\W{1,6}(?:in\s+)?(\d+(?:\.\d+)?)\s*s", text, flags=re.IGNORECASE)
     if match:
-        return max(1, min(3600, int(float(match.group(1))) + 1))
+        return max(1, min(DAILY_QUOTA_MAX_COOLDOWN, int(float(match.group(1))) + 1))
+    metric = re.sub(r"[^a-z0-9]", "", text.lower())
+    if "perday" in metric:
+        return _daily_quota_cooldown()
+    if "perhour" in metric:
+        return 60 * 60
+    if "perminute" in metric:
+        return 60
+    if "persecond" in metric:
+        return 1
     return default
 
 

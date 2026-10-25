@@ -1,0 +1,16 @@
+.git
+.github
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+**/.venv
+**/venv
+**/node_modules
+**/dist
+**/.env
+**/.env.*
+!**/.env.example
+ctu-chatbot-be/chroma_db
+ctu-chatbot-be/data
+vector-docs/old-version

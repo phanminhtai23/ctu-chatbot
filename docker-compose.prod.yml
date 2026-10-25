@@ -1,0 +1,64 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER in server .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in server .env}
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB in server .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  backend:
+    image: ghcr.io/${IMAGE_OWNER:?Set IMAGE_OWNER}/${IMAGE_NAME:-ctu-chatbot}-backend:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    env_file:
+      - ./ctu-chatbot-be/.env
+    environment:
+      RAG_SOURCE_PATH: /vector-docs/qd3266-clean.md
+      CHROMA_PATH: /app/chroma_db
+      DOCUMENTS_DIR: /app/data/documents
+      DONATE_DIR: /app/data/donate
+    volumes:
+      - chroma_data:/app/chroma_db
+      - document_data:/app/data/documents
+      - donate_data:/app/data/donate
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=3)"
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 10m
+
+  frontend:
+    image: ghcr.io/${IMAGE_OWNER:?Set IMAGE_OWNER}/${IMAGE_NAME:-ctu-chatbot}-frontend:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  chroma_data:
+  document_data:
+  donate_data:

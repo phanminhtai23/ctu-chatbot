@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useFormatDate } from '../../hooks/useFormatDate'
 import { useI18n } from '../../i18n'
 import { articleSources, webSources, type ChatMessage, type SourceRef } from '../../lib/conversations'
@@ -64,7 +64,7 @@ function SentAt({ iso, align = 'left' }: { iso: string | null; align?: 'left' | 
   return (
     <span
       className={`pointer-events-none absolute -top-5 z-10 whitespace-nowrap text-xs text-muted opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 ${
-        align === 'right' ? 'right-1' : 'left-[50px]'
+        align === 'right' ? 'right-1' : 'left-16'
       }`}
     >
       {t('chat.sentAt')} {formatDate(iso)}
@@ -74,6 +74,7 @@ function SentAt({ iso, align = 'left' }: { iso: string | null; align?: 'left' | 
 
 export default function MessageBubble({ message, liveElapsed, onReport, onOpenReference, activeArticle }: Props) {
   const { t } = useI18n()
+  const [botAvatarUnavailable, setBotAvatarUnavailable] = useState(false)
   const sources = useMemo(() => articleSources(message.sources), [message.sources])
   const web = useMemo(() => webSources(message.sources), [message.sources])
   const content = useMemo(
@@ -118,10 +119,20 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
   const seconds = message.pending ? liveElapsed : message.duration_seconds
   const open = (article: number) => onOpenReference(article, sources)
   return (
-    <div className="group relative flex items-start gap-3.5">
+    <div className="group relative flex items-start gap-2">
       {!message.pending && <SentAt iso={message.created_at} />}
-      <div className="flex size-9 flex-none items-center justify-center rounded-full bg-ctu-navy text-ctu-gold-active">
-        <Icon name="diamond" size={18} strokeWidth={2} />
+      <div className="flex size-14 flex-none items-center justify-center overflow-hidden rounded-full">
+        {botAvatarUnavailable ? (
+          <Icon name="diamond" size={28} strokeWidth={2} />
+        ) : (
+          <img
+            src="/ctu-chatbot-avt-rm-bg-chat.png"
+            alt=""
+            aria-hidden="true"
+            className="size-full object-cover"
+            onError={() => setBotAvatarUnavailable(true)}
+          />
+        )}
       </div>
       <div className="min-w-0 flex-1">
         <div className="break-words rounded-2xl rounded-tl-sm bg-bubble-bot px-5 py-4 text-[15px] leading-[1.75] text-heading">

@@ -1,3 +1,7 @@
+import os
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 import pytest
 from langchain_core.messages import AIMessage, AIMessageChunk, HumanMessage
 
@@ -7,6 +11,7 @@ from app.services.llm.gemini import (
     LLMError,
     LLMNotConfigured,
     LLMUnavailable,
+    _daily_quota_cooldown,
     classify_error,
     retry_delay_seconds,
 )
@@ -87,7 +92,14 @@ def test_retry_delay_parsing():
     assert retry_delay_seconds(FakeApiError(429, "Please retry in 34.5s."), default=60) == 35
     assert retry_delay_seconds(FakeApiError(429, "{'retryDelay': '12s'}"), default=60) == 13
     assert retry_delay_seconds(FakeApiError(429, "no hint here"), default=60) == 60
-    assert retry_delay_seconds(FakeApiError(429, "GenerateRequestsPerDayPerProjectPerModel"), default=60) == 3600
+    assert retry_delay_seconds(FakeApiError(429, "GenerateRequestsPerDayPerProjectPerModel"), default=60) > 0
+    assert retry_delay_seconds(FakeApiError(429, "GenerateRequestsPerMinutePerProjectPerModel"), default=60) == 60
+    assert retry_delay_seconds(FakeApiError(429, "retryDelay: 90000s GenerateRequestsPerDay"), default=60) == 86400
+
+
+def test_daily_quota_cooldown_waits_until_next_pacific_midnight():
+    now = datetime(2026, 6, 1, 23, 30, tzinfo=ZoneInfo("America/Los_Angeles"))
+    assert _daily_quota_cooldown(now) == 30 * 60
 
 
 def test_not_configured_without_keys():
@@ -153,9 +165,10 @@ def test_non_key_errors_do_not_burn_other_keys(monkeypatch):
     assert log == ["k1"]  # không thử k2 vì lỗi này không phải do key
 
 
-def test_empty_and_duplicate_keys_are_ignored(monkeypatch):
+def test_empty_and_duplicate_keys_are_ignored(monkeypatch, tmp_path):
     from app.core.config import settings
 
+    monkeypatch.chdir(tmp_path)
     # Xoá sạch mọi ô key (kể cả các ô 5-9 mà .env của máy có thể đã điền) rồi mới đặt giá trị thử.
     monkeypatch.setattr(settings, "gemini_api_key", "")
     for i in range(1, 10):
@@ -164,6 +177,25 @@ def test_empty_and_duplicate_keys_are_ignored(monkeypatch):
     monkeypatch.setattr(settings, "gemini_api_key_3", "A")
     monkeypatch.setattr(settings, "gemini_api_key_4", " B ")
     assert settings.gemini_api_keys == ["A", "B"]
+
+
+def test_api_keys_beyond_nine_are_loaded_in_numeric_order(monkeypatch, tmp_path):
+    from app.core.config import Settings
+
+    for name in list(os.environ):
+        if name.upper().startswith("GEMINI_API_KEY_"):
+            monkeypatch.delenv(name)
+    monkeypatch.chdir(tmp_path)
+    env_file = tmp_path / ".env"
+    env_file.write_text(
+        "GEMINI_API_KEY_10=K10\nGEMINI_API_KEY_2=K2\nGEMINI_API_KEY_100=K100\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("GEMINI_API_KEY_10", "OVERRIDE")
+
+    configured = Settings()
+
+    assert configured.gemini_api_keys == ["K2", "OVERRIDE", "K100"]
 
 
 def test_module_exposes_logger_without_leaking_keys():

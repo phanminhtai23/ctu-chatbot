@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Icon, { type IconName } from '../components/Icon'
-import Logo from '../components/Logo'
 import PrefToggles from '../components/PrefToggles'
 import { useI18n } from '../i18n'
 import type { TranslationKey } from '../i18n/vi'
@@ -43,12 +42,17 @@ export default function Landing() {
     <div id="top" className="bg-surface">
       <header className="bg-ctu-navy text-white">
         <div className={`${container} flex flex-wrap items-center justify-between gap-4 py-4`}>
-          <Link to="/" className="flex items-center gap-3.5 text-white no-underline">
-            <Logo size={48} />
-            <div className="leading-tight">
-              <div className="text-[17px] font-semibold tracking-wide">{t('brand.uni')}</div>
-              <div className="text-[13px] font-light">{t('brand.sub')}</div>
-            </div>
+          <Link to="/" className="flex shrink-0 items-center gap-1 text-white no-underline">
+            <img
+              src="/ctu-chatbot-avt-rm-bg.png"
+              alt=""
+              aria-hidden="true"
+              className="size-16 shrink-0 object-contain"
+            />
+            <span className="leading-tight">
+              <span className="block text-sm font-semibold tracking-wide sm:text-base">{t('brand.app')}</span>
+              <span className="mt-1 block text-xs font-light sm:text-sm">{t('brand.sub')}</span>
+            </span>
           </Link>
           <nav aria-label={t('brand.mainNav')} className="flex flex-wrap items-center gap-x-7 gap-y-3 text-[15px]">
             <a href="#tinh-nang" className="text-white no-underline hover:text-ctu-gold">{t('nav.features')}</a>

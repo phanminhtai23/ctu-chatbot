@@ -3,7 +3,6 @@ import { Link, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth'
 import GoogleSignInButton from '../components/GoogleSignInButton'
 import Icon from '../components/Icon'
-import Logo from '../components/Logo'
 import PrefToggles from '../components/PrefToggles'
 import { useI18n } from '../i18n'
 import { ApiError } from '../lib/api'
@@ -63,10 +62,15 @@ export default function Login() {
     <div className="flex min-h-screen flex-wrap bg-surface">
       <div className="box-border flex min-w-0 flex-[1_1_480px] flex-col justify-between gap-4 bg-ctu-navy px-6 py-6 text-white sm:px-10 lg:gap-12 lg:px-16 lg:py-14">
         <Link to="/" className="flex items-center gap-3.5 text-white no-underline">
-          <Logo />
+          <img
+            src="/ctu-chatbot-avt-rm-bg.png"
+            alt=""
+            aria-hidden="true"
+            className="size-16 shrink-0 object-contain"
+          />
           <div className="leading-tight">
-            <div className="text-[17px] font-semibold tracking-wide">{t('brand.uni')}</div>
-            <div className="text-[13px] font-light">{t('brand.sub')}</div>
+            <div className="text-[17px] font-semibold tracking-wide">{t('brand.app')}</div>
+            <div className="text-[13px] font-light">{t('brand.appSub')}</div>
           </div>
         </Link>
         <div>

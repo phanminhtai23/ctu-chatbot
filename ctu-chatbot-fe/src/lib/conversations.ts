@@ -7,10 +7,26 @@ export type SourceRef = { article: number; title: string }
 export type WebSourceRef = { title: string; url: string; n?: number | null }
 
 /** Nguồn BE trả về: có `article` là Điều của quy chế, có `url` là trang web. */
-export type AnySourceRef = { article?: number | null; title: string; url?: string | null; n?: number | null }
+export type AnySourceRef = {
+  article?: number | null
+  title: string
+  url?: string | null
+  document_url?: string
+  n?: number | null
+}
 
 export const articleSources = (sources: AnySourceRef[] = []): SourceRef[] =>
-  sources.filter((s): s is SourceRef => typeof s.article === 'number')
+  sources.filter((s): s is SourceRef => typeof s.article === 'number' && !s.document_url)
+
+export type DocumentSourceRef = { article: number; title: string; document_url: string }
+
+export const documentSources = (sources: AnySourceRef[] = []): DocumentSourceRef[] =>
+  sources.filter(
+    (s): s is DocumentSourceRef =>
+      typeof s.article === 'number' &&
+      typeof s.document_url === 'string' &&
+      /^\/api\/v1\/documents\/catalog\/[a-z][a-z0-9-]{1,39}\/[0-9]{14}-[0-9a-f]{6}\/source$/.test(s.document_url),
+  )
 
 /** Chỉ nhận http(s): không để `javascript:` hay scheme lạ lọt vào href. */
 export const webSources = (sources: AnySourceRef[] = []): WebSourceRef[] =>

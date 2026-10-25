@@ -1,4 +1,4 @@
-"""Bộ câu hỏi kiểm thử RAG, đáp án lấy từ vector-docs/qd3266-clean.md.
+"""Bộ câu hỏi kiểm thử RAG, đáp án lấy từ vector-docs/documents/qd3266/current/clean.md.
 
 `must` là danh sách các nhóm; MỖI nhóm phải khớp ít nhất một regex (không phân biệt hoa thường) trong câu trả lời.
 `forbid` là các regex KHÔNG được khớp. `article` là Điều chứa đáp án (kiểm tra truy xuất đúng Điều).

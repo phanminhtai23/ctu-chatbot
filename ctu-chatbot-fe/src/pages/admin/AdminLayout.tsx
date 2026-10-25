@@ -48,8 +48,8 @@ export default function AdminLayout({ title, subtitle, children }: Props) {
         onToggle={toggleSidebar}
         mobileOpen={navOpen}
         onMobileClose={() => setNavOpen(false)}
-        title={t('admin.title')}
-        subtitle={t('brand.app')}
+        title={t('brand.app')}
+        subtitle={t('admin.title')}
         switchTo={{ to: '/chat', label: t('admin.nav.chat'), icon: 'chat' }}
         footer={
           <button

@@ -35,7 +35,7 @@ class Hit:
 def default_source_path() -> Path:
     if settings.rag_source_path:
         return Path(settings.rag_source_path)
-    return _BACKEND_DIR.parent / "vector-docs" / "qd3266-clean.md"
+    return _BACKEND_DIR.parent / "vector-docs" / "documents" / "qd3266" / "current" / "clean.md"
 
 
 def default_chroma_path() -> Path:
@@ -104,6 +104,14 @@ class VectorStore:
         """Chuyển sang collection khác (khi admin kích hoạt phiên bản tài liệu mới); các truy vấn sau đó dùng bản mới."""
         self._collection = self._client.get_or_create_collection(name, metadata={"hnsw:space": "cosine"})
 
+    def for_collection(self, name: str) -> "VectorStore":
+        """Tạo view độc lập trên collection khác nhưng dùng chung client và embedder."""
+        store = object.__new__(VectorStore)
+        store._embedder = self._embedder
+        store._client = self._client
+        store._collection = self._client.get_or_create_collection(name, metadata={"hnsw:space": "cosine"})
+        return store
+
     @property
     def collection_name(self) -> str:
         return self._collection.name
@@ -163,12 +171,12 @@ class Retriever:
     def __init__(self, store: VectorStore, top_k: int | None = None, knowledge: KnowledgeStore | None = None):
         self._store = store
         self._top_k = top_k or settings.rag_top_k
-        self._phrases: dict[int, list[str]] | None = None
+        self._phrases: dict[str, dict[int, list[str]]] = {}
         self._knowledge = knowledge
 
     def reset(self) -> None:
         """Xoá bộ nhớ đệm tiêu đề (gọi sau khi kho vector chuyển sang phiên bản tài liệu khác)."""
-        self._phrases = None
+        self._phrases.clear()
 
     @property
     def store(self) -> VectorStore:
@@ -184,32 +192,35 @@ class Retriever:
             return []
         return self._knowledge.search(question, settings.kb_top_k, settings.kb_min_score)
 
-    def _title_matches(self, question: str, exclude: set[int]) -> list[int]:
-        if self._phrases is None:
-            self._phrases = {n: title_phrases(t) for n, t in self._store.titles().items()}
+    def _title_matches(self, question: str, exclude: set[int], store: VectorStore) -> list[int]:
+        phrases = self._phrases.get(store.collection_name)
+        if phrases is None:
+            phrases = {n: title_phrases(t) for n, t in store.titles().items()}
+            self._phrases[store.collection_name] = phrases
         lowered = question.lower()
-        found = [n for n, phrases in self._phrases.items() if n not in exclude and any(p in lowered for p in phrases)]
+        found = [n for n, candidates in phrases.items() if n not in exclude and any(p in lowered for p in candidates)]
         return sorted(found)[:_MAX_TITLE_HITS]
 
-    def retrieve(self, question: str) -> list[Hit]:
+    def retrieve(self, question: str, collection: str | None = None) -> list[Hit]:
+        store = self._store if collection is None or collection == self._store.collection_name else self._store.for_collection(collection)
         hits: list[Hit] = []
         seen: set[int] = set()
         for match in _ARTICLE_MENTION.finditer(question):
             number = int(match.group(1))
             if number in seen:
                 continue
-            hit = self._store.get_article(number)
+            hit = store.get_article(number)
             if hit is not None:
                 hits.append(hit)
                 seen.add(number)
         explicit = len(hits)
         # Xin thêm `explicit` kết quả vì Điều đã nêu thẳng thường cũng nằm trong kết quả ngữ nghĩa và bị bỏ trùng.
-        for hit in self._store.search(question, self._top_k + explicit):
+        for hit in store.search(question, self._top_k + explicit):
             if hit.article not in seen and len(hits) < self._top_k + explicit:
                 hits.append(hit)
                 seen.add(hit.article)
-        for number in self._title_matches(question, seen):
-            hit = self._store.get_article(number)
+        for number in self._title_matches(question, seen, store):
+            hit = store.get_article(number)
             if hit is not None:
                 hits.append(hit)
                 seen.add(number)

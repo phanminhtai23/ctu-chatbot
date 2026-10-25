@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     embedding_model: str = "models/gemini-embedding-2"
     embedding_model_api_key: str = ""  # rỗng thì dùng key Gemini đầu tiên
     embedding_dim: int = 768
-    rag_source_path: str = ""  # rỗng = vector-docs/qd3266-clean.md ở thư mục gốc dự án
+    rag_source_path: str = ""  # rỗng = vector-docs/documents/qd3266/current/clean.md
     chroma_path: str = "chroma_db"  # tương đối so với thư mục ctu-chatbot-be
     rag_top_k: int = 5
 
@@ -58,6 +58,9 @@ class Settings(BaseSettings):
     # Admin nạp tài liệu mới: PDF -> OCR -> chuẩn hóa -> chunk theo Điều -> embedding -> vị trí trên trang -> test -> kích hoạt.
     document_ingest_enabled: bool = True  # false = tắt hẳn các endpoint nạp tài liệu (ví dụ ở production)
     documents_dir: str = "data/documents"  # tương đối so với ctu-chatbot-be; mỗi lần nạp là một thư mục phiên bản
+    vector_docs_dir: str = ""  # rỗng = vector-docs/ ở thư mục gốc repo; production trỏ tới /vector-docs
+    document_catalog_edit_enabled: bool = True  # upload/đổi route chỉ ở máy có source repo ghi được
+    document_catalog_sync_enabled: bool = True  # cho phép admin vector hóa các version đã có trong vector-docs
     ingest_model: str = "gemini-3.5-flash"  # model đọc ảnh trang (OCR + khoanh vị trí Điều)
     ingest_ocr_pages_per_call: int = 5  # Gemini hay từ chối khi gửi cả file dài: chia nhóm trang nhỏ
     ingest_call_interval_seconds: float = 4.0  # giãn cách giữa các lần gọi Gemini để không vượt hạn mức free

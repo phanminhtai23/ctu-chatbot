@@ -1,8 +1,10 @@
 import json
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import FileResponse
 
+from app.api.deps import get_document_catalog
+from app.services.ingest.catalog import CatalogError, DocumentCatalog
 from app.services.ingest.storage import active_data_dir
 
 router = APIRouter(prefix="/documents", tags=["documents"])
@@ -49,3 +51,12 @@ def get_page_image(page: int) -> FileResponse:
     if not path.exists():
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Page not found")
     return FileResponse(path, media_type="image/jpeg", headers=_CACHE_HEADERS)
+
+
+@router.get("/catalog/{slug}/{version}/source")
+def get_catalog_source(slug: str, version: str, catalog: DocumentCatalog = Depends(get_document_catalog)) -> FileResponse:
+    try:
+        path = catalog.source_file(slug, version)
+    except CatalogError as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Document not found") from exc
+    return FileResponse(path, media_type="application/pdf", filename=f"{slug}-{version}.pdf")

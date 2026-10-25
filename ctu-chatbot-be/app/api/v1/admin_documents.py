@@ -9,9 +9,11 @@ import re
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import FileResponse
 
-from app.api.deps import get_ingest_manager, require_admin
+from app.api.deps import get_document_catalog, get_ingest_manager, require_admin
 from app.core.config import settings
 from app.services.ingest import pdf as pdf_mod
+from app.services.chat import route_catalog
+from app.services.ingest.catalog import CatalogError, DocumentCatalog
 from app.services.ingest.manager import IngestBusy, JobManager
 
 router = APIRouter(prefix="/admin/documents", tags=["admin"], dependencies=[Depends(require_admin)])
@@ -20,6 +22,121 @@ router = APIRouter(prefix="/admin/documents", tags=["admin"], dependencies=[Depe
 def _require_enabled() -> None:
     if not settings.document_ingest_enabled:
         raise HTTPException(status.HTTP_403_FORBIDDEN, detail="INGEST_DISABLED")
+
+
+def _catalog_error(exc: CatalogError) -> HTTPException:
+    code = str(exc)
+    if code.endswith("_NOT_FOUND"):
+        return HTTPException(status.HTTP_404_NOT_FOUND, detail=code)
+    if code == "CATALOG_READ_ONLY":
+        return HTTPException(status.HTTP_403_FORBIDDEN, detail=code)
+    if code == "CATALOG_SYNC_DISABLED":
+        return HTTPException(status.HTTP_403_FORBIDDEN, detail=code)
+    if code.endswith("_NOT_ALLOWED"):
+        return HTTPException(status.HTTP_409_CONFLICT, detail=code)
+    if code == "DOCUMENT_NAME_INVALID":
+        return HTTPException(status.HTTP_400_BAD_REQUEST, detail=code)
+    if code == "EXTRACT_FAILED" or code == "CLEAN_FAILED" or code == "SYNC_FAILED":
+        return HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=code)
+    return HTTPException(status.HTTP_400_BAD_REQUEST, detail=code)
+
+
+@router.get("/catalog")
+def catalog_overview(catalog: DocumentCatalog = Depends(get_document_catalog)) -> dict:
+    try:
+        config = route_catalog.load_config()
+    except ValueError as exc:
+        raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail="ROUTE_CONFIG_INVALID") from exc
+    return {
+        "editable": route_catalog.editable(),
+        "sync_enabled": settings.document_catalog_sync_enabled,
+        "routes": config,
+        "jobs": catalog.list_jobs(),
+    }
+
+
+@router.get("/catalog/jobs/{slug}/{job_id}")
+def catalog_job(slug: str, job_id: str, catalog: DocumentCatalog = Depends(get_document_catalog)) -> dict:
+    try:
+        return catalog.get_job(slug, job_id)
+    except CatalogError as exc:
+        raise _catalog_error(exc) from exc
+
+
+@router.post("/catalog/jobs", status_code=status.HTTP_201_CREATED)
+async def catalog_upload(
+    request: Request,
+    title: str,
+    filename: str = "tai-lieu.pdf",
+    catalog: DocumentCatalog = Depends(get_document_catalog),
+) -> dict:
+    if not settings.document_catalog_edit_enabled:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="CATALOG_READ_ONLY")
+    limit = settings.ingest_max_pdf_mb * 1024 * 1024
+    declared = request.headers.get("content-length")
+    if declared and declared.isdigit() and int(declared) > limit:
+        raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, detail="PDF_TOO_LARGE")
+    parts: list[bytes] = []
+    size = 0
+    async for part in request.stream():
+        size += len(part)
+        if size > limit:
+            raise HTTPException(status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, detail="PDF_TOO_LARGE")
+        parts.append(part)
+    data = b"".join(parts)
+    try:
+        pdf_mod.check_pdf_bytes(data, settings.ingest_max_pdf_mb)
+        return catalog.upload(title, filename, data)
+    except pdf_mod.PdfError as exc:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="INVALID_PDF") from exc
+    except CatalogError as exc:
+        raise _catalog_error(exc) from exc
+
+
+@router.post("/catalog/jobs/{slug}/{job_id}/extract")
+def catalog_extract(slug: str, job_id: str, catalog: DocumentCatalog = Depends(get_document_catalog)) -> dict:
+    try:
+        return catalog.extract(slug, job_id)
+    except CatalogError as exc:
+        raise _catalog_error(exc) from exc
+
+
+@router.post("/catalog/jobs/{slug}/{job_id}/clean")
+def catalog_clean(slug: str, job_id: str, catalog: DocumentCatalog = Depends(get_document_catalog)) -> dict:
+    try:
+        return catalog.clean(slug, job_id)
+    except CatalogError as exc:
+        raise _catalog_error(exc) from exc
+
+
+@router.post("/catalog/jobs/{slug}/{job_id}/sync")
+def catalog_sync_job(slug: str, job_id: str, catalog: DocumentCatalog = Depends(get_document_catalog)) -> dict:
+    try:
+        return catalog.sync_job(slug, job_id)
+    except CatalogError as exc:
+        raise _catalog_error(exc) from exc
+
+
+@router.post("/catalog/sync")
+def catalog_sync(catalog: DocumentCatalog = Depends(get_document_catalog)) -> dict:
+    try:
+        return catalog.sync_catalog()
+    except (CatalogError, ValueError, OSError) as exc:
+        if isinstance(exc, CatalogError):
+            raise _catalog_error(exc) from exc
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="CATALOG_SYNC_FAILED") from exc
+
+
+@router.put("/catalog/routes")
+def update_route_catalog(
+    payload: dict,
+) -> dict:
+    if not route_catalog.editable():
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="CATALOG_READ_ONLY")
+    try:
+        return route_catalog.save_config(payload)
+    except (ValueError, OSError) as exc:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="ROUTE_CONFIG_INVALID") from exc
 
 
 def _summary(job, manager: JobManager | None = None) -> dict:

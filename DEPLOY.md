@@ -19,13 +19,13 @@ FE container phục vụ SPA và proxy `/api/` tới BE; sau này Nginx trên ho
 1. **Chỉ chạy MỘT worker backend** (`uvicorn ... --workers 1`, không dùng `--workers N`, không chạy nhiều bản sao cùng lúc). Hàng đợi lượt chat, bộ đếm giới hạn tốc độ, tiến trình nạp tài liệu và ChromaDB nhúng đều nằm trong bộ nhớ / ổ đĩa của một process. Chạy nhiều worker thì mỗi worker đếm riêng và có thể hỏng dữ liệu vector.
 2. **Cần ổ đĩa bền (Docker named volumes)**, nếu không dữ liệu sẽ mất khi xóa container:
    - `chroma_data` — kho vector ChromaDB.
-   - `document_data` — các phiên bản tài liệu admin đã nạp.
+   - `document_data` — dữ liệu của pipeline upload cũ; workflow mới lưu PDF/OCR/clean text theo từng thư mục `vector-docs/documents/<slug>/`.
    - `donate_data` — ảnh QR ủng hộ.
    - `postgres_data` — database và lịch sử chat.
    - (`chroma_db/` cũng chứa vector của "Kiến thức bổ sung" do admin nhập; nội dung các mục nằm trong Postgres. Mất `chroma_db/` thì vào trang quản trị bấm "Embedding lại tất cả".)
 3. **Lịch sử chat nằm trong Postgres** (bảng checkpoint của LangGraph, tự tạo khi khởi động) nên phải sao lưu database.
-4. Backend image đóng gói file `vector-docs/qd3266-clean.md` để dựng kho vector lần đầu.
-5. Lần khởi động đầu tiên, backend gọi API embedding để nhúng từng Điều của văn bản. Cần key Gemini hợp lệ và có mạng; các lần sau dùng lại `chroma_db/`.
+4. Backend image đóng gói toàn bộ `vector-docs/`, gồm `routes.json` và các tài liệu/version đã commit trong `documents/`.
+5. Lần khởi động đầu tiên, backend gọi API embedding để nhúng từng Điều của văn bản mặc định. Với tài liệu mới, sau khi deploy cần admin bấm **Sync catalog vào vector DB**; Chroma lưu ở `chroma_data` và được giữ qua các lần deploy.
 
 ---
 
@@ -124,6 +124,7 @@ CHAT_MAX_CONCURRENT=4
 ### 3.4. Chạy lần đầu và cập nhật
 - Pull/merge vào `main` chạy lint/build FE và test BE offline (không gọi Gemini thật, tránh tốn quota). Chỉ khi kiểm tra pass, Actions build image ARM64 theo commit SHA, publish lên GHCR, gửi Compose manifest qua SSH, pull image và khởi động stack.
 - Migration Alembic tự chạy khi BE container khởi động; bảng checkpoint LangGraph được tạo khi app khởi động.
+- Deploy đóng gói nội dung Git trong `vector-docs/` vào image nhưng **không tự vector hóa tài liệu mới**. Sau deploy, admin vào `/admin/documents` và bấm **Sync catalog vào vector DB**; nút này chỉ đọc các `clean.md` đã commit và cập nhật Chroma.
 - Chạy thủ công tại **Actions → CI and ARM64 deployment → Run workflow** trên branch `main`.
 - Sau khi cấu hình DNS và Nginx host theo mục 5, trang sẽ ở `https://ctu-chatbot.io.vn`; API cũng dùng cùng origin qua proxy `/api/`. Domain này phải có trong Authorized JavaScript origins của Google OAuth client.
 
@@ -159,7 +160,10 @@ Các biến backend nằm trong `/home/opc/projects/ctu-chatbot/ctu-chatbot-be/.
 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, `CLOUDINARY_FOLDER` | Nơi lưu ảnh đại diện và PDF/ảnh người dùng tải lên (Cloudinary Console → Dashboard → API Keys). Thiếu thì tính năng tải file trả 503. **API Secret là bí mật, chỉ để ở backend.** |
 | `USER_STORAGE_QUOTA_MB`, `USER_UPLOAD_MAX_MB` | Dung lượng tối đa mỗi người dùng (mặc định 20) và mỗi lần tải (mặc định 5), tính bằng MB. |
 | `KB_MIN_SCORE`, `KB_STRONG_SCORE` | Ngưỡng tra cứu "Kiến thức bổ sung" do admin nhập (mặc định 0,72 và 0,80; đo bằng embedding Gemini thật). Thường không cần đổi. |
-| `DOCUMENT_INGEST_ENABLED` | `true` để admin tải PDF mới lên và nạp (cần ổ đĩa bền); `false` tắt hẳn các endpoint này. |
+| `VECTOR_DOCS_DIR` | Compose production đặt `/vector-docs`; đây là thư mục chỉ đọc được đóng gói từ source Git. |
+| `DOCUMENT_INGEST_ENABLED` | Compose production đặt `false` để tắt upload pipeline cũ lưu trong volume runtime. |
+| `DOCUMENT_CATALOG_EDIT_ENABLED` | Compose production đặt `false`; upload PDF và sửa route phải làm ở local, sau đó commit/push. |
+| `DOCUMENT_CATALOG_SYNC_ENABLED` | Compose production đặt `true` để admin có thể sync catalog đã deploy vào Chroma. |
 | `WEB_SEARCH_ENABLED` | `true` cho phép bot tìm web (DuckDuckGo) với câu hỏi ngoài quy chế. |
 
 Ví dụ phần `.env` production (điền giá trị thật, không dán lại key mẫu):
@@ -244,6 +248,7 @@ Lưu ý:
 - [ ] Gửi thử tin chào ("xin chào") nhận câu trả lời có sẵn, và một tin chửi thề nhận hộp thoại cảnh báo.
 - [ ] Trang `/admin/dashboard` hiện số liệu; tab "Phản hồi người dùng" hoạt động.
 - [ ] `/api/v1/auth/dev-login` trả **404** (xác nhận `ENV=prod`).
+- [ ] Sau khi có version mới trong `vector-docs`, vào `/admin/documents`, kiểm tra node tài liệu và bấm **Sync catalog vào vector DB**; hỏi thử nội dung của tài liệu mới.
 - [ ] (Nếu dùng) tải ảnh QR ở tab ủng hộ, kiểm tra ảnh hiện trong hộp thoại thông tin cá nhân.
 - [ ] Khởi động lại stack bằng `docker compose ... up -d`; lịch sử chat, ChromaDB, ảnh QR và tài liệu đã nạp vẫn còn.
 
@@ -251,11 +256,16 @@ Lưu ý:
 
 ## 9. Cập nhật phiên bản mới
 
+Quy trình tài liệu mới:
+1. Ở máy local, upload PDF trong `/admin/documents`; lần lượt bấm **Extract**, review OCR, bấm **Clean**, review clean text, rồi **Sync version này vào vector DB** để thêm/cập nhật node route.
+2. Commit/push thư mục timestamp mới trong `vector-docs/documents/<timestamp-id>/` cùng `vector-docs/routes.json`. PDF giữ nguyên tên file gốc; giữ các version cũ, không xóa nếu chưa chủ động dọn.
+3. GitHub Actions build/deploy image từ commit. Sau deploy, đăng nhập admin trên production và bấm **Sync catalog vào vector DB**. Nút này đọc manifest route đã đóng gói và chỉ cập nhật Chroma; nó không ghi ngược vào source repo.
+
 Push/merge commit đã kiểm tra vào `main`; GitHub Actions tự build và deploy. Workflow pin tag theo commit SHA và giữ tag `latest`. Nếu deployment lỗi, xem **Actions → workflow run** và logs service bằng lệnh ở mục 3.4. Migration chạy tự động trước khi backend bắt đầu phục vụ.
 
 ## 10. Sao lưu và bảo mật
 
-- **Sao lưu:** Postgres và các named volumes `postgres_data`, `chroma_data`, `document_data`, `donate_data` cần nằm trên ổ đĩa bền; backup định kỳ và lưu bản sao ngoài server. Ví dụ dump database: `docker compose --env-file ctu-chatbot-be/.env -f docker-compose.prod.yml exec -T db pg_dump -U ctu ctu_chatbot > ctu_chatbot.sql`.
+- **Sao lưu:** Postgres và các named volumes `postgres_data`, `chroma_data`, `document_data`, `donate_data` cần nằm trên ổ đĩa bền; backup định kỳ và lưu bản sao ngoài server. Các version tài liệu nguồn được bảo vệ bằng Git; Chroma có thể dựng lại bằng nút sync sau khi khôi phục `vector-docs/`. Ví dụ dump database: `docker compose --env-file ctu-chatbot-be/.env -f docker-compose.prod.yml exec -T db pg_dump -U ctu ctu_chatbot > ctu_chatbot.sql`.
 - Mất `chroma_data` thì phải dựng lại vector hoặc vào trang quản trị chọn "Embedding lại tất cả"; quá trình này tốn quota Gemini.
 - **Bí mật:** không commit `.env`, key Gemini, `SECRET_KEY`. Nếu lộ key, thu hồi và tạo lại ở Google.
 - **Phân quyền:** chỉ đưa email thật sự cần vào `ADMIN_EMAILS`; admin có quyền nạp tài liệu thay đổi nội dung chatbot trả lời.
@@ -271,5 +281,5 @@ Push/merge commit đã kiểm tra vào `main`; GitHub Actions tự build và dep
 | Lỗi `column ... does not exist` | Xem log backend; migration Alembic chạy khi container khởi động. |
 | Câu trả lời hiện một lần thay vì từng đoạn | Proxy đang buffer: `proxy_buffering off`. |
 | Chat báo hết hạn mức / "đang bận" liên tục | Hết hạn mức Gemini (xem mục 7 và 2.1); thêm key ở project khác hoặc bật billing. |
-| Bot trả lời không dựa trên quy chế, log có `Không dựng được RAG` | Thiếu hoặc sai key embedding, không có `vector-docs/qd3266-clean.md`, hoặc không có mạng. |
+| Bot trả lời không dựa trên quy chế, log có `Không dựng được RAG` | Thiếu hoặc sai key embedding, không có `vector-docs/documents/qd3266/current/clean.md`, hoặc không có mạng. |
 | Mất ảnh QR / tài liệu đã nạp sau khi deploy lại | Kiểm tra named volumes và việc backup/restore. |

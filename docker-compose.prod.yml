@@ -21,9 +21,13 @@ services:
     env_file:
       - ./ctu-chatbot-be/.env
     environment:
-      RAG_SOURCE_PATH: /vector-docs/qd3266-clean.md
+      RAG_SOURCE_PATH: /vector-docs/documents/qd3266/current/clean.md
+      VECTOR_DOCS_DIR: /vector-docs
       CHROMA_PATH: /app/chroma_db
       DOCUMENTS_DIR: /app/data/documents
+      DOCUMENT_INGEST_ENABLED: "false"
+      DOCUMENT_CATALOG_EDIT_ENABLED: "false"
+      DOCUMENT_CATALOG_SYNC_ENABLED: "true"
       DONATE_DIR: /app/data/donate
     volumes:
       - chroma_data:/app/chroma_db

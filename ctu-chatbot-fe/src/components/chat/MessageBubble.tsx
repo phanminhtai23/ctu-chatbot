@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useFormatDate } from '../../hooks/useFormatDate'
 import { useI18n } from '../../i18n'
-import { articleSources, webSources, type ChatMessage, type SourceRef } from '../../lib/conversations'
+import { articleSources, documentSources, webSources, type ChatMessage, type SourceRef } from '../../lib/conversations'
 import { formatBytes, formatSeconds } from '../../lib/format'
 import Icon from '../Icon'
 import Markdown from './Markdown'
@@ -64,7 +64,7 @@ function SentAt({ iso, align = 'left' }: { iso: string | null; align?: 'left' | 
   return (
     <span
       className={`pointer-events-none absolute -top-5 z-10 whitespace-nowrap text-xs text-muted opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 ${
-        align === 'right' ? 'right-1' : 'left-16'
+        align === 'right' ? 'right-1' : 'left-[4.25rem]'
       }`}
     >
       {t('chat.sentAt')} {formatDate(iso)}
@@ -76,6 +76,7 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
   const { t } = useI18n()
   const [botAvatarUnavailable, setBotAvatarUnavailable] = useState(false)
   const sources = useMemo(() => articleSources(message.sources), [message.sources])
+  const documents = useMemo(() => documentSources(message.sources), [message.sources])
   const web = useMemo(() => webSources(message.sources), [message.sources])
   const content = useMemo(
     () => (message.pending ? message.content : linkifyArticles(message.content, new Set(sources.map((s) => s.article)))),
@@ -119,7 +120,7 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
   const seconds = message.pending ? liveElapsed : message.duration_seconds
   const open = (article: number) => onOpenReference(article, sources)
   return (
-    <div className="group relative flex items-start gap-2">
+    <div className="group relative flex w-full min-w-0 flex-col items-start">
       {!message.pending && <SentAt iso={message.created_at} />}
       <div className="flex size-14 flex-none items-center justify-center overflow-hidden rounded-full">
         {botAvatarUnavailable ? (
@@ -136,8 +137,8 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
           />
         )}
       </div>
-      <div className="min-w-0 flex-1">
-        <div className="break-words rounded-2xl rounded-tl-sm bg-bubble-bot px-5 py-4 text-[15px] leading-[1.75] text-heading">
+      <div className="mt-2 w-full min-w-0">
+        <div className="relative break-words rounded-2xl bg-bubble-bot px-4 py-3.5 text-[15px] leading-[1.75] text-heading shadow-sm before:absolute before:-top-2 before:left-[21px] before:size-3.5 before:[clip-path:polygon(50%_0,100%_100%,0_100%)] before:bg-bubble-bot before:content-[''] sm:px-5 sm:py-4">
           {message.content ? (
             <Markdown onReference={sources.length > 0 ? open : undefined} activeArticle={activeArticle}>
               {content}
@@ -176,6 +177,31 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
                   </li>
                 )
               })}
+            </ul>
+          </div>
+        )}
+
+        {!message.pending && documents.length > 0 && (
+          <div className="mt-2 flex flex-col gap-1.5" aria-label={t('ref.label')}>
+            <span className="text-[13px] text-muted">{t('ref.label')}</span>
+            <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
+              {documents.map((source) => (
+                <li key={`${source.document_url}-${source.article}`}>
+                  <a
+                    href={source.document_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={source.title}
+                    className="flex min-h-9 w-full items-center gap-2 rounded-md border border-ctu-cyan bg-surface px-3 py-1.5 font-sans text-[13px] font-normal text-accent no-underline hover:bg-tint"
+                  >
+                    <Icon name="doc" size={14} className="flex-none" />
+                    <span className="flex-none rounded bg-tint px-1.5 text-xs font-semibold text-accent">
+                      {t('ref.articlePrefix')} {source.article}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate">{source.title}</span>
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         )}

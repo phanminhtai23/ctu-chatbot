@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "router_prompt": "Phân loại câu hỏi của sinh viên CTU vào đúng tuyến dữ liệu. Chỉ chọn một tuyến phù hợp nhất.",
+  "nodes": [
+    {
+      "id": "regulation",
+      "label": "Quy chế học vụ",
+      "kind": "document",
+      "prompt": "Câu hỏi về quy chế đào tạo, tín chỉ, điểm, học bổng, đăng ký học phần, cảnh báo học tập, tốt nghiệp và các quy định học vụ.",
+      "collection": "qd3266",
+      "source": "documents/qd3266/current/clean.md"
+    },
+    {
+      "id": "external",
+      "label": "Tìm kiếm web",
+      "kind": "web",
+      "prompt": "Thông tin mới hoặc chi tiết về trường như học phí, lịch, ký túc xá, tuyển sinh, thủ tục, liên hệ và thông báo."
+    },
+    {
+      "id": "offtopic",
+      "label": "Ngoài phạm vi",
+      "kind": "offtopic",
+      "prompt": "Chủ đề không liên quan đến Trường Đại học Cần Thơ hoặc việc học."
+    },
+    {
+      "id": "smalltalk",
+      "label": "Chào hỏi",
+      "kind": "smalltalk",
+      "prompt": "Chào hỏi, cảm ơn hoặc hỏi chatbot là ai và có thể giúp gì."
+    },
+    {
+      "id": "kiem-thu-ui-q-3266-20261-v4d00d5",
+      "label": "Kiểm thử UI QĐ 3266 20261025",
+      "kind": "document",
+      "prompt": "Câu hỏi liên quan tới Kiểm thử UI QĐ 3266 20261025; chỉ chọn tuyến này khi nội dung thuộc tài liệu đó.",
+      "collection": "doc-kiem-thu-ui-q-3266-2-20261025130713-4d00d5",
+      "source": "kiem-thu-ui-q-3266-20261025/versions/20261025130713-4d00d5/clean.md",
+      "document_slug": "kiem-thu-ui-q-3266-20261025",
+      "version": "20261025130713-4d00d5",
+      "status": "pending"
+    },
+    {
+      "id": "kiem-thu-ui-2-trang-that-v61f85d",
+      "label": "Kiểm thử UI 2 trang thật",
+      "kind": "document",
+      "prompt": "Câu hỏi liên quan tới Kiểm thử UI 2 trang thật; chỉ chọn tuyến này khi nội dung thuộc tài liệu đó.",
+      "collection": "doc-kiem-thu-ui-2-trang--20261025133000-61f85d",
+      "source": "documents/20261025133000-61f85d/clean.md",
+      "document_slug": "kiem-thu-ui-2-trang-that",
+      "version": "20261025133000-61f85d",
+      "status": "pending"
+    }
+  ],
+  "edges": [
+    {
+      "from": "router",
+      "to": "regulation",
+      "enabled": true
+    },
+    {
+      "from": "router",
+      "to": "external",
+      "enabled": true
+    },
+    {
+      "from": "router",
+      "to": "offtopic",
+      "enabled": true
+    },
+    {
+      "from": "router",
+      "to": "smalltalk",
+      "enabled": true
+    },
+    {
+      "from": "router",
+      "to": "kiem-thu-ui-q-3266-20261-v4d00d5",
+      "enabled": false
+    },
+    {
+      "from": "router",
+      "to": "kiem-thu-ui-2-trang-that-v61f85d",
+      "enabled": false
+    }
+  ]
+}

@@ -33,7 +33,10 @@ _SMALLTALK = re.compile(
     re.IGNORECASE,
 )
 # Dấu hiệu rõ ràng của việc học vụ có ngưỡng/công thức: không cần phân loại, đã có xử lý riêng.
-_REGULATION_HINT = re.compile(r"đtbctl|đtbchk|cảnh báo học tập|buộc thôi học|học cải thiện|xếp loại tốt nghiệp", re.IGNORECASE)
+_REGULATION_HINT = re.compile(
+    r"đtbctl|đtbchk|cảnh báo học tập|buộc thôi học|học cải thiện|xếp loại(?: tốt nghiệp)?",
+    re.IGNORECASE,
+)
 
 CLASSIFY_PROMPT = """Phân loại tin nhắn của sinh viên gửi cho chatbot học vụ Trường Đại học Cần Thơ (CTU). Trả về DUY NHẤT một từ:
 - regulation: hỏi về QUY CHẾ ĐÀO TẠO / công tác học vụ sinh viên đại học chính quy: tín chỉ, điểm và cách tính điểm, ĐTBCHK, ĐTBCTL, xếp loại, cảnh báo học tập, buộc thôi học, học bổng khuyến khích, đăng ký học phần, học cải thiện, tốt nghiệp, thôi học/bảo lưu, kỷ luật, điểm rèn luyện...
@@ -48,49 +51,66 @@ class ChatModel(Protocol):
     def stream(self, messages: list[BaseMessage]) -> Iterator[AIMessageChunk]: ...
 
 
-def parse_route(text: str) -> str | None:
+def parse_route(text: str, routes: tuple[str, ...] = ROUTES) -> str | None:
     lowered = text.strip().lower()
-    for route in ROUTES:
+    for route in routes:
         if re.match(rf"^\W*{route}\b", lowered):
             return route
     return None
 
 
-def quick_route(question: str, top_score: float | None) -> str | None:
+def quick_route(question: str, top_score: float | None, routes: tuple[str, ...] = ROUTES) -> str | None:
     """Quyết định không cần LLM (rẻ): None nghĩa là còn mơ hồ."""
-    if _SMALLTALK.match(question) and len(question) <= 60:
+    if SMALLTALK in routes and _SMALLTALK.match(question) and len(question) <= 60:
         return SMALLTALK
-    if _ARTICLE_MENTION.search(question) or _REGULATION_HINT.search(question):
+    if REGULATION in routes and (_ARTICLE_MENTION.search(question) or _REGULATION_HINT.search(question)):
         return REGULATION
-    if top_score is not None and top_score >= HIGH_SCORE:
+    dynamic_routes = set(routes) - set(ROUTES)
+    if REGULATION in routes and not dynamic_routes and top_score is not None and top_score >= HIGH_SCORE:
         return REGULATION
     return None
 
 
-def classify(llm: ChatModel, history: list[BaseMessage], top_score: float | None) -> str:
-    """Chọn tuyến cho tin nhắn mới nhất. Không bao giờ ném lỗi: lỗi/đầu ra lạ thì coi là `regulation`."""
+def classify(
+    llm: ChatModel,
+    history: list[BaseMessage],
+    top_score: float | None,
+    route_nodes: list[dict] | None = None,
+    router_prompt: str | None = None,
+) -> str:
+    """Chọn một tuyến đang bật; lỗi/đầu ra lạ quay về regulation nếu có, nếu không thì tuyến đầu."""
     humans = [m for m in history if isinstance(m, HumanMessage)]
+    routes = tuple(node["id"] for node in route_nodes) if route_nodes else ROUTES
+    fallback = REGULATION if REGULATION in routes else routes[0]
     if not humans:
-        return REGULATION
+        return fallback
     question = message_text(humans[-1])
-    quick = quick_route(question, top_score)
+    quick = quick_route(question, top_score, routes)
     if quick is not None:
         return quick
     context = ""
     if len(humans) > 1:  # câu nối tiếp ("còn năm ngoái thì sao?") cần câu trước để hiểu
         context = f"Tin nhắn trước đó của sinh viên: {message_text(humans[-2])[:300]}\n\n"
+    prompt = CLASSIFY_PROMPT
+    if route_nodes:
+        options = "\n".join(f"- {node['id']}: {node['label']}. {node['prompt']}" for node in route_nodes)
+        prompt = (
+            f"{router_prompt or 'Phân loại câu hỏi vào đúng tuyến dữ liệu.'}\n"
+            f"Chọn DUY NHẤT một id trong các tuyến đang bật:\n{options}\n"
+            "Chỉ trả về chính xác một id, không giải thích."
+        )
     try:
         reply = "".join(
             message_text(c)
             for c in llm.stream(
-                [SystemMessage(content=CLASSIFY_PROMPT), HumanMessage(content=f"{context}Tin nhắn cần phân loại: {question[:500]}")]
+                [SystemMessage(content=prompt), HumanMessage(content=f"{context}Tin nhắn cần phân loại: {question[:500]}")]
             )
         )
     except Exception:  # noqa: BLE001
         logger.warning("Không phân loại được phạm vi câu hỏi, dùng RAG như mặc định", exc_info=True)
-        return REGULATION
-    route = parse_route(reply)
+        return fallback
+    route = parse_route(reply, routes)
     if route is None:
         logger.warning("Phân loại phạm vi trả về giá trị lạ %r, dùng RAG", reply[:60])
-        return REGULATION
+        return fallback
     return route

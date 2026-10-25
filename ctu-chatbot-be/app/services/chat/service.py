@@ -24,6 +24,15 @@ def _mentioned_sources(stored: list, text: str) -> list[dict]:
     """
     kept = []
     for item in stored:
+        if (
+            isinstance(item, dict)
+            and isinstance(item.get("document_url"), str)
+            and re.fullmatch(r"/api/v1/documents/catalog/[a-z][a-z0-9-]{1,39}/[0-9]{14}-[0-9a-f]{6}/source", item["document_url"])
+            and isinstance(item.get("article"), int)
+            and re.search(rf'điều\s+{item["article"]}\b', text, flags=re.IGNORECASE)
+        ):
+            kept.append(item)
+            continue
         if isinstance(item, dict) and isinstance(item.get('url'), str) and item.get('title'):
             kept.append({"title": item["title"], "url": item["url"], "n": item.get("n")})  # nguồn web: đã lọc theo [n] lúc tạo câu trả lời
             continue

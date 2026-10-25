@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import BrandLockup from '../components/BrandLockup'
 import Icon, { type IconName } from '../components/Icon'
 import PrefToggles from '../components/PrefToggles'
 import { useI18n } from '../i18n'
@@ -24,6 +25,7 @@ const container = 'mx-auto max-w-[1200px] px-5 sm:px-8'
 export default function Landing() {
   const { t } = useI18n()
   const [samples, setSamples] = useState<Suggestion[]>([])
+  const [menuOpen, setMenuOpen] = useState(false)
 
   // Câu hỏi mẫu lấy từ server (cùng danh sách gợi ý trong khung chat); lỗi mạng thì chỉ ẩn mục này.
   useEffect(() => {
@@ -41,28 +43,38 @@ export default function Landing() {
   return (
     <div id="top" className="bg-surface">
       <header className="bg-ctu-navy text-white">
-        <div className={`${container} flex flex-wrap items-center justify-between gap-4 py-4`}>
-          <Link to="/" className="flex shrink-0 items-center gap-1 text-white no-underline">
-            <img
-              src="/ctu-chatbot-avt-rm-bg.png"
-              alt=""
-              aria-hidden="true"
-              className="size-16 shrink-0 object-contain"
-            />
-            <span className="leading-tight">
-              <span className="block text-sm font-semibold tracking-wide sm:text-base">{t('brand.app')}</span>
-              <span className="mt-1 block text-xs font-light sm:text-sm">{t('brand.sub')}</span>
-            </span>
-          </Link>
-          <nav aria-label={t('brand.mainNav')} className="flex flex-wrap items-center gap-x-7 gap-y-3 text-[15px]">
-            <a href="#tinh-nang" className="text-white no-underline hover:text-ctu-gold">{t('nav.features')}</a>
-            <a href="#cau-hoi-mau" className="text-white no-underline hover:text-ctu-gold">{t('nav.samples')}</a>
-            <a href="#cach-hoat-dong" className="text-white no-underline hover:text-ctu-gold">{t('nav.how')}</a>
-            <a href="#lien-he" className="text-white no-underline hover:text-ctu-gold">{t('nav.contact')}</a>
-            <PrefToggles tone="on-navy" />
+        <div className={`${container} py-2.5 sm:py-3 xl:flex xl:items-center xl:justify-between`}>
+          <div className="flex items-center justify-between gap-3">
+            <Link to="/" className="flex min-w-0 items-center text-white no-underline">
+              <BrandLockup size={52} />
+            </Link>
+            <div className="flex shrink-0 items-center gap-2 xl:hidden">
+              <PrefToggles tone="on-navy" compact />
+              <button
+                type="button"
+                aria-label={menuOpen ? t('sidebar.close') : t('brand.mainNav')}
+                aria-expanded={menuOpen}
+                aria-controls="landing-mobile-nav"
+                onClick={() => setMenuOpen((open) => !open)}
+                className="inline-flex size-10 cursor-pointer items-center justify-center rounded-lg border border-white/40 bg-transparent text-white hover:bg-white/10"
+              >
+                <Icon name={menuOpen ? 'close' : 'menu'} />
+              </button>
+            </div>
+          </div>
+          <nav
+            id="landing-mobile-nav"
+            aria-label={t('brand.mainNav')}
+            className={`${menuOpen ? 'flex' : 'hidden'} mt-3 flex-col gap-1 border-t border-white/20 pt-3 text-[15px] xl:mt-0 xl:flex xl:flex-row xl:items-center xl:gap-x-7 xl:gap-y-3 xl:border-0 xl:pt-0`}
+          >
+            <a href="#tinh-nang" onClick={() => setMenuOpen(false)} className="rounded-md px-3 py-2 text-white no-underline hover:bg-white/10 hover:text-ctu-gold xl:px-0 xl:py-0 xl:hover:bg-transparent">{t('nav.features')}</a>
+            <a href="#cau-hoi-mau" onClick={() => setMenuOpen(false)} className="rounded-md px-3 py-2 text-white no-underline hover:bg-white/10 hover:text-ctu-gold xl:px-0 xl:py-0 xl:hover:bg-transparent">{t('nav.samples')}</a>
+            <a href="#cach-hoat-dong" onClick={() => setMenuOpen(false)} className="rounded-md px-3 py-2 text-white no-underline hover:bg-white/10 hover:text-ctu-gold xl:px-0 xl:py-0 xl:hover:bg-transparent">{t('nav.how')}</a>
+            <a href="#lien-he" onClick={() => setMenuOpen(false)} className="rounded-md px-3 py-2 text-white no-underline hover:bg-white/10 hover:text-ctu-gold xl:px-0 xl:py-0 xl:hover:bg-transparent">{t('nav.contact')}</a>
             <Link
               to="/login"
-              className="inline-flex min-h-11 items-center rounded-lg bg-ctu-gold-active px-5 font-semibold text-ctu-navy-dark no-underline hover:bg-ctu-gold"
+              onClick={() => setMenuOpen(false)}
+              className="mt-2 inline-flex min-h-11 items-center justify-center rounded-lg bg-ctu-gold-active px-5 font-semibold text-ctu-navy-dark no-underline hover:bg-ctu-gold xl:mt-0"
             >
               {t('nav.login')}
             </Link>
@@ -72,7 +84,7 @@ export default function Landing() {
 
       {/* Hero */}
       <section>
-        <div className={`${container} flex flex-wrap items-center gap-14 pb-24 pt-16 sm:pt-20`}>
+        <div className={`${container} flex flex-wrap items-center gap-10 pb-16 pt-12 sm:gap-14 sm:pb-24 sm:pt-20`}>
           <div className="min-w-0 flex-[1_1_460px]">
             <div className="mb-6 inline-block rounded-full border border-ctu-cyan px-4 py-1 text-sm font-normal text-accent">
               {t('hero.badge')}

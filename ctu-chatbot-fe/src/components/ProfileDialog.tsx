@@ -171,11 +171,11 @@ function ProfileForm({ onClose }: { onClose: () => void }) {
         )}
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 border-t border-line pt-4">
+      <div className="flex flex-col gap-3 border-t border-line pt-4 sm:flex-row sm:flex-wrap sm:items-center">
         <button
           type="submit"
           disabled={saveState === 'saving' || !birthdayValid}
-          className="min-h-11 cursor-pointer rounded-lg border-0 bg-ctu-navy px-6 py-2.5 font-sans text-base font-semibold text-white hover:bg-ctu-navy-dark disabled:cursor-not-allowed disabled:opacity-50"
+          className="min-h-11 w-full cursor-pointer rounded-lg border-0 bg-ctu-navy px-6 py-2.5 font-sans text-base font-semibold text-white hover:bg-ctu-navy-dark disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
         >
           {t(saveState === 'saving' ? 'profile.saving' : 'profile.save')}
         </button>
@@ -191,7 +191,7 @@ function ProfileForm({ onClose }: { onClose: () => void }) {
         <button
           type="button"
           onClick={handleLogout}
-          className="ml-auto inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border-0 bg-[#B3261E] px-4 py-2 font-sans text-sm font-semibold text-white hover:bg-[#8C1D18] dark:bg-[#C93C3C] dark:hover:bg-[#A82F2F]"
+          className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-lg border-0 bg-[#B3261E] px-4 py-2 font-sans text-sm font-semibold text-white hover:bg-[#8C1D18] dark:bg-[#C93C3C] dark:hover:bg-[#A82F2F] sm:ml-auto sm:w-auto"
         >
           <Icon name="logout" size={18} />
           {t('profile.logout')}

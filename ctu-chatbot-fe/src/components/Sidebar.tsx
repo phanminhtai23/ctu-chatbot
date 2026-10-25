@@ -127,7 +127,7 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
         } ${collapsed ? 'md:w-[72px]' : 'md:w-[300px]'}`}
       >
         <div className={`flex items-center gap-3 p-3 ${collapsed ? 'md:flex-col md:py-4' : ''}`}>
-          <Logo size={40} fill="#0D47A1" />
+          <Logo size={40} />
           <div className={`min-w-0 flex-1 leading-tight ${labelClass(collapsed)}`}>
             <div className="truncate text-[15px] font-semibold">{title}</div>
             <div className="truncate text-xs opacity-85">{subtitle}</div>

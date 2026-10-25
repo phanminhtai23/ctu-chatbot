@@ -126,10 +126,12 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
           <Icon name="diamond" size={28} strokeWidth={2} />
         ) : (
           <img
-            src="/ctu-chatbot-avt-rm-bg-chat.png"
+            src="/ctu-chatbot-avatar.webp"
             alt=""
             aria-hidden="true"
             className="size-full object-cover"
+            fetchPriority="high"
+            decoding="async"
             onError={() => setBotAvatarUnavailable(true)}
           />
         )}

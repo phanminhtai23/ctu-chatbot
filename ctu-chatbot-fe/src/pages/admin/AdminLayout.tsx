@@ -42,7 +42,7 @@ export default function AdminLayout({ title, subtitle, children }: Props) {
   }, [refreshUnread])
 
   return (
-    <div className="flex min-h-screen flex-col bg-surface md:flex-row">
+    <div className="flex h-dvh flex-col overflow-hidden bg-surface md:flex-row">
       <Sidebar
         collapsed={collapsed}
         onToggle={toggleSidebar}
@@ -121,7 +121,7 @@ export default function AdminLayout({ title, subtitle, children }: Props) {
         </nav>
       </Sidebar>
 
-      <main className="min-w-0 flex-1">
+      <main className="min-h-0 min-w-0 flex-1 overflow-y-auto">
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-line px-6 py-5 md:px-8">
           <div className="flex min-w-0 flex-1 items-start gap-3">
             <MobileNavButton onClick={() => setNavOpen(true)} />

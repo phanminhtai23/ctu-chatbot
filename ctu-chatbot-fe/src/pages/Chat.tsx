@@ -656,7 +656,7 @@ export default function Chat() {
 
           {isEmpty && !busy && (
             <div className="mb-auto mt-[min(4vh,40px)] flex w-full max-w-[860px] flex-col items-center gap-2 text-center">
-              <Logo size={48} fill="#0D47A1" />
+              <Logo size={48} />
               <h2 className="m-0 text-2xl">{t('chat.emptyTitle')}</h2>
               <p className="m-0">{t('chat.emptyHint')}</p>
               {suggestions.length > 0 && (

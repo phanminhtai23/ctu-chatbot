@@ -146,7 +146,7 @@ export default function SharedView() {
   const header = (
     <header className="flex flex-wrap items-center gap-3 border-b border-line bg-surface px-4 py-3 sm:px-8">
       <Link to="/" className="flex items-center gap-2.5 text-heading no-underline">
-        <Logo size={36} fill="#0D47A1" />
+        <Logo size={36} />
         <span className="text-[15px] font-semibold">{t('brand.app')}</span>
       </Link>
       <div className="ml-auto flex items-center gap-3">
@@ -178,7 +178,7 @@ export default function SharedView() {
         {header}
         <main className="grid flex-1 place-items-center px-6 text-center">
           <div className="flex flex-col items-center gap-4">
-            <Logo size={56} fill="#0D47A1" />
+            <Logo size={56} />
             <p role="alert" className="m-0 text-lg text-heading">{notFound ? t('share.notFound') : t('chat.errLoad')}</p>
             {loadError && (
               <button

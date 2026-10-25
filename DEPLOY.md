@@ -201,7 +201,7 @@ server {
     }
 }
 ```
-Trước khi bật Nginx host, đổi port mapping trong `docker-compose.prod.yml` thành `127.0.0.1:8080:80` để FE chỉ truy cập được từ máy chủ. Deploy thay đổi này, cài Nginx host rồi kiểm tra HTTP. Cấp TLS bằng Certbot (ví dụ Ubuntu: `sudo certbot --nginx -d ctu-chatbot.io.vn -d www.ctu-chatbot.io.vn`); sau khi xác nhận HTTPS hoạt động, có thể bật chuyển hướng HTTP → HTTPS. Chỉ mở cổng 80/443 công khai. Cập nhật Authorized JavaScript origins trong Google Cloud thành `https://ctu-chatbot.io.vn`; CORS không cần chỉnh vì trình duyệt gọi API cùng origin.
+Port mapping đã bind `127.0.0.1:8080:80` để FE chỉ được truy cập từ máy chủ. Deploy thay đổi này, cài Nginx host rồi kiểm tra HTTP. Cấp TLS bằng Certbot (ví dụ Ubuntu: `sudo certbot --nginx -d ctu-chatbot.io.vn -d www.ctu-chatbot.io.vn`); sau khi xác nhận HTTPS hoạt động, có thể bật chuyển hướng HTTP → HTTPS. Chỉ mở cổng 80/443 công khai. Cập nhật Authorized JavaScript origins trong Google Cloud thành `https://ctu-chatbot.io.vn`; CORS không cần chỉnh vì trình duyệt gọi API cùng origin.
 
 ---
 

@@ -47,7 +47,7 @@ services:
     image: ghcr.io/${IMAGE_OWNER:?Set IMAGE_OWNER}/${IMAGE_NAME:-ctu-chatbot}-frontend:${IMAGE_TAG:-latest}
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "127.0.0.1:8080:80"
     depends_on:
       backend:
         condition: service_healthy

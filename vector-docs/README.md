@@ -38,14 +38,25 @@ vector-docs/
   `documents/<slug>/archive/` directory.
 
 The QĐ 3266 `source.pdf` and `ocr.txt` remain Git-ignored as before; `clean.md`
-is the source packaged and used for vectorization.
+is the source packaged and used for vectorization. For timestamped uploads,
+the original PDF, OCR output, cleaned Markdown, job progress, and manifest are
+versioned together when the upload is ready to deploy.
 
 ## Updating documents
 
-Use the admin workflow to upload, extract, review/clean, and sync a document.
-Commit the reviewed timestamp directory and the matching `routes.json` change
-before deploying. After deployment, run **Sync catalog vào vector DB** in the
-admin page to index the committed sources in persistent Chroma.
+Use the admin workflow to upload, extract, review OCR, clean, and review the
+Markdown. The workflow displays seven persisted steps: upload, render, OCR,
+normalize, chunk, embed, and catalog sync. **Sync version này vào vector DB**
+embeds the reviewed version and updates the local route catalog; it can change
+the Chroma store configured for that environment. Do not sync to production
+just to inspect OCR or clean output.
+
+Before deploying, commit the reviewed timestamp directory and the matching
+`routes.json` change. The upload creates a pending route; it is not available
+to chat until the version sync succeeds. After deployment, run **Sync catalog
+vào vector DB** in the production admin page to index the committed routes in
+the persistent production Chroma store. This production sync does not write
+back to the source repository.
 
 Do not put generated Chroma data here. Chroma is stored separately in its
 persistent volume. Keep source paths in `routes.json` relative, inside this

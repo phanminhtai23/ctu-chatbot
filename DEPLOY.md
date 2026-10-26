@@ -19,7 +19,7 @@ FE container phục vụ SPA và proxy `/api/` tới BE; sau này Nginx trên ho
 1. **Chỉ chạy MỘT worker backend** (`uvicorn ... --workers 1`, không dùng `--workers N`, không chạy nhiều bản sao cùng lúc). Hàng đợi lượt chat, bộ đếm giới hạn tốc độ, tiến trình nạp tài liệu và ChromaDB nhúng đều nằm trong bộ nhớ / ổ đĩa của một process. Chạy nhiều worker thì mỗi worker đếm riêng và có thể hỏng dữ liệu vector.
 2. **Cần ổ đĩa bền (Docker named volumes)**, nếu không dữ liệu sẽ mất khi xóa container:
    - `chroma_data` — kho vector ChromaDB.
-   - `document_data` — dữ liệu của pipeline upload cũ; workflow mới lưu PDF/OCR/clean text theo từng thư mục `vector-docs/documents/<slug>/`.
+   - `document_data` — dữ liệu của pipeline upload cũ (`DOCUMENT_INGEST_ENABLED=false` trong production). Workflow catalog hiện tại lưu PDF/OCR/clean text trong source `vector-docs/documents/` và được đóng gói vào image khi deploy.
    - `donate_data` — ảnh QR ủng hộ.
    - `postgres_data` — database và lịch sử chat.
    - (`chroma_db/` cũng chứa vector của "Kiến thức bổ sung" do admin nhập; nội dung các mục nằm trong Postgres. Mất `chroma_db/` thì vào trang quản trị bấm "Embedding lại tất cả".)
@@ -257,9 +257,10 @@ Lưu ý:
 ## 9. Cập nhật phiên bản mới
 
 Quy trình tài liệu mới:
-1. Ở máy local, upload PDF trong `/admin/documents`; lần lượt bấm **Extract**, review OCR, bấm **Clean**, review clean text, rồi **Sync version này vào vector DB** để thêm/cập nhật node route.
-2. Commit/push thư mục timestamp mới trong `vector-docs/documents/<timestamp-id>/` cùng `vector-docs/routes.json`. PDF giữ nguyên tên file gốc; giữ các version cũ, không xóa nếu chưa chủ động dọn.
-3. GitHub Actions build/deploy image từ commit. Sau deploy, đăng nhập admin trên production và bấm **Sync catalog vào vector DB**. Nút này đọc manifest route đã đóng gói và chỉ cập nhật Chroma; nó không ghi ngược vào source repo.
+1. Trên môi trường local có quyền sửa catalog, vào `/admin/documents` và upload PDF. Hệ thống giữ tên file gốc trong `vector-docs/documents/<YYYYMMDDHHMMSS-xxxxxx>/`, rồi hiển thị riêng tiến độ render, OCR, chuẩn hóa, chunk theo Điều, embedding và lưu route. Review OCR sau **Extract** và clean Markdown sau **Clean** trước khi tiếp tục.
+2. **Sync version này vào vector DB** tạo embedding và đánh dấu route trong catalog local. Đây là thao tác có ghi vào Chroma đang cấu hình ở môi trường chạy; nếu chỉ kiểm tra nội dung thì dừng sau Clean. Route mới chỉ phục vụ chat sau khi đã Sync.
+3. Commit/push thư mục timestamp và `vector-docs/routes.json`. Giữ các version cũ, không xóa nếu chưa chủ động dọn.
+4. GitHub Actions build/deploy image từ commit. Sau deploy, đăng nhập admin trên production và bấm **Sync catalog vào vector DB** để cập nhật Chroma production từ các route/tài liệu đã commit. Thao tác production này không sửa source repo.
 
 Push/merge commit đã kiểm tra vào `main`; GitHub Actions tự build và deploy. Workflow pin tag theo commit SHA và giữ tag `latest`. Nếu deployment lỗi, xem **Actions → workflow run** và logs service bằng lệnh ở mục 3.4. Migration chạy tự động trước khi backend bắt đầu phục vụ.
 

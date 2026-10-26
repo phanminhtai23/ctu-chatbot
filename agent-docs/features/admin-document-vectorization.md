@@ -5,12 +5,13 @@
 
 ## What
 
-Each committed document version has a clean Markdown source, a route node, and its own Chroma collection. Local admin Sync indexes a reviewed version; production admin Sync re-indexes the committed route catalog after deploy.
+Each committed document version has a clean Markdown source, a route node, and its own Chroma collection. The staged admin flow keeps OCR/clean review separate from embedding: local **Sync version này vào vector DB** indexes one reviewed version and promotes its route; production **Sync catalog vào vector DB** re-indexes the committed, synced route catalog after deploy. Sync writes to the Chroma store configured in the environment where the action runs.
 
 ## Scope chi tiết
 
 - BE: re-index only when the clean-text SHA-256 differs from the collection metadata.
-- DB: persistent Chroma collections in `chroma_data`, one collection per document version.
+- DB: production Chroma is persisted in the `chroma_data` Docker volume, with one collection per document version. Local sync writes to the local configured Chroma path.
+- New routes start as disabled pending drafts and are not available to chat until version sync succeeds. Production catalog sync reads the committed `routes.json` and clean Markdown in the deployed image; it does not modify source files.
 
 ## Notes
 

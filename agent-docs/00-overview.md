@@ -10,51 +10,47 @@ Chatbot hỗ trợ sinh viên CTU (Can Tho University) tra cứu và hỏi đáp
 |---|---|---|
 | FE | React + Tailwind | CTU style, tham khảo gu thiết kế kiểu Claude |
 | BE | FastAPI | |
-| DB | PostgreSQL | deploy trên Supabase |
+| DB | PostgreSQL 16 | Docker Compose trên server ARM64 |
 | LLM | Gemini (free tier) | orchestration qua LangGraph |
-| Test | pytest | dùng DeepSeek chat API (local) làm model test/judge |
-| Deploy FE | Vercel | |
-| Deploy DB | Supabase | |
+| Vector DB | ChromaDB nhúng | persistent Docker volume trên server |
+| Test | pytest + npm | CI chạy backend offline tests và build/lint frontend |
+| Deploy | GitHub Actions + GHCR | build image ARM64, deploy qua SSH và Docker Compose |
 
-## Tech flow (khi code xong sẽ cập nhật chi tiết)
+## Tech flow
 
 1. User hỏi → FE gửi request → BE (FastAPI).
-2. BE truy vấn vector DB (tài liệu quy chế đã được vectorize) để lấy context liên quan.
-3. BE gọi Gemini qua LangGraph, kết hợp context, trả lời.
-4. Admin có pipeline riêng để upload/update tài liệu → vectorization → lưu vectordb.
+2. BE dùng LangGraph để định tuyến câu hỏi; tuyến tài liệu truy vấn ChromaDB và lấy các Điều liên quan.
+3. BE gọi Gemini, kết hợp ngữ cảnh phù hợp rồi stream câu trả lời về FE.
+4. Admin quản lý route và review tài liệu ở `/admin/documents`. Catalog hiện tại lưu các version trong `vector-docs/`; upload, Extract/OCR, Clean và Sync là các thao tác riêng.
+5. GitHub Actions kiểm tra PR; khi commit được đưa vào `main`, build/push image `linux/arm64` lên GHCR rồi triển khai stack Docker Compose trên server.
 
-> Phần này là khung ban đầu, SẼ được cập nhật lại khi kiến trúc thật được implement — xem từng file feature trong `features/` để biết trạng thái thật.
+> Chi tiết vận hành/deploy xem `DEPLOY.md`; cấu trúc và quy trình catalog tài liệu xem `vector-docs/README.md` và `features/admin-document-upload.md`.
 
 ## Cấu trúc code hiện tại
 
 ```
 ctu-chatbot/
-├── ctu-chatbot-fe/         Vite + React + TypeScript + Tailwind v4
-│   └── src/
-│       ├── components/    UI components dùng chung
-│       ├── pages/         Các trang
-│       ├── hooks/         Custom hooks
-│       ├── lib/           api.ts — fetch wrapper gọi BE (VITE_API_BASE_URL)
-│       ├── App.tsx
-│       └── main.tsx
-└── ctu-chatbot-be/         FastAPI
-    └── app/
-        ├── api/v1/        Routers (health.py là ví dụ, mount tại /api/v1)
-        ├── core/          config.py — Settings đọc từ .env
-        ├── db/            session.py (SQLAlchemy engine/session), base.py (Base)
-        ├── models/        SQLAlchemy models — còn trống, chờ feature đầu tiên
-        ├── schemas/       Pydantic schemas — còn trống
-        ├── services/      business logic / LLM orchestration — còn trống
-        └── main.py        FastAPI app, CORS cho localhost:5173
-    tests/test_health.py   ví dụ test với pytest + TestClient
+├── ctu-chatbot-fe/         Vite + React + TypeScript + Tailwind
+│   └── src/                components, pages, hooks và lib
+├── ctu-chatbot-be/         FastAPI + LangGraph + ChromaDB
+│   └── app/
+│       ├── api/v1/        Routers cho auth, chat, user và admin
+│       ├── core/          config.py — settings đọc từ environment/.env
+│       ├── db/            SQLAlchemy engine/session và migrations Alembic
+│       ├── models/        SQLAlchemy models
+│       ├── services/chat/ LangGraph, route catalog và phân loại
+│       ├── services/ingest/ ingest legacy và staged document catalog
+│       └── services/rag/  chunking, embeddings và ChromaDB
+├── vector-docs/            route catalog và nguồn tài liệu version hóa
+├── agent-docs/              feature notes và hướng dẫn phát triển
+└── .github/workflows/       CI và deploy ARM64
 ```
 
-- FE chạy: `cd ctu-chatbot-fe && npm run dev` (copy `.env.example` → `.env` nếu cần đổi `VITE_API_BASE_URL`).
-- DB (dev): `docker compose up -d db` ở thư mục gốc → Postgres 16 container `ctu-chatbot-db`, cổng host **5433** (user `ctu`, db `ctu_chatbot`).
-- BE chạy: tạo venv trong `ctu-chatbot-be/venv`, `pip install -r requirements.txt`, copy `.env.example` → `.env`, `alembic upgrade head`, rồi `uvicorn app.main:app --reload --port 8000`. Test: `pytest -q` (dùng SQLite in-memory, không cần Docker).
+- FE chạy: `cd ctu-chatbot-fe && npm ci && npm run dev` (copy `.env.example` → `.env` nếu cần đổi API base hoặc OAuth client ID).
+- DB (dev): `docker compose up -d db` ở thư mục gốc → PostgreSQL 16, cổng host **5433**.
+- BE chạy: tạo venv trong `ctu-chatbot-be/venv`, cài `requirements.txt`, copy `.env.example` → `.env`, chạy `alembic upgrade head`, rồi `uvicorn app.main:app --reload --port 8000`. Test offline: `pytest -q -m "not live"`.
 - Migration: `alembic revision --autogenerate -m "..."` rồi `alembic upgrade head`.
-- `models/` (User, Feedback, RefreshToken, Conversation), `schemas/`, `api/v1/` (auth, users, feedback, conversations, admin_feedback), `api/deps.py` (get_current_user, require_admin, get_chat_graph), `services/` (`llm/` Gemini + xoay key, `chat/` LangGraph, `auth_tokens.py`, `google_auth.py`).
-- `agent-docs/` không được push lên git (xem `.gitignore` ở root) — chỉ tồn tại local để AI/dev đọc ngữ cảnh.
+- `agent-docs/` được version hóa trong repo để các contributor dùng chung feature notes và hướng dẫn.
 
 ## Danh sách feature
 
@@ -79,7 +75,7 @@ Xem chi tiết từng feature tại `agent-docs/features/`:
 ## Cấu hình Google login (tóm tắt)
 
 1. Google Cloud Console → tạo project → *APIs & Services → OAuth consent screen* (User type: External; scope mặc định email/profile/openid là đủ).
-2. *Credentials → Create credentials → OAuth client ID → Web application*; thêm *Authorized JavaScript origins*: `http://localhost:5173`, `http://localhost:5174` (và domain Vercel khi deploy). Không cần redirect URI, không dùng client secret.
+2. *Credentials → Create credentials → OAuth client ID → Web application*; thêm `http://localhost:5173` khi phát triển và origin production (ví dụ `https://ctu-chatbot.io.vn`) khi deploy. Không cần redirect URI, không dùng client secret.
 3. Đặt Client ID vào `VITE_GOOGLE_CLIENT_ID` (FE `.env`) và `GOOGLE_CLIENT_ID` (BE `.env`), khởi động lại cả hai.
 4. Lưu ý consent screen đang ở *Testing* chỉ cho tối đa 100 *test users* đăng nhập; muốn mọi sinh viên dùng được phải chuyển sang *In production*.
 

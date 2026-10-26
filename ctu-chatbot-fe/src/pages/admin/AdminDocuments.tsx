@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type DragEvent } from 'react'
 import Icon from '../../components/Icon'
+import DocumentPipeline, { PipelineSummary, currentStage } from '../../components/admin/DocumentPipeline'
 import RouteGraph from '../../components/admin/RouteGraph'
 import { useFormatDate } from '../../hooks/useFormatDate'
 import { useI18n } from '../../i18n'
@@ -50,7 +51,10 @@ export default function AdminDocuments() {
   const [job, setJob] = useState<CatalogJob | null>(null)
   const [routeDraft, setRouteDraft] = useState<RouteConfig | null>(null)
   const [routeDirty, setRouteDirty] = useState(false)
+  const [tab, setTab] = useState<'flow' | 'routes'>('flow')
   const [title, setTitle] = useState('')
+  const [titleTouched, setTitleTouched] = useState(false)
+  const [file, setFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
   const [dragging, setDragging] = useState(false)
   const [action, setAction] = useState('')
@@ -114,12 +118,25 @@ export default function AdminDocuments() {
     if (data && !routeDirty) setRouteDraft(data.routes)
   }
 
-  const upload = async (file: File | undefined) => {
-    if (!file || uploading || !overview?.editable) return
-    if (!/\.pdf$/i.test(file.name) && file.type !== 'application/pdf') {
+  const pickFile = (picked: File | undefined) => {
+    if (!picked) return
+    if (!/\.pdf$/i.test(picked.name) && picked.type !== 'application/pdf') {
       setNotice({ ok: false, text: t('admin.doc.errNotPdf') })
       return
     }
+    setNotice(null)
+    setFile(picked)
+    if (!titleTouched) setTitle(picked.name.replace(/\.pdf$/i, '').replace(/[_]+/g, ' ').trim().slice(0, 100))
+  }
+
+  const clearFile = () => {
+    setFile(null)
+    if (!titleTouched) setTitle('')
+    if (inputRef.current) inputRef.current.value = ''
+  }
+
+  const upload = async () => {
+    if (!file || uploading || !overview?.editable) return
     if (!title.trim()) {
       setNotice({ ok: false, text: t('admin.doc.errName') })
       return
@@ -129,6 +146,9 @@ export default function AdminDocuments() {
     try {
       const created = await uploadCatalogDocument(file, title.trim())
       setTitle('')
+      setTitleTouched(false)
+      clearFile()
+      setTab('flow')
       await refreshAfterAction(created)
       setNotice({ ok: true, text: t('admin.doc.uploadSaved') })
     } catch (error) {
@@ -136,14 +156,13 @@ export default function AdminDocuments() {
       setNotice({ ok: false, text: t(uploadErrors[code] ?? 'admin.doc.errGeneric') })
     } finally {
       setUploading(false)
-      if (inputRef.current) inputRef.current.value = ''
     }
   }
 
   const onDrop = (event: DragEvent) => {
     event.preventDefault()
     setDragging(false)
-    void upload(event.dataTransfer.files[0])
+    if (overview?.editable && !uploading) pickFile(event.dataTransfer.files[0])
   }
 
   const openJob = async (item: CatalogJob) => {
@@ -227,15 +246,10 @@ export default function AdminDocuments() {
     }
   }
 
-  const failedStep = job?.steps.find((step) => step.status === 'failed')?.key
-  const nextStage =
-    job?.status === 'uploaded' || (job?.status === 'failed' && (!failedStep || ['render', 'ocr'].includes(failedStep)))
-      ? 'extract'
-      : job?.status === 'extracted' || (job?.status === 'failed' && ['normalize', 'chunk'].includes(failedStep ?? ''))
-        ? 'clean'
-        : job?.status === 'cleaned' || (job?.status === 'failed' && ['embed', 'sync'].includes(failedStep ?? ''))
-          ? 'sync'
-          : null
+  const stage = job ? currentStage(job) : null
+  const pendingRoutes = routeDraft?.nodes.filter((node) => node.status === 'pending').length ?? 0
+  const locked = !overview?.editable || uploading
+  const statusTone = (status: CatalogJob['status']) => stepClass[status === 'failed' ? 'failed' : status === 'synced' ? 'done' : 'pending']
 
   return (
     <AdminLayout title={t('admin.doc.title')} subtitle={t('admin.doc.subtitle')}>
@@ -251,7 +265,7 @@ export default function AdminDocuments() {
           </button>
         </div>
       ) : (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-5">
           {notice && (
             <p
               role={notice.ok ? 'status' : 'alert'}
@@ -265,281 +279,258 @@ export default function AdminDocuments() {
             </p>
           )}
 
-          <section className="rounded-xl border border-line bg-surface p-5 md:p-6" aria-labelledby="route-flow-title">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 id="route-flow-title" className="m-0 text-base font-semibold text-heading">
-                  {t('admin.doc.routeFlow')}
-                </h2>
-                <p className="mb-0 mt-1 text-sm text-muted">{t('admin.doc.routeFlowHint')}</p>
-              </div>
+          <div role="tablist" aria-label={t('admin.doc.title')} className="flex gap-1 border-b border-line">
+            {(
+              [
+                ['flow', 'admin.doc.tab.flow'],
+                ['routes', 'admin.doc.tab.routes'],
+              ] as const
+            ).map(([key, label]) => (
               <button
+                key={key}
                 type="button"
-                onClick={saveRoutes}
-                disabled={!overview?.editable || !routeDirty || action !== ''}
-                className="min-h-11 cursor-pointer rounded-lg bg-ctu-navy px-4 font-sans text-sm font-semibold text-white hover:bg-ctu-navy-dark disabled:cursor-not-allowed disabled:opacity-50"
+                role="tab"
+                id={`tab-${key}`}
+                aria-selected={tab === key}
+                aria-controls={`panel-${key}`}
+                onClick={() => setTab(key)}
+                className={`-mb-px flex min-h-11 flex-1 cursor-pointer items-center justify-center gap-2 whitespace-nowrap border-0 border-b-2 bg-transparent px-2 font-sans text-sm font-semibold sm:flex-none sm:px-4 ${
+                  tab === key ? 'border-ctu-navy text-heading dark:border-ctu-gold-active' : 'border-transparent text-muted hover:text-heading'
+                }`}
               >
-                {action === 'routes' ? t('admin.doc.savingRoutes') : t('admin.doc.saveRoutes')}
+                {t(label)}
+                {key === 'routes' && pendingRoutes > 0 && (
+                  <span
+                    title={`${pendingRoutes} ${t('admin.doc.pendingRoutes')}`}
+                    className="rounded-full border border-ctu-gold-active bg-[#FFF8E1] px-2 py-0.5 text-[11px] text-[#7A5200] dark:bg-[#302711] dark:text-[#F2CB74]"
+                  >
+                    {pendingRoutes}
+                  </span>
+                )}
               </button>
-            </div>
-            {routeDraft && (
-              <RouteGraph
-                config={routeDraft}
-                editable={Boolean(overview?.editable)}
-                onChange={(next) => {
-                  setRouteDraft(next)
-                  setRouteDirty(true)
-                }}
-              />
-            )}
-          </section>
+            ))}
+          </div>
 
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
-            <div className="flex flex-col gap-6">
-              <section className="rounded-xl border border-line bg-surface p-5" aria-labelledby="doc-upload-title">
-                <h2 id="doc-upload-title" className="m-0 mb-3 text-base font-semibold text-heading">
-                  {t('admin.doc.upload')}
-                </h2>
-                {!overview?.editable && <p className="m-0 mb-3 text-sm text-muted">{t('admin.doc.readOnly')}</p>}
-                <label htmlFor="doc-title" className="mb-1.5 block text-sm font-semibold text-heading">
-                  {t('admin.doc.documentName')}
-                </label>
-                <input
-                  id="doc-title"
-                  value={title}
-                  onChange={(event) => setTitle(event.target.value)}
-                  maxLength={100}
-                  disabled={!overview?.editable || uploading}
-                  placeholder={t('admin.doc.documentNamePlaceholder')}
-                  className="mb-3 min-h-11 w-full rounded-lg border border-field bg-surface px-3 font-sans text-sm text-heading outline-none focus:border-ctu-cyan focus:ring-2 focus:ring-ctu-cyan/20 disabled:opacity-60"
-                />
-                <div
-                  onDragOver={(event) => {
-                    event.preventDefault()
-                    setDragging(true)
-                  }}
-                  onDragLeave={() => setDragging(false)}
-                  onDrop={onDrop}
-                  className={`flex flex-col items-center gap-2 rounded-lg border-2 border-dashed px-4 py-6 text-center ${
-                    dragging ? 'border-ctu-navy bg-tint' : 'border-field'
-                  } ${!overview?.editable || uploading ? 'opacity-60' : ''}`}
+          {tab === 'routes' ? (
+            <section
+              role="tabpanel"
+              id="panel-routes"
+              aria-labelledby="tab-routes"
+              className="rounded-xl border border-line bg-surface p-4 md:p-6"
+            >
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <h2 className="m-0 text-base font-semibold text-heading">{t('admin.doc.routeFlow')}</h2>
+                  <p className="mb-0 mt-1 text-sm text-muted">{t('admin.doc.routeFlowHint')}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={saveRoutes}
+                  disabled={!overview?.editable || !routeDirty || action !== ''}
+                  className="min-h-11 cursor-pointer rounded-lg bg-ctu-navy px-4 font-sans text-sm font-semibold text-white hover:bg-ctu-navy-dark disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <Icon name="upload" size={26} className="text-accent" />
-                  <p className="m-0 text-sm text-heading">{t('admin.doc.drop')}</p>
-                  <p className="m-0 text-xs text-muted">{t('admin.doc.dropHint')}</p>
+                  {action === 'routes' ? t('admin.doc.savingRoutes') : t('admin.doc.saveRoutes')}
+                </button>
+              </div>
+              {routeDraft && (
+                <RouteGraph
+                  config={routeDraft}
+                  editable={Boolean(overview?.editable)}
+                  onChange={(next) => {
+                    setRouteDraft(next)
+                    setRouteDirty(true)
+                  }}
+                />
+              )}
+            </section>
+          ) : (
+            <div
+              role="tabpanel"
+              id="panel-flow"
+              aria-labelledby="tab-flow"
+              className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,360px)_minmax(0,1fr)]"
+            >
+              <div className={`flex min-w-0 flex-col gap-5 ${job ? 'order-2 xl:order-none' : ''}`}>
+                <section className="rounded-xl border border-line bg-surface p-4 md:p-5" aria-labelledby="doc-upload-title">
+                  <h2 id="doc-upload-title" className="m-0 mb-3 text-base font-semibold text-heading">
+                    {t('admin.doc.upload')}
+                  </h2>
+                  {!overview?.editable && <p className="m-0 mb-3 text-sm text-muted">{t('admin.doc.readOnly')}</p>}
                   <input
                     ref={inputRef}
                     id="doc-file"
                     type="file"
                     accept="application/pdf,.pdf"
                     className="sr-only"
-                    disabled={!overview?.editable || uploading}
-                    onChange={(event) => void upload(event.target.files?.[0])}
+                    disabled={locked}
+                    onChange={(event) => pickFile(event.target.files?.[0])}
                   />
-                  <label
-                    htmlFor="doc-file"
-                    className={`mt-1 inline-flex min-h-11 items-center rounded-lg bg-ctu-navy px-5 font-sans text-sm font-semibold text-white ${
-                      !overview?.editable || uploading ? 'cursor-not-allowed' : 'cursor-pointer hover:bg-ctu-navy-dark'
-                    }`}
-                  >
-                    {uploading ? t('admin.doc.uploading') : t('admin.doc.choose')}
+                  {file ? (
+                    <div className="mb-3 flex items-center gap-3 rounded-lg border border-line bg-tint px-3 py-2.5">
+                      <Icon name="doc" size={22} className="flex-none text-accent" />
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-sm font-semibold text-heading">{file.name}</span>
+                        <span className="block text-xs text-muted">{(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                      </span>
+                      <button
+                        type="button"
+                        onClick={clearFile}
+                        disabled={uploading}
+                        className="min-h-11 cursor-pointer rounded-lg border-0 bg-transparent px-2 font-sans text-xs font-semibold text-accent hover:underline disabled:opacity-50"
+                      >
+                        {t('admin.doc.clearFile')}
+                      </button>
+                    </div>
+                  ) : (
+                    <label
+                      htmlFor="doc-file"
+                      onDragOver={(event) => {
+                        event.preventDefault()
+                        setDragging(true)
+                      }}
+                      onDragLeave={() => setDragging(false)}
+                      onDrop={onDrop}
+                      className={`mb-3 flex flex-col items-center gap-1.5 rounded-lg border-2 border-dashed px-4 py-6 text-center ${
+                        dragging ? 'border-ctu-navy bg-tint' : 'border-field'
+                      } ${locked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:bg-tint'}`}
+                    >
+                      <Icon name="upload" size={26} className="text-accent" />
+                      <span className="text-sm font-semibold text-heading">{t('admin.doc.drop')}</span>
+                      <span className="text-xs text-muted">{t('admin.doc.dropHint')}</span>
+                    </label>
+                  )}
+                  <label htmlFor="doc-title" className="mb-1.5 block text-sm font-semibold text-heading">
+                    {t('admin.doc.documentName')}
                   </label>
-                </div>
-                <p className="mb-0 mt-3 flex items-start gap-2 text-xs text-muted">
-                  <Icon name="shield" size={14} className="mt-0.5 flex-none" />
-                  {t('admin.doc.versionStorage')}
-                </p>
-              </section>
-
-              {overview?.sync_enabled && (
-                <section className="rounded-xl border border-line bg-surface p-5" aria-labelledby="catalog-sync-title">
-                  <h2 id="catalog-sync-title" className="m-0 mb-2 text-base font-semibold text-heading">
-                    {t('admin.doc.productionSync')}
-                  </h2>
-                  <p className="mb-3 mt-0 text-sm text-muted">{t('admin.doc.productionSyncHint')}</p>
+                  <input
+                    id="doc-title"
+                    value={title}
+                    onChange={(event) => {
+                      setTitle(event.target.value)
+                      setTitleTouched(true)
+                    }}
+                    maxLength={100}
+                    disabled={locked}
+                    placeholder={t('admin.doc.documentNamePlaceholder')}
+                    className="mb-3 min-h-11 w-full rounded-lg border border-field bg-surface px-3 font-sans text-sm text-heading outline-none focus:border-ctu-cyan focus:ring-2 focus:ring-ctu-cyan/20 disabled:opacity-60"
+                  />
                   <button
                     type="button"
-                    onClick={syncAll}
-                    disabled={action !== ''}
-                    className="min-h-11 cursor-pointer rounded-lg border border-ctu-cyan bg-surface px-4 font-sans text-sm font-semibold text-accent hover:bg-tint disabled:cursor-not-allowed disabled:opacity-50"
+                    onClick={() => void upload()}
+                    disabled={locked || !file || !title.trim()}
+                    className="min-h-11 w-full cursor-pointer rounded-lg bg-ctu-navy px-5 font-sans text-sm font-semibold text-white hover:bg-ctu-navy-dark disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {action === 'catalog-sync' ? t('admin.doc.syncingCatalog') : t('admin.doc.syncCatalog')}
+                    {uploading ? t('admin.doc.uploading') : t('admin.doc.uploadSubmit')}
                   </button>
+                  <p className="mb-0 mt-3 flex items-start gap-2 text-xs text-muted">
+                    <Icon name="shield" size={14} className="mt-0.5 flex-none" />
+                    {t('admin.doc.versionStorage')}
+                  </p>
                 </section>
-              )}
 
-              {overview && overview.jobs.length > 0 && (
-                <section className="rounded-xl border border-line bg-surface p-5" aria-labelledby="doc-history-title">
+                <section className="rounded-xl border border-line bg-surface p-4 md:p-5" aria-labelledby="doc-history-title">
                   <h2 id="doc-history-title" className="m-0 mb-3 text-base font-semibold text-heading">
-                    {t('admin.doc.history')}
+                    {t('admin.doc.versions')}
                   </h2>
-                  <ul className="m-0 flex list-none flex-col gap-2 p-0">
-                    {overview.jobs.map((item) => (
-                      <li key={`${item.slug}-${item.id}`}>
-                        <button
-                          type="button"
-                          onClick={() => void openJob(item)}
-                          aria-pressed={job?.id === item.id}
-                          className={`flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-lg border bg-surface px-3 py-2 text-left font-sans hover:bg-tint ${
-                            job?.id === item.id ? 'border-ctu-cyan' : 'border-line'
-                          }`}
-                        >
-                          <span className="min-w-0 flex-1">
-                            <span className="block truncate text-sm font-semibold text-heading">{item.title}</span>
-                            <span className="block truncate text-xs text-muted">
-                              {item.filename} · {formatDate(item.created_at)}
-                            </span>
-                          </span>
-                          <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${stepClass[item.status === 'failed' ? 'failed' : item.status === 'synced' ? 'done' : 'pending']}`}>
-                            {t(stageLabel[item.status])}
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-            </div>
-
-            <section className="min-w-0 rounded-xl border border-line bg-surface p-5 md:p-6" aria-labelledby="doc-workflow-title">
-              <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <h2 id="doc-workflow-title" className="m-0 text-base font-semibold text-heading">
-                    {t('admin.doc.reviewFlow')}
-                  </h2>
-                  {job && (
-                    <p className="mb-0 mt-1 break-words text-sm text-muted">
-                      {job.title} · {job.filename} · {job.id}
-                    </p>
-                  )}
-                </div>
-                {job && (
-                  <span className="rounded-full border border-line bg-tint px-3 py-1 text-xs font-semibold text-heading">
-                    {t(stageLabel[job.status])}
-                  </span>
-                )}
-              </div>
-              {job ? (
-                <>
-                  <ol className="m-0 grid list-none grid-cols-1 gap-2 p-0 md:grid-cols-2">
-                    {job.steps.map((step, index) => (
-                      <li key={step.key} className={`min-w-0 rounded-lg border p-3 ${stepClass[step.status]}`}>
-                        <div className="flex items-start gap-2">
-                          <span className="flex size-7 flex-none items-center justify-center rounded-full bg-surface text-xs font-bold">
-                            {step.status === 'done' ? '✓' : step.status === 'running' ? '…' : index + 1}
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <span className="text-sm font-semibold">{step.title}</span>
-                              <span className="rounded-full bg-surface/70 px-2 py-0.5 text-[11px] font-semibold">
-                                {t(`admin.doc.step.${step.status}` as TranslationKey)}
+                  {overview && overview.jobs.length > 0 ? (
+                    <ul className="m-0 flex max-h-96 list-none flex-col gap-2 overflow-y-auto p-0">
+                      {overview.jobs.map((item) => (
+                        <li key={`${item.slug}-${item.id}`}>
+                          <button
+                            type="button"
+                            onClick={() => void openJob(item)}
+                            aria-pressed={job?.id === item.id}
+                            className={`flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-lg border-2 bg-surface px-3 py-2 text-left font-sans hover:bg-tint ${
+                              job?.id === item.id ? 'border-ctu-cyan' : 'border-line'
+                            }`}
+                          >
+                            <span className="min-w-0 flex-1">
+                              <span className="block truncate text-sm font-semibold text-heading">{item.title}</span>
+                              <span className="block truncate text-xs text-muted">
+                                {item.filename} · {formatDate(item.created_at)}
                               </span>
-                            </div>
-                            {step.summary && <p className="mb-0 mt-1.5 break-words text-xs">{step.summary}</p>}
-                            {step.progress && step.progress.total > 0 && (
-                              <div className="mt-2">
-                                <div
-                                  role="progressbar"
-                                  aria-label={step.title}
-                                  aria-valuemin={0}
-                                  aria-valuemax={step.progress.total}
-                                  aria-valuenow={step.progress.done}
-                                  className="h-2 overflow-hidden rounded-full bg-surface"
-                                >
-                                  <div
-                                    className="h-full rounded-full bg-ctu-navy transition-[width] dark:bg-ctu-gold-active"
-                                    style={{ width: `${Math.min(100, Math.round((step.progress.done / step.progress.total) * 100))}%` }}
-                                  />
-                                </div>
-                                <p className="mb-0 mt-1 text-xs tabular-nums">
-                                  {step.progress.done}/{step.progress.total} {step.progress.unit}
-                                </p>
-                              </div>
-                            )}
-                            {step.error && <p role="alert" className="mb-0 mt-2 break-words text-xs font-semibold">{step.error}</p>}
-                          </div>
-                        </div>
-                        {((step.metrics?.length ?? 0) > 0 || (step.rows?.length ?? 0) > 0 || step.preview) && (
-                          <details className="mt-2 rounded-md border border-line bg-surface text-heading">
-                            <summary className="cursor-pointer px-3 py-2 text-xs font-semibold text-accent">
-                              {t('admin.doc.details')}
-                            </summary>
-                            <div className="flex flex-col gap-2 border-t border-line p-3">
-                              {(step.metrics?.length ?? 0) > 0 && (
-                                <dl className="m-0 grid grid-cols-1 gap-x-4 gap-y-1 sm:grid-cols-2">
-                                  {step.metrics?.map((metric) => (
-                                    <div key={metric.label} className="min-w-0 text-xs">
-                                      <dt className="inline text-muted">{metric.label}: </dt>
-                                      <dd className="m-0 inline break-words font-semibold">{metric.value}</dd>
-                                    </div>
-                                  ))}
-                                </dl>
-                              )}
-                              {(step.rows?.length ?? 0) > 0 && (
-                                <ul className="m-0 flex list-none flex-col gap-1 p-0 text-xs">
-                                  {step.rows?.map((row, rowIndex) => (
-                                    <li key={`${row.label}-${rowIndex}`} className="break-words">
-                                      <span className="font-semibold">{row.label}</span>
-                                      {row.note && <span className="text-muted"> — {row.note}</span>}
-                                    </li>
-                                  ))}
-                                </ul>
-                              )}
-                              {step.preview && (
-                                <pre className="m-0 max-h-56 overflow-auto whitespace-pre-wrap break-words bg-tint p-2 font-mono text-[11px]">
-                                  {step.preview}
-                                </pre>
-                              )}
-                            </div>
-                          </details>
-                        )}
-                      </li>
-                    ))}
-                  </ol>
-                  {job.error && (
-                    <p role="alert" className="mb-0 mt-4 break-words text-sm font-semibold text-[#9B1C1C] dark:text-[#F5A3A3]">
-                      {job.error}
-                    </p>
+                            </span>
+                            <span className={`flex-none rounded-full border px-2 py-0.5 text-[11px] font-semibold ${statusTone(item.status)}`}>
+                              {t(stageLabel[item.status])}
+                            </span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="m-0 text-sm text-muted">{t('admin.doc.noVersions')}</p>
                   )}
-                  {nextStage && overview?.editable && (
+                </section>
+
+                {overview?.sync_enabled && (
+                  <section className="rounded-xl border border-line bg-surface p-4 md:p-5" aria-labelledby="catalog-sync-title">
+                    <h2 id="catalog-sync-title" className="m-0 mb-2 text-base font-semibold text-heading">
+                      {t('admin.doc.productionSync')}
+                    </h2>
+                    <p className="mb-3 mt-0 text-sm text-muted">{t('admin.doc.productionSyncHint')}</p>
                     <button
                       type="button"
-                      onClick={() => void runStage(nextStage)}
+                      onClick={syncAll}
                       disabled={action !== ''}
-                      className="mt-4 min-h-11 cursor-pointer rounded-lg bg-ctu-navy px-5 font-sans text-sm font-semibold text-white hover:bg-ctu-navy-dark disabled:cursor-not-allowed disabled:opacity-50"
+                      className="min-h-11 cursor-pointer rounded-lg border border-ctu-cyan bg-surface px-4 font-sans text-sm font-semibold text-accent hover:bg-tint disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      {action === nextStage
-                        ? t(`admin.doc.${nextStage}Running` as TranslationKey)
-                        : t(`admin.doc.${nextStage}Action` as TranslationKey)}
+                      {action === 'catalog-sync' ? t('admin.doc.syncingCatalog') : t('admin.doc.syncCatalog')}
                     </button>
+                  </section>
+                )}
+              </div>
+
+              <section
+                className={`min-w-0 rounded-xl border border-line bg-surface p-4 md:p-6 ${job ? 'order-1 xl:order-none' : ''}`}
+                aria-labelledby="doc-workflow-title"
+              >
+                <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h2 id="doc-workflow-title" className="m-0 text-base font-semibold text-heading">
+                      {job ? job.title : t('admin.doc.reviewFlow')}
+                    </h2>
+                    {job && (
+                      <p className="mb-0 mt-1 break-all text-xs text-muted">
+                        {job.filename} · {job.id}
+                      </p>
+                    )}
+                  </div>
+                  {job && (
+                    <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${statusTone(job.status)}`}>
+                      {t(stageLabel[job.status])}
+                    </span>
                   )}
-                  {job.status === 'synced' && <p className="mb-0 mt-4 text-sm text-muted">{t('admin.doc.syncedHint')}</p>}
-                  {job.ocr_preview && (
-                    <details className="mt-5 rounded-lg border border-line bg-surface">
-                      <summary className="cursor-pointer px-3 py-2 text-sm font-semibold text-accent">
-                        {t('admin.doc.ocrPreview')}
-                      </summary>
-                      <pre className="m-0 max-h-80 overflow-auto whitespace-pre-wrap break-words border-t border-line bg-tint p-3 font-mono text-xs text-heading">
-                        {job.ocr_preview}
-                      </pre>
-                    </details>
-                  )}
-                  {job.clean_preview && (
-                    <details className="mt-3 rounded-lg border border-line bg-surface" open={job.status === 'cleaned'}>
-                      <summary className="cursor-pointer px-3 py-2 text-sm font-semibold text-accent">
-                        {t('admin.doc.cleanPreview')}
-                      </summary>
-                      <pre className="m-0 max-h-[32rem] overflow-auto whitespace-pre-wrap break-words border-t border-line bg-tint p-3 font-mono text-xs text-heading">
-                        {job.clean_preview}
-                      </pre>
-                    </details>
-                  )}
-                </>
-              ) : (
-                <p className="m-0 text-sm text-muted">{t('admin.doc.flowEmpty')}</p>
-              )}
-            </section>
-          </div>
+                </div>
+                {job ? (
+                  <div className="flex flex-col gap-5">
+                    <PipelineSummary job={job} />
+                    {job.error && stage && (
+                      <p
+                        role="alert"
+                        className="m-0 break-words rounded-lg border border-[#D13434] bg-[#FDE7E7] px-3 py-2 text-sm font-semibold text-[#9B1C1C] dark:bg-[#3B1414] dark:text-[#F5A3A3]"
+                      >
+                        {job.error}
+                      </p>
+                    )}
+                    <DocumentPipeline
+                      job={job}
+                      editable={Boolean(overview?.editable)}
+                      syncEnabled={Boolean(overview?.sync_enabled)}
+                      action={action}
+                      onRun={(next) => void runStage(next)}
+                    />
+                    {job.status === 'synced' && (
+                      <p className="m-0 rounded-lg border border-[#2E9E5B] bg-[#E3F4EA] px-3 py-2 text-sm text-[#14602F] dark:bg-[#12301F] dark:text-[#8AD9A8]">
+                        {t('admin.doc.allDone')}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="m-0 text-sm text-muted">{t('admin.doc.flowEmpty')}</p>
+                )}
+              </section>
+            </div>
+          )}
         </div>
       )}
     </AdminLayout>

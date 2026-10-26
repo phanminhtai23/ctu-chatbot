@@ -54,6 +54,7 @@ class Settings(BaseSettings):
     chat_max_concurrent: int = 4
     chat_queue_max_waiting: int = 30
     chat_queue_wait_seconds: int = 120  # chờ quá lâu trong hàng thì bỏ cuộc (báo QUEUE_TIMEOUT)
+    chat_busy_wait_seconds: int = 20  # người dùng còn lượt cũ đang chạy (vd. vừa tải lại trang): chờ chừng này giây rồi mới báo 429
 
     # Admin nạp tài liệu mới: PDF -> OCR -> chuẩn hóa -> chunk theo Điều -> embedding -> vị trí trên trang -> test -> kích hoạt.
     document_ingest_enabled: bool = True  # false = tắt hẳn các endpoint nạp tài liệu (ví dụ ở production)

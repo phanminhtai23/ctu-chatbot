@@ -168,6 +168,17 @@ class DocumentCatalog:
     @staticmethod
     def _update_step(job: dict, key: str, status: str, **details) -> None:
         step = next(item for item in job["steps"] if item["key"] == key)
+        # Ghi mốc thời gian để giao diện hiện thời gian từng bước; chi tiết do pipeline truyền vào (render/ocr) được ưu tiên.
+        if status == "pending":
+            details.setdefault("started_at", None)
+            details.setdefault("finished_at", None)
+        elif status == "running" and step.get("status") != "running":
+            details.setdefault("started_at", now_iso())
+            details.setdefault("finished_at", None)
+        elif status in {"done", "warning", "failed"}:
+            finished = details.get("finished_at") or step.get("finished_at") or now_iso()
+            details["finished_at"] = finished
+            details.setdefault("started_at", step.get("started_at") or finished)
         step["status"] = status
         step.update(details)
 

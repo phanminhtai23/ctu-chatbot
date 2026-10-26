@@ -198,6 +198,15 @@ def retrieve_knowledge(retriever, history: list[BaseMessage]) -> list:
 def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retriever: DocumentRetriever | None = None):
     def generate(state: MessagesState, writer: StreamWriter) -> dict:
         started = time.monotonic()
+        steps: dict[str, float] = {}  # thời gian từng node của lượt này, ghi log ở cuối để biết chậm ở đâu
+        last = started
+
+        def lap(name: str) -> None:
+            nonlocal last
+            now = time.monotonic()
+            steps[name] = round(now - last, 2)
+            last = now
+
         history = window(state["messages"], settings.chat_history_window)
         config = route_catalog.load_config() if retriever is not None else route_catalog.DEFAULT_CONFIG
         route_nodes = route_catalog.enabled_nodes(config)
@@ -216,7 +225,9 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
             except Exception:  # noqa: BLE001 - lỗi tra cứu (hết hạn mức embedding...) không làm hỏng cả lượt chat
                 logger.exception("Không tra cứu được văn bản quy định, trả lời không kèm ngữ cảnh")
 
+        lap("embed+rag")
         kb_hits = retrieve_knowledge(retriever, history) if retriever is not None else []
+        lap("kien_thuc_bo_sung")
         attached = has_attachments(history)
 
         # Guardrail phạm vi: thuộc quy chế (RAG) / ngoài quy chế (tìm web) / không liên quan / xã giao.
@@ -253,6 +264,7 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
                     except Exception:  # noqa: BLE001
                         logger.exception("Không tra cứu được tuyến tài liệu %s", route)
                         hits = []
+        lap("phan_loai_tuyen")
         logger.info("Tuyến câu hỏi: %s", route)
 
         tool_log: list[dict] = []
@@ -273,6 +285,7 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
             if route_node and route_node["kind"] == "web":
                 web = WebSearchSession()
                 tools = [web.as_tool()]
+        lap("dung_prompt")
         llm_history = build_llm_history(history)  # tin có tệp đính kèm kèm nội dung tệp (chỉ dùng cho LLM, không lưu vào checkpoint)
         messages = [SystemMessage(content=system), *llm_history]
         can_use_tools = can_use_tools and bool(tools)
@@ -284,6 +297,8 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
             for chunk in answer_stream:
                 text = message_text(chunk)
                 if text:
+                    if not collected and "token_dau" not in steps:
+                        lap("token_dau")  # từ lúc dựng xong prompt tới token đầu tiên của câu trả lời
                     collected.append(text)
                     writer({"token": text})  # đẩy từng đoạn ra cho client (chỉ có tác dụng khi stream_mode="custom")
             return "".join(collected)
@@ -302,6 +317,13 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
         if not answer.strip():
             raise LLMError("Gemini returned an empty reply (có thể bị chặn nội dung)")
 
+        lap("sinh_cau_tra_loi")
+        logger.info(
+            "Thời gian lượt chat (giây): %s | tổng=%.2f | tuyến=%s",
+            " ".join(f"{name}={value}" for name, value in steps.items()),
+            time.monotonic() - started,
+            route,
+        )
         reply = AIMessage(
             content=answer,
             additional_kwargs={

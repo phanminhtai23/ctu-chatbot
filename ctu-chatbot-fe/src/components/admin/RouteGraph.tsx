@@ -9,8 +9,8 @@ type Props = {
   onChange: (config: RouteConfig) => void
 }
 
-const NODE_HEIGHT = 92
-const NODE_GAP = 34
+const NODE_HEIGHT = 68
+const NODE_GAP = 16
 const NODE_X = 560
 const NODE_WIDTH = 310
 const routeKindLabel: Record<RouteNode['kind'], TranslationKey> = {

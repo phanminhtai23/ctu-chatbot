@@ -20,6 +20,11 @@ from app.services.rag.knowledge import KnowledgeStore
 from app.services.rag.store import Retriever, VectorStore, default_chroma_path, ensure_index
 
 logger = logging.getLogger("app")
+if not logger.handlers:  # uvicorn chỉ cấu hình logger của nó; không có dòng này thì log INFO của app.* (thời gian từng bước...) bị nuốt
+    _handler = logging.StreamHandler()
+    _handler.setFormatter(logging.Formatter("%(levelname)s:     %(name)s: %(message)s"))
+    logger.addHandler(_handler)
+    logger.setLevel(logging.INFO)
 
 
 def build_retriever() -> Retriever | None:

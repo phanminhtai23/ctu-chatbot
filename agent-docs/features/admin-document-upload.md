@@ -27,6 +27,10 @@ Production Compose sets `DOCUMENT_CATALOG_EDIT_ENABLED=false`, `DOCUMENT_CATALOG
 
 The committed QĐ 3266 source is organized under `vector-docs/documents/qd3266/current/`; previous regulations are kept under their own document folder. Admin uploads use a timestamp-named folder directly under `vector-docs/documents/`, and keep the original PDF filename. See `vector-docs/README.md` for the layout and file roles.
 
+### UI layout (2026-10-27)
+
+`/admin/documents` has two tabs: **Quy trình tài liệu** (default) and **Sơ đồ tuyến**. The workflow tab shows a four-stage summary (Upload, Extract, Clean, Sync) above a vertical timeline (`components/admin/DocumentPipeline.tsx`). Each stage lists its sub-steps and previews. The stage action button sits inside the stage waiting for the admin. Only Sync is tagged "Ảnh hưởng chatbot"; earlier stages only write draft files. Upload is file-first: choose a PDF, the name is pre-filled from the filename, then press **Lưu thành version mới**. The route graph is compact and its pending-draft count shows on the tab.
+
 ### Historical implementation — legacy automatic ingest
 
 The previous upload flow ran an automatic ingest pipeline, tested retrieval, and activated a version in server-side storage. It remains available through the legacy endpoints and `app/services/ingest/manager.py`, but it is not the staged catalog flow documented above. Its `DOCUMENT_INGEST_ENABLED` flag is disabled in production. Do not use its old 8/9-step UI description or `ctu-chatbot-be/data/documents/` paths when documenting or operating the current catalog.

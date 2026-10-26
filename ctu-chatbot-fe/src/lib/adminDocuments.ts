@@ -109,6 +109,8 @@ export type CatalogStep = {
   title: string
   status: 'pending' | 'running' | 'done' | 'warning' | 'failed'
   summary?: string
+  started_at?: string | null
+  finished_at?: string | null
   progress?: { done: number; total: number; unit: string } | null
   metrics?: { label: string; value: string }[]
   rows?: { label: string; status: 'ok' | 'warn' | 'fail' | 'info'; note: string }[]

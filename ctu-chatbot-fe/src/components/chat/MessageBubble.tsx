@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useFormatDate } from '../../hooks/useFormatDate'
 import { useI18n } from '../../i18n'
 import { articleSources, documentSources, webSources, type ChatMessage, type SourceRef } from '../../lib/conversations'
@@ -54,19 +54,15 @@ function linkifyArticles(text: string, articles: Set<number>): string {
 }
 
 /**
- * Giờ gửi tin theo múi giờ đã cài của người dùng. Nằm NỔI phía trên tin nhắn (không chiếm chỗ trong bố cục) và chỉ hiện khi
- * rê chuột / focus vào tin; cha phải có `group relative`.
+ * Giờ gửi tin theo múi giờ đã cài của người dùng. Nằm ngay DƯỚI tin nhắn, chỉ hiện khi rê chuột / focus vào tin
+ * (chỗ vẫn được giữ sẵn nên không làm nhảy bố cục); cha phải có `group`.
  */
-function SentAt({ iso, align = 'left' }: { iso: string | null; align?: 'left' | 'right' }) {
+function SentAt({ iso }: { iso: string | null }) {
   const { t } = useI18n()
   const formatDate = useFormatDate()
   if (!iso) return null
   return (
-    <span
-      className={`pointer-events-none absolute -top-5 z-10 whitespace-nowrap text-xs text-muted opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 ${
-        align === 'right' ? 'right-1' : 'left-[4.25rem]'
-      }`}
-    >
+    <span className="pointer-events-none whitespace-nowrap text-xs text-muted opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100">
       {t('chat.sentAt')} {formatDate(iso)}
     </span>
   )
@@ -74,7 +70,6 @@ function SentAt({ iso, align = 'left' }: { iso: string | null; align?: 'left' | 
 
 export default function MessageBubble({ message, liveElapsed, onReport, onOpenReference, activeArticle }: Props) {
   const { t } = useI18n()
-  const [botAvatarUnavailable, setBotAvatarUnavailable] = useState(false)
   const sources = useMemo(() => articleSources(message.sources), [message.sources])
   const documents = useMemo(() => documentSources(message.sources), [message.sources])
   const web = useMemo(() => webSources(message.sources), [message.sources])
@@ -112,7 +107,7 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
             {message.content}
           </div>
         )}
-        <SentAt iso={message.created_at} align="right" />
+        <SentAt iso={message.created_at} />
       </div>
     )
   }
@@ -121,31 +116,17 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
   const open = (article: number) => onOpenReference(article, sources)
   return (
     <div className="group relative flex w-full min-w-0 flex-col items-start">
-      {!message.pending && <SentAt iso={message.created_at} />}
-      <div className="flex size-14 flex-none items-center justify-center overflow-hidden rounded-full">
-        {botAvatarUnavailable ? (
-          <Icon name="diamond" size={28} strokeWidth={2} />
-        ) : (
-          <img
-            src="/ctu-chatbot-avatar.webp"
-            alt=""
-            aria-hidden="true"
-            className="size-full object-cover"
-            fetchPriority="high"
-            decoding="async"
-            onError={() => setBotAvatarUnavailable(true)}
-          />
-        )}
-      </div>
-      <div className="mt-2 w-full min-w-0">
-        <div className="relative break-words rounded-2xl bg-bubble-bot px-4 py-3.5 text-[15px] leading-[1.75] text-heading shadow-sm before:absolute before:-top-2 before:left-[21px] before:size-3.5 before:[clip-path:polygon(50%_0,100%_100%,0_100%)] before:bg-bubble-bot before:content-[''] sm:px-5 sm:py-4">
-          {message.content ? (
-            <Markdown onReference={sources.length > 0 ? open : undefined} activeArticle={activeArticle}>
-              {content}
-            </Markdown>
-          ) : (
-            <TypingDots queuePosition={message.queuePosition} />
-          )}
+      <div className="w-full min-w-0">
+        <div className="break-words text-[15px] leading-[1.6] text-heading">
+          <div className="[&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+            {message.content ? (
+              <Markdown onReference={sources.length > 0 ? open : undefined} activeArticle={activeArticle}>
+                {content}
+              </Markdown>
+            ) : (
+              <TypingDots queuePosition={message.queuePosition} />
+            )}
+          </div>
         </div>
 
         {!message.pending && sources.length > 0 && (
@@ -233,7 +214,7 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
           </div>
         )}
 
-        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px]">
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0 text-[13px]">
           {seconds != null && (
             <span className="inline-flex items-center gap-1.5 tabular-nums" title={t('chat.waited')}>
               <Icon name="clock" size={14} />
@@ -245,11 +226,16 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
             <button
               type="button"
               onClick={() => onReport(message)}
-              className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border-0 bg-transparent px-2 py-1 font-sans text-[13px] font-normal text-muted hover:bg-tint hover:text-accent"
+              className="inline-flex min-h-8 cursor-pointer items-center gap-2 rounded-lg border-0 bg-transparent px-2 py-0.5 font-sans text-[13px] font-normal text-muted hover:bg-tint hover:text-accent"
             >
               <Icon name="flag" size={16} />
               {t('chat.reportAnswer')}
             </button>
+          )}
+          {!message.pending && (
+            <span className="ml-auto">
+              <SentAt iso={message.created_at} />
+            </span>
           )}
         </div>
       </div>

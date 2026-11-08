@@ -251,6 +251,24 @@ export default function AdminDocuments() {
     }
   }
 
+  // Hiện ở cả tab Tài liệu (mặc định) và Quy trình: trên production đây là cách duy nhất để vector hoá tài liệu đã deploy.
+  const syncSection = overview?.sync_enabled ? (
+    <section className="rounded-xl border border-line bg-surface p-4 md:p-5" aria-labelledby="catalog-sync-title">
+      <h2 id="catalog-sync-title" className="m-0 mb-2 text-base font-semibold text-heading">
+        {t('admin.doc.productionSync')}
+      </h2>
+      <p className="mb-3 mt-0 text-sm text-muted">{t('admin.doc.productionSyncHint')}</p>
+      <button
+        type="button"
+        onClick={syncAll}
+        disabled={action !== ''}
+        className="min-h-11 cursor-pointer rounded-lg border border-ctu-cyan bg-surface px-4 font-sans text-sm font-semibold text-accent hover:bg-tint disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {action === 'catalog-sync' ? t('admin.doc.syncingCatalog') : t('admin.doc.syncCatalog')}
+      </button>
+    </section>
+  ) : null
+
   const stage = job ? currentStage(job) : null
   const pendingRoutes = routeDraft?.nodes.filter((node) => node.status === 'pending').length ?? 0
   const locked = !overview?.editable || uploading
@@ -319,6 +337,8 @@ export default function AdminDocuments() {
 
           {tab === 'library' ? (
             routeDraft && overview && (
+              <>
+              {syncSection}
               <DocumentLibrary
                 routes={overview.routes}
                 jobs={overview.jobs}
@@ -340,6 +360,7 @@ export default function AdminDocuments() {
                   setNotice({ ok: true, text: message })
                 }}
               />
+              </>
             )
           ) : tab === 'routes' ? (
             <section
@@ -514,22 +535,7 @@ export default function AdminDocuments() {
                   )}
                 </section>
 
-                {overview?.sync_enabled && (
-                  <section className="rounded-xl border border-line bg-surface p-4 md:p-5" aria-labelledby="catalog-sync-title">
-                    <h2 id="catalog-sync-title" className="m-0 mb-2 text-base font-semibold text-heading">
-                      {t('admin.doc.productionSync')}
-                    </h2>
-                    <p className="mb-3 mt-0 text-sm text-muted">{t('admin.doc.productionSyncHint')}</p>
-                    <button
-                      type="button"
-                      onClick={syncAll}
-                      disabled={action !== ''}
-                      className="min-h-11 cursor-pointer rounded-lg border border-ctu-cyan bg-surface px-4 font-sans text-sm font-semibold text-accent hover:bg-tint disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {action === 'catalog-sync' ? t('admin.doc.syncingCatalog') : t('admin.doc.syncCatalog')}
-                    </button>
-                  </section>
-                )}
+                {syncSection}
               </div>
 
               <section

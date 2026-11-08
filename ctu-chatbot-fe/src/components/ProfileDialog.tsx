@@ -343,7 +343,7 @@ export default function ProfileDialog({ open, onClose, scrollToFiles = false }: 
       onClick={(e) => {
         if (e.target === dialogRef.current) onClose() // bấm ra ngoài thì đóng
       }}
-      className="m-auto h-[min(92vh,760px)] w-[calc(100%-32px)] max-w-[860px] overflow-y-auto rounded-2xl border border-line bg-surface p-6 text-muted shadow-[0_24px_60px_rgba(0,0,0,.35)] backdrop:bg-black/50"
+      className="m-auto h-[min(92vh,760px)] w-[calc(100%-32px)] max-w-[1080px] overflow-y-auto rounded-2xl border border-line bg-surface p-6 text-muted shadow-[0_24px_60px_rgba(0,0,0,.35)] backdrop:bg-black/50"
     >
       <div className="mb-5 flex items-center justify-between gap-3">
         <h2 id="profile-dialog-title" className="m-0 text-xl">

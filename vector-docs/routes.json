@@ -8,7 +8,9 @@
       "kind": "document",
       "prompt": "Câu hỏi về quy chế đào tạo, tín chỉ, điểm, học bổng, đăng ký học phần, cảnh báo học tập, tốt nghiệp và các quy định học vụ.",
       "collection": "qd3266",
-      "source": "documents/qd3266/current/clean.md"
+      "source": "documents/qd3266/current/clean.md",
+      "decision_no": "3266/QĐ-ĐHCT (08/2024)",
+      "official_url": "https://tansinhvien.ctu.edu.vn/images/upload/Tansinhvien_K50/Quychehocvu/QD3266_Quy_dinh_cong_tac_hoc_vu_danh_cho_sinh_vien_trinh_do_dai_hoc_hinh_thuc_chinh_quy_V3.pdf"
     },
     {
       "id": "external",
@@ -27,17 +29,6 @@
       "label": "Chào hỏi",
       "kind": "smalltalk",
       "prompt": "Chào hỏi, cảm ơn hoặc hỏi chatbot là ai và có thể giúp gì."
-    },
-    {
-      "id": "kiem-thu-ui-q-3266-20261-v4d00d5",
-      "label": "Kiểm thử UI QĐ 3266 20261025",
-      "kind": "document",
-      "prompt": "Câu hỏi liên quan tới Kiểm thử UI QĐ 3266 20261025; chỉ chọn tuyến này khi nội dung thuộc tài liệu đó.",
-      "collection": "doc-kiem-thu-ui-q-3266-2-20261025130713-4d00d5",
-      "source": "kiem-thu-ui-q-3266-20261025/versions/20261025130713-4d00d5/clean.md",
-      "document_slug": "kiem-thu-ui-q-3266-20261025",
-      "version": "20261025130713-4d00d5",
-      "status": "pending"
     },
     {
       "id": "kiem-thu-ui-2-trang-that-v61f85d",
@@ -71,11 +62,6 @@
       "from": "router",
       "to": "smalltalk",
       "enabled": true
-    },
-    {
-      "from": "router",
-      "to": "kiem-thu-ui-q-3266-20261-v4d00d5",
-      "enabled": false
     },
     {
       "from": "router",

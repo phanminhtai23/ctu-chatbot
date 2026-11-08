@@ -49,3 +49,10 @@ The previous upload flow ran an automatic ingest pipeline, tested retrieval, and
 - Tab **Tài liệu**: mỗi thẻ có danh sách phiên bản (tên file, ngày, "Đang dùng", nút **Dùng bản này**, **Xem quy trình**) và nút **Tải lên phiên bản mới** (chuyển sang tab Quy trình với biểu mẫu upload nhắm vào tài liệu đó).
 - Thời gian từng giai đoạn đã có sẵn ở `DocumentPipeline` (mỗi bước ghi `started_at`/`finished_at`).
 - Test: `tests/test_catalog.py` (4 test mới).
+
+### 2026-11-08: quy chế mặc định có version, sửa lỗi qua kiểm thử thật
+- Tuyến `regulation` (QĐ 3266) cũng nhận version: upload với `route_id=regulation` tạo job slug `qd3266`; đồng bộ xong tuyến giữ id `regulation` nhưng trỏ sang collection/source của version mới. Bản kèm hệ thống (`documents/qd3266/current`) là version giả id `current` (chỉ đọc; extract/clean/sync trả `*_NOT_ALLOWED`), chọn lại bằng `activate` sẽ trả tuyến về đúng hình dạng ban đầu. Tuyến mặc định vẫn không xoá được.
+- Đã chạy thật 3 tài liệu (QĐ 3266 bản cũ 21 trang, QĐ 4544 liên thông 15 trang, nội quy KTX 6 trang): mọi bước xong, số Điều liên tục, số vector Chroma bằng số Điều. Lưu ý: Gemini tự sửa lỗi chính tả của bản gốc ("gởi" thành "gửi"), có thể còn thẻ `<br>` trong ô bảng và một ô bảng bị tách ở chỗ ngắt trang.
+- Sửa: `SourceOut` thiếu `document_url` nên API làm mất link PDF của nguồn trích dẫn; `_slugify` làm mất chữ "đ"; `quick_route` không còn chuyển thẳng sang `regulation` theo từ khoá ("ĐTBCHK", "Điều N"...) khi có tài liệu khác, để LLM phân loại (tốn thêm một lần gọi LLM cho các câu đó).
+- Định tuyến thử với Gemini thật: 12/12 câu thuộc các tuyến đang bật đúng; tuyến QĐ 4544 hiện tắt đường nối trên sơ đồ tuyến.
+- Dữ liệu `vector-docs` còn lại: `qd3266/current`, một version cũ của QĐ 3266, QĐ 4544 và nội quy KTX. Sau khi deploy production phải bấm "Sync catalog vào vector DB" để Chroma trên server có các collection mới.

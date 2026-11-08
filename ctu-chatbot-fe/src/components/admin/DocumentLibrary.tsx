@@ -37,20 +37,20 @@ function groupDocuments(routes: RouteConfig, jobs: CatalogJob[]): Entry[] {
   const groups = new Map<string, RouteNode[]>()
   for (const node of routes.nodes) {
     if (node.kind !== 'document') continue
-    const key = node.document_slug ?? node.id
+    const key = node.id === 'regulation' ? 'qd3266' : (node.document_slug ?? node.id) // quy chế mặc định gộp cùng các version của nó
     groups.set(key, [...(groups.get(key) ?? []), node])
   }
   return [...groups.entries()].map(([key, nodes]) => {
     const synced = nodes.find((n) => n.status !== 'pending')
     const node = synced ?? nodes[nodes.length - 1]
-    const builtin = !node.document_slug
-    const docJobs = builtin ? [] : jobs.filter((job) => job.slug === key)
+    const builtin = node.id === 'regulation'
+    const docJobs = jobs.filter((job) => job.slug === key)
     return {
       node,
       builtin,
       pending: !synced,
       jobs: docJobs,
-      versions: builtin ? 1 : docJobs.length || nodes.length,
+      versions: docJobs.length || nodes.length,
     }
   })
 }
@@ -274,7 +274,7 @@ function DocumentCard({
               <span className="text-muted">{t('admin.doc.lib.noOfficialUrl')}</span>
             )}
           </p>
-          {!builtin && (
+          {(
             <div className="mt-3 border-t border-line pt-3">
               <div className="flex flex-wrap items-center gap-2">
                 <button
@@ -302,7 +302,7 @@ function DocumentCard({
                 <ul id={`versions-${node.id}`} className="m-0 mt-2 flex list-none flex-col gap-2 p-0">
                   {jobs.length === 0 && <li className="text-sm text-muted">{t('admin.doc.ver.none')}</li>}
                   {jobs.map((job) => {
-                    const active = !pending && node.version === job.id
+                    const active = !pending && (node.version ? node.version === job.id : job.id === 'current')
                     return (
                       <li
                         key={job.id}

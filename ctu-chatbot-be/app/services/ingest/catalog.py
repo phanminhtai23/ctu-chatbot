@@ -28,6 +28,11 @@ from app.services.ingest.vision import Vision
 logger = logging.getLogger("app.ingest")
 _JOB_ID = re.compile(r"^[0-9]{14}-[0-9a-f]{6}$")
 _RESERVED = {"regulation", "external", "offtopic", "smalltalk"}
+# Quy chế mặc định (QĐ 3266) cũng có version: tuyến `regulation` giữ nguyên id, các version mới dùng slug này.
+# Bản kèm hệ thống (documents/qd3266/current) là version giả có id "current" để quay về được.
+BUILTIN_ROUTE = "regulation"
+BUILTIN_SLUG = "qd3266"
+CURRENT = "current"
 _EMBED_BATCH = 8
 _DETAIL_STEPS = (
     ("upload", "Lưu PDF và thông tin version"),
@@ -45,6 +50,7 @@ class CatalogError(Exception):
 
 
 def _slugify(value: str) -> str:
+    value = value.replace("đ", "d").replace("Đ", "D")  # NFKD không tách được đ/Đ
     ascii_value = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode().lower()
     slug = re.sub(r"[^a-z0-9]+", "-", ascii_value).strip("-")[:36].rstrip("-")
     if len(slug) < 2:
@@ -61,7 +67,41 @@ class DocumentCatalog:
     def root(self) -> Path:
         return route_catalog.vector_docs_root()
 
+    def _current_dir(self) -> Path:
+        return self.root / "documents" / BUILTIN_SLUG / "current"
+
+    def _current_job(self) -> dict:
+        """Version giả cho bản QĐ 3266 kèm hệ thống (chỉ đọc, không có quy trình xử lý)."""
+        directory = self._current_dir()
+        clean = directory / "clean.md"
+        if not clean.is_file():
+            raise CatalogError("DOCUMENT_VERSION_NOT_FOUND")
+        stamp = datetime.fromtimestamp(clean.stat().st_mtime, timezone.utc).isoformat()
+        source = directory / "source.pdf"
+        title = BUILTIN_SLUG
+        try:
+            title = next(n["label"] for n in route_catalog.load_config()["nodes"] if n["id"] == BUILTIN_ROUTE)
+        except (StopIteration, ValueError):
+            pass
+        return {
+            "id": CURRENT,
+            "slug": BUILTIN_SLUG,
+            "title": title,
+            "filename": "source.pdf",
+            "size_bytes": source.stat().st_size if source.is_file() else 0,
+            "status": "synced",
+            "created_at": stamp,
+            "finished_at": stamp,
+            "error": "",
+            "ocr_preview": "",
+            "clean_preview": "",
+            "metrics": {},
+            "steps": [{**self._step(key, label, "done"), "summary": "Bản mặc định kèm hệ thống"} for key, label in _DETAIL_STEPS],
+        }
+
     def _version_dir(self, slug: str, job_id: str) -> Path:
+        if slug == BUILTIN_SLUG and job_id == CURRENT:
+            return self._current_dir()
         if not re.fullmatch(r"[a-z][a-z0-9-]{1,39}", slug) or not _JOB_ID.fullmatch(job_id):
             raise CatalogError("DOCUMENT_VERSION_NOT_FOUND")
         timestamp_dir = self.root / "documents" / job_id
@@ -71,6 +111,8 @@ class DocumentCatalog:
         return legacy_dir
 
     def _read_job(self, slug: str, job_id: str) -> dict:
+        if slug == BUILTIN_SLUG and job_id == CURRENT:
+            return self._current_job()
         path = self._version_dir(slug, job_id) / "job.json"
         try:
             value = json.loads(path.read_text(encoding="utf-8"))
@@ -204,9 +246,12 @@ class DocumentCatalog:
         config = route_catalog.load_config()
         if route_id:
             node = self._document_nodes(config, route_id)[0]
-            if not node.get("document_slug"):
+            if route_id == BUILTIN_ROUTE:
+                safe_title, slug = node["label"], BUILTIN_SLUG
+            elif not node.get("document_slug"):
                 raise CatalogError("DOCUMENT_PROTECTED")
-            safe_title, slug = node["label"], node["document_slug"]
+            else:
+                safe_title, slug = node["label"], node["document_slug"]
         else:
             safe_title = title.strip()
             if not safe_title or len(safe_title) > 100:
@@ -250,7 +295,12 @@ class DocumentCatalog:
         self._save_job(job)
         config = route_catalog.load_config()
         existing = next(
-            (node for node in config["nodes"] if node.get("document_slug") == slug and node.get("status") != "pending"),
+            (
+                node
+                for node in config["nodes"]
+                if (node.get("document_slug") == slug or (slug == BUILTIN_SLUG and node["id"] == BUILTIN_ROUTE))
+                and node.get("status") != "pending"
+            ),
             None,
         )
         draft_id = f"{slug[:24]}-v{job_id[-6:]}"
@@ -297,6 +347,10 @@ class DocumentCatalog:
                 continue
             if job.get("slug") and job.get("id"):
                 jobs.append(job)
+        try:
+            jobs.append(self._current_job())
+        except CatalogError:
+            pass
         jobs.sort(key=lambda item: item.get("created_at", ""), reverse=True)
         return jobs[:limit]
 
@@ -475,6 +529,8 @@ class DocumentCatalog:
     def sync_job(self, slug: str, job_id: str) -> dict:
         if not settings.document_catalog_sync_enabled:
             raise CatalogError("CATALOG_SYNC_DISABLED")
+        if job_id == CURRENT:
+            raise CatalogError("SYNC_NOT_ALLOWED")  # bản kèm hệ thống không có quy trình xử lý
         job = self._read_job(slug, job_id)
         if job["status"] not in {"cleaned", "synced"}:
             raise CatalogError("SYNC_NOT_ALLOWED")
@@ -519,11 +575,16 @@ class DocumentCatalog:
             config = route_catalog.load_config()
             nodes = list(config["nodes"])
             existing = next(
-                (node for node in nodes if node.get("document_slug") == slug and node.get("status") != "pending"),
+                (
+                    node
+                    for node in nodes
+                    if (node.get("document_slug") == slug or (slug == BUILTIN_SLUG and node["id"] == BUILTIN_ROUTE))
+                    and node.get("status") != "pending"
+                ),
                 None,
             )
             draft = next((node for node in nodes if node.get("document_slug") == slug and node.get("status") == "pending"), None)
-            route_id = slug
+            route_id = BUILTIN_ROUTE if slug == BUILTIN_SLUG else slug
             prompt = (
                 existing["prompt"]
                 if existing
@@ -570,10 +631,10 @@ class DocumentCatalog:
         node = next((n for n in config["nodes"] if n["id"] == route_id and n["kind"] == "document"), None)
         if node is None:
             raise CatalogError("DOCUMENT_NOT_FOUND")
-        slug = node.get("document_slug")
+        slug = node.get("document_slug") or (BUILTIN_SLUG if route_id == BUILTIN_ROUTE else None)
         if not slug:
             return [node]
-        return [n for n in config["nodes"] if n.get("document_slug") == slug]
+        return [n for n in config["nodes"] if n.get("document_slug") == slug or n["id"] == route_id]
 
     def update_document(self, route_id: str, label: str, decision_no: str, official_url: str = "") -> dict:
         """Đổi tên, số quyết định và link tài liệu chính thức; áp cho mọi version của tài liệu. Mô tả (nếu có) giữ nguyên."""
@@ -616,13 +677,27 @@ class DocumentCatalog:
             raise CatalogError("CATALOG_READ_ONLY")
         config = route_catalog.load_config()
         nodes = self._document_nodes(config, route_id)
-        slug = nodes[0].get("document_slug")
+        slug = BUILTIN_SLUG if route_id == BUILTIN_ROUTE else nodes[0].get("document_slug")
         if not slug:
             raise CatalogError("DOCUMENT_PROTECTED")
         active = next((n for n in nodes if n.get("status") != "pending"), None)
         job = self._read_job(slug, job_id)
         if active is None or job["status"] != "synced":
             raise CatalogError("ACTIVATE_NOT_ALLOWED")
+        if job_id == CURRENT:  # quay về bản kèm hệ thống: trả tuyến về đúng hình dạng ban đầu
+            if not active.get("document_slug"):
+                return active
+            try:
+                self._sync_file(self._current_dir() / "clean.md", "qd3266", self._embedder_factory())
+            except Exception as exc:
+                logger.warning("Không chuẩn bị được vector cho bản mặc định", exc_info=True)
+                raise CatalogError("SYNC_FAILED") from exc
+            original = {k: v for k, v in active.items() if k not in {"document_slug", "version", "status"}}
+            original.update(collection="qd3266", source="documents/qd3266/current/clean.md")
+            route_catalog.save_config(
+                {**config, "nodes": [original if n["id"] == active["id"] else n for n in config["nodes"]]}
+            )
+            return original
         if active.get("version") == job_id:
             return active
         collection = f"doc-{slug[:20]}-{job_id}"
@@ -636,6 +711,7 @@ class DocumentCatalog:
             raise CatalogError("SYNC_FAILED") from exc
         switched = {
             **active,
+            "document_slug": slug,
             "collection": collection,
             "source": f"documents/{job_id}/clean.md"
             if (self.root / "documents" / job_id / "clean.md").is_file()
@@ -655,7 +731,7 @@ class DocumentCatalog:
         config = route_catalog.load_config()
         targets = self._document_nodes(config, route_id)
         slug = targets[0].get("document_slug")
-        if not slug:
+        if not slug or route_id == BUILTIN_ROUTE:
             raise CatalogError("DOCUMENT_PROTECTED")
         ids = {n["id"] for n in targets}
         nodes = [n for n in config["nodes"] if n["id"] not in ids]

@@ -63,9 +63,11 @@ def quick_route(question: str, top_score: float | None, routes: tuple[str, ...] 
     """Quyết định không cần LLM (rẻ): None nghĩa là còn mơ hồ."""
     if SMALLTALK in routes and _SMALLTALK.match(question) and len(question) <= 60:
         return SMALLTALK
-    if REGULATION in routes and (_ARTICLE_MENTION.search(question) or _REGULATION_HINT.search(question)):
-        return REGULATION
     dynamic_routes = set(routes) - set(ROUTES)
+    # Có thêm tài liệu khác (QĐ liên thông, nội quy KTX...) thì từ khoá như "ĐTBCHK", "Điều 18" không còn chỉ thuộc
+    # quy chế mặc định: để LLM phân loại, kẻo câu hỏi của sinh viên liên thông bị đưa nhầm sang quy chế chính quy.
+    if REGULATION in routes and not dynamic_routes and (_ARTICLE_MENTION.search(question) or _REGULATION_HINT.search(question)):
+        return REGULATION
     if REGULATION in routes and not dynamic_routes and top_score is not None and top_score >= HIGH_SCORE:
         return REGULATION
     return None

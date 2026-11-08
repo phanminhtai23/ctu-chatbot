@@ -294,8 +294,6 @@ def test_upload_with_route_id_adds_a_version_to_the_same_document(catalog):
     second = manager.upload("bỏ qua", "v2.pdf", make_pdf(), route_id=first["slug"])
     assert second["slug"] == first["slug"] and second["title"] == "Học phí"
     assert second["id"] != first["id"]
-    with pytest.raises(CatalogError, match="DOCUMENT_PROTECTED"):
-        manager.upload("x", "v3.pdf", make_pdf(), route_id="regulation")
     with pytest.raises(CatalogError, match="DOCUMENT_NOT_FOUND"):
         manager.upload("x", "v3.pdf", make_pdf(), route_id="khong-co")
 
@@ -322,5 +320,52 @@ def test_activate_requires_a_synced_version(catalog):
     pending = manager.upload("Học phí", "v2.pdf", make_pdf(), route_id=first["slug"])
     with pytest.raises(CatalogError, match="ACTIVATE_NOT_ALLOWED"):
         manager.activate_version(first["slug"], pending["id"])
+    with pytest.raises(CatalogError, match="DOCUMENT_VERSION_NOT_FOUND"):
+        manager.activate_version("regulation", first["id"])  # version của tài liệu khác
+
+
+def _with_builtin_current(root):
+    current = root / "documents" / "qd3266" / "current"
+    current.mkdir(parents=True)
+    (current / "clean.md").write_text("### Điều 1. Phạm vi" + chr(10) + "Nội dung bản mặc định." + chr(10), encoding="utf-8")
+
+
+def test_builtin_regulation_can_get_versions_and_switch_back(catalog):
+    manager, root = catalog
+    _with_builtin_current(root)
+    assert [j["id"] for j in manager.list_jobs() if j["slug"] == "qd3266"] == ["current"]
+
+    uploaded = manager.upload("bỏ qua", "old.pdf", make_pdf(), route_id="regulation")
+    assert uploaded["slug"] == "qd3266" and uploaded["title"] == "Quy chế học vụ"
+    _sync_all(manager, uploaded)
+    nodes = {n["id"]: n for n in route_catalog.load_config()["nodes"]}
+    assert nodes["regulation"]["version"] == uploaded["id"] and nodes["regulation"]["document_slug"] == "qd3266"
+    assert [n for n in nodes if n.startswith("qd3266")] == []  # không sinh tuyến thứ hai: id `regulation` được giữ
+    assert {j["id"] for j in manager.list_jobs() if j["slug"] == "qd3266"} == {"current", uploaded["id"]}
+
+    back = manager.activate_version("regulation", "current")
+    assert "document_slug" not in back and "version" not in back and back["collection"] == "qd3266"
+    assert back["source"] == "documents/qd3266/current/clean.md"
+    again = manager.activate_version("regulation", uploaded["id"])
+    assert again["version"] == uploaded["id"] and again["document_slug"] == "qd3266"
+
     with pytest.raises(CatalogError, match="DOCUMENT_PROTECTED"):
-        manager.activate_version("regulation", first["id"])
+        manager.delete_document("regulation")
+    with pytest.raises(CatalogError, match="SYNC_NOT_ALLOWED"):
+        manager.sync_job("qd3266", "current")
+    with pytest.raises(CatalogError, match="EXTRACT_NOT_ALLOWED"):
+        manager.extract("qd3266", "current")
+
+
+def test_slugify_keeps_vietnamese_d():
+    from app.services.ingest.catalog import _slugify
+
+    assert _slugify("QĐ 4544 Quy định công tác học vụ") == "qd-4544-quy-dinh-cong-tac-hoc-vu"
+    assert _slugify("Đại học Cần Thơ") == "dai-hoc-can-tho"
+
+
+def test_source_schema_keeps_document_url():
+    from app.schemas.conversation import SourceOut
+
+    source = SourceOut(article=18, title="Cảnh báo học vụ", document_url="/api/v1/documents/catalog/qd/20261108081530-7d8a7d/source")
+    assert source.model_dump()["document_url"].endswith("/source")

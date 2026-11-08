@@ -214,7 +214,12 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
           </div>
         )}
 
-        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0 text-[13px]">
+        {/* Chỉ hiện khi rê chuột / focus vào tin (màn hình cảm ứng không có hover nên luôn hiện); tin đang trả lời luôn hiện để thấy đồng hồ chờ. */}
+        <div
+          className={`mt-1 flex flex-wrap items-center gap-x-3 gap-y-0 text-[13px] ${
+            message.pending ? '' : 'opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100'
+          }`}
+        >
           {seconds != null && (
             <span className="inline-flex items-center gap-1.5 tabular-nums" title={t('chat.waited')}>
               <Icon name="clock" size={14} />

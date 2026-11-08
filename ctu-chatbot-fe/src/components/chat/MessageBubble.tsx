@@ -232,11 +232,7 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
               {t('chat.reportAnswer')}
             </button>
           )}
-          {!message.pending && (
-            <span className="ml-auto">
-              <SentAt iso={message.created_at} />
-            </span>
-          )}
+          {!message.pending && <SentAt iso={message.created_at} />}
         </div>
       </div>
     </div>

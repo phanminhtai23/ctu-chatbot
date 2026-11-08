@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth'
 import { useI18n } from '../i18n'
 import type { TranslationKey } from '../i18n/vi'
+import { getDonateInfo, type DonateInfo } from '../lib/donate'
 import { listFiles, type FileListing } from '../lib/files'
 import type { ThemeMode } from '../lib/me'
 import { useTheme } from '../theme'
@@ -11,6 +12,7 @@ import DateField from './DateField'
 import DonateSection from './DonateSection'
 import Icon from './Icon'
 import MyFiles from './MyFiles'
+import SourcePicker from './SourcePicker'
 
 const themeOptions: { value: ThemeMode; label: TranslationKey }[] = [
   { value: 'system', label: 'profile.theme.system' },
@@ -201,16 +203,72 @@ function ProfileForm({ onClose }: { onClose: () => void }) {
   )
 }
 
-/** Ảnh đại diện + biểu mẫu thông tin + tệp đã tải lên. Dung lượng đã dùng lấy từ server mỗi lần mở hộp thoại. */
-function ProfileBody({ onClose, scrollToFiles }: { onClose: () => void; scrollToFiles: boolean }) {
+type TabId = 'settings' | 'sources' | 'storage' | 'donate'
+
+const tabLabels: Record<TabId, TranslationKey> = {
+  settings: 'profile.tab.settings',
+  sources: 'profile.tab.sources',
+  storage: 'profile.tab.storage',
+  donate: 'profile.tab.donate',
+}
+
+/** Thanh tab: mũi tên trái/phải đổi tab, Home/End nhảy về đầu/cuối (mẫu WAI-ARIA tabs). */
+function Tabs({ tabs, active, onChange }: { tabs: TabId[]; active: TabId; onChange: (tab: TabId) => void }) {
+  const { t } = useI18n()
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    const index = tabs.indexOf(active)
+    let next = index
+    if (e.key === 'ArrowRight') next = (index + 1) % tabs.length
+    else if (e.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length
+    else if (e.key === 'Home') next = 0
+    else if (e.key === 'End') next = tabs.length - 1
+    else return
+    e.preventDefault()
+    onChange(tabs[next])
+    document.getElementById(`profile-tab-${tabs[next]}`)?.focus()
+  }
+  return (
+    <div role="tablist" aria-label={t('profile.title')} onKeyDown={onKeyDown} className="mb-5 flex gap-1 border-b border-line">
+      {tabs.map((id) => {
+        const selected = id === active
+        return (
+          <button
+            key={id}
+            type="button"
+            role="tab"
+            id={`profile-tab-${id}`}
+            aria-selected={selected}
+            aria-controls={`profile-panel-${id}`}
+            tabIndex={selected ? 0 : -1}
+            onClick={() => onChange(id)}
+            className={`-mb-px min-h-11 cursor-pointer border-0 border-b-2 bg-transparent px-4 py-2 font-sans text-[15px] ${
+              selected ? 'border-accent font-semibold text-heading' : 'border-transparent font-normal text-muted hover:text-heading'
+            }`}
+          >
+            {t(tabLabels[id])}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+/** Các tab của hộp thoại. Mọi tab đều giữ nguyên khi chuyển qua lại (chỉ ẩn) để không mất chỗ đang nhập dở. Dung lượng đã dùng lấy từ server mỗi lần mở hộp thoại. */
+function ProfileBody({ onClose, initialTab }: { onClose: () => void; initialTab: TabId }) {
+  const { t } = useI18n()
+  const [tab, setTab] = useState<TabId>(initialTab)
   const [listing, setListing] = useState<FileListing | null>(null)
+  const [listingFailed, setListingFailed] = useState(false)
+  const [donate, setDonate] = useState<DonateInfo | null>(null)
   const { user } = useAuth()
-  const scrolled = useRef(false)
 
   const refresh = useCallback(() => {
     listFiles()
-      .then(setListing)
-      .catch(() => {}) // không lấy được thì ẩn mục tệp, phần chỉnh hồ sơ vẫn dùng được
+      .then((next) => {
+        setListing(next)
+        setListingFailed(false)
+      })
+      .catch(() => setListingFailed(true)) // không lấy được thì tab Dung lượng báo lỗi, phần chỉnh hồ sơ vẫn dùng được
   }, [])
   useEffect(() => {
     refresh()
@@ -221,25 +279,51 @@ function ProfileBody({ onClose, scrollToFiles }: { onClose: () => void; scrollTo
     if (avatar) refresh()
   }, [avatar, refresh])
 
-  // Mở từ thanh dung lượng ở thanh bên: cuộn thẳng tới mục "Tệp của bạn" (sau khi danh sách tệp đã hiện ra).
   useEffect(() => {
-    if (!scrollToFiles || !listing || scrolled.current) return
-    scrolled.current = true
-    requestAnimationFrame(() => document.getElementById('my-files')?.scrollIntoView({ block: 'start' }))
-  }, [scrollToFiles, listing])
+    let cancelled = false
+    getDonateInfo()
+      .then((info) => !cancelled && setDonate(info))
+      .catch(() => {}) // không lấy được thì ẩn tab Ủng hộ
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // Chưa có mã QR thì không có gì để hiện: ẩn hẳn tab Ủng hộ.
+  const tabs: TabId[] = donate?.has_qr ? ['settings', 'sources', 'storage', 'donate'] : ['settings', 'sources', 'storage']
+  const active = tabs.includes(tab) ? tab : 'settings'
 
   return (
     <>
-      <AvatarEditor maxBytes={listing?.max_upload_bytes ?? 5 * 1024 * 1024} />
-      <ProfileForm onClose={onClose} />
-      <MyFiles listing={listing} onChange={setListing} />
+      <Tabs tabs={tabs} active={active} onChange={setTab} />
+      <div id="profile-panel-settings" role="tabpanel" aria-labelledby="profile-tab-settings" hidden={active !== 'settings'}>
+        <AvatarEditor maxBytes={listing?.max_upload_bytes ?? 5 * 1024 * 1024} />
+        <ProfileForm onClose={onClose} />
+      </div>
+      <div id="profile-panel-sources" role="tabpanel" aria-labelledby="profile-tab-sources" hidden={active !== 'sources'}>
+        <SourcePicker />
+      </div>
+      <div id="profile-panel-storage" role="tabpanel" aria-labelledby="profile-tab-storage" hidden={active !== 'storage'}>
+        {listing ? (
+          <MyFiles listing={listing} onChange={setListing} className="mt-0" />
+        ) : (
+          <p role={listingFailed ? 'alert' : 'status'} className="m-0 text-sm">
+            {t(listingFailed ? 'files.loadError' : 'files.loading')}
+          </p>
+        )}
+      </div>
+      {donate?.has_qr && (
+        <div id="profile-panel-donate" role="tabpanel" aria-labelledby="profile-tab-donate" hidden={active !== 'donate'}>
+          <DonateSection info={donate} className="mt-0" />
+        </div>
+      )}
     </>
   )
 }
 
-type Props = { open: boolean; onClose: () => void; /** true = cuộn tới mục "Tệp của bạn" khi mở */ scrollToFiles?: boolean }
+type Props = { open: boolean; onClose: () => void; /** true = mở thẳng tab Dung lượng */ scrollToFiles?: boolean }
 
-/** Hộp thoại chỉnh thông tin cá nhân (thay cho trang /profile cũ). */
+/** Hộp thoại thông tin cá nhân (thay cho trang /profile cũ): tab Cài đặt, Dung lượng và Ủng hộ. */
 export default function ProfileDialog({ open, onClose, scrollToFiles = false }: Props) {
   const { t } = useI18n()
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -259,7 +343,7 @@ export default function ProfileDialog({ open, onClose, scrollToFiles = false }: 
       onClick={(e) => {
         if (e.target === dialogRef.current) onClose() // bấm ra ngoài thì đóng
       }}
-      className="m-auto max-h-[92vh] w-[calc(100%-32px)] max-w-[520px] overflow-y-auto rounded-2xl border border-line bg-surface p-6 text-muted shadow-[0_24px_60px_rgba(0,0,0,.35)] backdrop:bg-black/50"
+      className="m-auto h-[min(92vh,760px)] w-[calc(100%-32px)] max-w-[860px] overflow-y-auto rounded-2xl border border-line bg-surface p-6 text-muted shadow-[0_24px_60px_rgba(0,0,0,.35)] backdrop:bg-black/50"
     >
       <div className="mb-5 flex items-center justify-between gap-3">
         <h2 id="profile-dialog-title" className="m-0 text-xl">
@@ -274,8 +358,7 @@ export default function ProfileDialog({ open, onClose, scrollToFiles = false }: 
           <Icon name="close" />
         </button>
       </div>
-      {open && <ProfileBody onClose={onClose} scrollToFiles={scrollToFiles} />}
-      {open && <DonateSection />}
+      {open && <ProfileBody onClose={onClose} initialTab={scrollToFiles ? 'storage' : 'settings'} />}
     </dialog>
   )
 }

@@ -35,7 +35,16 @@ export function UsageBar({ used, quota, variant = 'card' }: { used: number; quot
 }
 
 /** Tệp (PDF / ảnh) người dùng đã gửi trong lúc trò chuyện: xem dung lượng đã dùng và xoá bớt. Không có nút tải lên ở đây. */
-export default function MyFiles({ listing, onChange }: { listing: FileListing | null; onChange: (next: FileListing) => void }) {
+export default function MyFiles({
+  listing,
+  onChange,
+  className = 'mt-6',
+}: {
+  listing: FileListing | null
+  onChange: (next: FileListing) => void
+  /** Lề ngoài; mặc định cách phần trên 1.5rem */
+  className?: string
+}) {
   const { t } = useI18n()
   const formatDate = useFormatDate()
   const [busy, setBusy] = useState(false)
@@ -64,7 +73,7 @@ export default function MyFiles({ listing, onChange }: { listing: FileListing | 
   }
 
   return (
-    <section id="my-files" aria-labelledby="my-files-title" className="mt-6 rounded-2xl border border-line bg-tint p-4 sm:p-5">
+    <section id="my-files" aria-labelledby="my-files-title" className={`${className} rounded-2xl border border-line bg-tint p-4 sm:p-5`}>
       <h3 id="my-files-title" className="mb-3 mt-0 text-base">
         {t('files.title')}
       </h3>

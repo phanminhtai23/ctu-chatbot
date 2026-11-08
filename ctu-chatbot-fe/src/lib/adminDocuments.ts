@@ -139,6 +139,12 @@ export type RouteNode = {
   label: string
   kind: 'document' | 'web' | 'smalltalk' | 'offtopic'
   prompt: string
+  /** Mô tả ngắn hiện cho admin (không dùng để phân loại câu hỏi) */
+  description?: string
+  /** Số quyết định ban hành, ví dụ 3266/QĐ-ĐHCT */
+  decision_no?: string
+  /** Link tới tài liệu chính thức (trang web của Trường), http(s) */
+  official_url?: string
   collection?: string
   source?: string
   document_slug?: string
@@ -169,8 +175,8 @@ export const getCatalogOverview = (): Promise<CatalogOverview> => apiFetch(catal
 export const getCatalogJob = (slug: string, id: string): Promise<CatalogJob> =>
   apiFetch(`${catalogPath}/jobs/${encodeURIComponent(slug)}/${encodeURIComponent(id)}`)
 
-export const uploadCatalogDocument = (file: File, title: string): Promise<CatalogJob> =>
-  apiFetch(`${catalogPath}/jobs?title=${encodeURIComponent(title)}&filename=${encodeURIComponent(file.name)}`, {
+export const uploadCatalogDocument = (file: File, title: string, routeId?: string): Promise<CatalogJob> =>
+  apiFetch(`${catalogPath}/jobs?title=${encodeURIComponent(title)}&filename=${encodeURIComponent(file.name)}${routeId ? `&route_id=${encodeURIComponent(routeId)}` : ''}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/pdf' },
     body: file,
@@ -190,3 +196,32 @@ export const syncCatalog = (): Promise<{ documents: { collection: string; articl
 
 export const saveRouteConfig = (config: RouteConfig): Promise<RouteConfig> =>
   apiFetch(`${catalogPath}/routes`, { method: 'PUT', body: JSON.stringify(config) })
+
+export type DocumentMeta = { label: string; decision_no: string; official_url: string }
+
+/** Đổi tên, mô tả và số quyết định của tài liệu (áp cho mọi version của nó). */
+export const updateCatalogDocument = (routeId: string, meta: DocumentMeta): Promise<RouteNode> =>
+  apiFetch(`${catalogPath}/documents/${encodeURIComponent(routeId)}`, { method: 'PATCH', body: JSON.stringify(meta) })
+
+/** Xoá tài liệu đã upload cùng mọi version, vector và file nguồn. */
+export const deleteCatalogDocument = (routeId: string): Promise<{ deleted: string[]; versions: number }> =>
+  apiFetch(`${catalogPath}/documents/${encodeURIComponent(routeId)}`, { method: 'DELETE' })
+
+export type PromptDraft = { router_prompt: string; node_prompt: string }
+export type PromptProposal = { current: PromptDraft; proposal: PromptDraft & { changes: string[] } }
+
+/** Nhờ LLM viết lại prompt phân loại cho tài liệu. Chỉ trả đề xuất để so sánh, chưa lưu. */
+export const proposeRouterPrompt = (body: {
+  route_id: string
+  description: string
+  feedback?: string
+  previous?: PromptDraft
+}): Promise<PromptProposal> => apiFetch(`${catalogPath}/router-prompt/proposals`, { method: 'POST', body: JSON.stringify(body) })
+
+/** Admin đồng ý đề xuất: lưu router_prompt chung và prompt của tuyến tài liệu. */
+export const applyRouterPrompt = (body: PromptDraft & { route_id: string; description?: string }): Promise<RouteConfig> =>
+  apiFetch(`${catalogPath}/router-prompt/apply`, { method: 'POST', body: JSON.stringify(body) })
+
+/** Đổi phiên bản đang dùng của tài liệu sang một version đã đồng bộ trước đó. */
+export const activateCatalogVersion = (routeId: string, jobId: string): Promise<RouteNode> =>
+  apiFetch(`${catalogPath}/documents/${encodeURIComponent(routeId)}/versions/${encodeURIComponent(jobId)}/activate`, { method: 'POST' })

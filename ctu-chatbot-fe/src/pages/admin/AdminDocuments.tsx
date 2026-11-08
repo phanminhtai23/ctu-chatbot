@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type DragEvent } from 'react'
 import Icon from '../../components/Icon'
 import DocumentPipeline, { PipelineSummary, currentStage } from '../../components/admin/DocumentPipeline'
+import DocumentLibrary from '../../components/admin/DocumentLibrary'
 import RouteGraph from '../../components/admin/RouteGraph'
 import { useFormatDate } from '../../hooks/useFormatDate'
 import { useI18n } from '../../i18n'
@@ -17,6 +18,7 @@ import {
   uploadErrorCode,
   type CatalogJob,
   type RouteConfig,
+  type RouteNode,
 } from '../../lib/adminDocuments'
 import AdminLayout from './AdminLayout'
 
@@ -51,10 +53,12 @@ export default function AdminDocuments() {
   const [job, setJob] = useState<CatalogJob | null>(null)
   const [routeDraft, setRouteDraft] = useState<RouteConfig | null>(null)
   const [routeDirty, setRouteDirty] = useState(false)
-  const [tab, setTab] = useState<'flow' | 'routes'>('flow')
+  const [tab, setTab] = useState<'library' | 'flow' | 'routes'>('library')
   const [title, setTitle] = useState('')
   const [titleTouched, setTitleTouched] = useState(false)
   const [file, setFile] = useState<File | null>(null)
+  /** Có giá trị = đang thêm phiên bản mới cho tài liệu này (thay vì tạo tài liệu mới) */
+  const [targetDoc, setTargetDoc] = useState<RouteNode | null>(null)
   const [uploading, setUploading] = useState(false)
   const [dragging, setDragging] = useState(false)
   const [action, setAction] = useState('')
@@ -126,7 +130,7 @@ export default function AdminDocuments() {
     }
     setNotice(null)
     setFile(picked)
-    if (!titleTouched) setTitle(picked.name.replace(/\.pdf$/i, '').replace(/[_]+/g, ' ').trim().slice(0, 100))
+    if (!titleTouched && !targetDoc) setTitle(picked.name.replace(/\.pdf$/i, '').replace(/[_]+/g, ' ').trim().slice(0, 100))
   }
 
   const clearFile = () => {
@@ -137,14 +141,15 @@ export default function AdminDocuments() {
 
   const upload = async () => {
     if (!file || uploading || !overview?.editable) return
-    if (!title.trim()) {
+    if (!targetDoc && !title.trim()) {
       setNotice({ ok: false, text: t('admin.doc.errName') })
       return
     }
     setUploading(true)
     setNotice(null)
     try {
-      const created = await uploadCatalogDocument(file, title.trim())
+      const created = await uploadCatalogDocument(file, targetDoc?.label ?? title.trim(), targetDoc?.id)
+      setTargetDoc(null)
       setTitle('')
       setTitleTouched(false)
       clearFile()
@@ -282,6 +287,7 @@ export default function AdminDocuments() {
           <div role="tablist" aria-label={t('admin.doc.title')} className="flex gap-1 border-b border-line">
             {(
               [
+                ['library', 'admin.doc.tab.library'],
                 ['flow', 'admin.doc.tab.flow'],
                 ['routes', 'admin.doc.tab.routes'],
               ] as const
@@ -311,7 +317,31 @@ export default function AdminDocuments() {
             ))}
           </div>
 
-          {tab === 'routes' ? (
+          {tab === 'library' ? (
+            routeDraft && overview && (
+              <DocumentLibrary
+                routes={overview.routes}
+                jobs={overview.jobs}
+                editable={overview.editable}
+                onError={(text) => setNotice({ ok: false, text })}
+                onOpenJob={(item) => {
+                  setTab('flow')
+                  void openJob(item)
+                }}
+                onUploadVersion={(node) => {
+                  setTargetDoc(node)
+                  clearFile()
+                  setNotice(null)
+                  setTab('flow')
+                }}
+                onChanged={async ({ deletedSlug, message }) => {
+                  if (deletedSlug && job?.slug === deletedSlug) setJob(null)
+                  await refreshAfterAction()
+                  setNotice({ ok: true, text: message })
+                }}
+              />
+            )
+          ) : tab === 'routes' ? (
             <section
               role="tabpanel"
               id="panel-routes"
@@ -351,10 +381,16 @@ export default function AdminDocuments() {
               className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,360px)_minmax(0,1fr)]"
             >
               <div className={`flex min-w-0 flex-col gap-5 ${job ? 'order-2 xl:order-none' : ''}`}>
-                <section className="rounded-xl border border-line bg-surface p-4 md:p-5" aria-labelledby="doc-upload-title">
-                  <h2 id="doc-upload-title" className="m-0 mb-3 text-base font-semibold text-heading">
-                    {t('admin.doc.upload')}
-                  </h2>
+                <section className="rounded-2xl border border-line bg-surface p-4 shadow-sm md:p-5" aria-labelledby="doc-upload-title">
+                                    <div className="mb-4 flex items-center gap-3">
+                    <span className="flex size-11 flex-none items-center justify-center rounded-2xl bg-tint text-accent">
+                      <Icon name="upload" size={22} />
+                    </span>
+                    <div>
+                      <h2 id="doc-upload-title" className="m-0 text-base font-semibold text-heading">{t('admin.doc.upload')}</h2>
+                      <p className="mb-0 mt-1 text-xs text-muted">{t('admin.doc.stage.upload.desc')}</p>
+                    </div>
+                  </div>
                   {!overview?.editable && <p className="m-0 mb-3 text-sm text-muted">{t('admin.doc.readOnly')}</p>}
                   <input
                     ref={inputRef}
@@ -399,25 +435,41 @@ export default function AdminDocuments() {
                       <span className="text-xs text-muted">{t('admin.doc.dropHint')}</span>
                     </label>
                   )}
+                  {targetDoc && (
+                    <div className="mb-3 rounded-lg border border-ctu-cyan bg-tint px-3 py-2.5 text-sm">
+                      <p className="m-0 font-semibold text-heading">
+                        {t('admin.doc.ver.target')}: {targetDoc.label}
+                      </p>
+                      <p className="mb-2 mt-1 text-xs text-muted">{t('admin.doc.ver.targetHint')}</p>
+                      <button
+                        type="button"
+                        onClick={() => setTargetDoc(null)}
+                        disabled={uploading}
+                        className="min-h-11 cursor-pointer rounded-lg border-0 bg-transparent px-1 font-sans text-xs font-semibold text-accent hover:underline disabled:opacity-50"
+                      >
+                        {t('admin.doc.ver.cancelTarget')}
+                      </button>
+                    </div>
+                  )}
                   <label htmlFor="doc-title" className="mb-1.5 block text-sm font-semibold text-heading">
                     {t('admin.doc.documentName')}
                   </label>
                   <input
                     id="doc-title"
-                    value={title}
+                    value={targetDoc ? targetDoc.label : title}
                     onChange={(event) => {
                       setTitle(event.target.value)
                       setTitleTouched(true)
                     }}
                     maxLength={100}
-                    disabled={locked}
+                    disabled={locked || targetDoc !== null}
                     placeholder={t('admin.doc.documentNamePlaceholder')}
                     className="mb-3 min-h-11 w-full rounded-lg border border-field bg-surface px-3 font-sans text-sm text-heading outline-none focus:border-ctu-cyan focus:ring-2 focus:ring-ctu-cyan/20 disabled:opacity-60"
                   />
                   <button
                     type="button"
                     onClick={() => void upload()}
-                    disabled={locked || !file || !title.trim()}
+                    disabled={locked || !file || (!targetDoc && !title.trim())}
                     className="min-h-11 w-full cursor-pointer rounded-lg bg-ctu-navy px-5 font-sans text-sm font-semibold text-white hover:bg-ctu-navy-dark disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {uploading ? t('admin.doc.uploading') : t('admin.doc.uploadSubmit')}

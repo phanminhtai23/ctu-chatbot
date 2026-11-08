@@ -18,9 +18,11 @@ export type UserProfile = {
   theme: ThemeMode
   /** false = tài khoản mới, chưa hiện hộp thoại chào mừng */
   welcomed: boolean
+  /** Id các nguồn (tài liệu / web) người dùng chọn để hỏi; null = tất cả */
+  document_routes: string[] | null
 }
 
-export type UserUpdate = Partial<Pick<UserProfile, 'name' | 'birthday' | 'timezone' | 'theme'>>
+export type UserUpdate = Partial<Pick<UserProfile, 'name' | 'birthday' | 'timezone' | 'theme' | 'document_routes'>>
 
 export type TokenResponse = { access_token: string; refresh_token: string; user: UserProfile }
 

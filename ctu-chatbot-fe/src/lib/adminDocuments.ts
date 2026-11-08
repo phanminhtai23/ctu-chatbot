@@ -103,3 +103,125 @@ export function uploadErrorCode(err: unknown): string {
   const match = /"detail":\s*"([A-Z_]+)/.exec(err.message)
   return match ? match[1] : `HTTP_${err.status}`
 }
+
+export type CatalogStep = {
+  key: 'upload' | 'render' | 'ocr' | 'normalize' | 'chunk' | 'embed' | 'sync' | 'extract' | 'clean'
+  title: string
+  status: 'pending' | 'running' | 'done' | 'warning' | 'failed'
+  summary?: string
+  started_at?: string | null
+  finished_at?: string | null
+  progress?: { done: number; total: number; unit: string } | null
+  metrics?: { label: string; value: string }[]
+  rows?: { label: string; status: 'ok' | 'warn' | 'fail' | 'info'; note: string }[]
+  preview?: string
+  error?: string
+}
+
+export type CatalogJob = {
+  id: string
+  slug: string
+  title: string
+  filename: string
+  size_bytes: number
+  status: 'uploaded' | 'extracted' | 'cleaned' | 'synced' | 'failed'
+  created_at: string
+  finished_at: string | null
+  error: string
+  ocr_preview: string
+  clean_preview: string
+  metrics: Record<string, string | number>
+  steps: CatalogStep[]
+}
+
+export type RouteNode = {
+  id: string
+  label: string
+  kind: 'document' | 'web' | 'smalltalk' | 'offtopic'
+  prompt: string
+  /** Mô tả ngắn hiện cho admin (không dùng để phân loại câu hỏi) */
+  description?: string
+  /** Số quyết định ban hành, ví dụ 3266/QĐ-ĐHCT */
+  decision_no?: string
+  /** Link tới tài liệu chính thức (trang web của Trường), http(s) */
+  official_url?: string
+  collection?: string
+  source?: string
+  document_slug?: string
+  version?: string
+  status?: 'pending' | 'synced'
+}
+
+export type RouteEdge = { from: 'router'; to: string; enabled: boolean }
+
+export type RouteConfig = {
+  version: 1
+  router_prompt: string
+  nodes: RouteNode[]
+  edges: RouteEdge[]
+}
+
+export type CatalogOverview = {
+  editable: boolean
+  sync_enabled: boolean
+  routes: RouteConfig
+  jobs: CatalogJob[]
+}
+
+const catalogPath = '/api/v1/admin/documents/catalog'
+
+export const getCatalogOverview = (): Promise<CatalogOverview> => apiFetch(catalogPath)
+
+export const getCatalogJob = (slug: string, id: string): Promise<CatalogJob> =>
+  apiFetch(`${catalogPath}/jobs/${encodeURIComponent(slug)}/${encodeURIComponent(id)}`)
+
+export const uploadCatalogDocument = (file: File, title: string, routeId?: string): Promise<CatalogJob> =>
+  apiFetch(`${catalogPath}/jobs?title=${encodeURIComponent(title)}&filename=${encodeURIComponent(file.name)}${routeId ? `&route_id=${encodeURIComponent(routeId)}` : ''}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/pdf' },
+    body: file,
+  })
+
+export const extractCatalogDocument = (job: CatalogJob): Promise<CatalogJob> =>
+  apiFetch(`${catalogPath}/jobs/${encodeURIComponent(job.slug)}/${encodeURIComponent(job.id)}/extract`, { method: 'POST' })
+
+export const cleanCatalogDocument = (job: CatalogJob): Promise<CatalogJob> =>
+  apiFetch(`${catalogPath}/jobs/${encodeURIComponent(job.slug)}/${encodeURIComponent(job.id)}/clean`, { method: 'POST' })
+
+export const syncCatalogDocument = (job: CatalogJob): Promise<{ job: CatalogJob }> =>
+  apiFetch(`${catalogPath}/jobs/${encodeURIComponent(job.slug)}/${encodeURIComponent(job.id)}/sync`, { method: 'POST' })
+
+export const syncCatalog = (): Promise<{ documents: { collection: string; articles: number; unchanged: boolean }[]; count: number }> =>
+  apiFetch(`${catalogPath}/sync`, { method: 'POST' })
+
+export const saveRouteConfig = (config: RouteConfig): Promise<RouteConfig> =>
+  apiFetch(`${catalogPath}/routes`, { method: 'PUT', body: JSON.stringify(config) })
+
+export type DocumentMeta = { label: string; decision_no: string; official_url: string }
+
+/** Đổi tên, mô tả và số quyết định của tài liệu (áp cho mọi version của nó). */
+export const updateCatalogDocument = (routeId: string, meta: DocumentMeta): Promise<RouteNode> =>
+  apiFetch(`${catalogPath}/documents/${encodeURIComponent(routeId)}`, { method: 'PATCH', body: JSON.stringify(meta) })
+
+/** Xoá tài liệu đã upload cùng mọi version, vector và file nguồn. */
+export const deleteCatalogDocument = (routeId: string): Promise<{ deleted: string[]; versions: number }> =>
+  apiFetch(`${catalogPath}/documents/${encodeURIComponent(routeId)}`, { method: 'DELETE' })
+
+export type PromptDraft = { router_prompt: string; node_prompt: string }
+export type PromptProposal = { current: PromptDraft; proposal: PromptDraft & { changes: string[] } }
+
+/** Nhờ LLM viết lại prompt phân loại cho tài liệu. Chỉ trả đề xuất để so sánh, chưa lưu. */
+export const proposeRouterPrompt = (body: {
+  route_id: string
+  description: string
+  feedback?: string
+  previous?: PromptDraft
+}): Promise<PromptProposal> => apiFetch(`${catalogPath}/router-prompt/proposals`, { method: 'POST', body: JSON.stringify(body) })
+
+/** Admin đồng ý đề xuất: lưu router_prompt chung và prompt của tuyến tài liệu. */
+export const applyRouterPrompt = (body: PromptDraft & { route_id: string; description?: string }): Promise<RouteConfig> =>
+  apiFetch(`${catalogPath}/router-prompt/apply`, { method: 'POST', body: JSON.stringify(body) })
+
+/** Đổi phiên bản đang dùng của tài liệu sang một version đã đồng bộ trước đó. */
+export const activateCatalogVersion = (routeId: string, jobId: string): Promise<RouteNode> =>
+  apiFetch(`${catalogPath}/documents/${encodeURIComponent(routeId)}/versions/${encodeURIComponent(jobId)}/activate`, { method: 'POST' })

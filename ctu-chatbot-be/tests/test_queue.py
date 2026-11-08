@@ -37,6 +37,23 @@ def test_user_cannot_have_two_turns_at_once():
     q.enter("a")  # trả chỗ rồi thì vào lại được
 
 
+def test_busy_user_waits_for_orphaned_turn_to_release():
+    q = TurnQueue(max_concurrent=2, max_waiting=2, poll_seconds=0.05)
+    old = q.enter("a")
+    threading.Timer(0.2, q.release, args=(old,)).start()
+    started = time.monotonic()
+    new = q.enter("a", busy_wait=3)  # lượt cũ nhả chỗ sau 0,2 giây nên không bị UserBusy
+    assert 0.1 < time.monotonic() - started < 2
+    q.release(new)
+
+
+def test_busy_user_still_rejected_when_old_turn_outlasts_wait():
+    q = TurnQueue(max_concurrent=2, max_waiting=2, poll_seconds=0.05)
+    q.enter("a")
+    with pytest.raises(UserBusy):
+        q.enter("a", busy_wait=0.2)
+
+
 def test_full_queue_rejects_instead_of_growing():
     q = TurnQueue(max_concurrent=1, max_waiting=1)
     running = q.enter("a")

@@ -25,3 +25,23 @@ export function getDocLayout(): Promise<DocLayout> {
 }
 
 export const pageImageUrl = (page: number) => `${API_BASE_URL}/api/v1/documents/qd3266/pages/${page}.jpg`
+
+export type SourceRoute = {
+  id: string
+  label: string
+  kind: 'document' | 'web'
+  description: string
+  decision_no: string
+  official_url: string
+}
+
+/** Các nguồn người dùng có thể chọn để hỏi (tài liệu đã đồng bộ và tìm kiếm web nếu bật). */
+export const listSelectableRoutes = (): Promise<SourceRoute[]> => apiFetch('/api/v1/documents/catalog/routes')
+
+export type CatalogSummary = {
+  count: number
+  documents: { id: string; label: string; decision_no: string; description: string; official_url: string }[]
+}
+
+/** Công khai: các tài liệu chatbot đang hỗ trợ (đã đồng bộ), lấy từ danh mục admin quản lý. */
+export const getCatalogSummary = (): Promise<CatalogSummary> => apiFetch('/api/v1/documents/catalog/summary')

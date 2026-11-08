@@ -1,3 +1,4 @@
+import re
 import uuid
 from datetime import date
 from typing import Literal
@@ -23,6 +24,7 @@ class UserOut(BaseModel):
     language: Language
     theme: Theme
     welcomed: bool = False  # đã hiện hộp thoại chào mừng lần đầu chưa (false = tài khoản mới, cần chào mừng)
+    document_routes: list[str] | None = None  # tuyến tài liệu người dùng chọn để hỏi; None = tất cả
 
 
 class UserUpdate(BaseModel):
@@ -33,6 +35,18 @@ class UserUpdate(BaseModel):
     timezone: str | None = None
     language: Language | None = None
     theme: Theme | None = None
+    # Gửi null = quay về "tất cả"; gửi danh sách = chỉ tra cứu các tuyến này (ít nhất một).
+    document_routes: list[str] | None = None
+
+    @field_validator("document_routes")
+    @classmethod
+    def _document_routes(cls, v: list[str] | None) -> list[str] | None:
+        if v is None:
+            return v
+        ids = list(dict.fromkeys(v))
+        if not 1 <= len(ids) <= 50 or not all(re.fullmatch(r"[a-z][a-z0-9-]{1,39}", i) for i in ids):
+            raise ValueError("document_routes must list 1-50 valid route ids")
+        return ids
 
     @field_validator("name")
     @classmethod

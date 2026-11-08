@@ -13,12 +13,18 @@ from app.services.chat.graph import build_chat_graph
 from app.services.llm.gemini import GeminiClient
 from app.services.ingest import storage
 from app.services.ingest.manager import JobManager
+from app.services.ingest.catalog import DocumentCatalog
 from app.services.ingest.vision import GeminiVision
 from app.services.rag.embeddings import CachedQueryEmbedder, GeminiEmbedder
 from app.services.rag.knowledge import KnowledgeStore
 from app.services.rag.store import Retriever, VectorStore, default_chroma_path, ensure_index
 
 logger = logging.getLogger("app")
+if not logger.handlers:  # uvicorn chỉ cấu hình logger của nó; không có dòng này thì log INFO của app.* (thời gian từng bước...) bị nuốt
+    _handler = logging.StreamHandler()
+    _handler.setFormatter(logging.Formatter("%(levelname)s:     %(name)s: %(message)s"))
+    logger.addHandler(_handler)
+    logger.setLevel(logging.INFO)
 
 
 def build_retriever() -> Retriever | None:
@@ -63,8 +69,11 @@ async def lifespan(app: FastAPI):
 
     retriever = build_retriever()
     app.state.retriever = retriever  # trang quản trị kiến thức bổ sung dùng chung kho vector này
-    app.state.chat_graph = build_chat_graph(GeminiClient.from_settings(), checkpointer, retriever)
+    llm = GeminiClient.from_settings()
+    app.state.llm = llm  # trang quản trị nhờ LLM viết lại prompt phân loại
+    app.state.chat_graph = build_chat_graph(llm, checkpointer, retriever)
     app.state.ingest_manager = JobManager(retriever, GeminiVision.from_settings, GeminiEmbedder.from_settings)
+    app.state.document_catalog = DocumentCatalog(GeminiVision.from_settings, GeminiEmbedder.from_settings)
     try:
         yield
     finally:

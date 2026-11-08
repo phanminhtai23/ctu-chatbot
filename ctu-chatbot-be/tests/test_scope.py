@@ -61,3 +61,22 @@ def test_followup_gets_previous_question_as_context():
 
     _ask(Spy("external"), "còn năm ngoái thì sao?", 0.6, earlier=["Học phí năm nay bao nhiêu?"])
     assert "Học phí năm nay" in seen[0]
+
+
+def test_classifier_supports_dynamic_document_routes_and_disabled_targets():
+    routes = [
+        {"id": "regulation", "label": "Quy chế học vụ", "prompt": "quy chế", "kind": "document"},
+        {"id": "academic-calendar", "label": "Lịch học", "prompt": "lịch học và lịch thi", "kind": "document"},
+    ]
+    assert scope.classify(Classifier("academic-calendar"), [HumanMessage(content="Lịch thi học kỳ này?")], 0.9, routes) == "academic-calendar"
+
+    only_custom_route = [routes[1]]
+    assert scope.classify(Classifier("regulation"), [HumanMessage(content="Điều 14 nói gì?")], 0.95, only_custom_route) == "academic-calendar"
+
+
+def test_keyword_shortcut_is_off_when_other_document_routes_exist():
+    question = "Mình là sinh viên liên thông, ĐTBCHK 0,95 có bị buộc thôi học không?"
+    assert scope.quick_route(question, None) == scope.REGULATION  # chỉ có các tuyến mặc định: giữ đường tắt
+    routes = (*scope.ROUTES, "qd-4544-lien-thong")
+    assert scope.quick_route(question, None, routes) is None  # có tài liệu khác: nhờ LLM phân loại
+    assert scope.quick_route("Điều 18 nói gì?", None, routes) is None

@@ -24,6 +24,15 @@ def _mentioned_sources(stored: list, text: str) -> list[dict]:
     """
     kept = []
     for item in stored:
+        if (
+            isinstance(item, dict)
+            and isinstance(item.get("document_url"), str)
+            and re.fullmatch(r"/api/v1/documents/catalog/[a-z][a-z0-9-]{1,39}/[0-9]{14}-[0-9a-f]{6}/source", item["document_url"])
+            and isinstance(item.get("article"), int)
+            and re.search(rf'điều\s+{item["article"]}\b', text, flags=re.IGNORECASE)
+        ):
+            kept.append(item)
+            continue
         if isinstance(item, dict) and isinstance(item.get('url'), str) and item.get('title'):
             kept.append({"title": item["title"], "url": item["url"], "n": item.get("n")})  # nguồn web: đã lọc theo [n] lúc tạo câu trả lời
             continue
@@ -71,8 +80,12 @@ def to_chat_message(message: BaseMessage) -> ChatMessage | None:
     )
 
 
-def _config(conversation_id: uuid.UUID) -> dict:
-    return {"configurable": {"thread_id": str(conversation_id)}}
+def _config(conversation_id: uuid.UUID, routes: list[str] | None = None) -> dict:
+    """`routes` = các tuyến người dùng chọn để hỏi (None = tất cả); đồ thị đọc từ `configurable.allowed_routes`."""
+    configurable: dict = {"thread_id": str(conversation_id)}
+    if routes:
+        configurable["allowed_routes"] = list(routes)
+    return {"configurable": configurable}
 
 
 def _new_human_message(text: str, author_name: str | None = None, attachments: list[dict] | None = None) -> HumanMessage:
@@ -106,14 +119,19 @@ def find_exchange(graph, conversation_id: str | None, message_id: str | None) ->
 
 
 def run_turn(
-    graph, conversation_id: uuid.UUID, text: str, author_name: str | None = None, attachments: list[dict] | None = None
+    graph,
+    conversation_id: uuid.UUID,
+    text: str,
+    author_name: str | None = None,
+    attachments: list[dict] | None = None,
+    routes: list[str] | None = None,
 ) -> tuple[ChatMessage, ChatMessage]:
     """Thêm tin của người dùng, chạy đồ thị, trả về (tin người dùng, câu trả lời của bot).
 
     Lịch sử lấy từ checkpoint của `thread_id`, nên bot nhớ các lượt trước kể cả sau khi khởi động lại server.
     Nếu LLM lỗi, tin của người dùng bị gỡ khỏi lịch sử để gửi lại không bị trùng.
     """
-    config = _config(conversation_id)
+    config = _config(conversation_id, routes)
     human = _new_human_message(text, author_name, attachments)
     try:
         result = graph.invoke({"messages": [human]}, config)
@@ -174,14 +192,19 @@ def stream_cached_turn(
 
 
 def stream_turn(
-    graph, conversation_id: uuid.UUID, text: str, author_name: str | None = None, attachments: list[dict] | None = None
+    graph,
+    conversation_id: uuid.UUID,
+    text: str,
+    author_name: str | None = None,
+    attachments: list[dict] | None = None,
+    routes: list[str] | None = None,
 ) -> Iterator[dict]:
     """Như run_turn nhưng trả từng sự kiện: user_message, rồi nhiều token, cuối cùng done.
 
     Nếu LLM lỗi hoặc client ngắt kết nối giữa chừng, tin của người dùng bị gỡ khỏi lịch sử
     (không để lại tin "mồ côi" không có câu trả lời).
     """
-    config = _config(conversation_id)
+    config = _config(conversation_id, routes)
     human = _new_human_message(text, author_name, attachments)
     yield {"type": "user_message", "message": to_chat_message(human)}
 

@@ -56,6 +56,16 @@ def get_ingest_manager(request: Request):
     return request.app.state.ingest_manager
 
 
+def get_document_catalog(request: Request):
+    """Quy trình version tài liệu trong vector-docs và đồng bộ Chroma."""
+    return request.app.state.document_catalog
+
+
+def get_llm(request: Request):
+    """Client LLM dùng chung (Gemini) cho các việc ngoài luồng chat."""
+    return request.app.state.llm
+
+
 def get_chat_graph(request: Request):
     """Đồ thị LangGraph (đã gắn checkpointer Postgres) được dựng một lần lúc khởi động app."""
     return request.app.state.chat_graph

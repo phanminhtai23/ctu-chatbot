@@ -9,7 +9,6 @@ import ChatErrorDialog from '../components/ChatErrorDialog'
 import ConfirmDialog from '../components/ConfirmDialog'
 import FeedbackModal from '../components/FeedbackModal'
 import Icon from '../components/Icon'
-import Logo from '../components/Logo'
 import PrefToggles from '../components/PrefToggles'
 import { UsageBar } from '../components/MyFiles'
 import ProfileDialog from '../components/ProfileDialog'
@@ -566,7 +565,7 @@ export default function Chat() {
       </Sidebar>
 
       <main className="flex min-h-0 min-w-0 flex-1 flex-col bg-surface">
-        <div className="flex items-center justify-between gap-2 border-b border-line px-3 py-3 sm:gap-3 sm:px-8 sm:py-4">
+        <div className="flex items-center justify-between gap-2 border-b border-line px-3 py-2 sm:gap-3 sm:px-8">
           <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
             <MobileNavButton onClick={() => setNavOpen(true)} />
             <div className="min-w-0 flex-1">
@@ -591,18 +590,18 @@ export default function Chat() {
               onClick={startNewConversation}
               aria-label={t('chat.new')}
               title={t('chat.new')}
-              className="inline-flex size-10 cursor-pointer items-center justify-center rounded-lg border-0 bg-ctu-gold-active text-ctu-navy-dark hover:bg-ctu-gold disabled:cursor-not-allowed disabled:opacity-60 md:hidden"
+              className="inline-flex size-10 cursor-pointer items-center justify-center rounded-lg border-0 bg-ctu-gold-active text-ctu-navy-dark hover:bg-ctu-gold disabled:cursor-not-allowed disabled:opacity-60 max-[359px]:hidden md:hidden"
             >
               <Icon name="plus" size={18} strokeWidth={2.4} />
             </button>
-            {access === 'owner' && (
+            {access === 'owner' && conversationId && messages.length > 0 && (
               <button
                 type="button"
-                disabled={!conversationId || messages.length === 0}
+                disabled={busy}
                 onClick={() => setShareOpen(true)}
                 title={t('chat.share')}
                 aria-label={t('chat.share')}
-                className="inline-flex size-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-accent bg-transparent p-0 font-sans text-sm font-normal text-accent hover:bg-tint disabled:cursor-not-allowed disabled:opacity-50 sm:size-auto sm:min-h-11 sm:min-w-11 sm:px-4 sm:py-2"
+                className="inline-flex size-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-accent bg-transparent p-0 font-sans text-sm font-normal text-accent hover:bg-tint disabled:cursor-not-allowed disabled:opacity-50 sm:size-auto sm:min-h-10 sm:min-w-10 sm:px-3 sm:py-1"
               >
                 <Icon name="share" size={16} strokeWidth={2} />
                 <span className="hidden sm:inline">{t('chat.share')}</span>
@@ -614,12 +613,12 @@ export default function Chat() {
               onClick={() => setFeedback({ open: true, type: 'general', messageId: null })}
               aria-label={t('chat.feedback')}
               title={t('chat.feedback')}
-              className="inline-flex size-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-field bg-transparent p-0 font-sans text-sm font-normal text-heading hover:bg-tint sm:size-auto sm:min-h-11 sm:min-w-11 sm:px-4 sm:py-2"
+              className="inline-flex size-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-field bg-transparent p-0 font-sans text-sm font-normal text-heading hover:bg-tint sm:size-auto sm:min-h-10 sm:min-w-10 sm:px-3 sm:py-1"
             >
               <Icon name="flag" size={16} strokeWidth={2} />
               <span className="hidden sm:inline">{t('chat.feedback')}</span>
             </button>
-            <PrefToggles />
+            <PrefToggles compact />
           </div>
         </div>
 
@@ -647,7 +646,7 @@ export default function Chat() {
           role="log"
           aria-live="polite"
           aria-busy={busy}
-          className="relative flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-4 py-6 sm:p-8"
+          className="relative flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-4 py-6 [scrollbar-gutter:stable_both-edges] sm:p-8"
         >
           {loadingConversation && <p role="status">{t('chat.loadingConversation')}</p>}
           {loadError && (
@@ -656,7 +655,15 @@ export default function Chat() {
 
           {isEmpty && !busy && (
             <div className="mb-auto mt-[min(4vh,40px)] flex w-full max-w-[860px] flex-col items-center gap-2 text-center">
-              <Logo size={48} />
+              <img
+                src="/ctu-chatbot-avatar.webp"
+                alt="Mascot CTU Chatbot"
+                width={128}
+                height={128}
+                fetchPriority="high"
+                decoding="async"
+                className="size-28 object-contain sm:size-32"
+              />
               <h2 className="m-0 text-2xl">{t('chat.emptyTitle')}</h2>
               <p className="m-0">{t('chat.emptyHint')}</p>
               {suggestions.length > 0 && (

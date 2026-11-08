@@ -24,6 +24,7 @@ class SourceOut(BaseModel):
     n: int | None = None  # số thứ tự [n] mà câu trả lời dùng để trích nguồn web
     title: str
     url: str | None = None  # chỉ có ở nguồn web (câu hỏi ngoài quy chế được tìm trên web)
+    document_url: str | None = None  # câu trả lời từ tài liệu đã upload (có version): PDF nguồn của version đó
 
 
 class AttachmentOut(BaseModel):

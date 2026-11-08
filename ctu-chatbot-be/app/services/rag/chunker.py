@@ -26,7 +26,7 @@ class Chunk:
 
 
 def split_into_articles(markdown: str) -> list[Chunk]:
-    """Tách văn bản đã chuẩn hóa (`vector-docs/qd3266-clean.md`) thành các chunk, mỗi Điều một chunk."""
+    """Tách văn bản đã chuẩn hóa thành các chunk, mỗi Điều một chunk."""
     chunks: list[Chunk] = []
     chapter = ""
     current: dict | None = None

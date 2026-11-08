@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useI18n } from '../i18n'
 import Icon, { type IconName } from './Icon'
-import Logo from './Logo'
+import BrandLockup from './BrandLockup'
 
 /**
  * Trạng thái thu gọn của sidebar, lưu theo `storageKey`.
@@ -126,41 +126,39 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         } ${collapsed ? 'md:w-[72px]' : 'md:w-[300px]'}`}
       >
-        <div className={`flex items-center gap-3 p-3 ${collapsed ? 'md:flex-col md:py-4' : ''}`}>
-          <Logo size={40} />
-          <div className={`min-w-0 flex-1 leading-tight ${labelClass(collapsed)}`}>
-            <div className="truncate text-[15px] font-semibold">{title}</div>
-            <div className="truncate text-xs opacity-85">{subtitle}</div>
-          </div>
-          {switchTo && (
-            <Link
-              to={switchTo.to}
-              aria-label={switchTo.label}
-              title={switchTo.label}
-              className="inline-flex size-9 flex-none items-center justify-center rounded-lg border border-white/30 text-white no-underline hover:bg-white/10"
+        <div className={`flex items-center p-3 ${collapsed ? 'md:flex-col md:py-4' : ''}`}>
+          <BrandLockup size={52} title={title} subtitle={subtitle} textClassName={labelClass(collapsed)} />
+          <div className={`ml-auto flex flex-none items-center gap-1 ${collapsed ? 'md:ml-0 md:flex-col' : ''}`}>
+            {switchTo && (
+              <Link
+                to={switchTo.to}
+                aria-label={switchTo.label}
+                title={switchTo.label}
+                className="inline-flex size-9 flex-none items-center justify-center rounded-lg text-white no-underline hover:bg-white/10"
+              >
+                <Icon name={switchTo.icon} size={17} />
+              </Link>
+            )}
+            <button
+              type="button"
+              onClick={onMobileClose}
+              aria-label={t('sidebar.close')}
+              title={t('sidebar.close')}
+              className="inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-white hover:bg-white/10 md:hidden"
             >
-              <Icon name={switchTo.icon} size={17} />
-            </Link>
-          )}
-          <button
-            type="button"
-            onClick={onMobileClose}
-            aria-label={t('sidebar.close')}
-            title={t('sidebar.close')}
-            className="inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-white hover:bg-white/10 md:hidden"
-          >
-            <Icon name="close" />
-          </button>
-          <button
-            type="button"
-            onClick={onToggle}
-            aria-expanded={!collapsed}
-            aria-label={t(collapsed ? 'sidebar.expand' : 'sidebar.collapse')}
-            title={t(collapsed ? 'sidebar.expand' : 'sidebar.collapse')}
-            className="hidden size-11 flex-none cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-white hover:bg-white/10 md:inline-flex"
-          >
-            <Icon name="panelLeft" />
-          </button>
+              <Icon name="close" />
+            </button>
+            <button
+              type="button"
+              onClick={onToggle}
+              aria-expanded={!collapsed}
+              aria-label={t(collapsed ? 'sidebar.expand' : 'sidebar.collapse')}
+              title={t(collapsed ? 'sidebar.expand' : 'sidebar.collapse')}
+              className="hidden size-9 flex-none cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-white/90 hover:bg-white/10 hover:text-white md:inline-flex"
+            >
+              <Icon name="panelLeft" size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Bấm vào một liên kết trong ngăn kéo (chọn cuộc trò chuyện, đổi trang quản trị...) thì đóng ngăn kéo. */}
@@ -168,7 +166,7 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
           onClickCapture={(e) => {
             if (mobileOpen && (e.target as HTMLElement).closest('a[href]')) onMobileClose()
           }}
-          className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto overscroll-contain px-3 pb-4"
+          className="sidebar-scrollbar flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto overscroll-contain px-3 pb-4"
         >
           {children}
         </div>

@@ -65,3 +65,25 @@
     @apply font-semibold text-heading;
   }
 }
+
+.sidebar-scrollbar {
+  scrollbar-color: rgb(255 255 255 / 0.32) transparent;
+  scrollbar-width: thin;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.32);
+}
+
+.sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgb(255 255 255 / 0.52);
+}

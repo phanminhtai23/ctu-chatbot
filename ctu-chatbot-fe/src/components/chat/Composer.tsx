@@ -84,98 +84,98 @@ export default function Composer({
   }
 
   return (
-    <div className="flex flex-col items-center gap-2.5 px-4 pb-6 pt-2 sm:px-8">
-      <div className="box-border flex w-full max-w-[860px] flex-col gap-2 rounded-2xl border border-field bg-surface px-3 py-2.5 focus-within:border-accent">
-      {attachments.length > 0 && (
-        <ul className="m-0 flex list-none flex-wrap gap-2 p-0" aria-label={t('chat.attach')}>
-          {attachments.map((a) => (
-            <li
-              key={a.key}
-              className={`flex max-w-full items-center gap-2 rounded-lg border px-2.5 py-1.5 text-[13px] ${
-                a.status === 'error' ? 'border-[#E7B4B6] bg-[#FDF3F3] text-[#8A1216] dark:border-[#7A2A2E] dark:bg-[#2A1416] dark:text-[#FFB4B7]' : 'border-line bg-tint text-heading'
-              }`}
-            >
-              <Icon name={a.kind === 'pdf' ? 'doc' : 'image'} size={16} className="flex-none" />
-              <span className="min-w-0 max-w-[14rem] truncate" title={a.name}>
-                {a.name}
-              </span>
-              <span className="flex-none text-xs">
-                {a.status === 'uploading' ? t('chat.attach.uploading') : a.status === 'error' ? a.error : formatBytes(a.size)}
-              </span>
+    <div className="flex flex-col items-center gap-2.5 px-4 pb-3 pt-2 sm:px-8">
+      <div className="box-border flex w-full max-w-[860px] min-w-0 flex-col gap-1.5 rounded-2xl border border-field bg-surface px-1.5 py-1.5 focus-within:border-accent sm:gap-2 sm:px-2 sm:py-2">
+        {attachments.length > 0 && (
+          <ul className="m-0 flex list-none flex-wrap gap-2 p-0" aria-label={t('chat.attach')}>
+            {attachments.map((a) => (
+              <li
+                key={a.key}
+                className={`flex max-w-full items-center gap-2 rounded-lg border px-2.5 py-1.5 text-[13px] ${
+                  a.status === 'error' ? 'border-[#E7B4B6] bg-[#FDF3F3] text-[#8A1216] dark:border-[#7A2A2E] dark:bg-[#2A1416] dark:text-[#FFB4B7]' : 'border-line bg-tint text-heading'
+                }`}
+              >
+                <Icon name={a.kind === 'pdf' ? 'doc' : 'image'} size={16} className="flex-none" />
+                <span className="min-w-0 max-w-[45vw] truncate sm:max-w-[14rem]" title={a.name}>
+                  {a.name}
+                </span>
+                <span className="flex-none text-xs">
+                  {a.status === 'uploading' ? t('chat.attach.uploading') : a.status === 'error' ? a.error : formatBytes(a.size)}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => onRemoveAttachment?.(a.key)}
+                  aria-label={`${t('chat.attach.remove')}: ${a.name}`}
+                  title={t('chat.attach.remove')}
+                  className="inline-flex size-6 flex-none cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-current hover:bg-black/10"
+                >
+                  <Icon name="close" size={14} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="flex min-w-0 items-end gap-1 sm:gap-2">
+          {onAddFiles && (
+            <>
               <button
                 type="button"
-                onClick={() => onRemoveAttachment?.(a.key)}
-                aria-label={`${t('chat.attach.remove')}: ${a.name}`}
-                title={t('chat.attach.remove')}
-                className="inline-flex size-6 flex-none cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-current hover:bg-black/10"
+                disabled={busy || attachments.length >= MAX_ATTACHMENTS}
+                onClick={() => fileInput.current?.click()}
+                aria-label={t('chat.attach')}
+                title={fillTemplate(t('chat.attachHint'), { max: formatBytes(maxUploadBytes), count: MAX_ATTACHMENTS })}
+                className="inline-flex size-10 flex-none cursor-pointer items-center justify-center rounded-lg border-0 bg-tint text-accent hover:bg-bubble-user disabled:cursor-not-allowed disabled:opacity-50 sm:size-11"
               >
-                <Icon name="close" size={14} />
+                <Icon name="clip" />
               </button>
-            </li>
-          ))}
-        </ul>
-      )}
-      <div className="flex items-end gap-2">
-        {onAddFiles && (
-          <>
+              <input
+                ref={fileInput}
+                type="file"
+                multiple
+                accept={ATTACH_ACCEPT}
+                className="hidden"
+                onChange={(e) => {
+                  const files = Array.from(e.target.files ?? [])
+                  e.target.value = '' // cho phép chọn lại đúng tệp vừa bỏ
+                  if (files.length > 0) onAddFiles(files)
+                }}
+              />
+            </>
+          )}
+          <label htmlFor="question" className="sr-only">{t('chat.questionLabel')}</label>
+          <textarea
+            ref={ref}
+            id="question"
+            rows={1}
+            value={value}
+            maxLength={MAX_LENGTH}
+            placeholder={t('chat.placeholder')}
+            onChange={(e) => onChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="min-h-10 min-w-0 flex-1 resize-none border-0 bg-transparent px-0.5 py-2 font-sans text-sm font-light leading-5 text-heading outline-0 placeholder:text-muted sm:min-h-11 sm:px-1 sm:py-2.5 sm:text-[15px] sm:leading-6"
+          />
+          {busy ? (
             <button
               type="button"
-              disabled={busy || attachments.length >= MAX_ATTACHMENTS}
-              onClick={() => fileInput.current?.click()}
-              aria-label={t('chat.attach')}
-              title={fillTemplate(t('chat.attachHint'), { max: formatBytes(maxUploadBytes), count: MAX_ATTACHMENTS })}
-              className="inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-lg border-0 bg-tint text-accent hover:bg-bubble-user disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={onStop}
+              aria-label={t('chat.stop')}
+              title={t('chat.stop')}
+              className="inline-flex size-10 flex-none cursor-pointer items-center justify-center rounded-full border-0 bg-heading text-surface hover:opacity-85 sm:size-11"
             >
-              <Icon name="clip" />
+              <Icon name="stop" size={18} fill="currentColor" />
             </button>
-            <input
-              ref={fileInput}
-              type="file"
-              multiple
-              accept={ATTACH_ACCEPT}
-              className="hidden"
-              onChange={(e) => {
-                const files = Array.from(e.target.files ?? [])
-                e.target.value = '' // cho phép chọn lại đúng tệp vừa bỏ
-                if (files.length > 0) onAddFiles(files)
-              }}
-            />
-          </>
-        )}
-        <label htmlFor="question" className="sr-only">{t('chat.questionLabel')}</label>
-        <textarea
-          ref={ref}
-          id="question"
-          rows={1}
-          value={value}
-          maxLength={MAX_LENGTH}
-          placeholder={t('chat.placeholder')}
-          onChange={(e) => onChange(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className="min-h-11 min-w-0 flex-1 resize-none border-0 bg-transparent px-1 py-2.5 font-sans text-[15px] font-light leading-6 text-heading outline-0 placeholder:text-muted"
-        />
-        {busy ? (
-          <button
-            type="button"
-            onClick={onStop}
-            aria-label={t('chat.stop')}
-            title={t('chat.stop')}
-            className="inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-full border-0 bg-heading text-surface hover:opacity-85"
-          >
-            <Icon name="stop" size={18} fill="currentColor" />
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={onSend}
-            disabled={!canSend}
-            aria-label={t('chat.send')}
-            className="inline-flex size-11 flex-none cursor-pointer items-center justify-center rounded-full border-0 bg-ctu-navy text-white hover:bg-ctu-navy-dark disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <Icon name="arrow" size={18} strokeWidth={2} />
-          </button>
-        )}
-      </div>
+          ) : (
+            <button
+              type="button"
+              onClick={onSend}
+              disabled={!canSend}
+              aria-label={t('chat.send')}
+              className="inline-flex size-10 flex-none cursor-pointer items-center justify-center rounded-full border-0 bg-ctu-navy text-white hover:bg-ctu-navy-dark disabled:cursor-not-allowed disabled:opacity-50 sm:size-11"
+            >
+              <Icon name="arrow" size={18} strokeWidth={2} />
+            </button>
+          )}
+        </div>
       </div>
       <p className="m-0 text-center text-xs">{t('chat.disclaimer')}</p>
     </div>

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth'
+import BrandLockup from '../components/BrandLockup'
 import GoogleSignInButton from '../components/GoogleSignInButton'
 import Icon from '../components/Icon'
 import PrefToggles from '../components/PrefToggles'
@@ -59,37 +60,33 @@ export default function Login() {
   }
 
   return (
-    <div className="flex min-h-screen flex-wrap bg-surface">
-      <div className="box-border flex min-w-0 flex-[1_1_480px] flex-col justify-between gap-4 bg-ctu-navy px-6 py-6 text-white sm:px-10 lg:gap-12 lg:px-16 lg:py-14">
-        <Link to="/" className="flex items-center gap-3.5 text-white no-underline">
-          <img
-            src="/ctu-chatbot-avt-rm-bg.png"
-            alt=""
-            aria-hidden="true"
-            className="size-16 shrink-0 object-contain"
-          />
-          <div className="leading-tight">
-            <div className="text-[17px] font-semibold tracking-wide">{t('brand.app')}</div>
-            <div className="text-[13px] font-light">{t('brand.appSub')}</div>
+    <div className="min-h-screen bg-surface lg:grid lg:grid-cols-2">
+      <div className="box-border flex min-w-0 flex-col justify-start gap-0 bg-surface px-4 py-3 text-heading sm:px-10 sm:py-4 lg:min-h-screen lg:justify-between lg:gap-12 lg:bg-ctu-navy lg:px-16 lg:py-14 lg:text-white">
+        <div className="flex items-center justify-between gap-3">
+          <Link to="/" className="flex min-w-0 items-center text-heading no-underline lg:text-white">
+            <BrandLockup size={52} textClassName="text-heading lg:text-white" />
+          </Link>
+          <div className="lg:hidden">
+            <PrefToggles />
           </div>
-        </Link>
-        <div>
-          <h1 className="m-0 text-2xl leading-[1.2] text-white md:mb-5 md:text-[length:clamp(1.9rem,3.2vw,2.75rem)]">
+        </div>
+        <div className="hidden md:block lg:mt-0">
+          <h1 className="m-0 text-[length:clamp(1.55rem,5vw,2rem)] leading-[1.2] text-heading md:mb-5 md:text-[length:clamp(1.9rem,3.2vw,2.75rem)] lg:text-white">
             {t('login.heroTitle')}
           </h1>
-          <p className="m-0 hidden max-w-[460px] text-lg text-white/90 md:block">{t('login.heroDesc')}</p>
+          <p className="m-0 hidden max-w-[460px] text-lg text-muted md:block lg:text-white/90">{t('login.heroDesc')}</p>
           <div className="mt-8 hidden h-1 w-[72px] rounded-sm bg-ctu-gold-active md:block" />
         </div>
-        <p className="m-0 hidden text-[13px] text-white/85 md:block">{t('brand.disclaimer')}</p>
+        <p className="m-0 hidden text-[13px] text-muted md:block lg:text-white/85">{t('brand.disclaimer')}</p>
       </div>
 
-      <div className="box-border flex min-w-0 flex-[1_1_480px] flex-col px-8 py-6">
-        <div className="flex justify-end">
+      <div className="box-border flex min-w-0 flex-col px-5 py-3 sm:px-8 sm:py-5 lg:min-h-screen lg:px-12 lg:py-8 xl:px-16">
+        <div className="hidden justify-end lg:flex">
           <PrefToggles />
         </div>
-        <div className="flex flex-1 items-center justify-center py-10">
+        <div className="flex flex-none items-center justify-center py-5 sm:py-7 lg:flex-1 lg:py-12">
           <div className="w-full max-w-[420px]">
-            <h2 className="mb-2 text-[2rem]">{t('login.title')}</h2>
+            <h2 className="mb-2 text-[length:clamp(1.75rem,5vw,2rem)]">{t('login.title')}</h2>
             <p className="mb-8">{t('login.welcome')}</p>
 
             {GOOGLE_CLIENT_ID ? (

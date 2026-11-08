@@ -6,9 +6,10 @@ import Icon from './Icon'
 type Props = {
   /** on-navy: đặt trên nền navy (chữ trắng); default: đặt trên nền theo theme */
   tone?: 'on-navy' | 'default'
+  compact?: boolean
 }
 
-export default function PrefToggles({ tone = 'default' }: Props) {
+export default function PrefToggles({ tone = 'default', compact = false }: Props) {
   const { theme, toggleTheme } = useTheme()
   const { t } = useI18n()
   const { user, updateProfile } = useAuth()
@@ -28,7 +29,7 @@ export default function PrefToggles({ tone = 'default' }: Props) {
       type="button"
       onClick={handleTheme}
       aria-label={theme === 'dark' ? t('toggle.toLight') : t('toggle.toDark')}
-      className={`inline-flex size-10 cursor-pointer sm:size-11 items-center justify-center rounded-lg border bg-transparent ${frame}`}
+      className={`inline-flex ${compact ? 'size-10' : 'size-10 sm:size-11'} cursor-pointer items-center justify-center rounded-lg border bg-transparent ${frame}`}
     >
       <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
     </button>

@@ -1,16 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import Icon, { type IconName } from '../components/Icon'
+import BrandLockup from '../components/BrandLockup'
+import Icon from '../components/Icon'
 import PrefToggles from '../components/PrefToggles'
 import { useI18n } from '../i18n'
 import type { TranslationKey } from '../i18n/vi'
+import { getCatalogSummary, type CatalogSummary } from '../lib/documents'
 import { getSuggestions, type Suggestion } from '../lib/suggestions'
+import './Landing.css'
 
-const features: { icon: IconName; title: TranslationKey; text: TranslationKey; accent: string }[] = [
-  { icon: 'doc', title: 'feat1.t', text: 'feat1.x', accent: 'border-t-ctu-navy dark:border-t-ctu-cyan' },
-  { icon: 'calc', title: 'feat2.t', text: 'feat2.x', accent: 'border-t-ctu-gold-active' },
-  { icon: 'shield', title: 'feat3.t', text: 'feat3.x', accent: 'border-t-ctu-cyan' },
-  { icon: 'chat', title: 'feat4.t', text: 'feat4.x', accent: 'border-t-ctu-navy dark:border-t-ctu-cyan' },
+type IconName = Parameters<typeof Icon>[0]['name']
+
+const smallFeatures: { icon: IconName; title: TranslationKey; text: TranslationKey; wide?: boolean }[] = [
+  { icon: 'calc', title: 'feat2.t', text: 'feat2.x' },
+  { icon: 'shield', title: 'feat3.t', text: 'feat3.x' },
+  { icon: 'chat', title: 'feat4.t', text: 'feat4.x', wide: true },
 ]
 
 const steps: { title: TranslationKey; text: TranslationKey }[] = [
@@ -19,245 +23,384 @@ const steps: { title: TranslationKey; text: TranslationKey }[] = [
   { title: 'step3.t', text: 'step3.x' },
 ]
 
-const container = 'mx-auto max-w-[1200px] px-5 sm:px-8'
+/** Các khối hiện dần khi cuộn tới; mỗi khối so le theo thứ tự trong cùng cha để danh sách hiện lần lượt. */
+const REVEAL = [
+  '.lp-docs__lead',
+  '.lp-docs__list li',
+  '.lp-split__copy',
+  '.lp-page',
+  '.lp-pick',
+  '.lp-intro',
+  '.lp-card',
+  '.lp-sample',
+  '.lp-steps__title',
+  '.lp-steps li',
+  '.lp-close__inner',
+].join(',')
 
 export default function Landing() {
   const { t } = useI18n()
+  const rootRef = useRef<HTMLDivElement>(null)
   const [samples, setSamples] = useState<Suggestion[]>([])
+  const [summary, setSummary] = useState<CatalogSummary | null>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
 
-  // Câu hỏi mẫu lấy từ server (cùng danh sách gợi ý trong khung chat); lỗi mạng thì chỉ ẩn mục này.
   useEffect(() => {
     let alive = true
     getSuggestions()
-      .then((items) => {
-        if (alive) setSamples(items)
-      })
+      .then((items) => alive && setSamples(items))
       .catch(() => {})
+    getCatalogSummary()
+      .then((data) => alive && setSummary(data))
+      .catch(() => {}) // không lấy được thì ẩn mục tài liệu, phần còn lại của trang vẫn dùng được
     return () => {
       alive = false
     }
   }, [])
 
+  // Hiện dần khi cuộn. Không có IntersectionObserver hoặc người dùng chọn giảm chuyển động thì giữ nguyên, nội dung luôn thấy được.
+  useEffect(() => {
+    const root = rootRef.current
+    if (!root || !('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          entry.target.classList.add('is-visible')
+          observer.unobserve(entry.target)
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -6% 0px' },
+    )
+    root.classList.add('lp-reveal-on')
+    root.querySelectorAll<HTMLElement>(REVEAL).forEach((el) => {
+      if (el.classList.contains('is-visible')) return
+      if (!el.hasAttribute('data-reveal')) {
+        el.setAttribute('data-reveal', '')
+        const index = Array.prototype.indexOf.call(el.parentElement?.children ?? [], el)
+        el.style.setProperty('--d', `${Math.min(Math.max(index, 0), 5) * 90}ms`)
+      }
+      observer.observe(el)
+    })
+    return () => observer.disconnect()
+  }, [samples, summary])
+
+  const close = () => setMenuOpen(false)
+  const enter = (i: number) => ({ '--i': i }) as React.CSSProperties
+  // Mục "Chọn nguồn": dùng tài liệu thật nếu đã lấy được, chưa có thì dùng mô tả mẫu.
+  const sourceDocs =
+    summary && summary.documents.length > 0
+      ? summary.documents.slice(0, 2)
+      : [{ id: 'sample', label: t('pick.docName'), decision_no: t('pick.docNo'), description: t('pick.docText') }]
+
   return (
-    <div id="top" className="bg-surface">
-      <header className="bg-ctu-navy text-white">
-        <div className={`${container} flex flex-wrap items-center justify-between gap-4 py-4`}>
-          <Link to="/" className="flex shrink-0 items-center gap-1 text-white no-underline">
-            <img
-              src="/ctu-chatbot-avt-rm-bg.png"
-              alt=""
-              aria-hidden="true"
-              className="size-16 shrink-0 object-contain"
-            />
-            <span className="leading-tight">
-              <span className="block text-sm font-semibold tracking-wide sm:text-base">{t('brand.app')}</span>
-              <span className="mt-1 block text-xs font-light sm:text-sm">{t('brand.sub')}</span>
-            </span>
+    <div id="top" ref={rootRef} className="landing-page">
+      <header className="lp-header">
+        <div className="lp-container lp-header__inner">
+          <Link to="/" className="lp-brand" aria-label={t('brand.app')}>
+            <BrandLockup size={50} />
           </Link>
-          <nav aria-label={t('brand.mainNav')} className="flex flex-wrap items-center gap-x-7 gap-y-3 text-[15px]">
-            <a href="#tinh-nang" className="text-white no-underline hover:text-ctu-gold">{t('nav.features')}</a>
-            <a href="#cau-hoi-mau" className="text-white no-underline hover:text-ctu-gold">{t('nav.samples')}</a>
-            <a href="#cach-hoat-dong" className="text-white no-underline hover:text-ctu-gold">{t('nav.how')}</a>
-            <a href="#lien-he" className="text-white no-underline hover:text-ctu-gold">{t('nav.contact')}</a>
-            <PrefToggles tone="on-navy" />
-            <Link
-              to="/login"
-              className="inline-flex min-h-11 items-center rounded-lg bg-ctu-gold-active px-5 font-semibold text-ctu-navy-dark no-underline hover:bg-ctu-gold"
-            >
+
+          <nav id="landing-nav" aria-label={t('brand.mainNav')} className={`lp-nav${menuOpen ? ' is-open' : ''}`}>
+            {summary && summary.count > 0 && (
+              <a href="#tai-lieu" onClick={close}>{t('nav.docs')}</a>
+            )}
+            <a href="#can-cu" onClick={close}>{t('nav.proof')}</a>
+            <a href="#tinh-nang" onClick={close}>{t('nav.features')}</a>
+            <a href="#cau-hoi-mau" onClick={close}>{t('nav.samples')}</a>
+            <Link to="/login" onClick={close} className="lp-button lp-button--small">
               {t('nav.login')}
             </Link>
           </nav>
+
+          <div className="lp-header__tools">
+            <PrefToggles compact />
+            <button
+              type="button"
+              aria-label={menuOpen ? t('sidebar.close') : t('brand.mainNav')}
+              aria-expanded={menuOpen}
+              aria-controls="landing-nav"
+              onClick={() => setMenuOpen((open) => !open)}
+              className="lp-menu-button"
+            >
+              <Icon name={menuOpen ? 'close' : 'menu'} />
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* Hero */}
-      <section>
-        <div className={`${container} flex flex-wrap items-center gap-14 pb-24 pt-16 sm:pt-20`}>
-          <div className="min-w-0 flex-[1_1_460px]">
-            <div className="mb-6 inline-block rounded-full border border-ctu-cyan px-4 py-1 text-sm font-normal text-accent">
-              {t('hero.badge')}
-            </div>
-            <h1 className="mb-5 text-[length:clamp(1.9rem,2.9vw,2.6rem)] leading-[1.2] text-balance">
-              {t('hero.title1')}
-              <br />
-              {t('hero.title2')}{' '}
-              {/* Gạch chân vàng bằng text-decoration (không dùng box-shadow: nó phụ thuộc kích thước hộp chữ của font nên lúc lệch lúc đứt). */}
-              <span className="text-accent underline [text-decoration-color:#fbc500] [text-decoration-skip-ink:none] [text-decoration-thickness:0.11em] [text-underline-offset:0.2em]">
-                {t('hero.highlight')}
-              </span>
-            </h1>
-            <p className="mb-9 max-w-[540px] text-lg">{t('hero.desc')}</p>
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-              <Link
-                to="/login"
-                className="inline-flex min-h-12 items-center gap-3 rounded-[10px] bg-ctu-navy px-7 text-base font-semibold text-white no-underline hover:bg-ctu-navy-dark"
-              >
-                {t('hero.cta')}
-                <Icon name="arrow" />
-              </Link>
-              <a href="#cau-hoi-mau" className="inline-flex min-h-12 items-center text-base font-normal text-accent no-underline">
-                {t('hero.how')}
-              </a>
-            </div>
-            <p className="mt-5 text-sm">{t('hero.domainNote')}</p>
-          </div>
-
-          {/* Minh họa: câu hỏi, câu trả lời có tham chiếu và trang văn bản được tô vàng */}
-          <div className="relative min-w-0 max-w-[540px] flex-[1_1_440px] pb-8">
-            <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_18px_40px_rgba(13,71,161,.12)]">
-              <div className="flex items-center gap-2.5 bg-ctu-navy px-5 py-3.5 text-[15px] font-normal text-white">
-                <span className="inline-block size-2.5 rounded-full bg-ctu-gold-active" />
-                {t('mock.title')}
-              </div>
-              <div className="flex flex-col gap-3.5 px-5 py-6">
-                <div className="max-w-[88%] self-end rounded-2xl rounded-br-sm bg-bubble-user px-4 py-3 text-[15px] font-normal text-heading">
-                  {t('mock.q')}
-                </div>
-                <div className="max-w-[94%] self-start rounded-2xl rounded-bl-sm bg-bubble-bot px-4 py-3.5 text-[15px] text-heading">
-                  <div className="mb-2.5">
-                    <strong className="font-semibold">{t('mock.a1')}</strong> {t('mock.a2')}
-                  </div>
-                  <span className="inline-flex items-center gap-2 rounded-md border border-ctu-cyan bg-surface px-3 py-1 text-[13px] font-normal text-accent">
-                    <Icon name="doc" size={14} />
-                    {t('mock.ref')}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div
-              aria-hidden="true"
-              className="absolute -bottom-2 right-0 hidden w-[190px] rounded-[10px] border border-line bg-surface p-3.5 shadow-[0_12px_28px_rgba(13,71,161,.16)] sm:block"
-            >
-              <div className="mb-2 h-1.5 w-[70%] rounded-[3px] bg-line" />
-              <div className="mb-2 h-1.5 w-full rounded-[3px] bg-tint" />
-              <div className="-mx-1.5 mb-2 rounded-[3px] border-2 border-ctu-gold-active bg-ctu-gold-active/40 px-1.5 py-1.5">
-                <div className="mb-1.5 h-1.5 w-full rounded-[3px] bg-field" />
-                <div className="h-1.5 w-[82%] rounded-[3px] bg-field" />
-              </div>
-              <div className="mb-2 h-1.5 w-full rounded-[3px] bg-tint" />
-              <div className="mb-2.5 h-1.5 w-[55%] rounded-[3px] bg-tint" />
-              <div className="text-center text-xs font-normal text-muted">{t('mock.page')}</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Dải căn cứ */}
-      <section className="bg-ctu-navy-dark text-white">
-        <div className={`${container} flex flex-wrap items-center justify-between gap-x-10 gap-y-2 py-5 text-[15px] font-normal`}>
-          <span>{t('band.text')}</span>
-          <span className="font-semibold text-ctu-gold-active">{t('band.facts')}</span>
-        </div>
-      </section>
-
-      <section id="tinh-nang">
-        <div className={`${container} py-20 sm:py-22`}>
-          <h2 className="mb-3 text-center text-[length:clamp(1.6rem,3vw,2.25rem)]">{t('feat.title')}</h2>
-          <p className="mx-auto mb-12 max-w-[640px] text-center">{t('feat.sub')}</p>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(260px,100%),1fr))] gap-6">
-            {features.map((f) => (
-              <div key={f.title} className={`rounded-[10px] border border-t-4 border-line px-6 py-7 ${f.accent}`}>
-                <Icon name={f.icon} size={40} className="text-accent" strokeWidth={1.6} />
-                <h3 className="mb-2.5 mt-4 text-[21px]">{t(f.title)}</h3>
-                <p className="m-0">{t(f.text)}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {samples.length > 0 && (
-        <section id="cau-hoi-mau" className="bg-tint">
-          <div className={`${container} py-20 sm:py-22`}>
-            <h2 className="mb-3 text-center text-[length:clamp(1.6rem,3vw,2.25rem)]">{t('samples.title')}</h2>
-            <p className="mx-auto mb-12 max-w-[640px] text-center">{t('samples.sub')}</p>
-            <div className="mx-auto flex max-w-[820px] flex-col gap-4">
-              {samples.map((s) => (
-                <Link
-                  key={s.id}
-                  to="/login"
-                  className="group block rounded-xl border border-line bg-surface px-6 py-6 no-underline hover:border-ctu-cyan"
-                >
-                  <span className="mb-3 inline-block rounded-full bg-bubble-user px-3 text-[13px] font-normal text-accent">
-                    {s.category}
-                  </span>
-                  <span className="block text-[17px] font-normal leading-[1.55] text-heading">{s.question}</span>
-                  <span className="mt-3 inline-flex items-center gap-2 text-sm font-normal text-accent">
-                    {t('samples.ask')}
-                    <Icon name="arrow" size={16} className="transition-transform group-hover:translate-x-1" />
-                  </span>
+      <main>
+        <section className="lp-hero" aria-labelledby="landing-title">
+          <div className="lp-container lp-hero__grid">
+            <div className="lp-hero__copy" data-enter style={enter(0)}>
+              <h1 id="landing-title">
+                {t('hero.title1')}
+                <br />
+                {t('hero.title2')} {t('hero.highlight')}
+              </h1>
+              <span className="lp-rule" aria-hidden="true" />
+              <p className="lp-lead">{t('hero.desc')}</p>
+              <div className="lp-actions">
+                <Link to="/login" className="lp-button lp-button--large">
+                  {t('hero.cta')} <Icon name="arrow" size={20} />
                 </Link>
-              ))}
+                <a href="#cau-hoi-mau" className="lp-text-link">
+                  {t('hero.how')}
+                </a>
+              </div>
+              <p className="lp-note">{t('hero.domainNote')}</p>
+            </div>
+
+            <div className="lp-chat-wrap" data-enter style={enter(1)}>
+              <img className="lp-mascot" src="/ctu-chatbot-mascot.webp" alt="" width="132" height="142" fetchPriority="high" decoding="async" />
+              <div className="lp-chat" role="img" aria-label={t('mock.title')}>
+                <div className="lp-chat__bar">
+                  <span className="lp-chat__dots" aria-hidden="true">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  {t('mock.title')}
+                </div>
+                <div className="lp-chat__body" aria-hidden="true">
+                  <div className="lp-msg lp-msg--user">{t('mock.q')}</div>
+                  <div className="lp-msg lp-msg--bot">
+                    <p>
+                      <strong>{t('mock.a1')}.</strong> {t('mock.a2')}
+                    </p>
+                    <div className="lp-msg__foot">
+                      <span className="lp-chip">
+                        <Icon name="doc" size={16} />
+                        {t('mock.ref')}
+                      </span>
+                      <span className="lp-meta">
+                        <Icon name="clock" size={14} />
+                        {t('mock.time')}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
-      )}
 
-      <section id="cach-hoat-dong">
-        <div className={`${container} py-20 sm:py-22`}>
-          <h2 className="mb-12 text-center text-[length:clamp(1.6rem,3vw,2.25rem)]">{t('steps.title')}</h2>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(min(260px,100%),1fr))] gap-9">
-            {steps.map((s, i) => (
-              <div key={s.title} className="flex items-start gap-4">
-                <div className="flex size-12 flex-none items-center justify-center rounded-full bg-ctu-navy text-xl font-semibold text-white">
-                  {i + 1}
+        {summary && summary.count > 0 && (
+          <section id="tai-lieu" className="lp-docs" aria-labelledby="docs-title">
+            <div className="lp-container lp-docs__grid">
+              <div className="lp-docs__lead">
+                <p className="lp-docs__count" aria-hidden="true">
+                  {summary.count}
+                </p>
+                <h2 id="docs-title">
+                  <span className="sr-only">{summary.count} </span>
+                  {t('docs.title')}
+                </h2>
+                <p>{t('docs.sub')}</p>
+              </div>
+              <ul className="lp-docs__list">
+                {summary.documents.map((doc) => (
+                  <li key={doc.id}>
+                    <span className="lp-docs__icon" aria-hidden="true">
+                      <Icon name="doc" size={24} />
+                    </span>
+                    <div className="lp-docs__body">
+                      <p className="lp-docs__name">{doc.label}</p>
+                      {doc.description && <p className="lp-docs__desc">{doc.description}</p>}
+                      {(doc.decision_no || doc.official_url) && (
+                        <div className="lp-docs__meta">
+                          {doc.decision_no && <span className="lp-docs__decision">{doc.decision_no}</span>}
+                          {doc.official_url && (
+                            <a className="lp-docs__link" href={doc.official_url} target="_blank" rel="noopener noreferrer">
+                              {t('admin.doc.lib.openOfficial')}
+                              <Icon name="arrow" size={16} />
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        )}
+
+        <section id="can-cu" className="lp-section" aria-labelledby="proof-title">
+          <div className="lp-container lp-split">
+            <div className="lp-split__copy">
+              <h2 id="proof-title">{t('proof.title')}</h2>
+              <p>{t('proof.text')}</p>
+            </div>
+            <div className="lp-page" role="img" aria-label={t('mock.ref')}>
+              <div className="lp-page__bar">
+                <span>{t('mock.ref')}</span>
+                <span className="lp-page__no">{t('proof.page')}</span>
+              </div>
+              <div className="lp-page__sheet" aria-hidden="true">
+                <i className="lp-sk lp-sk--head" />
+                <i className="lp-sk" />
+                <i className="lp-sk lp-sk--94" />
+                <i className="lp-sk lp-sk--98" />
+                <div className="lp-page__mark">
+                  <i className="lp-sk" />
+                  <i className="lp-sk lp-sk--90" />
+                  <i className="lp-sk lp-sk--64" />
                 </div>
+                <i className="lp-sk lp-sk--97" />
+                <i className="lp-sk" />
+                <i className="lp-sk lp-sk--72" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="tinh-nang" className="lp-section lp-section--tint" aria-labelledby="feat-title">
+          <div className="lp-container">
+            <div className="lp-intro">
+              <h2 id="feat-title">{t('feat.title')}</h2>
+              <p>{t('feat.sub')}</p>
+            </div>
+            <ul className="lp-bento">
+              <li className="lp-card lp-card--hero">
+                <span className="lp-card__icon lp-card__icon--gold">
+                  <Icon name="doc" size={30} />
+                </span>
                 <div>
-                  <h3 className="mb-1.5 text-xl">{t(s.title)}</h3>
-                  <p className="m-0">{t(s.text)}</p>
+                  <h3>{t('feat1.t')}</h3>
+                  <p>{t('feat1.x')}</p>
                 </div>
-              </div>
-            ))}
+              </li>
+              {smallFeatures.map((feature) => (
+                <li key={feature.title} className={`lp-card lp-card--row${feature.wide ? ' lp-card--wide' : ''}`}>
+                  <span className="lp-card__icon">
+                    <Icon name={feature.icon} size={26} />
+                  </span>
+                  <div>
+                    <h3>{t(feature.title)}</h3>
+                    <p>{t(feature.text)}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Lời kêu gọi: thẻ bo tròn nổi trên nền sáng, tách rõ với chân trang tối bên dưới (không còn hai dải xanh liền nhau). */}
-      <section className="bg-surface">
-        <div className={`${container} pb-16 pt-2 sm:pb-20`}>
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-ctu-navy to-[#1976d2] px-7 py-10 text-white shadow-[0_18px_40px_rgba(13,71,161,.28)] sm:px-14 sm:py-14">
-            <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 size-64 rounded-full bg-white/10" />
-            <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 right-40 size-52 rounded-full bg-white/[.07]" />
-            <div className="relative flex flex-wrap items-center justify-between gap-x-10 gap-y-6">
-              <div className="min-w-0 flex-[1_1_420px]">
-                <h2 className="mb-2 text-[length:clamp(1.5rem,2.6vw,2rem)] !text-white">{t('cta.title')}</h2>
-                <p className="m-0 font-light text-white">{t('cta.sub')}</p>
+        <section className="lp-section" aria-labelledby="pick-title">
+          <div className="lp-container lp-split">
+            <div className="lp-split__copy">
+              <h2 id="pick-title">{t('pick.title')}</h2>
+              <p>{t('pick.text')}</p>
+            </div>
+            <div className="lp-pick" role="img" aria-label={t('pick.title')}>
+              <div className="lp-pick__tabs" aria-hidden="true">
+                <span>{t('profile.tab.settings')}</span>
+                <span className="is-active">{t('profile.tab.sources')}</span>
+                <span>{t('profile.tab.storage')}</span>
               </div>
-              <Link
-                to="/login"
-                className="inline-flex min-h-[52px] items-center gap-3 rounded-[10px] bg-ctu-gold-active px-8 text-base font-semibold text-ctu-navy-dark no-underline hover:bg-ctu-gold"
-              >
-                {t('steps.cta')}
-                <Icon name="arrow" />
-              </Link>
+              <div className="lp-pick__all" aria-hidden="true">
+                <strong>{t('sources.all')}</strong> <span>{t('sources.allHint')}</span>
+              </div>
+              {sourceDocs.map((doc) => (
+                <div key={doc.id} className="lp-pick__item is-on" aria-hidden="true">
+                  <span className="lp-pick__check">
+                    <Icon name="check" size={14} strokeWidth={3} />
+                  </span>
+                  <span>
+                    <span className="lp-pick__name">
+                      {doc.label}
+                      {doc.decision_no && <em>{doc.decision_no}</em>}
+                    </span>
+                    {doc.description && <span className="lp-pick__text">{doc.description}</span>}
+                  </span>
+                </div>
+              ))}
+              <div className="lp-pick__item is-on" aria-hidden="true">
+                <span className="lp-pick__check">
+                  <Icon name="check" size={14} strokeWidth={3} />
+                </span>
+                <span>
+                  <span className="lp-pick__name">{t('sources.web')}</span>
+                  <span className="lp-pick__text">{t('pick.webText')}</span>
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <footer id="lien-he" className="bg-ctu-navy-dark text-white">
-        <div className={`${container} flex flex-wrap justify-between gap-10 pb-8 pt-14`}>
-          <div className="flex-[1_1_280px]">
-            <div className="mb-2 text-lg font-semibold">{t('brand.uni')}</div>
-            <p className="m-0 text-sm text-white opacity-85">{t('footer.desc')}</p>
-          </div>
-          <div className="flex-[1_1_200px] text-sm">
-            <div className="mb-2.5 font-semibold">{t('footer.links')}</div>
-            <div className="flex flex-col gap-1.5">
-              <a href="https://www.ctu.edu.vn" className="text-white no-underline hover:text-ctu-gold">
-                {t('footer.site')}
-              </a>
-              <Link to="/login" className="text-white no-underline hover:text-ctu-gold">{t('nav.login')}</Link>
+        {samples.length > 0 && (
+          <section id="cau-hoi-mau" className="lp-section lp-section--tint" aria-labelledby="samples-title">
+            <div className="lp-container">
+              <div className="lp-intro">
+                <h2 id="samples-title">{t('samples.title')}</h2>
+                <p>{t('samples.sub')}</p>
+              </div>
+              <ul className="lp-samples">
+                {samples.slice(0, 4).map((sample) => (
+                  <li key={sample.id}>
+                    <Link to="/login" className="lp-sample">
+                      <span className="lp-sample__category">{sample.category}</span>
+                      <span className="lp-sample__question">{sample.question}</span>
+                      <span className="lp-sample__action">
+                        {t('samples.ask')} <Icon name="arrow" size={16} />
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
+          </section>
+        )}
+
+        <section id="cach-hoat-dong" className="lp-section" aria-labelledby="steps-title">
+          <div className="lp-container">
+            <h2 id="steps-title" className="lp-steps__title">
+              {t('steps.title')}
+            </h2>
+            <ol className="lp-steps">
+              {steps.map((step, index) => (
+                <li key={step.title}>
+                  <span className="lp-steps__no" aria-hidden="true">
+                    {`0${index + 1}`}
+                  </span>
+                  <h3>{t(step.title)}</h3>
+                  <p>{t(step.text)}</p>
+                </li>
+              ))}
+            </ol>
           </div>
-          <div className="flex-[1_1_240px] text-sm">
-            <div className="mb-2.5 font-semibold">{t('footer.contact')}</div>
-            <p className="m-0 text-white opacity-85">{t('footer.contactPlaceholder')}</p>
+        </section>
+
+        <section className="lp-close" aria-labelledby="close-title">
+          <div className="lp-container lp-close__inner">
+            <div>
+              <h2 id="close-title">{t('cta.title')}</h2>
+              <p>{t('cta.sub')}</p>
+            </div>
+            <Link to="/login" className="lp-button lp-button--gold lp-button--large">
+              {t('steps.cta')} <Icon name="arrow" size={20} />
+            </Link>
+          </div>
+        </section>
+      </main>
+
+      <footer id="lien-he" className="lp-footer">
+        <div className="lp-container lp-footer__main">
+          <div>
+            <p className="lp-footer__uni">{t('brand.uni')}</p>
+            <p>{t('footer.desc')}</p>
+          </div>
+          <div>
+            <h2>{t('footer.links')}</h2>
+            <a href="https://www.ctu.edu.vn">{t('footer.site')}</a>
+            <Link to="/login">{t('nav.login')}</Link>
+          </div>
+          <div>
+            <h2>{t('footer.contact')}</h2>
+            <p>{t('footer.contactPlaceholder')}</p>
           </div>
         </div>
-        <div className="border-t border-white/20 px-5 py-4 text-center text-[13px] text-white opacity-85">
-          {t('brand.disclaimer')}
-        </div>
+        <div className="lp-container lp-footer__legal">{t('brand.disclaimer')}</div>
       </footer>
     </div>
   )

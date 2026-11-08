@@ -10,7 +10,7 @@
             job.json                 trạng thái các bước của lần nạp này
 
 Chưa có `active.json` (chưa từng nạp qua trang admin) thì hệ thống dùng dữ liệu cũ đi kèm repo
-(`app/data/qd3266`, `vector-docs/qd3266-clean.md`, collection `qd3266`).
+(`app/data/qd3266`, `vector-docs/documents/qd3266/current/clean.md`, collection `qd3266`).
 """
 
 import json

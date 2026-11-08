@@ -1,7 +1,7 @@
 import uuid
 from datetime import date, datetime
 
-from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, Integer, String, Uuid, func
+from sqlalchemy import JSON, Boolean, CheckConstraint, Date, DateTime, Integer, String, Uuid, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.avatar import default_avatar_url
@@ -29,6 +29,8 @@ class User(Base):
     timezone: Mapped[str] = mapped_column(String(64), default="Asia/Ho_Chi_Minh")
     language: Mapped[str] = mapped_column(String(2), default="vi")
     theme: Mapped[str] = mapped_column(String(10), default="system")
+    # Id các tuyến tài liệu / web mà người dùng muốn chatbot tra cứu. NULL = tất cả (mặc định).
+    document_routes: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
 
     # Phân quyền. Mọi tài khoản mới là 'user'; nâng lên 'admin' bằng cách sửa trực tiếp trong DB.
     role: Mapped[str] = mapped_column(String(10), default="user", server_default="user")

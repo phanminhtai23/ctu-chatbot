@@ -27,6 +27,7 @@ from app.services.chat import smalltalk, suggested
 from app.services.chat.moderation import is_profane
 from app.services.chat.queue import QueueFull, QueueTimeout, Ticket, UserBusy, conversation_guard, get_turn_queue
 from app.services.chat.service import cached_turn, delete_thread, get_history, run_turn, stream_cached_turn, stream_turn
+from app.core.config import settings
 from app.services.llm.gemini import LLMError, LLMNotConfigured, LLMUnavailable
 from app.services.rate_limit import chat_limiter, describe_window
 from app.services.usage import record_usage
@@ -83,6 +84,7 @@ def _enforce_rate_limit(db: Session, user: User) -> None:
         return
     allowed, retry_after, blocked = chat_limiter.hit_detail(str(user.id))
     if not allowed and blocked is not None:
+        logger.warning("429 RATE_LIMITED user=%s limit=%s/%ss retry_after=%ss", user.id, blocked.max_events, blocked.window_seconds, retry_after)
         _record_abuse(db, user, User.spam_count)
         # `limit` và `window` cho giao diện hiện đúng "tối đa N tin trong M phút" theo cấu hình hiện tại.
         raise HTTPException(
@@ -100,8 +102,9 @@ def _enforce_rate_limit(db: Session, user: User) -> None:
 def _enter_queue(user: User) -> Ticket:
     """Xin chỗ trong hàng đợi lượt chat. Đầy thì 503, người dùng đang có lượt khác chạy thì 429."""
     try:
-        return get_turn_queue().enter(str(user.id))
+        return get_turn_queue().enter(str(user.id), busy_wait=settings.chat_busy_wait_seconds)
     except UserBusy:
+        logger.warning("429 TURN_IN_PROGRESS user=%s (lượt trước của người này chưa trả chỗ trong hàng đợi)", user.id)
         raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, detail="TURN_IN_PROGRESS", headers={"Retry-After": "5"}) from None
     except QueueFull as exc:
         raise HTTPException(
@@ -239,6 +242,7 @@ def send_message(
 ):
     conv, level = _accessible(db, user, conversation_id, need="chat")
     conv_id, user_id, author = conv.id, user.id, _author(user, level)
+    routes = user.document_routes
     text = body.text
     attachments = _resolve_attachments(db, user, body.attachment_ids)
     db.rollback()  # trả kết nối DB về pool trong lúc chờ LLM (có thể mất vài chục giây)
@@ -256,7 +260,7 @@ def send_message(
             holding = conversation_guard.acquire(conv_id)
             if not holding:
                 raise HTTPException(status.HTTP_409_CONFLICT, detail="CONVERSATION_BUSY")
-            user_msg, bot_msg = run_turn(graph, conv_id, text, author, attachments)
+            user_msg, bot_msg = run_turn(graph, conv_id, text, author, attachments, routes)
     except QueueTimeout as exc:
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE, detail="SERVER_BUSY", headers={"Retry-After": str(exc.retry_after)}
@@ -318,6 +322,7 @@ def stream_response(
 ) -> StreamingResponse:
     """Phần dùng chung của mọi cách gửi tin có stream (chủ sở hữu, được chia sẻ theo email, liên kết chia sẻ có quyền chat)."""
     conv_id, user_id = conv.id, user.id
+    routes = user.document_routes
     text = body.text
     attachments = _resolve_attachments(db, user, body.attachment_ids)
     db.rollback()
@@ -336,7 +341,7 @@ def stream_response(
                 if not holding:
                     yield _sse("error", {"code": "CONVERSATION_BUSY"})
                     return
-                turn = stream_turn(graph, conv_id, text, author, attachments)
+                turn = stream_turn(graph, conv_id, text, author, attachments, routes)
             for event in turn:
                 kind = event["type"]
                 if kind == "user_message":

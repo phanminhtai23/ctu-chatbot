@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { useAuth } from '../auth'
 import ChatErrorDialog from '../components/ChatErrorDialog'
+import BrandLockup from '../components/BrandLockup'
 import Composer from '../components/chat/Composer'
 import MessageBubble, { type UiMessage } from '../components/chat/MessageBubble'
 import ReferencePanel from '../components/chat/ReferencePanel'
@@ -145,9 +146,8 @@ export default function SharedView() {
 
   const header = (
     <header className="flex flex-wrap items-center gap-3 border-b border-line bg-surface px-4 py-3 sm:px-8">
-      <Link to="/" className="flex items-center gap-2.5 text-heading no-underline">
-        <Logo size={36} />
-        <span className="text-[15px] font-semibold">{t('brand.app')}</span>
+      <Link to="/" className="flex items-center text-heading no-underline">
+        <BrandLockup size={52} />
       </Link>
       <div className="ml-auto flex items-center gap-3">
         {user ? (
@@ -226,7 +226,7 @@ export default function SharedView() {
             </div>
           )}
 
-          <div ref={scrollRef} onScroll={handleScroll} role="log" aria-live="polite" className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-4 py-6 sm:p-8">
+          <div ref={scrollRef} onScroll={handleScroll} role="log" aria-live="polite" className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-4 py-6 [scrollbar-gutter:stable_both-edges] sm:p-8">
             {!view && <p role="status">{t('chat.loadingConversation')}</p>}
             {messages.length > 0 && (
               <div className="flex w-full max-w-[860px] flex-col gap-6">

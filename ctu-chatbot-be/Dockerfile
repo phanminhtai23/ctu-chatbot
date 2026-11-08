@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY ctu-chatbot-be/app ./app
 COPY ctu-chatbot-be/alembic ./alembic
 COPY ctu-chatbot-be/alembic.ini ./alembic.ini
-COPY vector-docs/qd3266-clean.md /vector-docs/qd3266-clean.md
+COPY vector-docs /vector-docs
 
 RUN mkdir -p /app/chroma_db /app/data/documents /app/data/donate \
     && useradd --system --uid 10001 --create-home appuser \

@@ -111,12 +111,20 @@ class TurnQueue:
         return max(5, min(120, int(self._avg_seconds * ahead / self._max_concurrent)))
 
     # --- API ---
-    def enter(self, user: str) -> Ticket:
-        """Xin một chỗ trong hàng. Ném UserBusy / QueueFull ngay nếu không nhận được."""
+    def enter(self, user: str, busy_wait: float = 0) -> Ticket:
+        """Xin một chỗ trong hàng. Ném UserBusy / QueueFull nếu không nhận được.
+
+        Người dùng đang có lượt chạy thì chờ tối đa `busy_wait` giây cho lượt đó nhả chỗ: tải lại trang giữa lúc đang
+        trả lời làm lượt cũ mồ côi nhưng vẫn giữ chỗ cho tới khi lời gọi LLM đang dở trả về."""
+        deadline = self._clock() + busy_wait
         with self._cond:
             self._purge()
-            if user in self._by_user:
-                raise UserBusy
+            while user in self._by_user:
+                remaining = deadline - self._clock()
+                if remaining <= 0:
+                    raise UserBusy
+                self._cond.wait(min(remaining, self._poll))
+                self._purge()
             if len(self._running) >= self._max_concurrent and len(self._waiting) >= self._max_waiting:
                 raise QueueFull(self._retry_after())
             self._next_id += 1

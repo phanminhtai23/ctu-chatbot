@@ -19,7 +19,7 @@ Admin có một tab để tải ảnh **mã QR ủng hộ** lên; ảnh lưu ở
 - **Kiểm tra ảnh (BE là nơi quyết định):** kiểu ảnh lấy từ **nội dung** bằng Pillow (không tin tên file/`Content-Type`), phải giải mã/`verify()` được, chỉ nhận PNG/JPEG/WebP (**không nhận SVG** vì có thể chứa script, cũng không nhận GIF), tối đa `DONATE_QR_MAX_MB` (mặc định 2 MB) và 4096 px mỗi cạnh. Tải lỗi thì ảnh đang dùng được giữ nguyên.
 - **FE:**
   - Tab admin "Mã QR ủng hộ" (`/admin/donate`, `pages/admin/AdminDonate.tsx`): chọn hoặc kéo-thả ảnh, xem trước ảnh đã chọn rồi mới Lưu, thay ảnh, xoá (có hộp xác nhận), và cột "Người dùng sẽ thấy" xem trước đúng giao diện người dùng.
-  - `components/DonateSection.tsx`: tiêu đề + lời kêu gọi + QR (nền trắng cố định để quét được cả ở dark mode) + GIF cạnh nhau (tự xuống dòng ở màn hình hẹp). Gắn vào cuối `ProfileDialog`. **Chưa có QR (hoặc ảnh hỏng) thì không hiện gì.**
+  - `components/DonateSection.tsx`: tiêu đề + lời kêu gọi + QR (nền trắng cố định để quét được cả ở dark mode) + GIF cạnh nhau (tự xuống dòng ở màn hình hẹp). Hiện trong tab **Ủng hộ** của `ProfileDialog` (tab ẩn khi chưa có QR). **Chưa có QR (hoặc ảnh hỏng) thì không hiện gì.**
   - `lib/donate.ts`: API + kiểm tra nhanh ở trình duyệt (kiểu/kích thước) để báo lỗi sớm.
 - **Landing page:** `<DonateSection band />` đặt giữa khối CTA và footer của `pages/Landing.tsx`: dải toàn chiều ngang, thẻ rộng tối đa 760 px; chưa có QR thì cả dải biến mất (không để khoảng trống).
 - Chữ ở `i18n/vi.ts` (`donate.*`, `admin.donate.*`, `admin.nav.donate`).

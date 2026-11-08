@@ -242,6 +242,7 @@ def send_message(
 ):
     conv, level = _accessible(db, user, conversation_id, need="chat")
     conv_id, user_id, author = conv.id, user.id, _author(user, level)
+    routes = user.document_routes
     text = body.text
     attachments = _resolve_attachments(db, user, body.attachment_ids)
     db.rollback()  # trả kết nối DB về pool trong lúc chờ LLM (có thể mất vài chục giây)
@@ -259,7 +260,7 @@ def send_message(
             holding = conversation_guard.acquire(conv_id)
             if not holding:
                 raise HTTPException(status.HTTP_409_CONFLICT, detail="CONVERSATION_BUSY")
-            user_msg, bot_msg = run_turn(graph, conv_id, text, author, attachments)
+            user_msg, bot_msg = run_turn(graph, conv_id, text, author, attachments, routes)
     except QueueTimeout as exc:
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE, detail="SERVER_BUSY", headers={"Retry-After": str(exc.retry_after)}
@@ -321,6 +322,7 @@ def stream_response(
 ) -> StreamingResponse:
     """Phần dùng chung của mọi cách gửi tin có stream (chủ sở hữu, được chia sẻ theo email, liên kết chia sẻ có quyền chat)."""
     conv_id, user_id = conv.id, user.id
+    routes = user.document_routes
     text = body.text
     attachments = _resolve_attachments(db, user, body.attachment_ids)
     db.rollback()
@@ -339,7 +341,7 @@ def stream_response(
                 if not holding:
                     yield _sse("error", {"code": "CONVERSATION_BUSY"})
                     return
-                turn = stream_turn(graph, conv_id, text, author, attachments)
+                turn = stream_turn(graph, conv_id, text, author, attachments, routes)
             for event in turn:
                 kind = event["type"]
                 if kind == "user_message":

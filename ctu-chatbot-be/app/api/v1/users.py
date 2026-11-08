@@ -35,7 +35,7 @@ def update_me(
     # exclude_unset: field không gửi lên thì giữ nguyên; birthday=null thì xoá ngày sinh.
     changes = body.model_dump(exclude_unset=True)
     for field, value in changes.items():
-        if value is None and field != "birthday":
+        if value is None and field not in {"birthday", "document_routes"}:
             continue  # không cho set null các cột bắt buộc
         setattr(user, field, value)
     db.commit()

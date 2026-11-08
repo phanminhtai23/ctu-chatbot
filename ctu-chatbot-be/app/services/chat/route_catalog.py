@@ -53,6 +53,11 @@ DEFAULT_CONFIG = {
 }
 
 
+def valid_official_url(value: object) -> bool:
+    """Link tài liệu chính thức: chỉ nhận http(s), một dòng, tối đa 500 ký tự (chặn javascript:, data:...)."""
+    return isinstance(value, str) and bool(re.fullmatch(r"https?://[^\s<>\"']{3,490}", value.strip()))
+
+
 def vector_docs_root() -> Path:
     configured = settings.vector_docs_dir.strip()
     path = Path(configured) if configured else _REPO_ROOT / "vector-docs"
@@ -103,6 +108,19 @@ def validate_config(value: object) -> dict:
             if not isinstance(source, str) or not source or Path(source).is_absolute() or ".." in Path(source).parts:
                 raise ValueError(f"Route {node_id} has an invalid source path")
             normalized.update(collection=collection, source=Path(source).as_posix())
+            for field, limit in (("description", 500), ("decision_no", 100)):
+                value = node.get(field)
+                if value in (None, ""):
+                    continue
+                if not isinstance(value, str) or len(value.strip()) > limit:
+                    raise ValueError(f"Route {node_id} has an invalid {field}")
+                if value.strip():
+                    normalized[field] = value.strip()
+            official_url = node.get("official_url")
+            if official_url not in (None, ""):
+                if not valid_official_url(official_url):
+                    raise ValueError(f"Route {node_id} has an invalid official_url")
+                normalized["official_url"] = official_url.strip()
             if node.get("document_slug"):
                 normalized["document_slug"] = node["document_slug"]
             if node.get("version"):

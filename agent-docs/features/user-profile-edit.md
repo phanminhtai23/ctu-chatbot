@@ -30,3 +30,6 @@ Trang `/profile` được thay bằng hộp thoại (`components/ProfileDialog.t
 ### 2026-10-18: ngày sinh dd/mm/yyyy, về ảnh mặc định
 - Ngày sinh nhập bằng ô chữ riêng (`components/DateField.tsx`, `lib/dates.ts`) LUÔN dạng dd/mm/yyyy (ô `type="date"` của trình duyệt hiện theo ngôn ngữ trình duyệt, có khi mm/dd/yyyy): gõ số tự chèn dấu "/", kiểm tra ngày có thật (31/02 báo lỗi) và khoảng 1900..hôm nay, nút lịch để chọn; nhập dở / sai thì chặn nút Lưu. Server vẫn nhận/trả ISO yyyy-mm-dd.
 - Ảnh đại diện có 3 nút: "Tải ảnh", "Ngẫu nhiên" (quay ảnh mặc định mới), "Mặc định" (về ảnh mặc định của tài khoản: `DELETE /me/avatar?random=false`). Tài khoản mới có `avatar_url` để TRỐNG: ảnh mặc định (DiceBear `thumbs`) suy ra cố định từ id (`User.avatar`), nên "Mặc định" luôn về đúng ảnh lúc mới đăng ký.
+
+### 2026-11-08: hộp thoại chia tab
+`ProfileDialog` giờ có thanh tab: **Cài đặt** (ảnh đại diện + form hồ sơ + đăng xuất), **Dung lượng** (`MyFiles`: thanh dung lượng + danh sách tệp, xoá bớt) và **Ủng hộ** (`DonateSection`; tab chỉ hiện khi admin đã tải mã QR). Chuyển tab chỉ ẩn/hiện (không huỷ) nên form đang nhập dở không mất. Mở từ thanh dung lượng ở sidebar thì vào thẳng tab Dung lượng (prop `scrollToFiles` giữ tên cũ). Hộp thoại có chiều cao cố định để đổi tab không bị nhảy.

@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from typing import Protocol
 
 from langchain_core.messages import AIMessage, AIMessageChunk, BaseMessage, HumanMessage, SystemMessage
+from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.base import BaseCheckpointSaver
 from langgraph.graph import END, START, MessagesState, StateGraph
 from langgraph.types import StreamWriter
@@ -196,7 +197,7 @@ def retrieve_knowledge(retriever, history: list[BaseMessage]) -> list:
 
 
 def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retriever: DocumentRetriever | None = None):
-    def generate(state: MessagesState, writer: StreamWriter) -> dict:
+    def generate(state: MessagesState, writer: StreamWriter, config: RunnableConfig) -> dict:
         started = time.monotonic()
         steps: dict[str, float] = {}  # thời gian từng node của lượt này, ghi log ở cuối để biết chậm ở đâu
         last = started
@@ -208,12 +209,18 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
             last = now
 
         history = window(state["messages"], settings.chat_history_window)
-        config = route_catalog.load_config() if retriever is not None else route_catalog.DEFAULT_CONFIG
-        route_nodes = route_catalog.enabled_nodes(config)
+        catalog = route_catalog.load_config() if retriever is not None else route_catalog.DEFAULT_CONFIG
+        route_nodes = route_catalog.enabled_nodes(catalog)
+        # Người dùng có thể chọn chỉ hỏi một số tài liệu / web; chào hỏi và ngoài phạm vi luôn mở.
+        allowed = (config.get("configurable") or {}).get("allowed_routes")
+        if allowed:
+            chosen = [n for n in route_nodes if n["kind"] not in {"document", "web"} or n["id"] in allowed]
+            if any(n["kind"] in {"document", "web"} for n in chosen):  # lựa chọn lỗi thời (tuyến đã xoá) thì bỏ qua
+                route_nodes = chosen
         if not settings.web_search_enabled:
             route_nodes = [node for node in route_nodes if node["kind"] != "web"]
         if not route_nodes:
-            fallback_node = next((node for node in config["nodes"] if node["id"] == scope.REGULATION), None)
+            fallback_node = next((node for node in catalog["nodes"] if node["id"] == scope.REGULATION), None)
             route_nodes = [fallback_node] if fallback_node else []
 
         hits: list = []
@@ -248,11 +255,11 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
                     history,
                     router_score(retriever, history, hits),
                     route_nodes=route_nodes,
-                    router_prompt=config.get("router_prompt"),
+                    router_prompt=catalog.get("router_prompt"),
                 )
                 route_node = next((node for node in route_nodes if node["id"] == route), None)
             if route_node is None:
-                route_node = next((node for node in config["nodes"] if node["id"] == route), None)
+                route_node = next((node for node in catalog["nodes"] if node["id"] == route), None)
             if route_node and route_node["kind"] == "document" and route_node.get("document_slug"):
                 collection = route_node["collection"]
                 if collection != getattr(getattr(retriever, "store", None), "collection_name", None):

@@ -14,6 +14,8 @@ from collections.abc import Callable
 from datetime import datetime, timezone
 from pathlib import Path
 
+import chromadb
+
 from app.core.config import settings
 from app.services.chat import route_catalog
 from app.services.ingest import pdf as pdf_mod
@@ -182,13 +184,34 @@ class DocumentCatalog:
         step["status"] = status
         step.update(details)
 
-    def upload(self, title: str, filename: str, data: bytes) -> dict:
+    def _unique_slug(self, title: str, config: dict) -> str:
+        """Mỗi lần upload tài liệu MỚI là một tuyến riêng: trùng tên với tài liệu có sẵn thì thêm hậu tố -2, -3…"""
+        taken = {n["document_slug"] for n in config["nodes"] if n.get("document_slug")}
+        taken |= {job["slug"] for job in self.list_jobs(limit=10_000)}
+        taken |= {n["id"] for n in config["nodes"]}
+        base = _slugify(title)
+        slug, number = base, 2
+        while slug in taken:
+            suffix = f"-{number}"
+            slug = f"{base[: 36 - len(suffix)].rstrip('-')}{suffix}"
+            number += 1
+        return slug
+
+    def upload(self, title: str, filename: str, data: bytes, route_id: str | None = None) -> dict:
+        """`route_id` có giá trị = thêm PHIÊN BẢN MỚI cho tài liệu đó (giữ tên + slug); không có = tài liệu mới, tuyến riêng."""
         if not settings.document_catalog_edit_enabled or not route_catalog.editable():
             raise CatalogError("CATALOG_READ_ONLY")
-        safe_title = title.strip()
-        if not safe_title or len(safe_title) > 100:
-            raise CatalogError("DOCUMENT_NAME_INVALID")
-        slug = _slugify(safe_title)
+        config = route_catalog.load_config()
+        if route_id:
+            node = self._document_nodes(config, route_id)[0]
+            if not node.get("document_slug"):
+                raise CatalogError("DOCUMENT_PROTECTED")
+            safe_title, slug = node["label"], node["document_slug"]
+        else:
+            safe_title = title.strip()
+            if not safe_title or len(safe_title) > 100:
+                raise CatalogError("DOCUMENT_NAME_INVALID")
+            slug = self._unique_slug(safe_title, config)
         stamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
         job_id = f"{stamp}-{uuid.uuid4().hex[:6]}"
         safe_filename = filename.replace("\\", "/").rsplit("/", 1)[-1].strip()
@@ -236,6 +259,7 @@ class DocumentCatalog:
             "label": safe_title,
             "kind": "document",
             "prompt": existing["prompt"] if existing else f"Câu hỏi liên quan tới {safe_title}; chỉ chọn tuyến này khi nội dung thuộc tài liệu đó.",
+            **({key: existing[key] for key in ("description", "decision_no", "official_url") if existing and existing.get(key)}),
             "collection": f"doc-{slug[:20]}-{job_id}",
             "source": f"documents/{job_id}/clean.md",
             "document_slug": slug,
@@ -512,6 +536,7 @@ class DocumentCatalog:
                 "label": job["title"],
                 "kind": "document",
                 "prompt": prompt,
+                **{key: (existing or draft or {})[key] for key in ("description", "decision_no", "official_url") if (existing or draft or {}).get(key)},
                 "collection": collection,
                 "source": f"documents/{job_id}/clean.md",
                 "document_slug": slug,
@@ -539,6 +564,124 @@ class DocumentCatalog:
                 self._update_step(job, running["key"], "failed", error=str(exc))
             self._save_job(job)
             raise CatalogError("SYNC_FAILED") from exc
+
+    def _document_nodes(self, config: dict, route_id: str) -> list[dict]:
+        """Mọi node của cùng một tài liệu (các version chung `document_slug`); node không có slug (quy chế mặc định) đứng riêng."""
+        node = next((n for n in config["nodes"] if n["id"] == route_id and n["kind"] == "document"), None)
+        if node is None:
+            raise CatalogError("DOCUMENT_NOT_FOUND")
+        slug = node.get("document_slug")
+        if not slug:
+            return [node]
+        return [n for n in config["nodes"] if n.get("document_slug") == slug]
+
+    def update_document(self, route_id: str, label: str, decision_no: str, official_url: str = "") -> dict:
+        """Đổi tên, số quyết định và link tài liệu chính thức; áp cho mọi version của tài liệu. Mô tả (nếu có) giữ nguyên."""
+        if not settings.document_catalog_edit_enabled or not route_catalog.editable():
+            raise CatalogError("CATALOG_READ_ONLY")
+        label, decision_no, official_url = label.strip(), decision_no.strip(), official_url.strip()
+        if not label or len(label) > 100 or len(decision_no) > 100:
+            raise CatalogError("DOCUMENT_NAME_INVALID")
+        if official_url and not route_catalog.valid_official_url(official_url):
+            raise CatalogError("DOCUMENT_URL_INVALID")
+        config = route_catalog.load_config()
+        targets = {n["id"] for n in self._document_nodes(config, route_id)}
+        nodes = []
+        for node in config["nodes"]:
+            if node["id"] in targets:
+                node = {k: v for k, v in node.items() if k not in {"decision_no", "official_url"}}
+                node["label"] = label
+                if decision_no:
+                    node["decision_no"] = decision_no
+                if official_url:
+                    node["official_url"] = official_url
+            nodes.append(node)
+        saved = route_catalog.save_config({**config, "nodes": nodes})
+        slug = next((n.get("document_slug") for n in saved["nodes"] if n["id"] == route_id), None)
+        if slug:  # tên hiện trên quy trình xử lý cũng đổi theo
+            for listed in self.list_jobs(limit=10_000):
+                if listed["slug"] != slug or listed.get("title") == label:
+                    continue
+                try:
+                    job = self._read_job(slug, listed["id"])
+                except CatalogError:
+                    continue
+                job["title"] = label
+                self._save_job(job)
+        return next(n for n in saved["nodes"] if n["id"] == route_id)
+
+    def activate_version(self, route_id: str, job_id: str) -> dict:
+        """Đổi phiên bản đang dùng của một tài liệu sang version đã đồng bộ trước đó (qua lại tuỳ ý)."""
+        if not settings.document_catalog_edit_enabled or not route_catalog.editable():
+            raise CatalogError("CATALOG_READ_ONLY")
+        config = route_catalog.load_config()
+        nodes = self._document_nodes(config, route_id)
+        slug = nodes[0].get("document_slug")
+        if not slug:
+            raise CatalogError("DOCUMENT_PROTECTED")
+        active = next((n for n in nodes if n.get("status") != "pending"), None)
+        job = self._read_job(slug, job_id)
+        if active is None or job["status"] != "synced":
+            raise CatalogError("ACTIVATE_NOT_ALLOWED")
+        if active.get("version") == job_id:
+            return active
+        collection = f"doc-{slug[:20]}-{job_id}"
+        source = self._version_dir(slug, job_id) / "clean.md"
+        if not source.is_file():
+            raise CatalogError("ACTIVATE_NOT_ALLOWED")
+        try:  # collection của version cũ có thể đã mất (xoá volume Chroma): nhúng lại từ clean.md
+            self._sync_file(source, collection, self._embedder_factory())
+        except Exception as exc:
+            logger.warning("Không chuẩn bị được vector cho version %s", job_id, exc_info=True)
+            raise CatalogError("SYNC_FAILED") from exc
+        switched = {
+            **active,
+            "collection": collection,
+            "source": f"documents/{job_id}/clean.md"
+            if (self.root / "documents" / job_id / "clean.md").is_file()
+            else f"documents/{slug}/versions/{job_id}/clean.md",
+            "version": job_id,
+            "status": "synced",
+        }
+        route_catalog.save_config(
+            {**config, "nodes": [switched if n["id"] == active["id"] else n for n in config["nodes"]]}
+        )
+        return switched
+
+    def delete_document(self, route_id: str) -> dict:
+        """Xoá tài liệu đã upload: mọi version, tuyến, vector và thư mục nguồn. Quy chế mặc định không xoá được."""
+        if not settings.document_catalog_edit_enabled or not route_catalog.editable():
+            raise CatalogError("CATALOG_READ_ONLY")
+        config = route_catalog.load_config()
+        targets = self._document_nodes(config, route_id)
+        slug = targets[0].get("document_slug")
+        if not slug:
+            raise CatalogError("DOCUMENT_PROTECTED")
+        ids = {n["id"] for n in targets}
+        nodes = [n for n in config["nodes"] if n["id"] not in ids]
+        edges = [e for e in config["edges"] if e["to"] not in ids]
+        try:
+            route_catalog.save_config({**config, "nodes": nodes, "edges": edges})
+        except ValueError as exc:
+            raise CatalogError("DOCUMENT_DELETE_NOT_ALLOWED") from exc
+        jobs = [job for job in self.list_jobs(limit=10_000) if job["slug"] == slug]
+        collections = {n["collection"] for n in targets} | {f"doc-{slug[:20]}-{job['id']}" for job in jobs}
+        try:
+            client = chromadb.PersistentClient(path=str(default_chroma_path()))
+            existing = {c.name if hasattr(c, "name") else str(c) for c in client.list_collections()}
+            for name in collections & existing:
+                client.delete_collection(name)
+        except Exception:
+            logger.warning("Không xoá được collection của tài liệu %s", slug, exc_info=True)
+        documents_root = (self.root / "documents").resolve()
+        for job in jobs:
+            directory = self._version_dir(slug, job["id"])
+            if directory.is_dir() and directory.resolve().is_relative_to(documents_root):
+                shutil.rmtree(directory, ignore_errors=True)
+        legacy = self.root / "documents" / slug
+        if legacy.is_dir() and not any(legacy.rglob("job.json")):
+            shutil.rmtree(legacy, ignore_errors=True)
+        return {"deleted": sorted(ids), "versions": len(jobs)}
 
     def sync_catalog(self) -> dict:
         if not settings.document_catalog_sync_enabled:

@@ -215,3 +215,112 @@ def test_catalog_upload_is_rejected_when_source_is_read_only(catalog, client, ad
     )
     assert response.status_code == 403
     assert response.json()["detail"] == "CATALOG_READ_ONLY"
+
+
+def test_update_document_renames_and_describes_every_version(catalog):
+    manager, _ = catalog
+    job = manager.upload("Quy chế học vụ", "rule.pdf", make_pdf())
+    route_id = next(n["id"] for n in route_catalog.load_config()["nodes"] if n.get("document_slug") == job["slug"])
+    node = manager.update_document(route_id, "  QĐ 3266  ", "3266/QĐ-ĐHCT", "https://ctu.edu.vn/qd3266.pdf")
+    assert node["label"] == "QĐ 3266"
+    assert node["official_url"] == "https://ctu.edu.vn/qd3266.pdf" and node["decision_no"] == "3266/QĐ-ĐHCT"
+    assert manager.get_job(job["slug"], job["id"])["title"] == "QĐ 3266"
+    with pytest.raises(CatalogError, match="DOCUMENT_NAME_INVALID"):
+        manager.update_document(route_id, "   ", "", "")
+    for bad in ("javascript:alert(1)", "ctu.edu.vn/x", "https://a b.vn", "ftp://x.vn/f"):
+        with pytest.raises(CatalogError, match="DOCUMENT_URL_INVALID"):
+            manager.update_document(route_id, "QĐ 3266", "", bad)
+    cleared = manager.update_document(route_id, "QĐ 3266", "", "")
+    assert "official_url" not in cleared and "decision_no" not in cleared
+
+
+def test_delete_document_removes_route_versions_and_files(catalog):
+    manager, root = catalog
+    job = manager.upload("Tài liệu thử", "x.pdf", make_pdf())
+    route_id = next(n["id"] for n in route_catalog.load_config()["nodes"] if n.get("document_slug") == job["slug"])
+    result = manager.delete_document(route_id)
+    assert result["versions"] == 1 and route_id in result["deleted"]
+    config = route_catalog.load_config()
+    assert all(n["id"] != route_id for n in config["nodes"])
+    assert all(e["to"] != route_id for e in config["edges"])
+    assert not (root / "documents" / job["id"]).exists()
+
+
+def test_built_in_regulation_cannot_be_deleted(catalog):
+    manager, _ = catalog
+    with pytest.raises(CatalogError, match="DOCUMENT_PROTECTED"):
+        manager.delete_document("regulation")
+    with pytest.raises(CatalogError, match="DOCUMENT_NOT_FOUND"):
+        manager.delete_document("external")
+
+
+def test_admin_api_updates_and_deletes_document(catalog, client, admin_headers):
+    manager, _ = catalog
+    client.app.state.document_catalog = manager
+    job = client.post(
+        "/api/v1/admin/documents/catalog/jobs?title=Tai%20lieu&filename=a.pdf",
+        headers={**admin_headers, "Content-Type": "application/pdf"},
+        content=make_pdf(),
+    ).json()
+    route_id = next(n["id"] for n in route_catalog.load_config()["nodes"] if n.get("document_slug") == job["slug"])
+    url = f"/api/v1/admin/documents/catalog/documents/{route_id}"
+    patched = client.patch(url, headers=admin_headers, json={"label": "Mới", "decision_no": "1/QĐ", "official_url": "https://ctu.edu.vn/a.pdf"})
+    assert patched.status_code == 200 and patched.json()["label"] == "Mới"
+    bad_url = client.patch(url, headers=admin_headers, json={"label": "Mới", "official_url": "javascript:alert(1)"})
+    assert bad_url.status_code == 400
+    assert client.delete(url, headers=admin_headers).status_code == 200
+    assert client.delete(url, headers=admin_headers).status_code == 404
+    assert client.delete("/api/v1/admin/documents/catalog/documents/regulation", headers=admin_headers).status_code == 409
+
+
+def _sync_all(manager, job):
+    manager.extract(job["slug"], job["id"])
+    manager.clean(job["slug"], job["id"])
+    return manager.sync_job(job["slug"], job["id"])["job"]
+
+
+def test_each_new_upload_is_its_own_route_even_with_the_same_title(catalog):
+    manager, _ = catalog
+    first = manager.upload("Quy chế", "a.pdf", make_pdf())
+    second = manager.upload("Quy chế", "b.pdf", make_pdf())
+    assert first["slug"] != second["slug"]
+    assert second["slug"].startswith("quy-che-")
+
+
+def test_upload_with_route_id_adds_a_version_to_the_same_document(catalog):
+    manager, _ = catalog
+    first = manager.upload("Học phí", "v1.pdf", make_pdf())
+    _sync_all(manager, first)
+    second = manager.upload("bỏ qua", "v2.pdf", make_pdf(), route_id=first["slug"])
+    assert second["slug"] == first["slug"] and second["title"] == "Học phí"
+    assert second["id"] != first["id"]
+    with pytest.raises(CatalogError, match="DOCUMENT_PROTECTED"):
+        manager.upload("x", "v3.pdf", make_pdf(), route_id="regulation")
+    with pytest.raises(CatalogError, match="DOCUMENT_NOT_FOUND"):
+        manager.upload("x", "v3.pdf", make_pdf(), route_id="khong-co")
+
+
+def test_activate_version_switches_back_and_forth(catalog):
+    manager, _ = catalog
+    first = manager.upload("Học phí", "v1.pdf", make_pdf())
+    _sync_all(manager, first)
+    second = manager.upload("Học phí", "v2.pdf", make_pdf(), route_id=first["slug"])
+    _sync_all(manager, second)
+    node = lambda: next(n for n in route_catalog.load_config()["nodes"] if n["id"] == first["slug"])  # noqa: E731
+    assert node()["version"] == second["id"]
+    back = manager.activate_version(first["slug"], first["id"])
+    assert back["version"] == first["id"] and node()["collection"].endswith(first["id"])
+    assert node()["source"] == f"documents/{first['id']}/clean.md"
+    manager.activate_version(first["slug"], second["id"])
+    assert node()["version"] == second["id"]
+
+
+def test_activate_requires_a_synced_version(catalog):
+    manager, _ = catalog
+    first = manager.upload("Học phí", "v1.pdf", make_pdf())
+    _sync_all(manager, first)
+    pending = manager.upload("Học phí", "v2.pdf", make_pdf(), route_id=first["slug"])
+    with pytest.raises(CatalogError, match="ACTIVATE_NOT_ALLOWED"):
+        manager.activate_version(first["slug"], pending["id"])
+    with pytest.raises(CatalogError, match="DOCUMENT_PROTECTED"):
+        manager.activate_version("regulation", first["id"])

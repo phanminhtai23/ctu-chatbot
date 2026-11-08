@@ -69,7 +69,9 @@ async def lifespan(app: FastAPI):
 
     retriever = build_retriever()
     app.state.retriever = retriever  # trang quản trị kiến thức bổ sung dùng chung kho vector này
-    app.state.chat_graph = build_chat_graph(GeminiClient.from_settings(), checkpointer, retriever)
+    llm = GeminiClient.from_settings()
+    app.state.llm = llm  # trang quản trị nhờ LLM viết lại prompt phân loại
+    app.state.chat_graph = build_chat_graph(llm, checkpointer, retriever)
     app.state.ingest_manager = JobManager(retriever, GeminiVision.from_settings, GeminiEmbedder.from_settings)
     app.state.document_catalog = DocumentCatalog(GeminiVision.from_settings, GeminiEmbedder.from_settings)
     try:

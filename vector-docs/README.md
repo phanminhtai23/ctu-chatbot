@@ -14,9 +14,6 @@ vector-docs/
     |       |-- source.pdf
     |       |-- ocr.txt
     |       `-- clean.md
-    |-- qd2748-2019/
-    |   `-- archive/
-    |       `-- source.pdf
     `-- <YYYYMMDDHHMMSS-xxxxxx>/
         |-- <original-upload-filename>.pdf
         |-- ocr.txt
@@ -34,8 +31,6 @@ vector-docs/
 - `documents/<timestamp-id>/` stores each staged admin upload. The timestamp ID
   is generated when the admin uploads; the original PDF filename is preserved.
   OCR, cleaned Markdown, and ingest metadata stay beside it.
-- Historical documents that are not active routes live in their own
-  `documents/<slug>/archive/` directory.
 
 The QĐ 3266 `source.pdf` and `ocr.txt` remain Git-ignored as before; `clean.md`
 is the source packaged and used for vectorization. For timestamped uploads,

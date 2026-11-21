@@ -56,7 +56,9 @@ export default function ReferencePanel({ source, onClose }: Props) {
   }, [onClose])
 
   const entry = layout?.articles[String(article)]
+  const [offscreenEntry, setOffscreenEntry] = useState<typeof entry>(undefined)
   const hasHighlight = !!entry?.highlights.length
+  const emphasizeReturn = hasHighlight && offscreenEntry === entry
   const articleTitle = entry?.title || source.title
   const highlightPages = useMemo(
     () => (entry ? [...new Set(entry.highlights.map((h) => h.page))].sort((a, b) => a - b) : []),
@@ -75,6 +77,23 @@ export default function ReferencePanel({ source, onClose }: Props) {
     const id = window.setTimeout(() => scrollToHighlight(true), 60)
     return () => window.clearTimeout(id)
   }, [article, entry, zoomIdx, scrollToHighlight])
+
+  useEffect(() => {
+    const root = scrollRef.current
+    if (!root || !hasHighlight) return
+    const visibleBoxes = new Set<Element>()
+    let hasBeenVisible = false
+    const observer = new IntersectionObserver((changes) => {
+      for (const change of changes) {
+        if (change.isIntersecting) visibleBoxes.add(change.target)
+        else visibleBoxes.delete(change.target)
+      }
+      if (visibleBoxes.size > 0) hasBeenVisible = true
+      setOffscreenEntry(hasBeenVisible && visibleBoxes.size === 0 ? entry : undefined)
+    }, { root })
+    root.querySelectorAll('[data-reference-highlight]').forEach((box) => observer.observe(box))
+    return () => observer.disconnect()
+  }, [entry, hasHighlight])
 
   // Trang đang nhìn thấy = trang cuối cùng có mép trên nằm trên 1/3 khung cuộn.
   const updateCurrentPage = useCallback(() => {
@@ -161,7 +180,9 @@ export default function ReferencePanel({ source, onClose }: Props) {
           type="button"
           onClick={() => scrollToHighlight(true)}
           disabled={!hasHighlight}
-          className="ml-auto inline-flex min-h-8 cursor-pointer items-center gap-1.5 rounded-md border border-ctu-gold-active bg-ctu-gold-active/20 px-3 py-1 font-sans text-[13px] font-normal text-heading hover:bg-ctu-gold-active/40 disabled:cursor-not-allowed disabled:opacity-40"
+          className={`ml-auto inline-flex min-h-8 cursor-pointer items-center gap-1.5 rounded-md border px-3 py-1 font-sans text-[13px] font-normal text-heading transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+            emphasizeReturn ? 'border-ctu-gold-active bg-ctu-gold-active/20 hover:bg-ctu-gold-active/40' : 'border-line bg-surface hover:bg-tint'
+          }`}
         >
           <Icon name="arrow" size={14} />
           {t('ref.backToHighlight')}
@@ -216,6 +237,7 @@ export default function ReferencePanel({ source, onClose }: Props) {
                           <div
                             key={i}
                             ref={page === highlightPages[0] && i === 0 ? highlightRef : undefined}
+                            data-reference-highlight
                             className="absolute rounded-[3px] bg-[#FBC500]"
                             style={{
                               top: `${y0 * 100}%`,

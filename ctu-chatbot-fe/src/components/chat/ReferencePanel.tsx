@@ -30,7 +30,7 @@ export default function ReferencePanel({ source, onClose }: Props) {
   const [currentPage, setCurrentPage] = useState(1)
   const scrollRef = useRef<HTMLDivElement>(null)
   const pageRefs = useRef<Record<number, HTMLElement | null>>({})
-  const highlightRef = useRef<HTMLElement | null>(null)
+  const highlightRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     let alive = true

@@ -36,6 +36,7 @@ def test_upload_extract_clean_and_sync_keep_each_source_version(catalog):
         "ocr",
         "normalize",
         "chunk",
+        "layout",
         "embed",
         "sync",
     ]
@@ -60,6 +61,9 @@ def test_upload_extract_clean_and_sync_keep_each_source_version(catalog):
     assert "### Điều 1." in cleaned["clean_preview"]
     assert next(step for step in cleaned["steps"] if step["key"] == "normalize")["status"] == "done"
     assert next(step for step in cleaned["steps"] if step["key"] == "chunk")["status"] == "done"
+    assert next(step for step in cleaned["steps"] if step["key"] == "layout")["status"] == "done"
+    assert (version / "layout.json").is_file()
+    assert (version / "pages" / "page-01.jpg").is_file()
 
     synced = manager.sync_job(uploaded["slug"], uploaded["id"])
     node = next(n for n in route_catalog.load_config()["nodes"] if n.get("document_slug") == uploaded["slug"])

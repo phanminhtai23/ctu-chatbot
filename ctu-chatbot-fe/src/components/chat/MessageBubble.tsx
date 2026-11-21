@@ -25,21 +25,19 @@ type Props = {
   activeArticle: number | null
 }
 
-function TypingDots({ queuePosition }: { queuePosition?: number }) {
+function ThinkingIndicator({ queuePosition }: { queuePosition?: number }) {
   const { t } = useI18n()
   return (
-    <span role="status" className="inline-flex items-center gap-2 py-1" aria-label={t('chat.thinking')}>
-      {[0, 150, 300].map((delay) => (
-        <span
-          key={delay}
-          className="size-2 animate-bounce rounded-full bg-muted motion-reduce:animate-none"
-          style={{ animationDelay: `${delay}ms` }}
-        />
-      ))}
-      {queuePosition != null && (
-        <span className="text-[13px] text-muted">
-          {t('chat.queued')} {queuePosition}
-        </span>
+    <span role="status" aria-atomic="true" className="inline-flex min-h-9 max-w-full items-center gap-3 py-2">
+      <span className="chat-thinking-dots" aria-hidden="true">
+        <span className="chat-thinking-dot" />
+        <span className="chat-thinking-dot" />
+        <span className="chat-thinking-dot" />
+      </span>
+      {queuePosition != null ? (
+        <span className="text-[13px] text-muted">{t('chat.queued')} {queuePosition}</span>
+      ) : (
+        <span className="sr-only">{t('chat.thinking')}</span>
       )}
     </span>
   )
@@ -123,9 +121,9 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
               <Markdown onReference={sources.length > 0 ? open : undefined} activeArticle={activeArticle}>
                 {content}
               </Markdown>
-            ) : (
-              <TypingDots queuePosition={message.queuePosition} />
-            )}
+            ) : message.pending ? (
+              <ThinkingIndicator queuePosition={message.queuePosition} />
+            ) : null}
           </div>
         </div>
 

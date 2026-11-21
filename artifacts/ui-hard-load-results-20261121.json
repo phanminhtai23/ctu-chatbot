@@ -1,0 +1,2677 @@
+{
+  "startedAt": "2026-11-21T06:06:37.293Z",
+  "finishedAt": "2026-11-21T06:09:54.100Z",
+  "done": true,
+  "target": 40,
+  "stopReason": "Three real whole-pool quota errors; stopping additional chats",
+  "results": [
+    {
+      "worker": 1,
+      "phase": 4,
+      "caseId": "t01",
+      "startedAt": "2026-11-21T06:06:43.438Z",
+      "ttftS": 4.434199999999721,
+      "doneS": 5.273299999999813,
+      "tokenChars": 989,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.06929999999981373,
+      "cached": false,
+      "serverDurationS": 5,
+      "answer": "Hạng tốt nghiệp của bạn là **loại xuất sắc** đó bạn nhé! 😊 ✨\n\nDựa theo quy định tại Điều 34 và kết quả kiểm tra các mốc, mình giải thích chi tiết như sau:\n\n- **Về ĐTBCTL:** Điểm trung bình chung tích lũy của bạn là 3,70, nằm trong khoảng từ 3,60 đến 4,00 nên đạt chuẩn **loại xuất sắc**.\n- **Về tỷ lệ học phần điểm F:** Chương trình của bạn có tổng cộng 120 tín chỉ (TC) và có 6 TC bị điểm F. Tỷ lệ này là đúng 5% (6 chia 120 nhân 100). Quy định nêu rõ khối lượng học phần bị điểm F phải **vượt quá** 5% thì hạng tốt nghiệp mới bị giảm một mức; vì 6 TC không lớn hơn ngưỡng 5% này nên bạn không bị giảm hạng.\n- **Về kỷ luật:** Nếu bạn chưa từng bị kỷ luật từ mức cảnh cáo cấp Trường trở lên trong suốt thời gian học, bạn sẽ giữ vững hạng xuất sắc này.\n\n*Lưu ý nhỏ:* Hạng xuất sắc hoặc giỏi sẽ bị giảm một mức nếu số tín chỉ điểm F vượt quá 5% tổng số TC của chương trình hoặc từng bị kỷ luật cấp Trường trở lên. \n\nBạn còn muốn mình tính toán hoặc hỗ trợ thêm thông tin gì nữa không nè? 📚",
+      "sources": [
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 5.274199999999721,
+      "ended": true,
+      "clickToCompletedS": 5.358,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 3,
+      "phase": 4,
+      "caseId": "w04",
+      "startedAt": "2026-11-21T06:06:43.438Z",
+      "ttftS": 4.9825999999996275,
+      "doneS": 6.1128999999999065,
+      "tokenChars": 1177,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.06409999999962747,
+      "cached": false,
+      "serverDurationS": 5.8,
+      "answer": "Không bị cảnh báo học tập bạn nhé 😊 Theo các tiêu chí đã kiểm tra được thì bạn an toàn, nhưng vẫn còn một vài điểm chưa đủ dữ liệu để kết luận toàn diện.\n\nDưới đây là chi tiết kiểm tra từng mức theo **Điều 18** của quy định nè:\n\n- **Về Điểm trung bình chung học kỳ (ĐTBCHK)**: \n  + ĐTBCHK của bạn là 1,50, cao hơn mức tối thiểu 1,00 đối với các học kỳ tiếp theo (từ Khóa 47 trở về sau). Do đó, bạn không bị cảnh báo theo tiêu chí này.\n- **Về số tín chỉ không đạt trong học kỳ**: \n  + Bạn đăng ký 16 tín chỉ và không đạt 8 tín chỉ, tính ra là đúng bằng 50% khối lượng đã đăng ký. \n  + Theo quy định, số tín chỉ không đạt phải *vượt quá* 50% thì mới bị cảnh báo. Vì 50% không lớn hơn 50% nên bạn không bị cảnh báo ở mục này.\n\nTuy nhiên, mình **chưa kiểm tra được** 2 tiêu chí sau do thiếu số liệu:\n- Tổng số tín chỉ nợ đọng từ đầu khóa có vượt quá 24 tín chỉ hay không.\n- Điểm trung bình tích lũy (ĐTBCTL) có dưới ngưỡng theo năm học hay không (dưới 1,2 cho năm nhất; dưới 1,4 cho năm hai; dưới 1,6 cho năm ba; dưới 1,8 cho các năm tiếp theo).\n\nBạn có muốn chia sẻ thêm tổng số tín chỉ nợ đọng, ĐTBCTL hiện tại và số tín chỉ đã tích lũy để mình kiểm tra kỹ hơn giúp bạn không? ✨",
+      "sources": [
+        {
+          "article": 18,
+          "n": null,
+          "title": "Nghỉ học tạm thời, cảnh báo học tập, đình chỉ học tập và buộc thôi học",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 6.113699999999721,
+      "ended": true,
+      "clickToCompletedS": 6.225,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 0,
+      "phase": 4,
+      "caseId": "b01",
+      "startedAt": "2026-11-21T06:06:43.438Z",
+      "ttftS": 4.843600000000093,
+      "doneS": 6.08730000000028,
+      "tokenChars": 1283,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.0635,
+      "cached": false,
+      "serverDurationS": 5.7,
+      "answer": "Điểm trung bình chung học kỳ (ĐTBCHK) của bạn là **2,59**, đạt xếp loại **Khá** bạn nhé 😊 ✨\n\nTheo **Điều 24** và **Điều 22** của quy định, cách tính cụ thể như sau:\n- Tổng số tín chỉ (TC) bạn đăng ký trong học kỳ là 11 TC (gồm Toán 3 TC, Lý 3 TC, Giáo dục thể chất 1 TC, Ngoại ngữ căn bản 3 TC và Hóa 2 TC).\n- Quy đổi điểm chữ sang hệ 4:\n  + Toán (3 TC, điểm A): 3 × 4,00 = 12,0 điểm\n  + Lý (3 TC, điểm B+): 3 × 3,50 = 10,5 điểm\n  + Giáo dục thể chất (1 TC, điểm A): 1 × 4,00 = 4,0 điểm (lưu ý theo Điều 24, học phần Giáo dục thể chất không tính vào ĐTBCHK nhưng ở đây theo dữ liệu hệ thống hiển thị cùng các học phần học kỳ; tuy nhiên tổng số TC dùng cho công thức ĐTBCHK của các học phần tính điểm là 11 TC với tổng điểm tích lũy là 28,5 điểm).\n  + Ngoại ngữ căn bản (3 TC, điểm C): 3 × 2,00 = 6,0 điểm\n  + Hóa (2 TC, điểm F): 2 × 0,00 = 0,0 điểm (học phần bị điểm F vẫn được tính vào ĐTBCHK theo khoản 2 Điều 24).\n- Công thức tính: ĐTBCHK = (tổng số [TC × điểm hệ 4]) / (tổng số TC) = 28,5 / 11 = **2,59**.\n\nĐối chiếu với bảng xếp loại học tập học kỳ tại khoản 5 Điều 24 (mức Khá từ 2,50 đến 3,19), kết quả 2,59 của bạn nằm trong khoảng này nên xếp loại **Khá** nha.\n\nBạn có muốn mình tính thêm điểm trung bình chung tích lũy (ĐTBCTL) hay cần giải đáp thêm điều gì khác không? 📚",
+      "sources": [
+        {
+          "article": 24,
+          "n": null,
+          "title": "Điểm trung bình chung học kỳ, điểm trung bình chung năm học và điểm trung bình chung tích lũy",
+          "url": null,
+          "document_url": null
+        },
+        {
+          "article": 22,
+          "n": null,
+          "title": "Điểm học phần",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 6.119200000000186,
+      "ended": true,
+      "clickToCompletedS": 6.219,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 1,
+      "phase": 4,
+      "caseId": "t02",
+      "startedAt": "2026-11-21T06:06:48.949Z",
+      "ttftS": 3.6165,
+      "doneS": 4.493599999999628,
+      "tokenChars": 972,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.0356999999997206,
+      "cached": false,
+      "serverDurationS": 4.3,
+      "answer": "Hạng tốt nghiệp của bạn là loại giỏi bạn nha 😊 Dù điểm trung bình chung tích lũy (ĐTBCTL) của bạn đạt mức xuất sắc, nhưng do bạn có khối lượng học phần điểm F vượt quá quy định nên bị giảm một mức theo quy định.\n\nDưới đây là căn cứ và chi tiết kiểm tra:\n\n- **Hạng theo điểm (Điều 34 khoản 2):** ĐTBCTL của bạn là 3,70, thuộc khoảng từ 3,60 đến 4,00 nên ban đầu đạt **loại xuất sắc**.\n- **Kiểm tra mức điểm F (Điều 34 khoản 2a):** \n  - Chương trình có tổng số tín chỉ (TC) là 120, mức cho phép tối đa là 5% tổng số TC, tương ứng với 6 TC.\n  - Bạn có 7 TC bị điểm F, **vượt quá** ngưỡng 6 TC cho phép.\n- **Kết luận:** Vì vượt quá 5% số TC điểm F, hạng xuất sắc của bạn bị giảm một mức xuống thành **loại giỏi**. *(Lưu ý: Nếu bạn từng bị kỷ luật từ mức cảnh cáo cấp Trường trở lên, hạng cũng sẽ bị giảm, nhưng dù vướng một hay cả hai điều kiện thì mức giảm cũng chỉ là một bậc bạn nhé).*\n\nBạn có cần mình hỗ trợ kiểm tra thêm thông tin gì về việc xét tốt nghiệp không nào? ✨",
+      "sources": [
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 4.493699999999721,
+      "ended": true,
+      "clickToCompletedS": 4.574,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 3,
+      "phase": 4,
+      "caseId": "w06",
+      "startedAt": "2026-11-21T06:06:49.849Z",
+      "ttftS": 4.11619999999972,
+      "doneS": 4.87,
+      "tokenChars": 710,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.0451999999997206,
+      "cached": false,
+      "serverDurationS": 4.7,
+      "answer": "Không bạn nhé, bạn không bị cảnh báo học tập đâu nè 😊 ✨\n\nTheo các quy định tại Điều 18 (Quyết định 3266/QĐ-ĐHCT), mình kiểm tra cụ thể các mốc như sau:\n- **Về điểm trung bình chung học kỳ (ĐTBCHK):** Điểm của bạn là 2,00, lớn hơn mức tối thiểu quy định là 1,00 (và học kỳ đầu là 0,80) nên hoàn toàn an toàn nha.\n- **Về số tín chỉ nợ đọng (trên 24 TC):** Mặc dù bạn đang nợ 30 tín chỉ (vượt mốc 24 tín chỉ), nhưng quy định về việc xét cảnh báo học tập dựa trên tổng số tín chỉ nợ đọng chỉ áp dụng cho sinh viên từ **Khóa 47 trở về sau** (theo Điều 18 khoản 2 điểm c). \n- Vì bạn là **Khóa 46**, quy định này không áp dụng cho bạn nhé!\n\nNếu bạn còn băn khoăn hay muốn kiểm tra thêm vấn đề gì cứ hỏi mình nha 📚❤️",
+      "sources": [
+        {
+          "article": 18,
+          "n": null,
+          "title": "Nghỉ học tạm thời, cảnh báo học tập, đình chỉ học tập và buộc thôi học",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 4.893799999999814,
+      "ended": true,
+      "clickToCompletedS": 4.99,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 2,
+      "phase": 4,
+      "caseId": "s08",
+      "startedAt": "2026-11-21T06:06:43.490Z",
+      "ttftS": null,
+      "doneS": null,
+      "tokenChars": 0,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.05929999999981374,
+      "error": "LLM_ERROR",
+      "errorS": 64.51629999999982,
+      "endedS": 64.51789999999991,
+      "ended": true,
+      "clickToCompletedS": 64.599,
+      "dialog": "Ôi, có chút trục trặc!Chatbot gặp lỗi khi trả lời. Hãy thử lại.Mình hiểu rồi",
+      "answer_check_problems": [
+        "No complete answer"
+      ]
+    },
+    {
+      "worker": 0,
+      "phase": 4,
+      "caseId": "b02",
+      "startedAt": "2026-11-21T06:06:49.848Z",
+      "ttftS": 62.6965,
+      "doneS": 63.39179999999981,
+      "tokenChars": 685,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.043600000000093134,
+      "cached": false,
+      "serverDurationS": 63.2,
+      "answer": "Điểm trung bình chung tích lũy (ĐTBCTL) của riêng các môn này là **3,75** bạn nhé ✨ (đạt loại xuất sắc theo Điều 24 và Điều 34) 😊\n\nCách tính chi tiết dựa theo **Điều 24** (ĐTBCTL chỉ tính các học phần đã tích lũy, không tính điểm F và học phần điều kiện như ngoại ngữ căn bản, đồng thời giáo dục thể chất không tính vào ĐTBCHK/ĐTBCTL):\n- **Các học phần được tính vào ĐTBCTL**:\n  + Toán: 3 tín chỉ × 4,00 = 12,0 điểm\n  + Lý: 3 tín chỉ × 3,50 = 10,5 điểm\n- **Tổng số tín chỉ tính tích lũy**: 3 + 3 = 6 tín chỉ\n- **Tổng số điểm tích lũy**: 12,0 + 10,5 = 22,5 điểm\n- **ĐTBCTL**: 22,5 / 6 = 3,75 điểm hệ 4.\n\nBạn có muốn mình giải đáp thêm thông tin nào khác về quy chế học tập không nè? 📚",
+      "sources": [
+        {
+          "article": 24,
+          "n": null,
+          "title": "Điểm trung bình chung học kỳ, điểm trung bình chung năm học và điểm trung bình chung tích lũy",
+          "url": null,
+          "document_url": null
+        },
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 63.40739999999991,
+      "ended": true,
+      "clickToCompletedS": 63.502,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 2,
+      "phase": 4,
+      "caseId": "k03",
+      "startedAt": "2026-11-21T06:07:48.209Z",
+      "ttftS": 16.908900000000372,
+      "doneS": 18.15880000000028,
+      "tokenChars": 1206,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.027700000000186263,
+      "cached": false,
+      "serverDurationS": 18,
+      "answer": "Có thể bạn nhé 😊 Tối đa điểm trung bình chung tích lũy (ĐTBCTL) bạn có thể đạt là 3,85, cao hơn mức 3,60 của loại xuất sắc, nhưng ở 51 tín chỉ (TC) còn lại bạn cần đạt ĐTBCTL khoảng 3,74. \n\nTheo Điều 24 và Điều 34 quy định về cách tính điểm và xếp hạng tốt nghiệp, mình cùng xem chi tiết nhé:\n\n- **Số TC còn lại phải học:** \n  + Tổng số TC được tính điểm của chương trình (T) = 151 TC - 30 TC điều kiện = 121 TC.\n  + Số TC đã tích lũy tính điểm (C) = 100 TC - 30 TC điều kiện = 70 TC.\n  + Số TC còn lại cần học = 121 TC - 70 TC = 51 TC.\n\n- **Điểm trung bình cần đạt ở phần còn lại:**\n  + Để đạt hạng xuất sắc, ĐTBCTL toàn khóa cần tối thiểu 3,60, tương ứng tổng điểm tích lũy cần đạt cho 121 TC là: 121 × 3,60 = 435,60 điểm (theo kết quả tính toán).\n  + Tổng điểm hiện có của 70 TC đã học (với ĐTBCTL 3,5) là: 70 × 3,5 = 245 điểm.\n  + Số điểm cần đạt trong 51 TC còn lại là: 435,60 - 245 = 190,60 điểm.\n  + ĐTBCTL cần đạt ở 51 TC còn lại là: 190,60 / 51 = 3,74 điểm. \n\nVì 3,74 nhỏ hơn mức tối đa 4,0 điểm, mục tiêu đạt loại xuất sắc hoàn toàn khả thi nhưng bạn sẽ cần cố gắng rất nhiều ở các học phần tiếp theo đó nha! ✨ Bạn có muốn tính toán thêm về học kỳ tới hay cần mình hỗ trợ thông tin gì nữa không?",
+      "sources": [
+        {
+          "article": 24,
+          "n": null,
+          "title": "Điểm trung bình chung học kỳ, điểm trung bình chung năm học và điểm trung bình chung tích lũy",
+          "url": null,
+          "document_url": null
+        },
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 18.15880000000028,
+      "ended": true,
+      "clickToCompletedS": 18.243,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 5,
+      "phase": 8,
+      "caseId": "t04",
+      "startedAt": "2026-11-21T06:08:12.980Z",
+      "ttftS": 3.714600000000093,
+      "doneS": 4.546800000000279,
+      "tokenChars": 949,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.10430000000027939,
+      "cached": false,
+      "serverDurationS": 4.2,
+      "answer": "Hạng giỏi bạn nhé! 😊 \n\nTheo kết quả đã được kiểm tra, dù bạn từng bị khiển trách cấp Trường, mức kỷ luật này chưa đến mức cảnh cáo nên hạng tốt nghiệp của bạn vẫn giữ nguyên ở **hạng giỏi** (Điều 34).\n\nMình giải thích thêm các căn cứ theo quy định để bạn yên tâm nha:\n- **Căn cứ vào điểm số**: Với điểm trung bình chung tích lũy (ĐTBCTL) là 3,30, bạn đạt mức từ 3,20 đến 3,59 nên thuộc **loại giỏi** (Điều 34 khoản 2).\n- **Căn cứ về kỷ luật**: Theo Điều 34 khoản 2 điểm b, hạng tốt nghiệp loại xuất sắc và giỏi chỉ bị giảm một mức nếu bạn từng bị kỷ luật từ mức **cảnh cáo cấp Trường** trở lên. Bạn mới chỉ bị hình thức **khiển trách**, nên không bị hạ bậc tốt nghiệp. *(Lưu ý thêm là khối lượng học phần bị điểm F của bạn cũng cần đảm bảo không vượt quá 5% tổng số tín chỉ của chương trình đào tạo để không bị ảnh hưởng nhé).*\n\nChúc mừng bạn sắp hoàn thành chặng đường đại học nha! Bạn có muốn mình hỗ trợ thêm thông tin nào khác nữa không nè? ✨📚",
+      "sources": [
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 4.616400000000373,
+      "ended": true,
+      "clickToCompletedS": 5.093,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 2,
+      "phase": 8,
+      "caseId": "s01",
+      "startedAt": "2026-11-21T06:08:13.043Z",
+      "ttftS": 4.386,
+      "doneS": 5.202799999999813,
+      "tokenChars": 954,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.1096999999997206,
+      "cached": false,
+      "serverDurationS": 4.9,
+      "answer": "Không bạn nhé, rất tiếc là bạn chưa đủ điều kiện xét học bổng khuyến khích học tập rồi 😔\n\nTheo **Điều 9**, quy định xét học bổng khuyến khích học tập cụ thể như sau:\n- **Điều kiện số tín chỉ:** Bạn phải có số tín chỉ đăng ký tối thiểu trong học kỳ trước đó là 12 tín chỉ (trừ trường hợp do Trường bố trí). \n- **Trường hợp của bạn:** Bạn chỉ đăng ký 10 tín chỉ và không thuộc diện Trường bố trí, nên chưa đáp ứng được điều kiện tối thiểu này.\n\nMặc dù điểm trung bình chung học kỳ (ĐTBCHK) đạt 3,70 (xuất sắc) và điểm rèn luyện (ĐRL) đạt 95 (loại xuất sắc) là rất tuyệt vời, nhưng vì thiếu điều kiện về số tín chỉ đăng ký nên bạn chưa thể nhận học bổng ở học kỳ này. \n\nBên cạnh đó, mức học bổng cụ thể và chỉ tiêu do Hiệu trưởng quyết định (**Điều 9 khoản 1e**), nên bạn nhớ theo dõi các thông báo chính thức từ Trường nhé. Kỳ tới ráng đăng ký từ 12 tín chỉ trở lên để \"ẵm\" học bổng nha bạn ơi! ✨ Bạn còn muốn mình giải đáp thêm quy định nào nữa không nè?",
+      "sources": [
+        {
+          "article": 9,
+          "n": null,
+          "title": "Học bổng và trợ cấp xã hội",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 5.24,
+      "ended": true,
+      "clickToCompletedS": 5.382,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 7,
+      "phase": 8,
+      "caseId": "w03",
+      "startedAt": "2026-11-21T06:08:12.999Z",
+      "ttftS": 4.810299999999814,
+      "doneS": 5.856,
+      "tokenChars": 865,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.10860000000009314,
+      "cached": false,
+      "serverDurationS": 5.4,
+      "answer": "Có bạn nhé, bạn đã bị cảnh báo học tập trong học kỳ này rồi đó bạn ơi! 🥺📚\n\nDựa theo kết quả đã kiểm tra, lý do là vì:\n- **Tổng số tín chỉ (TC) không đạt trong học kỳ vượt quá 50% khối lượng đã đăng ký:** Bạn đăng ký 16 TC mà rớt tới 9 TC, tính ra là chiếm khoảng **56,2%**, vượt qua giới hạn 50% cho phép nha. \n\nTheo quy định tại **Điều 18 khoản 2** (áp dụng từ Khóa 47 trở về sau), sinh viên thuộc trường hợp có tổng số TC không đạt trong HK vượt quá 50% khối lượng đã đăng ký sẽ bị **cảnh báo học tập**. \n\nĐể mình tính chi tiết tỉ lệ rớt môn cho bạn xem nha:\n- Phép tính: `9 / 16 * 100 = 56.25%` (làm tròn là 56,2%).\n- Khi so sánh với ngưỡng `50%`, kết quả là **vượt quá** (`56.25 > 50`), nên quy định cảnh báo học tập được kích hoạt.\n\nBạn nhớ lưu ý giữ gìn phong độ và cố gắng hơn ở học kỳ tới nha! ✨ Bạn có muốn mình tư vấn thêm quy định nào khác không nè? 😊",
+      "sources": [
+        {
+          "article": 18,
+          "n": null,
+          "title": "Nghỉ học tạm thời, cảnh báo học tập, đình chỉ học tập và buộc thôi học",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 5.951600000000093,
+      "ended": true,
+      "clickToCompletedS": 6.413,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 6,
+      "phase": 8,
+      "caseId": "k04",
+      "startedAt": "2026-11-21T06:08:13.004Z",
+      "ttftS": 4.303300000000279,
+      "doneS": 5.827300000000279,
+      "tokenChars": 1454,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.12110000000009313,
+      "cached": false,
+      "serverDurationS": 5.2,
+      "answer": "Có thể bạn nhé 😊 Tối đa bạn đạt được là 3,25, cao hơn mức 3,20 để tốt nghiệp loại giỏi, nhưng 30 tín chỉ (TC) còn lại bạn cần đạt điểm trung bình khoảng 3,80 (gần như toàn điểm A). \n\nTuy nhiên, kết quả này **chưa chắc chắn** đâu nha! Nếu 30 TC còn lại bạn chỉ đạt điểm thấp (ví dụ điểm D), ĐTBCTL có thể rớt xuống 2,50 và không giữ được loại giỏi nữa.\n\nDưới đây là chi tiết cụ thể dựa trên quy định:\n- **Căn cứ quy định:** Theo Điều 34, để tốt nghiệp loại giỏi, điểm trung bình chung tích lũy (ĐTBCTL) phải đạt từ 3,20 đến 3,59.\n- **Cách tính và kiểm tra:** \n  + Giả định tạm thời mọi TC đã học đều được tính điểm (chưa trừ học phần điều kiện hay điểm M).\n  + Tổng điểm hệ 4 hiện có của bạn là: 90 TC × 3,00 = 270 điểm.\n  + Nếu 30 TC còn lại bạn đạt điểm tuyệt đối (4,0), tổng điểm tối đa sẽ là: 270 + (30 × 4,0) = 390 điểm.\n  + ĐTBCTL tối đa toàn khóa = 390 / 120 = 3,25 (vượt qua ngưỡng 3,20 của loại giỏi).\n  + Để đạt mức tối thiểu của loại giỏi (3,20), bạn cần tổng điểm 120 TC là: 120 × 3,20 = 384 điểm. Số điểm cần thêm trong 30 TC còn lại là: 384 − 270 = 114 điểm, tức trung bình cần **3,80/4,00** cho mỗi TC còn lại.\n\n*Lưu ý nhỏ:* Để mình tính lại chính xác hơn cho bạn, bạn cho mình biết thêm 2 thông tin nhé: \n1. Trong 90 TC đã học, có bao nhiêu TC là học phần điều kiện hoặc điểm M (không tính vào ĐTBCTL)?\n2. Tổng số TC học phần điều kiện của toàn bộ chương trình là bao nhiêu?\n\nBạn có muốn mình kiểm tra thêm mục tiêu nào khác không nè? ✨📚",
+      "sources": [
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 5.8275,
+      "ended": true,
+      "clickToCompletedS": 6.41,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 4,
+      "phase": 8,
+      "caseId": "b04",
+      "startedAt": "2026-11-21T06:08:13.094Z",
+      "ttftS": 8.345399999999907,
+      "doneS": 9.13919999999972,
+      "tokenChars": 846,
+      "queued": [
+        {
+          "position": 1,
+          "seconds": 0.11260000000009313
+        }
+      ],
+      "status": 200,
+      "headersS": 0.108,
+      "cached": false,
+      "serverDurationS": 4.5,
+      "answer": "Điểm trung bình chung học kỳ (ĐTBCHK) của bạn là **2,39** và được xếp loại **Trung bình** bạn nhé 😊\n\nDưới đây là chi tiết cách tính và căn cứ quy định nè:\n\n- **Cách tính điểm (theo Điều 24):** \n  - ĐTBCHK được tính bằng tổng tích số giữa số tín chỉ (TC) và điểm số hệ 4 của từng học phần, chia cho tổng số tín chỉ.\n  - Tổng số tín chỉ là: 3 + 2 + 4 = 9 TC.\n  - Tổng điểm hệ 4 nhân tín chỉ là: (3 × 3,50) + (2 × 2,50) + (4 × 1,50) = 10,5 + 5 + 6 = 21,5.\n  - ĐTBCHK = 21,5 / 9 = **2,39**. *(Lưu ý: Theo khoản 2 Điều 24, các học phần bị điểm F vẫn được tính vào ĐTBCHK).*\n\n- **Xếp loại học tập (theo khoản 5 Điều 24):**\n  - Với mức ĐTBCHK là 2,39, chiếu theo bảng quy định thì nằm trong khoảng từ 2,00 đến 2,49, tương ứng với loại **Trung bình**.\n\nBạn có muốn mình tính thêm điểm trung bình chung tích lũy hay giải đáp thắc mắc nào khác không nè? ✨",
+      "sources": [
+        {
+          "article": 24,
+          "n": null,
+          "title": "Điểm trung bình chung học kỳ, điểm trung bình chung năm học và điểm trung bình chung tích lũy",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 9.208600000000093,
+      "ended": true,
+      "clickToCompletedS": 9.462,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": false
+    },
+    {
+      "worker": 0,
+      "phase": 8,
+      "caseId": "b03",
+      "startedAt": "2026-11-21T06:08:13.095Z",
+      "ttftS": 9.116100000000094,
+      "doneS": 9.94530000000028,
+      "tokenChars": 1054,
+      "queued": [
+        {
+          "position": 2,
+          "seconds": 0.3248999999999069
+        }
+      ],
+      "status": 200,
+      "headersS": 0.3238999999999069,
+      "cached": false,
+      "serverDurationS": 4.6,
+      "answer": "ĐTBCHK học kỳ này của bạn là **3,43** (xếp loại **Giỏi** bạn nhé 😊 ✨).\n\nTheo Điều 24 của quy định, điểm trung bình chung học kỳ (ĐTBCHK) được tính bằng tổng số điểm các học phần nhân với số tín chỉ (TC) chia cho tổng số tín chỉ. Cụ thể cách tính cho các môn của bạn như sau:\n\n- **Môn Toán (3 TC, điểm A - hệ 4 là 4,0):** 3 nhân 4,0 = 12 điểm.\n- **Môn Lý (2 TC, điểm W):** Điểm W là môn rút bớt theo Điều 22, nên không tính vào ĐTBCHK và không tính số tín chỉ vào mẫu số.\n- **Môn Hóa (3 TC, điểm I):** Điểm I là điểm chờ bổ sung theo Điều 22, cũng không tính vào ĐTBCHK ở học kỳ này.\n- **Môn Văn (4 TC, điểm B - hệ 4 là 3,0):** 4 nhân 3,0 = 12 điểm.\n\n**Phép tính chi tiết:**\n- Tổng điểm các học phần tính vào ĐTBCHK: 12 + 12 = 24 điểm.\n- Tổng số tín chỉ: 3 (Toán) + 4 (Văn) = 7 tín chỉ.\n- ĐTBCHK = 24 / 7 = 3,43 (làm tròn hai chữ số thập phân theo Điều 22).\n\nChiếu theo bảng xếp loại học tập tại khoản 5 Điều 24 (mức từ 3,20 đến 3,59), mức 3,43 thuộc loại **Giỏi** bạn nha! \n\nBạn có muốn mình kiểm tra thêm thông tin nào khác về kết quả học tập không? 📚",
+      "sources": [
+        {
+          "article": 24,
+          "n": null,
+          "title": "Điểm trung bình chung học kỳ, điểm trung bình chung năm học và điểm trung bình chung tích lũy",
+          "url": null,
+          "document_url": null
+        },
+        {
+          "article": 22,
+          "n": null,
+          "title": "Điểm học phần",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 9.982600000000094,
+      "ended": true,
+      "clickToCompletedS": 10.139,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 3,
+      "phase": 8,
+      "caseId": "w02",
+      "startedAt": "2026-11-21T06:08:13.199Z",
+      "ttftS": 9.238600000000092,
+      "doneS": 9.9495,
+      "tokenChars": 851,
+      "queued": [
+        {
+          "position": 3,
+          "seconds": 0.2343000000002794
+        },
+        {
+          "position": 2,
+          "seconds": 4.334700000000186
+        }
+      ],
+      "status": 200,
+      "headersS": 0.2318000000002794,
+      "cached": false,
+      "serverDurationS": 4.2,
+      "answer": "Không bạn nhé, theo ĐTBCHK đúng bằng 1,00 thì bạn chưa bị cảnh báo học tập theo tiêu chí này đâu nha 😊 ✨\n\nDựa theo kết quả kiểm tra sẵn và các quy định:\n- Theo **Điều 18 khoản 2a**, sinh viên chỉ bị cảnh báo học tập khi điểm trung bình chung học kỳ (ĐTBCHK) đạt dưới 0,80 đối với học kỳ đầu hoặc **dưới 1,00** đối với các học kỳ tiếp theo. Vì ĐTBCHK của bạn là 1,00 (không bé hơn 1,00), nên bạn an toàn ở tiêu chí này.\n- Tuy nhiên, hệ thống chưa rõ bạn thuộc khóa mấy. Nếu bạn từ **Khóa 47 trở về sau**, bạn cần lưu ý kiểm tra thêm các tiêu chí bổ sung tại **Điều 18 khoản 2c** (như số tín chỉ không đạt trong học kỳ vượt quá 50%, số tín chỉ nợ đọng vượt quá 24 tín chỉ, hoặc điểm trung bình tích lũy dưới ngưỡng quy định theo năm học).\n\nBạn có thuộc Khóa 47 trở về sau không, hoặc bạn có muốn mình kiểm tra thêm các tiêu chí nợ tín chỉ không nào? 📚",
+      "sources": [
+        {
+          "article": 18,
+          "n": null,
+          "title": "Nghỉ học tạm thời, cảnh báo học tập, đình chỉ học tập và buộc thôi học",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 9.997700000000187,
+      "ended": true,
+      "clickToCompletedS": 10.256,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 1,
+      "phase": 8,
+      "caseId": "t03",
+      "startedAt": "2026-11-21T06:08:13.204Z",
+      "ttftS": 10.248599999999627,
+      "doneS": 10.733599999999628,
+      "tokenChars": 619,
+      "queued": [
+        {
+          "position": 4,
+          "seconds": 0.23959999999962747
+        },
+        {
+          "position": 3,
+          "seconds": 5.04569999999972
+        },
+        {
+          "position": 2,
+          "seconds": 5.0663999999999065
+        },
+        {
+          "position": 1,
+          "seconds": 5.64
+        }
+      ],
+      "status": 200,
+      "headersS": 0.2351999999997206,
+      "cached": false,
+      "serverDurationS": 4.9,
+      "answer": "Hạng tốt nghiệp của bạn là loại khá nhé 😊 \n\nTheo quy định tại Điều 34, điểm trung bình chung tích lũy (ĐTBCTL) 3,30 của bạn thuộc loại giỏi. Tuy nhiên, do bạn từng bị kỷ luật từ mức cảnh cáo cấp Trường trở lên, hạng tốt nghiệp của bạn bị giảm xuống một mức, từ giỏi thành khá.\n\nMình tóm tắt lại các yếu tố theo quy định nhé:\n- ĐTBCTL từ 3,20 đến 3,59 đạt loại giỏi (Điều 34 khoản 2).\n- Tuy nhiên, hạng tốt nghiệp loại xuất sắc và giỏi sẽ bị giảm một mức nếu sinh viên từng bị kỷ luật từ mức cảnh cáo cấp Trường trong thời gian học (Điều 34 khoản 2 điểm b).\n\nBạn còn muốn mình hỗ trợ thêm thông tin nào khác không nè? ✨",
+      "sources": [
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 10.769299999999813,
+      "ended": true,
+      "clickToCompletedS": 10.995,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 5,
+      "phase": 8,
+      "caseId": "t06",
+      "startedAt": "2026-11-21T06:08:18.032Z",
+      "ttftS": 7.513,
+      "doneS": 8.572600000000094,
+      "tokenChars": 1074,
+      "queued": [
+        {
+          "position": 4,
+          "seconds": 0.07279999999981374
+        },
+        {
+          "position": 2,
+          "seconds": 0.7786000000000931
+        },
+        {
+          "position": 1,
+          "seconds": 0.8265
+        }
+      ],
+      "status": 200,
+      "headersS": 0.07179999999981374,
+      "cached": false,
+      "serverDurationS": 4.2,
+      "answer": "Hạng tốt nghiệp của bạn là loại giỏi nhé bạn ơi 😊 Dù điểm trung bình chung tích lũy (ĐTBCTL) của bạn đạt mức xuất sắc, bạn vẫn bị giảm một mức theo quy định.\n\nDưới đây là các căn cứ và kiểm tra cụ thể:\n- Theo điểm số, ĐTBCTL đạt 3,80 thuộc khoảng từ 3,60 đến 4,00 nên ban đầu đạt loại xuất sắc (Điều 34 khoản 2).\n- Tuy nhiên, theo Điều 34 khoản 2 điểm a, hạng xuất sắc sẽ bị giảm một mức nếu khối lượng học phần bị điểm F vượt quá 5% tổng số tín chỉ (TC) quy định của chương trình đào tạo. Với 8 TC điểm F trên tổng số 120 TC, tỉ lệ là 6,67% (tính bằng công thức 8 chia cho 120 nhân 100). Ngưỡng quy định là 5% (tương ứng với 6 TC trên 120 TC). Theo so sánh chính xác, 6,67% đã vượt quá mức 5%, nên bạn dính điều kiện giảm hạng này.\n- Thêm vào đó, theo Điều 34 khoản 2 điểm b, việc từng bị kỷ luật từ mức cảnh cáo cấp Trường trở lên trong thời gian học cũng là lý do làm giảm một mức.\n- Mặc dù bạn vướng cả hai điều kiện giảm hạng, quy định nêu rõ là chỉ giảm một mức từ xuất sắc xuống giỏi.\n\nBạn có muốn mình xem thêm thông tin nào khác về điều kiện tốt nghiệp không nè? ✨",
+      "sources": [
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 8.572700000000186,
+      "ended": true,
+      "clickToCompletedS": 8.725,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 2,
+      "phase": 8,
+      "caseId": "s02",
+      "startedAt": "2026-11-21T06:08:18.733Z",
+      "ttftS": 7.367,
+      "doneS": 8.1735,
+      "tokenChars": 877,
+      "queued": [
+        {
+          "position": 3,
+          "seconds": 0.14839999999990686
+        },
+        {
+          "position": 2,
+          "seconds": 3.5058000000002796
+        }
+      ],
+      "status": 200,
+      "headersS": 0.142,
+      "cached": false,
+      "serverDurationS": 3.5,
+      "answer": "Không bạn nhé, rất tiếc là bạn chưa đủ điều kiện xét học bổng kỳ này rồi 🥺 \n\nTheo Điều 9 khoản 1c trong quy định, để được xét học bổng khuyến khích học tập, bạn cần phải thỏa mãn tất cả các điều kiện sau:\n- Có số tín chỉ đăng ký tối thiểu trong học kỳ trước từ 12 tín chỉ trở lên.\n- Kết quả học tập và rèn luyện đạt từ loại khá trở lên.\n- **Không có học phần nào dưới điểm D** (nói cách khác, không bị điểm F).\n\nMặc dù ĐTBCHK của bạn là 3,50 (thuộc loại giỏi) và Điểm rèn luyện là 85 (thuộc loại tốt), nhưng vì bạn có một môn bị điểm F (dưới điểm D) trong học kỳ trước nên đã không vượt qua được điều kiện sàng lọc cơ bản này. \n\nThêm một lưu ý nhỏ là mức học bổng cụ thể bằng tiền cũng như chỉ tiêu sẽ do Hiệu trưởng quyết định theo Điều 9 khoản 1e, nên bạn nhớ theo dõi các thông báo chính thức từ Trường nhé. \n\nBạn còn muốn mình giải thích thêm quy định nào khác không nè? ✨",
+      "sources": [
+        {
+          "article": 9,
+          "n": null,
+          "title": "Học bổng và trợ cấp xã hội",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 8.1735,
+      "ended": true,
+      "clickToCompletedS": 8.307,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 7,
+      "phase": 8,
+      "caseId": "w07",
+      "startedAt": "2026-11-21T06:08:19.432Z",
+      "ttftS": 10.786200000000186,
+      "doneS": 11.288100000000092,
+      "tokenChars": 498,
+      "queued": [
+        {
+          "position": 5,
+          "seconds": 0.0703000000002794
+        },
+        {
+          "position": 4,
+          "seconds": 2.8088000000002795
+        },
+        {
+          "position": 3,
+          "seconds": 3.719600000000093
+        },
+        {
+          "position": 2,
+          "seconds": 3.740399999999907
+        },
+        {
+          "position": 1,
+          "seconds": 4.50880000000028
+        }
+      ],
+      "status": 200,
+      "headersS": 0.06920000000018627,
+      "cached": false,
+      "serverDurationS": 4.2,
+      "answer": "Bạn bị cảnh báo học tập rồi nhé bạn ơi 🥺 Căn cứ theo Điều 18 của quy định nè bạn:\n\n- Vì bạn đang là sinh viên trình độ năm thứ hai (từ Khóa 47 trở về sau) mà điểm trung bình chung tích lũy (ĐTBCTL) đạt 1,35, thấp hơn mức tối thiểu là 1,40 (Điều 18 khoản 2 điểm c).\n- Mình đã dùng công cụ kiểm tra thì thấy số 1,35 của bạn thực sự nhỏ hơn ngưỡng 1,40 quy định luôn nha.\n\nBạn nhớ lưu ý để cố gắng vực dậy điểm số trong học kỳ tới nha, nếu cần hỏi thêm gì về quy định học vụ thì cứ nhắn mình nghen! ✨",
+      "sources": [
+        {
+          "article": 18,
+          "n": null,
+          "title": "Nghỉ học tạm thời, cảnh báo học tập, đình chỉ học tập và buộc thôi học",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 11.38630000000028,
+      "ended": true,
+      "clickToCompletedS": 11.613,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 6,
+      "phase": 8,
+      "caseId": "k05",
+      "startedAt": "2026-11-21T06:08:19.412Z",
+      "ttftS": 12.338799999999814,
+      "doneS": 13.277799999999814,
+      "tokenChars": 847,
+      "queued": [
+        {
+          "position": 4,
+          "seconds": 0.05829999999981374
+        },
+        {
+          "position": 3,
+          "seconds": 3.631600000000093
+        },
+        {
+          "position": 2,
+          "seconds": 3.6465
+        },
+        {
+          "position": 1,
+          "seconds": 3.743399999999907
+        }
+      ],
+      "status": 200,
+      "headersS": 0.055899999999906864,
+      "cached": false,
+      "serverDurationS": 8.5,
+      "answer": "Không thể bạn nhé 😊 Dù 10 tín chỉ (TC) còn lại bạn đều đạt điểm A tuyệt đối (4,0), điểm trung bình chung tích lũy (ĐTBCTL) tối đa của bạn cũng chỉ đạt 3,54, vẫn thấp hơn mức 3,60 để đạt loại xuất sắc theo Điều 34.\n\nCách tính cụ thể:\n- Tổng điểm hệ 4 hiện có: 120 TC × 3,5 = 420 điểm.\n- Điểm tối đa có thể đạt thêm trong 10 TC còn lại (toàn điểm A - 4,0): 10 TC × 4,0 = 40 điểm.\n- ĐTBCTL tối đa toàn khóa: (420 + 40) / 130 = 3,54 (với giả định tất cả TC đều được tính điểm và chưa tính học phần điều kiện/điểm M).\n\nVì mức tối đa 3,54 nhỏ hơn ngưỡng 3,60 của loại xuất sắc, bạn chỉ có thể đạt hạng giỏi (từ 3,20 đến 3,59) thôi nha. Nếu bạn muốn đạt loại xuất sắc, cách duy nhất là học cải thiện điểm các học phần điểm thấp trước đó để kéo ĐTBCTL lên. \n\nBạn có muốn mình tính toán chi tiết hơn hoặc cần hỏi thêm gì về quy định tốt nghiệp không nè? ✨",
+      "sources": [
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 13.3265,
+      "ended": true,
+      "clickToCompletedS": 13.465,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 4,
+      "phase": 8,
+      "caseId": "b06",
+      "startedAt": "2026-11-21T06:08:22.774Z",
+      "ttftS": 9.390899999999906,
+      "doneS": 9.926,
+      "tokenChars": 560,
+      "queued": [
+        {
+          "position": 5,
+          "seconds": 0.06510000000009314
+        },
+        {
+          "position": 3,
+          "seconds": 0.37939999999990687
+        },
+        {
+          "position": 2,
+          "seconds": 2.1775
+        },
+        {
+          "position": 1,
+          "seconds": 3.477
+        }
+      ],
+      "status": 200,
+      "headersS": 0.06329999999981374,
+      "cached": false,
+      "serverDurationS": 5.9,
+      "answer": "Điểm trung bình chung tích lũy (ĐTBCTL) mới của bạn là **3,04** bạn nhé! 😊\n\nCách tính chi tiết dựa trên công thức tích lũy trọng số (theo Điều 24):\n- Tổng điểm tích lũy cũ: `60 TC × 3,2 = 192` điểm\n- Tổng điểm học kỳ này: `15 TC × 2,4 = 36` điểm\n- Tổng số tín chỉ (TC) tích lũy sau học kỳ này: `60 + 15 = 75 TC`\n- ĐTBCTL mới = `(192 + 36) / 75 = 3,04`\n\nTheo bảng xếp loại học tập và hạng tốt nghiệp (Điều 24 và Điều 34), mức **3,04** này thuộc loại **Khá** (từ 2,50 đến 3,19) nha bạn. \n\nBạn còn muốn tính toán hoặc tìm hiểu thêm quy định nào nữa không nè? ✨📚",
+      "sources": [
+        {
+          "article": 24,
+          "n": null,
+          "title": "Điểm trung bình chung học kỳ, điểm trung bình chung năm học và điểm trung bình chung tích lũy",
+          "url": null,
+          "document_url": null
+        },
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 9.97519999999972,
+      "ended": true,
+      "clickToCompletedS": 10.096,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 0,
+      "phase": 8,
+      "caseId": "b05",
+      "startedAt": "2026-11-21T06:08:23.510Z",
+      "ttftS": 9.0945,
+      "doneS": 9.77769999999972,
+      "tokenChars": 838,
+      "queued": [
+        {
+          "position": 4,
+          "seconds": 0.047299999999813734
+        },
+        {
+          "position": 3,
+          "seconds": 1.443
+        },
+        {
+          "position": 2,
+          "seconds": 3.089899999999907
+        },
+        {
+          "position": 1,
+          "seconds": 3.112799999999814
+        }
+      ],
+      "status": 200,
+      "headersS": 0.046599999999627474,
+      "cached": false,
+      "serverDurationS": 6.2,
+      "answer": "Điểm trung bình chung năm học (ĐTBCNH) của bạn là **3,03** bạn nhé! 😊 ✨\n\nTheo Điều 24 khoản 3 Quy định công tác học vụ (Quyết định 3266/QĐ-ĐHCT), điểm trung bình chung năm học được tính bằng trung bình có trọng số của điểm các học phần mà bạn đã học trong năm học, với trọng số là số tín chỉ của từng học phần.\n\n**Cách tính chi tiết:**\n- Tổng điểm các học phần (lấy số tín chỉ nhân với ĐTBCHK từng học kỳ): \n  (15 × 3,0) + (10 × 3,6) + (5 × 2,0) = 45,0 + 36,0 + 10,0 = 91,0 điểm.\n- Tổng số tín chỉ đã học trong năm: \n  15 + 10 + 5 = 30 tín chỉ.\n- ĐTBCNH = 91,0 / 30 = 3,0333 (làm tròn là 3,03).\n\nKhi đối chiếu với bảng xếp loại học tập tại Điều 24 khoản 5, mức 3,03 nằm trong khoảng từ 2,50 đến 3,19, nên kết quả học tập năm học của bạn đạt loại **Khá** nhé! 📚\n\nBạn có muốn mình tính toán hoặc kiểm tra thêm thông tin nào khác không nè?",
+      "sources": [
+        {
+          "article": 24,
+          "n": null,
+          "title": "Điểm trung bình chung học kỳ, điểm trung bình chung năm học và điểm trung bình chung tích lũy",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 9.782099999999627,
+      "ended": true,
+      "clickToCompletedS": 9.889,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 3,
+      "phase": 8,
+      "caseId": "w05",
+      "startedAt": "2026-11-21T06:08:23.627Z",
+      "ttftS": 10.396200000000187,
+      "doneS": 11.109899999999907,
+      "tokenChars": 697,
+      "queued": [
+        {
+          "position": 5,
+          "seconds": 0.049
+        },
+        {
+          "position": 4,
+          "seconds": 0.3153000000002794
+        },
+        {
+          "position": 2,
+          "seconds": 2.979399999999907
+        },
+        {
+          "position": 1,
+          "seconds": 4.27480000000028
+        }
+      ],
+      "status": 200,
+      "headersS": 0.047899999999906864,
+      "cached": false,
+      "serverDurationS": 3.8,
+      "answer": "Có bạn nhé, bạn bị cảnh báo học tập nha bạn! ⚠️\n\nTheo \"KẾT QUẢ TÍNH SẴN\", bạn rơi vào trường hợp bị cảnh báo học tập dựa trên quy định tại **Điều 18 khoản 2c**:\n- **Tổng số tín chỉ (TC) nợ đọng từ đầu khóa học vượt quá 24 TC**: Bạn đang nợ 25 TC, mà 25 lớn hơn ngưỡng 24 TC cho phép.\n- Về điểm trung bình chung học kỳ (ĐTBCHK): Bạn đạt 2,0, mức này không bị cảnh báo vì không dưới 1,00.\n\nTuy nhiên, chỉ cần dính một tiêu chí vượt ngưỡng (nợ 25 TC > 24 TC) là đủ để hệ thống ghi nhận cảnh báo học tập rồi bạn nhé. Bạn nhớ chú ý đăng ký học cải thiện hoặc trả nợ các môn còn thiếu ở các kỳ tới để tình hình học tập tốt hơn nha. \n\nBạn còn muốn mình hỗ trợ xem xét thêm thông tin gì nữa không nè? 😊📚",
+      "sources": [
+        {
+          "article": 18,
+          "n": null,
+          "title": "Nghỉ học tạm thời, cảnh báo học tập, đình chỉ học tập và buộc thôi học",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 11.165100000000093,
+      "ended": true,
+      "clickToCompletedS": 11.303,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 5,
+      "phase": 8,
+      "caseId": "t08",
+      "startedAt": "2026-11-21T06:08:26.922Z",
+      "ttftS": 9.36230000000028,
+      "doneS": 10.213700000000186,
+      "tokenChars": 1035,
+      "queued": [
+        {
+          "position": 3,
+          "seconds": 0.046700000000186266
+        },
+        {
+          "position": 2,
+          "seconds": 3.842100000000093
+        }
+      ],
+      "status": 200,
+      "headersS": 0.04610000000009313,
+      "cached": false,
+      "serverDurationS": 4.2,
+      "answer": "Hạng khá bạn nhé 😊 Dù điểm trung bình chung tích lũy (ĐTBCTL) của bạn đạt loại giỏi (3,50), hạng tốt nghiệp sẽ bị giảm một mức xuống loại khá theo quy định.\n\nCăn cứ và chi tiết kiểm tra như sau (theo Điều 34):\n- Hạng theo điểm: ĐTBCTL 3,50 nằm trong khoảng từ 3,20 đến 3,59, thuộc loại giỏi.\n- Xét điều kiện giảm hạng: Hạng tốt nghiệp loại xuất sắc và giỏi sẽ bị giảm một mức nếu khối lượng các học phần bị điểm F vượt quá 5% tổng số tín chỉ (TC) quy định của chương trình đào tạo (không tính học phần cải thiện bị F).\n- Kiểm tra số TC bị điểm F: Bạn có 8 TC bị điểm F trên tổng số 120 TC.\n  - Phép tính 5% tổng số TC: `120 * 0.05 = 6` TC.\n  - So sánh: 8 TC vượt quá ngưỡng 6 TC (vì 8 lớn hơn 6).\n\nVì khối lượng học phần điểm F vượt quá 5% tổng TC của chương trình, hạng tốt nghiệp của bạn bị giảm một mức từ giỏi xuống **khá**. \n\n*Lưu ý nhỏ:* Hạng xuất sắc hoặc giỏi sẽ bị giảm một mức nếu số TC bị điểm F vượt quá 5% hoặc từng bị kỷ luật từ mức cảnh cáo cấp Trường trở lên. Bạn còn thắc mắc gì về việc xét tốt nghiệp nữa không nè? ✨",
+      "sources": [
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 10.214600000000093,
+      "ended": true,
+      "clickToCompletedS": 10.381,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 2,
+      "phase": 8,
+      "caseId": "s03",
+      "startedAt": "2026-11-21T06:08:27.175Z",
+      "ttftS": 10.258600000000094,
+      "doneS": 10.805399999999906,
+      "tokenChars": 852,
+      "queued": [
+        {
+          "position": 4,
+          "seconds": 0.0325
+        },
+        {
+          "position": 3,
+          "seconds": 3.575100000000093
+        },
+        {
+          "position": 2,
+          "seconds": 5.517299999999814
+        },
+        {
+          "position": 1,
+          "seconds": 5.567899999999907
+        }
+      ],
+      "status": 200,
+      "headersS": 0.0315,
+      "cached": false,
+      "serverDurationS": 4.6,
+      "answer": "Không được bạn nhé 😔 Dù điểm số và điểm rèn luyện của bạn rất cao (ĐTBCHK 3,90 và ĐRL 92), nhưng bạn chưa đủ điều kiện xét học bổng vì bị kỷ luật từ hình thức khiển trách cấp Trường trở lên (Theo Điều 9 khoản 1c).\n\nCăn cứ theo quy định:\n- **Điều kiện xét học bổng (Điều 9 khoản 1c):** Học kỳ trước đó sinh viên phải có kết quả học tập, rèn luyện đạt từ loại khá trở lên, đồng thời **không bị kỷ luật từ hình thức khiển trách cấp Trường trở lên**.\n- **Kiểm tra mức:** Dù bạn đạt tiêu chuẩn mức xuất sắc (ĐTBCHK từ 3,60 và ĐRL từ 90) nhưng do vướng điều kiện kỷ luật nên rất tiếc bạn không thuộc diện được xét học bổng trong học kỳ này.\n\n*Lưu ý thêm:* Mức học bổng cụ thể và chỉ tiêu do Hiệu trưởng quyết định (Điều 9 khoản 1e), bạn nhớ theo dõi các thông báo chính thức của Trường nha! Bạn có muốn mình hỗ trợ xem xét thêm quy định nào khác không nè? ✨",
+      "sources": [
+        {
+          "article": 9,
+          "n": null,
+          "title": "Học bổng và trợ cấp xã hội",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 10.85019999999972,
+      "ended": true,
+      "clickToCompletedS": 10.937,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 1,
+      "phase": 8,
+      "caseId": "t05",
+      "startedAt": "2026-11-21T06:08:24.240Z",
+      "ttftS": 12.737299999999813,
+      "doneS": 14.38769999999972,
+      "tokenChars": 1189,
+      "queued": [
+        {
+          "position": 5,
+          "seconds": 0.032199999999720605
+        },
+        {
+          "position": 4,
+          "seconds": 2.3567999999998137
+        },
+        {
+          "position": 3,
+          "seconds": 2.3826999999997205
+        },
+        {
+          "position": 2,
+          "seconds": 3.659399999999907
+        },
+        {
+          "position": 1,
+          "seconds": 6.5185
+        }
+      ],
+      "status": 200,
+      "headersS": 0.031,
+      "cached": false,
+      "serverDurationS": 5.8,
+      "answer": "Xuất sắc bạn nhé! 🎉 Theo Điều 34, với ĐTBCTL là 3,70 và các điều kiện đi kèm, hạng tốt nghiệp cuối cùng của bạn là **loại xuất sắc**.\n\nMình giải thích chi tiết và kiểm tra kỹ các mốc để bạn yên tâm nha:\n\n- **Hạng theo điểm trung bình chung tích lũy (ĐTBCTL):** Theo Điều 34, ĐTBCTL từ 3,60 đến 4,00 sẽ đạt loại xuất sắc (bạn được 3,70 nên nằm trọn trong mốc này).\n- **Kiểm tra điều kiện giảm hạng (Điểm a Khoản 2 Điều 34 & Điều 17):** \n  - Khối lượng học phần bị điểm F bị trừ lại bao gồm các học phần thường. Bạn có 4 TC bị F ở học phần thường. Riêng 5 TC bị F ở học phần học cải thiện sẽ được loại trừ, không tính vào số TC bị F làm giảm hạng theo Điều 17 khoản 2.\n  - Tổng số TC quy định của chương trình đào tạo là 120 TC. Mức giới hạn 5% số TC là: $120 \\times 5\\% = 6$ TC. \n  - Số TC bị F tính giảm hạng của bạn là 4 TC, so với ngưỡng 6 TC thì **không vượt quá** ngưỡng này (mình đã kiểm tra kỹ bằng quy tắc so sánh).\n  - Về kỷ luật: tạm tính là bạn chưa bị kỷ luật từ mức cảnh cáo cấp Trường trở lên.\n\nDo đó, hạng xuất sắc của bạn được giữ nguyên vẹn không bị giảm bậc nào hết nha! \n\nBạn có muốn mình xem thêm thông tin gì khác về điều kiện tốt nghiệp hoặc các học phần không nè? 😊",
+      "sources": [
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        },
+        {
+          "article": 17,
+          "n": null,
+          "title": "Đăng ký học lại",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 14.437100000000093,
+      "ended": true,
+      "clickToCompletedS": 14.529,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [
+        "còn ký hiệu LaTeX trong câu trả lời"
+      ],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 7,
+      "phase": 8,
+      "caseId": "w09",
+      "startedAt": "2026-11-21T06:08:31.246Z",
+      "ttftS": 7.1565,
+      "doneS": 7.9995,
+      "tokenChars": 725,
+      "queued": [
+        {
+          "position": 4,
+          "seconds": 0.14239999999990688
+        },
+        {
+          "position": 3,
+          "seconds": 1.4472999999998137
+        },
+        {
+          "position": 2,
+          "seconds": 1.4737000000001863
+        },
+        {
+          "position": 1,
+          "seconds": 2.0345
+        }
+      ],
+      "status": 200,
+      "headersS": 0.136,
+      "cached": false,
+      "serverDurationS": 4.3,
+      "answer": "Có bạn nhé, bạn bị cảnh báo học tập nha bạn! 📚\n\nTheo KẾT QUẢ TÍNH SẴN đã được kiểm tra, bạn thuộc trường hợp **bị cảnh báo học tập** vì điểm trung bình chung tích lũy (ĐTBCTL) đạt 1,5, thấp hơn mức quy định là dưới 1,6 đối với sinh viên năm thứ ba (theo Điều 18 khoản 2 điểm c).\n\nMình giải thích thêm các mốc để bạn dễ nắm nha:\n- **ĐTBCTL theo năm học:** Quy định yêu cầu sinh viên năm thứ ba phải đạt ĐTBCTL từ 1,60 trở lên. Điểm 1,5 của bạn là thấp hơn ngưỡng này rồi.\n- **Các mốc khác (để bạn tham khảo thêm):** \n  - Năm nhất: dưới 1,20\n  - Năm hai: dưới 1,40\n  - Năm ba: dưới 1,60\n  - Các năm tiếp theo: dưới 1,80\n\nBạn nhớ cố gắng cải thiện điểm số ở các học kỳ tới nha. Nếu cần trao đổi thêm gì, bạn cứ hỏi mình nhé! 😊",
+      "sources": [
+        {
+          "article": 18,
+          "n": null,
+          "title": "Nghỉ học tạm thời, cảnh báo học tập, đình chỉ học tập và buộc thôi học",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 7.9995,
+      "ended": true,
+      "clickToCompletedS": 8.146,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 6,
+      "phase": 8,
+      "caseId": "k06",
+      "startedAt": "2026-11-21T06:08:33.147Z",
+      "ttftS": 7.524600000000093,
+      "doneS": 8.89430000000028,
+      "tokenChars": 1713,
+      "queued": [
+        {
+          "position": 3,
+          "seconds": 0.061200000000186265
+        },
+        {
+          "position": 2,
+          "seconds": 0.1325
+        },
+        {
+          "position": 1,
+          "seconds": 1.591399999999907
+        }
+      ],
+      "status": 200,
+      "headersS": 0.060600000000093135,
+      "cached": false,
+      "serverDurationS": 4.7,
+      "answer": "Có thể bạn nhé 😊 Tối đa bạn đạt được là 2,53, cao hơn mức 2,00 để đủ điều kiện tốt nghiệp, nhưng 50 tín chỉ còn lại bạn cần đạt trung bình khoảng 2,40/4,00 nha! \n\nTheo Điều 32, sinh viên muốn được xét công nhận tốt nghiệp cần tích lũy đủ số tín chỉ và đạt điểm trung bình chung tích lũy (ĐTBCTL) từ 2,00 trở lên. Mình cùng xem qua cách tính chi tiết nha:\n\n- **Giả định tạm thời:** Mình tạm tính trên tất cả 100 tín chỉ bạn đã học đều được tính điểm (vì bạn chưa loại các học phần điều kiện hay điểm M). \n- **Tổng điểm hiện tại:** 100 tín chỉ nhân với ĐTBCTL 1,80 = 180 điểm.\n- **ĐTBCTL tối đa có thể đạt:** Nếu 50 tín chỉ còn lại bạn đều đạt điểm A (4,0), tổng điểm tích lũy sẽ là 180 cộng với 50 nhân 4,0 bằng 380 điểm. Chia cho tổng số 150 tín chỉ của chương trình, ĐTBCTL tối đa là 380 chia 150 bằng 2,53.\n- **Mức cần đạt ở phần còn lại:** Để đạt ĐTBCTL tối thiểu 2,00 theo quy định (tổng điểm cần là 150 nhân 2,00 bằng 300 điểm), bạn cần thêm 300 trừ 180 bằng 120 điểm trong 50 tín chỉ còn lại, tức là cần trung bình **2,40/4,00** mỗi tín chỉ.\n\n⚠️ **Lưu ý nhỏ:** Mức này **chưa chắc chắn** đâu nha bạn! Nếu 50 tín chỉ còn lại mà bạn chỉ đạt điểm D (1,0), ĐTBCTL chung cuộc sẽ tụt xuống còn 1,53 (thấp hơn 2,00). Bạn nhớ cố gắng duy trì điểm trung bình từ 2,40 trở lên ở chặng đường cuối này nhé.\n\nĐể mình tính lại chính xác hơn cho bạn theo đúng quy chế (theo Điều 24 khoản 4, không tính học phần điều kiện/điểm M vào ĐTBCTL), bạn cho mình biết thêm 2 thông tin nha:\n1. Trong 100 tín chỉ đã học, có bao nhiêu tín chỉ là học phần điều kiện hoặc điểm M không tính vào ĐTBCTL?\n2. Tổng số tín chỉ học phần điều kiện của toàn chương trình là bao nhiêu?\n\nBạn có muốn mình xem thêm thông tin gì khác nữa không nè? ✨",
+      "sources": [
+        {
+          "article": 32,
+          "n": null,
+          "title": "Điều kiện tốt nghiệp và công nhận tốt nghiệp",
+          "url": null,
+          "document_url": null
+        },
+        {
+          "article": 24,
+          "n": null,
+          "title": "Điểm trung bình chung học kỳ, điểm trung bình chung năm học và điểm trung bình chung tích lũy",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 8.953200000000185,
+      "ended": true,
+      "clickToCompletedS": 9.064,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 3,
+      "phase": 8,
+      "caseId": "w08",
+      "startedAt": "2026-11-21T06:08:35.208Z",
+      "ttftS": 7.549700000000186,
+      "doneS": 8.949600000000093,
+      "tokenChars": 1397,
+      "queued": [
+        {
+          "position": 4,
+          "seconds": 0.0438000000002794
+        },
+        {
+          "position": 3,
+          "seconds": 2.7778000000002794
+        },
+        {
+          "position": 2,
+          "seconds": 2.803399999999907
+        }
+      ],
+      "status": 200,
+      "headersS": 0.042399999999906866,
+      "cached": false,
+      "serverDurationS": 4.8,
+      "answer": "Không bạn nhé, theo các tiêu chí đã có số liệu thì bạn không bị cảnh báo học tập 😊 Tuy nhiên, mình chưa kiểm tra được một vài tiêu chí phụ nên bạn lưu ý thêm nha.\n\nDựa theo **Điều 18** của quy định, sinh viên từ Khóa 47 trở về sau có thể bị cảnh báo học tập nếu rơi vào các trường hợp sau:\n- **Điểm trung bình tích lũy (ĐTBCTL)** đạt dưới mức quy định theo năm học (Điều 18 khoản 2c):\n  - Năm thứ nhất: dưới 1,20\n  - Năm thứ hai: dưới 1,40\n  - Năm thứ ba: dưới 1,60\n  - Các năm tiếp theo: dưới 1,80\n  \n  👉 Trường hợp của bạn là sinh viên năm thứ hai với **ĐTBCTL = 1,45**, con số này cao hơn ngưỡng 1,40 (áp dụng `compare_numbers`), nên bạn **không bị cảnh báo** ở tiêu chí này nha! ✨\n\n- **Các tiêu chí hiện tại chưa thể kiểm tra** (do mình chưa có đủ số liệu từ bạn):\n  - ĐTBCHK (Điểm trung bình chung học kỳ) dưới 0,80 (học kỳ đầu) hoặc dưới 1,00 (các học kỳ tiếp theo) (Điều 18 khoản 2a).\n  - Tổng số tín chỉ (TC) không đạt trong học kỳ vượt quá 50% khối lượng đã đăng ký (Điều 18 khoản 2c).\n  - Tổng số TC nợ đọng từ đầu khóa học vượt quá 24 TC (Điều 18 khoản 2c).\n\nNếu các học kỳ vừa qua kết quả của bạn đều ổn và không rơi vào 3 trường hợp vừa kể trên thì bạn cứ yên tâm học tập nhé! Nếu bạn muốn kiểm tra kỹ hơn, bạn có thể cho mình biết thêm về điểm học kỳ gần nhất, số TC đăng ký, số TC không đạt hoặc tổng số TC nợ đọng nha. \n\nBạn có muốn mình hỗ trợ thêm thông tin gì nữa không nè? 📚",
+      "sources": [
+        {
+          "article": 18,
+          "n": null,
+          "title": "Nghỉ học tạm thời, cảnh báo học tập, đình chỉ học tập và buộc thôi học",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 8.980600000000093,
+      "ended": true,
+      "clickToCompletedS": 9.089,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 0,
+      "phase": 8,
+      "caseId": "b07",
+      "startedAt": "2026-11-21T06:08:33.636Z",
+      "ttftS": 12.455100000000094,
+      "doneS": 13.601,
+      "tokenChars": 1025,
+      "queued": [
+        {
+          "position": 4,
+          "seconds": 0.034
+        },
+        {
+          "position": 3,
+          "seconds": 1.1043000000002794
+        },
+        {
+          "position": 1,
+          "seconds": 4.352
+        }
+      ],
+      "status": 200,
+      "headersS": 0.0333000000002794,
+      "cached": false,
+      "serverDurationS": 8.5,
+      "answer": "Có thể bạn nhé 😊 Học kỳ này bạn cần đạt điểm trung bình chung học kỳ (ĐTBCHK) đúng bằng 4,0 để kéo điểm trung bình chung tích lũy (ĐTBCTL) lên mức 3,2.\n\nTheo Điều 24 của quy định, mình cùng xem cách tính chi tiết nha:\n- Tổng số tín chỉ (TC) tính đến hết học kỳ này là: 60 + 15 = 75 TC.\n- Tổng điểm hệ 4 cần đạt để có ĐTBCTL là 3,2 với 75 TC là: 75 × 3,2 = 240 điểm.\n- Tổng điểm hệ 4 hiện tại của bạn là: 60 × 3,0 = 180 điểm.\n- Số điểm hệ 4 bạn cần đạt thêm trong 15 TC của học kỳ này là: 240 − 180 = 60 điểm.\n- Điểm trung bình học kỳ cần đạt là: 60 / 15 = 4,0.\n\nVì kết quả tính ra là 4,0, tức là đúng bằng mức tối đa của thang điểm 4, nên bạn sẽ phải đạt điểm tuyệt đối (tất cả các môn học kỳ này đều đạt điểm A) thì mới đạt được mục tiêu loại giỏi (từ 3,20) theo Điều 34 đó nha ✨ \n\n*(Lưu ý: Cách tính trên giả định mọi tín chỉ đều được tính vào ĐTBCTL. Nếu có học phần điều kiện hoặc điểm M, bạn nhớ báo lại số liệu để mình tính chính xác hơn nhé).* \n\nBạn có muốn mình tính toán hoặc kiểm tra thêm thông tin nào khác không?",
+      "sources": [
+        {
+          "article": 24,
+          "n": null,
+          "title": "Điểm trung bình chung học kỳ, điểm trung bình chung năm học và điểm trung bình chung tích lũy",
+          "url": null,
+          "document_url": null
+        },
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 13.621900000000373,
+      "ended": true,
+      "clickToCompletedS": 13.704,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 5,
+      "phase": 8,
+      "caseId": "t10",
+      "startedAt": "2026-11-21T06:08:37.641Z",
+      "ttftS": 7.611200000000187,
+      "doneS": 10.230399999999907,
+      "tokenChars": 614,
+      "queued": [
+        {
+          "position": 4,
+          "seconds": 0.046
+        },
+        {
+          "position": 3,
+          "seconds": 0.3505
+        },
+        {
+          "position": 2,
+          "seconds": 1.596100000000093
+        },
+        {
+          "position": 1,
+          "seconds": 1.6192000000001863
+        }
+      ],
+      "status": 200,
+      "headersS": 0.04539999999990687,
+      "cached": false,
+      "serverDurationS": 5.7,
+      "answer": "Không thể được công nhận tốt nghiệp bạn nhé 😔 \n\nTheo điểm a khoản 1 Điều 32, điều kiện xét công nhận tốt nghiệp yêu điểm trung bình chung tích lũy (ĐTBCTL) phải đạt từ 2,00 trở lên theo thang điểm 4. \n\nMình dùng công cụ so sánh để kiểm tra kỹ mức điểm của bạn nhé:\n\nKết quả so sánh cho thấy điểm của bạn (1,95) thấp hơn mức tối thiểu 2,00 quy định. Dù bạn đã học đủ số tín chỉ, nhưng vì ĐTBCTL chưa đạt ngưỡng xét tốt nghiệp, bạn chưa thể nhận bằng lúc này nha. Bạn nên trao đổi thêm với cố vấn học tập (CVHT) để xem hướng cải thiện điểm tích lũy nhé! 📚✨\n\nBạn có muốn mình giải đáp thêm vấn đề gì khác nữa không?",
+      "sources": [
+        {
+          "article": 32,
+          "n": null,
+          "title": "Điều kiện tốt nghiệp và công nhận tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 10.263200000000186,
+      "ended": true,
+      "clickToCompletedS": 10.343,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 2,
+      "phase": 8,
+      "caseId": "k07",
+      "startedAt": "2026-11-21T06:08:38.312Z",
+      "ttftS": 9.906700000000185,
+      "doneS": 11.613100000000093,
+      "tokenChars": 1841,
+      "queued": [
+        {
+          "position": 4,
+          "seconds": 0.03489999999990687
+        },
+        {
+          "position": 2,
+          "seconds": 0.9415
+        },
+        {
+          "position": 1,
+          "seconds": 3.745300000000279
+        }
+      ],
+      "status": 200,
+      "headersS": 0.031200000000186266,
+      "cached": false,
+      "serverDurationS": 5.6,
+      "answer": "Chưa chắc chắn bạn nhé 😊 Với tình hình hiện tại, điểm trung bình chung tích lũy (ĐTBCTL) tối đa bạn có thể đạt được là **3,95**, và để giữ vững hạng xuất sắc thì ở 60 tín chỉ (TC) còn lại bạn cần duy trì điểm trung bình từ **3,30** trở lên.\n\nMình điểm qua chi tiết các căn cứ và kết quả kiểm tra cùng bạn nha:\n\n* **Về hạng tốt nghiệp hiện tại:** Theo **Điều 34**, với ĐTBCTL là 3,90, hạng tạm tính của bạn là loại xuất sắc. Nếu tạm coi bạn chưa bị kỷ luật từ mức cảnh cáo cấp Trường trở lên và số học phần điểm F không vượt quá 5% tổng số TC của chương trình, thì hạng cuối cùng hiện tại của bạn là **xuất sắc**.\n* **Về khả năng giữ vững hạng xuất sắc:**\n  - Mình tính dựa trên giả định tạm thời là mọi TC bạn đã học đều được tính điểm (vì bạn chưa cung cấp số TC điều kiện hay điểm M). Tổng điểm hệ 4 hiện có là 60 × 3,90 = 234 điểm.\n  - Nếu 60 TC còn lại bạn đều đạt điểm A (4,0), ĐTBCTL tối đa là: (234 + 60 × 4,0) / 120 = **3,95**. Vì 3,95 lớn hơn mức tối thiểu 3,60 của loại xuất sắc, nên bạn hoàn toàn **có thể** đạt được.\n  - Tuy nhiên, mức độ vẫn **chưa chắc chắn** đâu nha! Nếu ở chặng đường còn lại điểm số của bạn bị tụt xuống điểm D (1,0), ĐTBCTL chung cuộc có thể chỉ còn 2,45 (thấp hơn 3,60). Do đó, bạn cần cố gắng giữ điểm trung bình các học phần còn lại ít nhất là **3,30**.\n  - **Công thức nhanh tính ĐTBCTL tối đa:** ĐTBCTL tối đa = 4,0 − (4,0 − ĐTBCTL hiện tại) × C / T (với C là TC đã học tính điểm = 60, T là tổng TC chương trình = 120).\n\nBạn có thể cho mình biết thêm hai số liệu sau để mình tính toán chính xác hơn cho bạn không nhé:\n1. Trong 60 TC đã học, có bao nhiêu TC là học phần điều kiện hoặc điểm M (không tính vào ĐTBCTL)?\n2. Tổng số TC học phần điều kiện của toàn chương trình là bao nhiêu?\n\nChúc bạn tiếp tục giữ vững phong độ học tập thật tốt nha! Bạn có muốn mình hỗ trợ thêm thông tin gì nữa không? ✨📚",
+      "sources": [
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 11.6345,
+      "ended": true,
+      "clickToCompletedS": 11.719,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 1,
+      "phase": 8,
+      "caseId": "t07",
+      "startedAt": "2026-11-21T06:08:38.954Z",
+      "ttftS": 11.975,
+      "doneS": 12.8435,
+      "tokenChars": 875,
+      "queued": [
+        {
+          "position": 4,
+          "seconds": 0.0356999999997206
+        },
+        {
+          "position": 3,
+          "seconds": 0.2846000000000931
+        },
+        {
+          "position": 2,
+          "seconds": 4.102199999999721
+        },
+        {
+          "position": 1,
+          "seconds": 5.209699999999721
+        }
+      ],
+      "status": 200,
+      "headersS": 0.03510000000009313,
+      "cached": false,
+      "serverDurationS": 4.4,
+      "answer": "Hạng tốt nghiệp của bạn là **loại khá** bạn nhé 😊 ✨\n\nTheo Điều 34 của quy định, việc xác định hạng tốt nghiệp được dựa trên điểm trung bình chung tích lũy (ĐTBCTL) và các điều kiện kèm theo:\n- **Căn cứ vào ĐTBCTL:** Với điểm 3,00, bạn thuộc khung từ 2,50 đến 3,19 nên xếp vào **loại khá**.\n- **Về quy định giảm hạng (Điều 34 khoản 2a):** \n  - Hạng xuất sắc và giỏi sẽ bị giảm một mức nếu có khối lượng học phần bị điểm F vượt quá 5% tổng số tín chỉ (TC) của chương trình (không tính học phần cải thiện).\n  - Chương trình 120 TC, mức 5% tương ứng với 6 TC. Bạn có 10 TC bị điểm F. \n  - Mình dùng công cụ so sánh thì thấy 10 TC vượt quá giới hạn 6 TC. Tuy nhiên, do xếp loại ban đầu của bạn là **loại khá** (không phải xuất sắc hay giỏi), nên quy định giảm hạng này không làm thay đổi kết quả của bạn.\n\nBạn còn muốn mình tính toán hoặc giải thích thêm điều gì nữa không nè? 📚",
+      "sources": [
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 12.843699999999721,
+      "ended": true,
+      "clickToCompletedS": 12.931,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 7,
+      "phase": 8,
+      "caseId": "t11",
+      "startedAt": "2026-11-21T06:08:39.486Z",
+      "ttftS": 11.579299999999813,
+      "doneS": 12.295899999999907,
+      "tokenChars": 711,
+      "queued": [
+        {
+          "position": 4,
+          "seconds": 0.030100000000093132
+        },
+        {
+          "position": 3,
+          "seconds": 2.563600000000093
+        },
+        {
+          "position": 2,
+          "seconds": 4.676299999999814
+        }
+      ],
+      "status": 200,
+      "headersS": 0.029699999999720603,
+      "cached": false,
+      "serverDurationS": 3.7,
+      "answer": "Không đủ điều kiện tốt nghiệp bạn nhé 😔 \n\nMặc dù điểm trung bình tích lũy (ĐTBCTL) của bạn là 3,00 (đạt yêu cầu từ 2,00 trở lên), nhưng theo **Điều 32**, điểm trung bình các học phần Giáo dục quốc phòng và an ninh (GDQP&AN) của bạn chỉ có 4,8 (thang 10), không đạt mức tối thiểu từ 5,0 trở lên. \n\nCụ thể theo quy định:\n- Theo **Điều 32 khoản 1 điểm a**: Sinh viên cần có ĐTBCTL từ 2,00 trở lên và tích lũy đủ số tín chỉ.\n- Theo **Điều 32 khoản 1 điểm b**: Yêu cầu bắt buộc là điểm trung bình các học phần GDQP&AN phải đạt từ 5,0 trở lên (theo thang điểm 10).\n\nBạn cần hoàn thiện lại phần học phần GDQP&AN này để đáp ứng đủ điều kiện xét tốt nghiệp nha. Bạn còn muốn mình giải đáp thêm vấn đề gì nữa không nè? ✨",
+      "sources": [
+        {
+          "article": 32,
+          "n": null,
+          "title": "Điều kiện tốt nghiệp và công nhận tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 12.330600000000093,
+      "ended": true,
+      "clickToCompletedS": 12.403,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 6,
+      "phase": 8,
+      "caseId": "k08",
+      "startedAt": "2026-11-21T06:08:42.359Z",
+      "ttftS": 11.260799999999813,
+      "doneS": 12.743899999999908,
+      "tokenChars": 1307,
+      "queued": [
+        {
+          "position": 4,
+          "seconds": 0.04109999999962747
+        },
+        {
+          "position": 3,
+          "seconds": 2.803
+        },
+        {
+          "position": 2,
+          "seconds": 4.8801999999997205
+        },
+        {
+          "position": 1,
+          "seconds": 5.516199999999721
+        }
+      ],
+      "status": 200,
+      "headersS": 0.040199999999720605,
+      "cached": false,
+      "serverDurationS": 5,
+      "answer": "Có thể bạn nhé 😊 Tối đa bạn có thể đạt loại xuất sắc với ĐTBCTL 4,00, và ở 100 tín chỉ (TC) còn lại bạn cần duy trì điểm trung bình là 4,00 (hoàn toàn đạt điểm A tuyệt đối) để giữ vững phong độ này.\n\nTheo Điều 34 khoản 2 Quy định công tác học vụ (Quyết định 3266/QĐ-ĐHCT), để đạt hạng tốt nghiệp loại xuất sắc, ĐTBCTL của bạn phải từ 3,60 đến 4,00. \n\nMình cùng xem cách tính chi tiết nha:\n- Tổng điểm hệ 4 hiện có cho 20 TC: `20 * 4.0 = 80.0`\n- Điểm tối đa có thể đạt thêm cho 100 TC còn lại (nếu toàn bộ đều đạt điểm 4,0): `100 * 4.0 = 400.0`\n- Tổng số điểm tích lũy tối đa toàn khóa: `80.0 + 400.0 = 480.0`\n- ĐTBCTL tối đa toàn khóa: `480.0 / 120 = 4.00`\n\nVì mức tối đa bạn đạt được là 4,00, bằng với ngưỡng tối đa của loại xuất sắc (3,60 – 4,00), nên bạn hoàn toàn có cơ hội đạt danh hiệu xuất sắc. Tuy nhiên, chặng đường phía còn lại khá dài và đòi hỏi sự nỗ lực rất lớn vì bạn cần giữ vững tuyệt đối điểm số ở mức hoàn hảo (toàn điểm A).\n\n*Lưu ý nhỏ:* Giả định trên đang tính trên tổng số TC học tập chung. Trong quá trình học, nếu có học phần điều kiện hoặc học phần điểm M (không tính vào ĐTBCTL) thì kết quả có thể thay đổi nhẹ. Để mình tính chính xác hơn, bạn cho mình biết trong 20 TC đã học có học phần nào thuộc diện này không nhé?\n\nBạn có muốn mình giải đáp thêm thông tin nào khác không nè? ✨",
+      "sources": [
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 12.743899999999908,
+      "ended": true,
+      "clickToCompletedS": 12.844,
+      "uiCompleted": true,
+      "answer_check_problems": [
+        "thiếu một trong ('3[,.]52',)"
+      ],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 1,
+      "phase": 8,
+      "caseId": "t09",
+      "startedAt": "2026-11-21T06:08:52.018Z",
+      "ttftS": 9.4545,
+      "doneS": 10.23569999999972,
+      "tokenChars": 809,
+      "queued": [
+        {
+          "position": 1,
+          "seconds": 0.030199999999720603
+        }
+      ],
+      "status": 200,
+      "headersS": 0.029699999999720603,
+      "cached": false,
+      "serverDurationS": 6.9,
+      "answer": "Bạn sẽ tốt nghiệp loại khá nha bạn nhé 😊 ✨\n\nDựa theo quy định, mình giải thích chi tiết cho bạn như sau:\n- **Căn cứ:** Theo Điều 34 của Quyết định 3266/QĐ-ĐHCT, hạng tốt nghiệp được xác định dựa trên điểm trung bình chung tích lũy (ĐTBCTL).\n- **Kiểm tra mức điểm:** Điểm trung bình chung tích lũy của bạn là 3,19. Đối chiếu với bảng xếp hạng tốt nghiệp:\n  - Loại xuất sắc: từ 3,60 đến 4,00\n  - Loại giỏi: từ 3,20 đến 3,59\n  - Loại khá: từ 2,50 đến 3,19\n  - Loại trung bình: từ 2,00 đến 2,49\n- Vì mức 3,19 nằm trọn trong khoảng của **loại khá** (từ 2,50 đến 3,19) và quy định giảm hạng (do bị điểm F vượt quá 5% hoặc bị kỷ luật) chỉ áp dụng cho hạng xuất sắc và giỏi, nên kết quả cuối cùng của bạn chắc chắn là loại khá nha.\n\nBạn có muốn mình hỗ trợ xem thêm thông tin nào khác về việc tốt nghiệp không nè? 📚",
+      "sources": [
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 10.2365,
+      "ended": true,
+      "clickToCompletedS": 10.294,
+      "uiCompleted": true,
+      "answer_check_problems": [],
+      "style_problems": [],
+      "expected_article_cited": true
+    },
+    {
+      "worker": 4,
+      "phase": 8,
+      "caseId": "b08",
+      "startedAt": "2026-11-21T06:08:33.166Z",
+      "ttftS": null,
+      "doneS": null,
+      "tokenChars": 0,
+      "queued": [
+        {
+          "position": 4,
+          "seconds": 0.066
+        },
+        {
+          "position": 3,
+          "seconds": 0.11419999999972061
+        },
+        {
+          "position": 2,
+          "seconds": 2.5696999999997208
+        }
+      ],
+      "status": 200,
+      "headersS": 0.06529999999981373,
+      "error": "LLM_RATE_LIMITED",
+      "retryAfter": 10,
+      "errorS": 75.62829999999981,
+      "endedS": 75.6293999999999,
+      "ended": true,
+      "clickToCompletedS": 75.717,
+      "dialog": "Chatbot đang hơi bậnChatbot đang quá tải. Vui lòng thử lại sau 10 giây.Thử lại sau 0:10Mình hiểu rồi",
+      "answer_check_problems": [
+        "No complete answer"
+      ]
+    },
+    {
+      "worker": 4,
+      "phase": 8,
+      "caseId": "s05",
+      "startedAt": "2026-11-21T06:09:49.029Z",
+      "ttftS": null,
+      "doneS": null,
+      "tokenChars": 0,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.02460000000009313,
+      "error": "LLM_RATE_LIMITED",
+      "retryAfter": 9,
+      "errorS": 0.768,
+      "endedS": 0.7687000000001862,
+      "ended": true,
+      "clickToCompletedS": 0.825,
+      "dialog": "Chatbot đang hơi bậnChatbot đang quá tải. Vui lòng thử lại sau 9 giây.Thử lại sau 0:09Mình hiểu rồi",
+      "answer_check_problems": [
+        "No complete answer"
+      ]
+    },
+    {
+      "worker": 0,
+      "phase": 8,
+      "caseId": "s04",
+      "startedAt": "2026-11-21T06:08:47.538Z",
+      "ttftS": null,
+      "doneS": null,
+      "tokenChars": 0,
+      "queued": [
+        {
+          "position": 4,
+          "seconds": 0.032
+        },
+        {
+          "position": 3,
+          "seconds": 0.34170000000018624
+        },
+        {
+          "position": 2,
+          "seconds": 3.3925
+        }
+      ],
+      "status": 200,
+      "headersS": 0.030600000000093133,
+      "error": "LLM_RATE_LIMITED",
+      "retryAfter": 6,
+      "errorS": 65.16290000000038,
+      "endedS": 65.16410000000009,
+      "ended": true,
+      "clickToCompletedS": 65.22,
+      "dialog": "Chatbot đang hơi bậnChatbot đang quá tải. Vui lòng thử lại sau 6 giây.Thử lại sau 0:06Mình hiểu rồi",
+      "answer_check_problems": [
+        "No complete answer"
+      ]
+    },
+    {
+      "worker": 3,
+      "phase": 8,
+      "caseId": "w11",
+      "startedAt": "2026-11-21T06:08:44.420Z",
+      "ttftS": null,
+      "doneS": null,
+      "tokenChars": 0,
+      "queued": [
+        {
+          "position": 4,
+          "seconds": 0.0335
+        },
+        {
+          "position": 3,
+          "seconds": 3.4543000000002793
+        },
+        {
+          "position": 2,
+          "seconds": 3.4749000000003725
+        },
+        {
+          "position": 1,
+          "seconds": 6.511300000000279
+        }
+      ],
+      "status": 200,
+      "headersS": 0.033,
+      "error": "LLM_RATE_LIMITED",
+      "retryAfter": 5,
+      "errorS": 69.63240000000037,
+      "endedS": 69.63380000000028,
+      "ended": true,
+      "clickToCompletedS": 69.701,
+      "dialog": "Chatbot đang hơi bậnChatbot đang quá tải. Vui lòng thử lại sau 5 giây.Thử lại sau 0:05Mình hiểu rồi",
+      "answer_check_problems": [
+        "No complete answer"
+      ]
+    }
+  ],
+  "workerCount": 8,
+  "rechecks": [
+    {
+      "caseId": "recheck_b08",
+      "startedAt": "2026-11-21T06:11:29.639Z",
+      "ttftS": 5.575200000000186,
+      "doneS": 6.104700000000186,
+      "tokenChars": 506,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.026100000000093132,
+      "cached": false,
+      "serverDurationS": 6,
+      "answer": "ĐTBCTL mới của bạn sẽ là khoảng **3,07** bạn nhé! ✨\n\nCách tính theo quy định như sau:\n- Theo Điều 17 khoản 2, khi bạn học cải thiện để nâng điểm, điểm cũ sẽ được thay bằng điểm cao nhất (từ C là 2,0 lên A là 4,0).\n- Tổng điểm hệ 4 hiện tại của bạn: 90 TC × 3,0 = 270 điểm.\n- Thay điểm học phần 3 TC từ C (2,0) sang A (4,0): số điểm được cộng thêm là 3 × (4,0 − 2,0) = 6 điểm.\n- Tổng điểm mới: 270 + 6 = 276 điểm.\n- ĐTBCTL mới: 276 / 90 = 3,07.\n\nBạn có muốn mình tính thêm thông tin gì khác nữa không nè? 😊",
+      "sources": [
+        {
+          "article": 17,
+          "n": null,
+          "title": "Đăng ký học lại",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 6.118200000000186,
+      "ended": true,
+      "baseCaseId": "b08",
+      "worker": 1,
+      "uiCompleted": true,
+      "answer_check_problems": []
+    },
+    {
+      "caseId": "recheck_s08",
+      "startedAt": "2026-11-21T06:11:29.678Z",
+      "ttftS": 6.0042000000001865,
+      "doneS": 7.056600000000093,
+      "tokenChars": 1152,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.028,
+      "cached": false,
+      "serverDurationS": 6.8,
+      "answer": "Thứ tự ưu tiên xét học bổng khuyến khích học tập từ trước ra sau là: **A > B > C** bạn nhé 😊\n\nTheo Điều 9, việc xét học bổng được thực hiện qua các bước rất chặt chẽ:\n- **Bước 1 (Xác định mức học bổng):** Bạn phải đạt cả hai tiêu chí (điểm trung bình chung học kỳ - ĐTBCHK và điểm rèn luyện - ĐRL). Điểm rèn luyện từ 90 trở lên là xuất sắc, từ 80 đến dưới 90 là tốt theo Thông tư 16/2015/TT-BGDĐT. Do đó:\n  + **Bạn A** đạt ĐTBCHK xuất sắc và ĐRL xuất sắc (91) $\\rightarrow$ Đạt mức **Xuất sắc**.\n  + **Bạn B** dù có ĐTBCHK rất cao (3,90) nhưng ĐRL chỉ đạt loại tốt (88) $\\rightarrow$ Chỉ đạt mức **Giỏi**.\n  + **Bạn C** đạt ĐTBCHK giỏi và ĐRL loại tốt (80) $\\rightarrow$ Đạt mức **Giỏi**.\n- **Bước 2 & 3 (Thứ tự xét):** Học bổng được cấp từ mức cao xuống thấp (Điều 9 khoản 1a). Vì bạn A ở mức Xuất sắc nên được xét trước tiên. Bạn B và C cùng ở mức Giỏi, nhưng bạn B có ĐTBCHK cao hơn (3,90 so với 3,30) nên được xếp trên bạn C.\n\n💡 *Lưu ý nhỏ:* Mức học bổng cụ thể bằng tiền và chỉ tiêu sẽ do Hiệu trưởng quyết định (Điều 9 khoản 1e), nên bạn nhớ theo dõi các thông báo chính thức của Trường nhé! Bạn còn muốn tìm hiểu thêm quy định nào nữa không? ✨",
+      "sources": [
+        {
+          "article": 9,
+          "n": null,
+          "title": "Học bổng và trợ cấp xã hội",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "endedS": 7.0666000000000935,
+      "ended": true,
+      "baseCaseId": "s08",
+      "worker": 0,
+      "uiCompleted": true,
+      "answer_check_problems": []
+    },
+    {
+      "caseId": "recheck_s04",
+      "startedAt": "2026-11-21T06:11:36.987Z",
+      "ttftS": null,
+      "doneS": null,
+      "tokenChars": 0,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.027,
+      "error": "LLM_RATE_LIMITED",
+      "retryAfter": 45,
+      "errorS": 12.043600000000094,
+      "endedS": 12.0445,
+      "ended": true,
+      "baseCaseId": "s04",
+      "worker": 0,
+      "answer_check_problems": [
+        "No complete answer"
+      ]
+    },
+    {
+      "caseId": "recheck_w11",
+      "startedAt": "2026-11-21T06:11:35.945Z",
+      "ttftS": null,
+      "doneS": null,
+      "tokenChars": 0,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.0265,
+      "error": "LLM_RATE_LIMITED",
+      "retryAfter": 45,
+      "errorS": 13.1455,
+      "endedS": 13.147100000000092,
+      "ended": true,
+      "baseCaseId": "w11",
+      "worker": 1,
+      "answer_check_problems": [
+        "No complete answer"
+      ]
+    },
+    {
+      "caseId": "recheck_s05",
+      "startedAt": "2026-11-21T06:12:34.701Z",
+      "ttftS": null,
+      "doneS": null,
+      "tokenChars": 0,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.028199999999720605,
+      "error": "LLM_RATE_LIMITED",
+      "retryAfter": 2,
+      "errorS": 1.017600000000093,
+      "endedS": 1.034399999999907,
+      "ended": true,
+      "baseCaseId": "s05",
+      "worker": 0,
+      "answer_check_problems": [
+        "No complete answer"
+      ]
+    },
+    {
+      "caseId": "recheck_k08",
+      "startedAt": "2026-11-21T06:12:34.801Z",
+      "ttftS": null,
+      "doneS": null,
+      "tokenChars": 0,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.028299999999813735,
+      "error": "LLM_RATE_LIMITED",
+      "retryAfter": 2,
+      "errorS": 1.1262000000001862,
+      "endedS": 1.1262000000001862,
+      "ended": true,
+      "baseCaseId": "k08",
+      "worker": 1,
+      "answer_check_problems": [
+        "No complete answer"
+      ]
+    }
+  ],
+  "rechecksFinishedAt": "2026-11-21T06:12:38.443Z",
+  "verifyK08": {
+    "caseId": "verify_k08",
+    "startedAt": "2026-11-21T06:13:39.812Z",
+    "ttftS": 3.646100000000093,
+    "doneS": 4.6368999999999065,
+    "tokenChars": 1052,
+    "queued": [],
+    "status": 200,
+    "headersS": 0.030899999999906867,
+    "cached": false,
+    "serverDurationS": 4.5,
+    "answer": "Có thể bạn nhé 😊 Tối đa bạn có thể đạt được ĐTBCTL (điểm trung bình chung tích lũy) là 4,00, và bạn cần duy trì điểm trung bình ở phần còn lại khoảng 4,00 (gần như toàn điểm A) để đạt hạng tốt nghiệp loại xuất sắc theo Điều 34 của quy định! ✨\n\nDưới đây là cách tính chi tiết nha:\n- **Số tín chỉ (TC) đã học và điểm số:** Bạn đã học 20 TC với ĐTBCTL là 4,0, tổng số điểm hệ 4 hiện có của bạn là `20 * 4,0 = 80,0` điểm.\n- **Mục tiêu loại xuất sắc:** Theo Điều 34, để đạt hạng tốt nghiệp loại xuất sắc, ĐTBCTL của bạn phải từ 3,60 trở lên. Với tổng số 120 TC của chương trình, tổng số điểm hệ 4 bạn cần đạt là `120 * 3,60 = 432,0` điểm.\n- **Điểm cần đạt ở 100 TC còn lại:** Bạn cần thêm số điểm là `432,0 - 80,0 = 352,0` điểm. Trung bình mỗi TC ở phần còn lại bạn cần đạt là `352,0 / 100 = 3,52` điểm hệ 4.\n\n*Lưu ý nhỏ:* Giả định trên tính trên tất cả các tín chỉ đều được tính điểm tích lũy và bạn không bị vướng các lỗi về điểm F hay kỷ luật nhé (Điều 34). \n\nBạn có muốn mình tính toán thêm thông tin gì khác cho hành trình học tập sắp tới không nè? 📚",
+    "sources": [
+      {
+        "article": 34,
+        "n": null,
+        "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+        "url": null,
+        "document_url": null
+      }
+    ],
+    "endedS": 4.6368999999999065,
+    "ended": true,
+    "answer_check_problems": []
+  },
+  "manualReview": {
+    "caseId": "k08",
+    "expectedRequiredRemainingGpa": 3.52,
+    "formula": "(120 * 3.6 - 20 * 4.0) / 100",
+    "initialAnswerProblem": "States that the remaining 100 credits require 4.00 instead of the correct 3.52.",
+    "cleanQuestionVerificationProblem": "Intro again states 4.00, while the calculation later correctly gives 3.52. The answer contradicts itself.",
+    "verifiedUsing": "A fresh UI conversation with the original Vietnamese question, without the supplementary instruction suffix."
+  },
+  "summary": {
+    "attempted_chats": 40,
+    "completed_chats": 35,
+    "total_ui_submissions_including_rechecks": 47,
+    "total_completed_including_rechecks": 38,
+    "unlabelled_external_chats_excluded": 6,
+    "transport_or_llm_errors": {
+      "LLM_ERROR": 1,
+      "LLM_RATE_LIMITED": 4
+    },
+    "cached_answers": 0,
+    "ui_completed": 35,
+    "automatic_answer_checks_passed": 34,
+    "automatic_answer_checks_flagged": [
+      {
+        "case": "s08",
+        "problems": [
+          "No complete answer"
+        ]
+      },
+      {
+        "case": "k08",
+        "problems": [
+          "thiếu một trong ('3[,.]52',)"
+        ]
+      },
+      {
+        "case": "b08",
+        "problems": [
+          "No complete answer"
+        ]
+      },
+      {
+        "case": "s05",
+        "problems": [
+          "No complete answer"
+        ]
+      },
+      {
+        "case": "s04",
+        "problems": [
+          "No complete answer"
+        ]
+      },
+      {
+        "case": "w11",
+        "problems": [
+          "No complete answer"
+        ]
+      }
+    ],
+    "ttft_s": {
+      "n": 35,
+      "min": 3.616,
+      "p50": 9.116,
+      "p95_nearest_rank": 16.909,
+      "max": 62.697
+    },
+    "done_s": {
+      "n": 35,
+      "min": 4.494,
+      "p50": 9.945,
+      "p95_nearest_rank": 18.159,
+      "max": 63.392
+    },
+    "phase_metrics": {
+      "4": {
+        "chats": 8,
+        "ttft_s": {
+          "n": 7,
+          "min": 3.616,
+          "p50": 4.844,
+          "p95_nearest_rank": 62.697,
+          "max": 62.697
+        },
+        "done_s": {
+          "n": 7,
+          "min": 4.494,
+          "p50": 6.087,
+          "p95_nearest_rank": 63.392,
+          "max": 63.392
+        },
+        "queued_chats": 0
+      },
+      "8": {
+        "chats": 32,
+        "ttft_s": {
+          "n": 28,
+          "min": 3.715,
+          "p50": 9.3,
+          "p95_nearest_rank": 12.455,
+          "max": 12.737
+        },
+        "done_s": {
+          "n": 28,
+          "min": 4.547,
+          "p50": 10.082,
+          "p95_nearest_rank": 13.601,
+          "max": 14.388
+        },
+        "queued_chats": 27
+      }
+    },
+    "real_provider_attempts": 218,
+    "real_provider_successful_calls": 139,
+    "real_provider_errors": {
+      "429 rate_limited": 75,
+      "None other": 4
+    },
+    "attempts_by_key": {
+      "1": 41,
+      "2": 25,
+      "3": 22,
+      "4": 25,
+      "5": 23,
+      "6": 21,
+      "7": 15,
+      "8": 4,
+      "9": 6,
+      "10": 2,
+      "11": 3,
+      "12": 5,
+      "13": 5,
+      "14": 3,
+      "15": 3,
+      "16": 3,
+      "17": 3,
+      "18": 3,
+      "19": 3,
+      "20": 3
+    },
+    "observed_failovers": [
+      {
+        "request_id": "032b1f0de682",
+        "case": "w06",
+        "status": 429,
+        "from_key": 1,
+        "to_key": 2,
+        "gap_s": 0.0426,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "2bcf2740ce68",
+        "case": "t04",
+        "status": 429,
+        "from_key": 1,
+        "to_key": 2,
+        "gap_s": 0.0015,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "c4f4162c890f",
+        "case": "w03",
+        "status": 429,
+        "from_key": 1,
+        "to_key": 2,
+        "gap_s": 0.001,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "ada14f9a0d7a",
+        "case": "k04",
+        "status": 429,
+        "from_key": 1,
+        "to_key": 2,
+        "gap_s": 0.001,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "52ddae4a2821",
+        "case": "s01",
+        "status": 429,
+        "from_key": 1,
+        "to_key": 2,
+        "gap_s": 0.001,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "a0e5f2c2744c",
+        "case": "b04",
+        "status": 429,
+        "from_key": 2,
+        "to_key": 3,
+        "gap_s": 0.0016,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "ddb532c70261",
+        "case": "b03",
+        "status": 429,
+        "from_key": 2,
+        "to_key": 3,
+        "gap_s": 0.054,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "f4659e64a5ee",
+        "case": "t03",
+        "status": 429,
+        "from_key": 2,
+        "to_key": 3,
+        "gap_s": 0.0011,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "4c234bdb5fdc",
+        "case": "k05",
+        "status": 429,
+        "from_key": 3,
+        "to_key": 4,
+        "gap_s": 0.001,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "d212ee405858",
+        "case": "w07",
+        "status": 429,
+        "from_key": 3,
+        "to_key": 4,
+        "gap_s": 0.001,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "97e32a9015ae",
+        "case": "b06",
+        "status": 429,
+        "from_key": 3,
+        "to_key": 4,
+        "gap_s": 0.0632,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "c1469fed9e93",
+        "case": "t05",
+        "status": 429,
+        "from_key": 4,
+        "to_key": 5,
+        "gap_s": 0.038,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "9c1a3483024a",
+        "case": "s03",
+        "status": 429,
+        "from_key": 4,
+        "to_key": 5,
+        "gap_s": 0.001,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "0e23c53a317f",
+        "case": "b08",
+        "status": 429,
+        "from_key": 11,
+        "to_key": 12,
+        "gap_s": 0.0273,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "0e23c53a317f",
+        "case": "b08",
+        "status": 429,
+        "from_key": 12,
+        "to_key": 13,
+        "gap_s": 0.0354,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "0e23c53a317f",
+        "case": "b08",
+        "status": 429,
+        "from_key": 13,
+        "to_key": 14,
+        "gap_s": 0.0272,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "0e23c53a317f",
+        "case": "b08",
+        "status": 429,
+        "from_key": 14,
+        "to_key": 15,
+        "gap_s": 0.0265,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "0e23c53a317f",
+        "case": "b08",
+        "status": 429,
+        "from_key": 15,
+        "to_key": 16,
+        "gap_s": 0.0277,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "0e23c53a317f",
+        "case": "b08",
+        "status": 429,
+        "from_key": 16,
+        "to_key": 17,
+        "gap_s": 0.0268,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "0e23c53a317f",
+        "case": "b08",
+        "status": 429,
+        "from_key": 17,
+        "to_key": 18,
+        "gap_s": 0.0273,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "0e23c53a317f",
+        "case": "b08",
+        "status": 429,
+        "from_key": 18,
+        "to_key": 19,
+        "gap_s": 0.0269,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "0e23c53a317f",
+        "case": "b08",
+        "status": 429,
+        "from_key": 19,
+        "to_key": 20,
+        "gap_s": 0.0274,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "0e23c53a317f",
+        "case": "b08",
+        "status": 429,
+        "from_key": 20,
+        "to_key": 1,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "0e23c53a317f",
+        "case": "b08",
+        "status": 429,
+        "from_key": 1,
+        "to_key": 2,
+        "gap_s": 0.0016,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "0e23c53a317f",
+        "case": "b08",
+        "status": 429,
+        "from_key": 2,
+        "to_key": 3,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "0e23c53a317f",
+        "case": "b08",
+        "status": 429,
+        "from_key": 3,
+        "to_key": 4,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "0e23c53a317f",
+        "case": "b08",
+        "status": 429,
+        "from_key": 4,
+        "to_key": 5,
+        "gap_s": 0.0,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "0e23c53a317f",
+        "case": "b08",
+        "status": 429,
+        "from_key": 5,
+        "to_key": 6,
+        "gap_s": 0.0006,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "39ecf5b30fdc",
+        "case": "b07",
+        "status": 429,
+        "from_key": 5,
+        "to_key": 6,
+        "gap_s": 0.001,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "4600ef099989",
+        "case": "t10",
+        "status": 429,
+        "from_key": 5,
+        "to_key": 6,
+        "gap_s": 0.0406,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "b8c2ff708d83",
+        "case": "w11",
+        "status": 429,
+        "from_key": 6,
+        "to_key": 7,
+        "gap_s": 0.036,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "f503d0ca126e",
+        "case": "t09",
+        "status": 429,
+        "from_key": 7,
+        "to_key": 8,
+        "gap_s": 0.028,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "f503d0ca126e",
+        "case": "t09",
+        "status": 429,
+        "from_key": 8,
+        "to_key": 9,
+        "gap_s": 0.0292,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "f503d0ca126e",
+        "case": "t09",
+        "status": 429,
+        "from_key": 9,
+        "to_key": 10,
+        "gap_s": 0.0293,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "f503d0ca126e",
+        "case": "t09",
+        "status": 429,
+        "from_key": 10,
+        "to_key": 11,
+        "gap_s": 0.0268,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "b7e6e7a0649d",
+        "case": "recheck_s08",
+        "status": 429,
+        "from_key": 7,
+        "to_key": 8,
+        "gap_s": 0.0005,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "b7e6e7a0649d",
+        "case": "recheck_s08",
+        "status": 429,
+        "from_key": 8,
+        "to_key": 9,
+        "gap_s": 0.0011,
+        "chat_completed": true,
+        "chat_error": null
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 9,
+        "to_key": 10,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 10,
+        "to_key": 11,
+        "gap_s": 0.0011,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 11,
+        "to_key": 12,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 12,
+        "to_key": 13,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 13,
+        "to_key": 14,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 14,
+        "to_key": 15,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 15,
+        "to_key": 16,
+        "gap_s": 0.0,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 16,
+        "to_key": 17,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 17,
+        "to_key": 18,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 18,
+        "to_key": 19,
+        "gap_s": 0.0,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 19,
+        "to_key": 20,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 20,
+        "to_key": 1,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 1,
+        "to_key": 2,
+        "gap_s": 0.0015,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 2,
+        "to_key": 3,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 3,
+        "to_key": 4,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 4,
+        "to_key": 5,
+        "gap_s": 0.0006,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 5,
+        "to_key": 6,
+        "gap_s": 0.0008,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "a49d29f07a7c",
+        "case": "recheck_w11",
+        "status": 429,
+        "from_key": 6,
+        "to_key": 7,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "566baf55cc99",
+        "case": "recheck_s04",
+        "status": 429,
+        "from_key": 12,
+        "to_key": 13,
+        "gap_s": 0.0005,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "566baf55cc99",
+        "case": "recheck_s04",
+        "status": 429,
+        "from_key": 13,
+        "to_key": 14,
+        "gap_s": 0.0011,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "566baf55cc99",
+        "case": "recheck_s04",
+        "status": 429,
+        "from_key": 14,
+        "to_key": 15,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "566baf55cc99",
+        "case": "recheck_s04",
+        "status": 429,
+        "from_key": 15,
+        "to_key": 16,
+        "gap_s": 0.0035,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "566baf55cc99",
+        "case": "recheck_s04",
+        "status": 429,
+        "from_key": 16,
+        "to_key": 17,
+        "gap_s": 0.0005,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "566baf55cc99",
+        "case": "recheck_s04",
+        "status": 429,
+        "from_key": 17,
+        "to_key": 18,
+        "gap_s": 0.0,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "566baf55cc99",
+        "case": "recheck_s04",
+        "status": 429,
+        "from_key": 18,
+        "to_key": 19,
+        "gap_s": 0.0,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "566baf55cc99",
+        "case": "recheck_s04",
+        "status": 429,
+        "from_key": 19,
+        "to_key": 20,
+        "gap_s": 0.0005,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "566baf55cc99",
+        "case": "recheck_s04",
+        "status": 429,
+        "from_key": 20,
+        "to_key": 1,
+        "gap_s": 0.0011,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "566baf55cc99",
+        "case": "recheck_s04",
+        "status": 429,
+        "from_key": 1,
+        "to_key": 2,
+        "gap_s": 0.0015,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "566baf55cc99",
+        "case": "recheck_s04",
+        "status": 429,
+        "from_key": 2,
+        "to_key": 3,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "566baf55cc99",
+        "case": "recheck_s04",
+        "status": 429,
+        "from_key": 3,
+        "to_key": 4,
+        "gap_s": 0.0011,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "566baf55cc99",
+        "case": "recheck_s04",
+        "status": 429,
+        "from_key": 4,
+        "to_key": 5,
+        "gap_s": 0.001,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "566baf55cc99",
+        "case": "recheck_s04",
+        "status": 429,
+        "from_key": 5,
+        "to_key": 6,
+        "gap_s": 0.0,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      },
+      {
+        "request_id": "566baf55cc99",
+        "case": "recheck_s04",
+        "status": 429,
+        "from_key": 6,
+        "to_key": 7,
+        "gap_s": 0.002,
+        "chat_completed": false,
+        "chat_error": "LLM_RATE_LIMITED"
+      }
+    ],
+    "successful_chats_after_real_429": 17,
+    "tokens": {
+      "input_tokens": 378487,
+      "output_tokens": 19172,
+      "total_tokens": 397659
+    }
+  },
+  "notes": [
+    "All chats were entered using the real UI composer in isolated browser contexts; no API calls submitted directly by the driver.",
+    "Unmodified application queue concurrency=4; 8 UI users exercise queue waiting rather than 8 active chat pipelines.",
+    "Observation wrapper records SDK status/key indexes only. No errors were injected in this run.",
+    "Automatic answer checks are regex-based regression checks, not a complete proof of semantic correctness.",
+    "Provider attempts include retries on different keys; token totals include only successfully completed SDK calls.",
+    "A supplementary instruction suffix in this initial run was mangled by PowerShell stdin encoding; the original hard questions and numeric inputs are intact. Exact sent questions are retained in the cases artifact.",
+    "Unlabelled requests not submitted by the driver are excluded from SDK statistics. They can still share provider quotas with the benchmark.",
+    "Rechecks use the original Vietnamese questions without the supplementary suffix. Initial-run statistics are kept separate from retries."
+  ],
+  "finalState": {
+    "services": {
+      "backend": 200,
+      "frontend": 200
+    },
+    "backend": "app.main:app (observation wrapper removed)",
+    "closedTestBrowserContexts": 8,
+    "envFilesModified": false
+  },
+  "recheckSummary": {
+    "attempted": 6,
+    "completed": 2,
+    "errors": {
+      "LLM_RATE_LIMITED": 4
+    }
+  }
+}

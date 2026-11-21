@@ -10,7 +10,7 @@ import { useTheme } from '../theme'
 import AvatarEditor from './AvatarEditor'
 import DateField from './DateField'
 import DonateSection from './DonateSection'
-import Icon from './Icon'
+import Icon, { type IconName } from './Icon'
 import MyFiles from './MyFiles'
 import SourcePicker from './SourcePicker'
 
@@ -36,11 +36,11 @@ function listTimezones(current: string): string[] {
 type SaveState = 'idle' | 'saving' | 'saved' | 'error'
 
 const fieldClass =
-  'box-border min-h-11 w-full rounded-lg border border-field bg-surface px-3.5 py-2 font-sans text-[15px] text-heading outline-accent'
+  'box-border min-h-11 min-w-0 w-full rounded-lg border border-field bg-surface px-3.5 py-2 font-sans text-[15px] text-heading outline-accent'
 const labelClass = 'mb-1.5 block text-sm font-normal text-heading'
 
 /** Biểu mẫu chỉnh thông tin: chỉ được gắn khi hộp thoại mở nên mỗi lần mở đều bắt đầu từ dữ liệu mới nhất của tài khoản. */
-function ProfileForm({ onClose }: { onClose: () => void }) {
+function ProfileForm({ onClose, maxAvatarBytes }: { onClose: () => void; maxAvatarBytes: number }) {
   const { t } = useI18n()
   const { setMode } = useTheme()
   const { user, updateProfile, logout } = useAuth()
@@ -91,89 +91,107 @@ function ProfileForm({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} onChange={() => saveState !== 'idle' && setSaveState('idle')} className="flex flex-col gap-5">
-      <div>
-        <label htmlFor="profile-email" className={labelClass}>
-          {t('profile.email')}
-        </label>
-        <input id="profile-email" type="email" value={user.email} readOnly className={`${fieldClass} cursor-not-allowed bg-tint`} />
-      </div>
+    <form onSubmit={handleSubmit} onChange={() => saveState !== 'idle' && setSaveState('idle')} className="flex h-full min-h-0 min-w-0 flex-col">
+      <div className="min-h-0 flex-1 space-y-7 overflow-y-auto overscroll-contain p-4 sm:p-6 lg:p-8">
+        <section aria-labelledby="profile-info-title" className="min-w-0">
+          <div className="mb-5">
+            <h3 id="profile-info-title" className="m-0 text-lg">{t('profile.sectionInfo')}</h3>
+            <p className="mb-0 mt-1 text-sm">{t('profile.infoHint')}</p>
+          </div>
+          <div className="mb-6 rounded-xl border border-line bg-tint/40 p-4 sm:p-5 [&>div]:mb-0">
+            <AvatarEditor maxBytes={maxAvatarBytes} />
+          </div>
+          <div className="grid min-w-0 gap-5 lg:grid-cols-2">
+            <div className="min-w-0 lg:col-span-2">
+              <label htmlFor="profile-email" className={labelClass}>
+                {t('profile.email')}
+              </label>
+              <input id="profile-email" type="email" value={user.email} readOnly className={`${fieldClass} cursor-not-allowed bg-tint`} />
+            </div>
 
-      <div>
-        <label htmlFor="profile-name" className={labelClass}>
-          {t('profile.name')}
-        </label>
-        <input
-          id="profile-name"
-          type="text"
-          value={name}
-          maxLength={100}
-          autoComplete="name"
-          onChange={(e) => setName(e.target.value)}
-          className={fieldClass}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="profile-birthday" className={labelClass}>
-          {t('profile.birthday')}
-        </label>
-        <DateField
-          id="profile-birthday"
-          value={birthday}
-          min="1900-01-01"
-          max={now.toISOString().slice(0, 10)}
-          onChange={(iso, valid) => {
-            setBirthday(iso)
-            setBirthdayValid(valid)
-          }}
-          className="sm:max-w-[300px]"
-        />
-      </div>
-
-      <fieldset className="m-0 border-0 p-0">
-        <legend className={`${labelClass} p-0`}>{t('profile.theme')}</legend>
-        <div className="flex flex-wrap gap-2">
-          {themeOptions.map((o) => (
-            <label
-              key={o.value}
-              className={`flex min-h-11 cursor-pointer items-center gap-2.5 rounded-lg border px-4 py-2 text-[15px] ${
-                theme === o.value ? 'border-accent bg-tint text-heading' : 'border-line'
-              }`}
-            >
+            <div className="min-w-0">
+              <label htmlFor="profile-name" className={labelClass}>
+                {t('profile.name')}
+              </label>
               <input
-                type="radio"
-                name="profile-theme"
-                value={o.value}
-                checked={theme === o.value}
-                onChange={() => setTheme(o.value)}
-                className="size-4 accent-[var(--accent)]"
+                id="profile-name"
+                type="text"
+                value={name}
+                maxLength={100}
+                autoComplete="name"
+                onChange={(e) => setName(e.target.value)}
+                className={fieldClass}
               />
-              {t(o.label)}
-            </label>
-          ))}
-        </div>
-      </fieldset>
+            </div>
 
-      <div>
-        <label htmlFor="profile-timezone" className={labelClass}>
-          {t('profile.timezone')}
-        </label>
-        <select id="profile-timezone" value={timezone} onChange={(e) => setTimezone(e.target.value)} className={fieldClass}>
-          {zones.map((z) => (
-            <option key={z} value={z}>
-              {z}
-            </option>
-          ))}
-        </select>
-        {timePreview && (
-          <p className="mb-0 mt-2 text-sm">
-            {t('profile.timezoneNow')} <strong className="font-semibold text-heading">{timePreview}</strong>
-          </p>
-        )}
+            <div className="min-w-0">
+              <label htmlFor="profile-birthday" className={labelClass}>
+                {t('profile.birthday')}
+              </label>
+              <DateField
+                id="profile-birthday"
+                value={birthday}
+                min="1900-01-01"
+                max={now.toISOString().slice(0, 10)}
+                onChange={(iso, valid) => {
+                  setBirthday(iso)
+                  setBirthdayValid(valid)
+                }}
+                className="min-w-0"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="profile-prefs-title" className="min-w-0 border-t border-line pt-6">
+          <h3 id="profile-prefs-title" className="mb-4 mt-0 text-lg">{t('profile.sectionPrefs')}</h3>
+          <div className="grid min-w-0 gap-5">
+            <fieldset className="m-0 min-w-0 border-0 p-0">
+              <legend className={`${labelClass} p-0`}>{t('profile.theme')}</legend>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                {themeOptions.map((o) => (
+                  <label
+                    key={o.value}
+                    className={`flex min-h-12 min-w-0 cursor-pointer items-center gap-2.5 rounded-lg border px-3 py-2 text-sm ${
+                      theme === o.value ? 'border-accent bg-tint text-heading' : 'border-line'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="profile-theme"
+                      value={o.value}
+                      checked={theme === o.value}
+                      onChange={() => setTheme(o.value)}
+                      className="size-4 flex-none accent-[var(--accent)]"
+                    />
+                    {t(o.label)}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
+            <div className="min-w-0">
+              <label htmlFor="profile-timezone" className={labelClass}>
+                {t('profile.timezone')}
+              </label>
+              <select id="profile-timezone" value={timezone} onChange={(e) => setTimezone(e.target.value)} className={fieldClass}>
+                {zones.map((z) => (
+                  <option key={z} value={z}>
+                    {z}
+                  </option>
+                ))}
+              </select>
+              {timePreview && (
+                <p className="mb-0 mt-2 text-sm">
+                  {t('profile.timezoneNow')} <strong className="font-semibold text-heading">{timePreview}</strong>
+                </p>
+              )}
+            </div>
+          </div>
+        </section>
       </div>
 
-      <div className="flex flex-col gap-3 border-t border-line pt-4 sm:flex-row sm:flex-wrap sm:items-center">
+      <div className="flex shrink-0 flex-col gap-3 border-t border-line bg-surface p-4 sm:flex-row sm:flex-wrap sm:items-center sm:px-6 lg:px-8">
         <button
           type="submit"
           disabled={saveState === 'saving' || !birthdayValid}
@@ -181,7 +199,7 @@ function ProfileForm({ onClose }: { onClose: () => void }) {
         >
           {t(saveState === 'saving' ? 'profile.saving' : 'profile.save')}
         </button>
-        <span role="status" aria-live="polite" className="text-sm">
+        <span role="status" aria-live="polite" className={`text-sm ${saveState === 'idle' || saveState === 'saving' ? 'sr-only' : ''}`}>
           {saveState === 'saved' && (
             <span className="inline-flex items-center gap-1.5 text-[#14602F] dark:text-[#8AD9A8]">
               <Icon name="check" size={18} strokeWidth={2.2} />
@@ -212,14 +230,28 @@ const tabLabels: Record<TabId, TranslationKey> = {
   donate: 'profile.tab.donate',
 }
 
-/** Thanh tab: mũi tên trái/phải đổi tab, Home/End nhảy về đầu/cuối (mẫu WAI-ARIA tabs). */
+const tabIcons: Record<TabId, IconName> = {
+  settings: 'settings',
+  sources: 'doc',
+  storage: 'clip',
+  donate: 'heart',
+}
+
+const tabHints: Record<TabId, TranslationKey> = {
+  settings: 'profile.tab.settingsHint',
+  sources: 'profile.tab.sourcesHint',
+  storage: 'profile.tab.storageHint',
+  donate: 'profile.tab.donateHint',
+}
+
+/** Tab dọc: mũi tên lên/xuống đổi tab, Home/End nhảy về đầu/cuối. */
 function Tabs({ tabs, active, onChange }: { tabs: TabId[]; active: TabId; onChange: (tab: TabId) => void }) {
   const { t } = useI18n()
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     const index = tabs.indexOf(active)
     let next = index
-    if (e.key === 'ArrowRight') next = (index + 1) % tabs.length
-    else if (e.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length
+    if (e.key === 'ArrowDown') next = (index + 1) % tabs.length
+    else if (e.key === 'ArrowUp') next = (index - 1 + tabs.length) % tabs.length
     else if (e.key === 'Home') next = 0
     else if (e.key === 'End') next = tabs.length - 1
     else return
@@ -228,7 +260,7 @@ function Tabs({ tabs, active, onChange }: { tabs: TabId[]; active: TabId; onChan
     document.getElementById(`profile-tab-${tabs[next]}`)?.focus()
   }
   return (
-    <div role="tablist" aria-label={t('profile.title')} onKeyDown={onKeyDown} className="mb-5 flex gap-1 border-b border-line">
+    <div role="tablist" aria-label={t('profile.dialogTitle')} aria-orientation="vertical" onKeyDown={onKeyDown} className="flex flex-col gap-1.5">
       {tabs.map((id) => {
         const selected = id === active
         return (
@@ -239,13 +271,19 @@ function Tabs({ tabs, active, onChange }: { tabs: TabId[]; active: TabId; onChan
             id={`profile-tab-${id}`}
             aria-selected={selected}
             aria-controls={`profile-panel-${id}`}
+            aria-label={t(tabLabels[id])}
+            title={t(tabLabels[id])}
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(id)}
-            className={`-mb-px min-h-11 cursor-pointer border-0 border-b-2 bg-transparent px-4 py-2 font-sans text-[15px] ${
-              selected ? 'border-accent font-semibold text-heading' : 'border-transparent font-normal text-muted hover:text-heading'
+            className={`flex min-h-12 min-w-0 cursor-pointer items-center justify-center gap-3 rounded-xl border-0 px-2 py-3 text-left font-sans outline-offset-2 focus-visible:outline-2 focus-visible:outline-accent sm:justify-start sm:px-3 ${
+              selected ? 'bg-ctu-navy text-white shadow-sm' : 'bg-transparent text-muted hover:bg-surface hover:text-heading'
             }`}
           >
-            {t(tabLabels[id])}
+            <Icon name={tabIcons[id]} size={21} className={`flex-none ${selected ? 'text-ctu-gold-active' : ''}`} />
+            <span className="sr-only min-w-0 sm:not-sr-only">
+              <span className="block text-sm font-semibold">{t(tabLabels[id])}</span>
+              <span className={`mt-0.5 block text-xs font-light ${selected ? 'text-white/75' : 'text-muted'}`}>{t(tabHints[id])}</span>
+            </span>
           </button>
         )
       })}
@@ -294,36 +332,43 @@ function ProfileBody({ onClose, initialTab }: { onClose: () => void; initialTab:
   const active = tabs.includes(tab) ? tab : 'settings'
 
   return (
-    <>
-      <Tabs tabs={tabs} active={active} onChange={setTab} />
-      <div id="profile-panel-settings" role="tabpanel" aria-labelledby="profile-tab-settings" hidden={active !== 'settings'}>
-        <AvatarEditor maxBytes={listing?.max_upload_bytes ?? 5 * 1024 * 1024} />
-        <ProfileForm onClose={onClose} />
-      </div>
-      <div id="profile-panel-sources" role="tabpanel" aria-labelledby="profile-tab-sources" hidden={active !== 'sources'}>
-        <SourcePicker />
-      </div>
-      <div id="profile-panel-storage" role="tabpanel" aria-labelledby="profile-tab-storage" hidden={active !== 'storage'}>
-        {listing ? (
-          <MyFiles listing={listing} onChange={setListing} className="mt-0" />
-        ) : (
-          <p role={listingFailed ? 'alert' : 'status'} className="m-0 text-sm">
-            {t(listingFailed ? 'files.loadError' : 'files.loading')}
-          </p>
+    <div className="flex min-h-0 flex-1">
+      <aside className="flex w-16 shrink-0 flex-col gap-5 overflow-y-auto border-r border-line bg-tint/50 px-2 py-4 sm:w-56 sm:p-4 lg:w-60 lg:p-5">
+        <Tabs tabs={tabs} active={active} onChange={setTab} />
+        <div className="mt-auto hidden min-w-0 border-t border-line px-2 pt-4 sm:block">
+          <p className="m-0 truncate text-sm font-semibold text-heading">{user?.name || user?.email}</p>
+          <p className="mb-0 mt-1 truncate text-xs" title={user?.email}>{user?.email}</p>
+        </div>
+      </aside>
+      <div className="min-h-0 min-w-0 flex-1">
+        <div id="profile-panel-settings" role="tabpanel" aria-labelledby="profile-tab-settings" tabIndex={0} hidden={active !== 'settings'} className="h-full min-w-0 outline-offset-[-2px] outline-accent">
+          <ProfileForm onClose={onClose} maxAvatarBytes={listing?.max_upload_bytes ?? 5 * 1024 * 1024} />
+        </div>
+        <div id="profile-panel-sources" role="tabpanel" aria-labelledby="profile-tab-sources" tabIndex={0} hidden={active !== 'sources'} className="h-full overflow-y-auto overscroll-contain p-4 outline-offset-[-2px] outline-accent sm:p-6 lg:p-8">
+          <SourcePicker />
+        </div>
+        <div id="profile-panel-storage" role="tabpanel" aria-labelledby="profile-tab-storage" tabIndex={0} hidden={active !== 'storage'} className="h-full overflow-y-auto overscroll-contain p-4 outline-offset-[-2px] outline-accent sm:p-6 lg:p-8">
+          {listing ? (
+            <MyFiles listing={listing} onChange={setListing} className="mt-0" />
+          ) : (
+            <p role={listingFailed ? 'alert' : 'status'} className="m-0 text-sm">
+              {t(listingFailed ? 'files.loadError' : 'files.loading')}
+            </p>
+          )}
+        </div>
+        {donate?.has_qr && (
+          <div id="profile-panel-donate" role="tabpanel" aria-labelledby="profile-tab-donate" tabIndex={0} hidden={active !== 'donate'} className="h-full overflow-y-auto overscroll-contain p-4 outline-offset-[-2px] outline-accent sm:p-6 lg:p-8">
+            <DonateSection info={donate} className="mt-0" />
+          </div>
         )}
       </div>
-      {donate?.has_qr && (
-        <div id="profile-panel-donate" role="tabpanel" aria-labelledby="profile-tab-donate" hidden={active !== 'donate'}>
-          <DonateSection info={donate} className="mt-0" />
-        </div>
-      )}
-    </>
+    </div>
   )
 }
 
 type Props = { open: boolean; onClose: () => void; /** true = mở thẳng tab Dung lượng */ scrollToFiles?: boolean }
 
-/** Hộp thoại thông tin cá nhân (thay cho trang /profile cũ): tab Cài đặt, Dung lượng và Ủng hộ. */
+/** Hộp thoại cài đặt rộng, tab dọc bên trái và nội dung cuộn riêng. */
 export default function ProfileDialog({ open, onClose, scrollToFiles = false }: Props) {
   const { t } = useI18n()
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -343,22 +388,28 @@ export default function ProfileDialog({ open, onClose, scrollToFiles = false }: 
       onClick={(e) => {
         if (e.target === dialogRef.current) onClose() // bấm ra ngoài thì đóng
       }}
-      className="m-auto h-[min(92vh,760px)] w-[calc(100%-32px)] max-w-[1080px] overflow-y-auto rounded-2xl border border-line bg-surface p-6 text-muted shadow-[0_24px_60px_rgba(0,0,0,.35)] backdrop:bg-black/50"
+      className="m-auto h-[min(92dvh,860px)] max-h-[92dvh] w-[calc(100%-24px)] max-w-[1280px] overflow-hidden rounded-2xl border border-line bg-surface p-0 text-muted shadow-[0_24px_60px_rgba(0,0,0,.35)] backdrop:bg-black/50"
     >
-      <div className="mb-5 flex items-center justify-between gap-3">
-        <h2 id="profile-dialog-title" className="m-0 text-xl">
-          {t('profile.title')}
-        </h2>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label={t('ref.close')}
-          className="inline-flex size-11 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-heading hover:bg-tint"
-        >
-          <Icon name="close" />
-        </button>
+      <div className="flex h-full min-h-0 flex-col">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-line px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="hidden size-11 shrink-0 items-center justify-center rounded-xl bg-tint text-accent sm:inline-flex"><Icon name="settings" size={23} /></span>
+            <div className="min-w-0">
+              <h2 id="profile-dialog-title" className="m-0 text-lg sm:text-xl">{t('profile.dialogTitle')}</h2>
+              <p className="mb-0 mt-0.5 hidden text-sm sm:block">{t('profile.dialogHint')}</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label={t('ref.close')}
+            className="inline-flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-heading hover:bg-tint"
+          >
+            <Icon name="close" />
+          </button>
+        </div>
+        {open && <ProfileBody onClose={onClose} initialTab={scrollToFiles ? 'storage' : 'settings'} />}
       </div>
-      {open && <ProfileBody onClose={onClose} initialTab={scrollToFiles ? 'storage' : 'settings'} />}
     </dialog>
   )
 }

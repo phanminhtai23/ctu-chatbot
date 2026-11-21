@@ -1,0 +1,313 @@
+{
+  "date": "2026-11-21",
+  "timezone": "Asia/Saigon",
+  "model": "gemini-3.5-flash-lite",
+  "frontend": "http://localhost:5173",
+  "backend": "http://localhost:8000",
+  "browserOrigin": "http://host.docker.internal:5173",
+  "method": "Actual UI dev-login and chat composer clicks via Playwright; streamed response cloned for browser TTFT/done timings.",
+  "faultPolicy": "429 and invalid-key errors injected before first SDK chunk in a temporary local wrapper; fallback provider calls went to real Gemini. No .env changes, no deliberate quota exhaustion.",
+  "scope": "Sequential end-to-end browser -> Vite API proxy -> FastAPI -> RAG/LLM -> Postgres -> SSE. Not a concurrent UI load test.",
+  "samples": [
+    {
+      "label": "baseline_1",
+      "startedAt": "2026-11-21T05:49:57.218Z",
+      "ttftS": 3.2036999999999534,
+      "doneS": 3.4322999999998136,
+      "tokenChars": 291,
+      "events": [],
+      "status": 200,
+      "headersS": 0.040299999999813735,
+      "cached": false,
+      "serverDurationS": 3.2,
+      "answerChars": 291,
+      "endedS": 3.4331999999999536
+    },
+    {
+      "label": "baseline_2",
+      "startedAt": "2026-11-21T05:50:12.246Z",
+      "ttftS": 3.0317999999998135,
+      "doneS": 3.2517999999998137,
+      "tokenChars": 260,
+      "events": [],
+      "status": 200,
+      "headersS": 0.030299999999813736,
+      "cached": false,
+      "serverDurationS": 3.1,
+      "answerChars": 260,
+      "endedS": 3.2525999999998603
+    },
+    {
+      "label": "baseline_3",
+      "startedAt": "2026-11-21T05:50:37.295Z",
+      "ttftS": 1.7793999999999068,
+      "doneS": 2.0718000000000467,
+      "tokenChars": 276,
+      "events": [],
+      "status": 200,
+      "headersS": 0.026899999999906866,
+      "cached": false,
+      "serverDurationS": 1.9,
+      "answerChars": 276,
+      "endedS": 2.0723000000000464
+    },
+    {
+      "label": "rotation_429_once",
+      "startedAt": "2026-11-21T05:50:56.859Z",
+      "ttftS": 2.44,
+      "doneS": 2.7383000000000464,
+      "tokenChars": 282,
+      "events": [],
+      "status": 200,
+      "headersS": 0.03269999999995343,
+      "cached": false,
+      "serverDurationS": 2.6,
+      "answerChars": 282,
+      "endedS": 2.7383000000000464
+    },
+    {
+      "label": "reuse_key_2",
+      "startedAt": "2026-11-21T05:51:28.007Z",
+      "ttftS": 1.8141999999999534,
+      "doneS": 2.0995,
+      "tokenChars": 266,
+      "events": [],
+      "status": 200,
+      "headersS": 0.025699999999953434,
+      "cached": false,
+      "serverDurationS": 2,
+      "answerChars": 266,
+      "endedS": 2.1000999999998604
+    },
+    {
+      "label": "rotation_invalid_once",
+      "startedAt": "2026-11-21T05:51:31.837Z",
+      "ttftS": 2.386399999999907,
+      "doneS": 2.6391999999999536,
+      "tokenChars": 271,
+      "events": [],
+      "status": 200,
+      "headersS": 0.03230000000004657,
+      "cached": false,
+      "serverDurationS": 2.5,
+      "answerChars": 271,
+      "endedS": 2.6396999999999533
+    },
+    {
+      "label": "all_keys_unavailable",
+      "startedAt": "2026-11-21T05:51:59.451Z",
+      "ttftS": null,
+      "doneS": null,
+      "tokenChars": 0,
+      "events": [],
+      "status": 200,
+      "headersS": 0.04389999999990687,
+      "error": "LLM_RATE_LIMITED",
+      "errorS": 0.9288999999999069,
+      "endedS": 0.9291999999999534
+    },
+    {
+      "label": "recovery_normal_backend",
+      "startedAt": "2026-11-21T05:52:58.444Z",
+      "ttftS": 3.8435,
+      "doneS": 4.042899999999907,
+      "tokenChars": 223,
+      "events": [],
+      "status": 200,
+      "headersS": 0.18219999999995343,
+      "cached": false,
+      "serverDurationS": 3.6,
+      "answerChars": 223,
+      "endedS": 4.043
+    }
+  ],
+  "allUnavailableUi": {
+    "dialogText": "Chatbot đang hơi bậnChatbot đang quá tải. Vui lòng thử lại sau 61 giây.Thử lại sau 0:04Mình hiểu rồi",
+    "draftPreserved": true,
+    "emptyHistory": true
+  },
+  "cleanup": {
+    "backend": "Restarted unmodified app.main:app; injection wrapper no longer loaded",
+    "envFilesModified": false
+  },
+  "notes": [
+    "Google sign-in reports unregistered Docker browser origin; testing used the existing dev-login form.",
+    "Browser timings include the local Docker browser/proxy network, not production network.",
+    "A successful key switch does not establish independent quota projects for the configured keys."
+  ],
+  "backendTraces": [
+    {
+      "request_id": "9940a5186508",
+      "mode": "observe",
+      "injected_errors": [],
+      "real_provider_key_indices": [
+        1,
+        1
+      ],
+      "error_codes": []
+    },
+    {
+      "request_id": "4303a34f5a51",
+      "mode": "observe",
+      "injected_errors": [],
+      "real_provider_key_indices": [
+        1,
+        1
+      ],
+      "error_codes": []
+    },
+    {
+      "request_id": "087baeed47a2",
+      "mode": "observe",
+      "injected_errors": [],
+      "real_provider_key_indices": [
+        1,
+        1
+      ],
+      "error_codes": []
+    },
+    {
+      "request_id": "6045f187c7f5",
+      "mode": "429-once",
+      "injected_errors": [
+        {
+          "key_index": 1,
+          "status": 429
+        }
+      ],
+      "real_provider_key_indices": [
+        2,
+        2
+      ],
+      "error_codes": []
+    },
+    {
+      "request_id": "2489be7ebb4d",
+      "mode": "observe",
+      "injected_errors": [],
+      "real_provider_key_indices": [
+        2,
+        2
+      ],
+      "error_codes": []
+    },
+    {
+      "request_id": "90b54cd44583",
+      "mode": "invalid-once",
+      "injected_errors": [
+        {
+          "key_index": 2,
+          "status": 400
+        }
+      ],
+      "real_provider_key_indices": [
+        3,
+        3
+      ],
+      "error_codes": []
+    },
+    {
+      "request_id": "dab0401ee434",
+      "mode": "429-all",
+      "injected_errors": [
+        {
+          "key_index": 3,
+          "status": 429
+        },
+        {
+          "key_index": 4,
+          "status": 429
+        },
+        {
+          "key_index": 5,
+          "status": 429
+        },
+        {
+          "key_index": 6,
+          "status": 429
+        },
+        {
+          "key_index": 7,
+          "status": 429
+        },
+        {
+          "key_index": 8,
+          "status": 429
+        },
+        {
+          "key_index": 9,
+          "status": 429
+        },
+        {
+          "key_index": 10,
+          "status": 429
+        },
+        {
+          "key_index": 11,
+          "status": 429
+        },
+        {
+          "key_index": 12,
+          "status": 429
+        },
+        {
+          "key_index": 13,
+          "status": 429
+        },
+        {
+          "key_index": 14,
+          "status": 429
+        },
+        {
+          "key_index": 15,
+          "status": 429
+        },
+        {
+          "key_index": 16,
+          "status": 429
+        },
+        {
+          "key_index": 17,
+          "status": 429
+        },
+        {
+          "key_index": 18,
+          "status": 429
+        },
+        {
+          "key_index": 19,
+          "status": 429
+        },
+        {
+          "key_index": 20,
+          "status": 429
+        },
+        {
+          "key_index": 1,
+          "status": 429
+        }
+      ],
+      "real_provider_key_indices": [],
+      "error_codes": [
+        "LLM_RATE_LIMITED"
+      ]
+    }
+  ],
+  "baselineSummary": {
+    "samples": 3,
+    "medianTtftS": 3.032,
+    "medianDoneS": 3.252,
+    "minDoneS": 2.072,
+    "maxDoneS": 3.432
+  },
+  "assertions": {
+    "normal_chat_no_cache": true,
+    "429_switch_1_to_2": true,
+    "subsequent_request_stays_on_2": true,
+    "invalid_switch_2_to_3": true,
+    "all_unavailable_returns_error_no_external_attempt": true,
+    "failed_turn_draft_preserved": true,
+    "failed_turn_no_orphan_ui_messages": true,
+    "recovery_normal_backend": true
+  }
+}

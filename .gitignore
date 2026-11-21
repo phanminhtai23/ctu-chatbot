@@ -4,6 +4,10 @@ vector-docs/documents/qd3266/current/source.pdf
 vector-docs/documents/qd3266/current/ocr.txt
 local-data
 e2e-report
+.playwright-mcp/
+**/.hallmark/
+artifacts/landing-photo-options/
+artifacts/landing-document-search.css
 
 # frontend
 ctu-chatbot-fe/node_modules/

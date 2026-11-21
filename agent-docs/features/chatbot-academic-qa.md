@@ -15,6 +15,25 @@ Chatbot chính: user hỏi về quy chế công tác học vụ (tính điểm, 
 
 ## Notes
 
+### 2026-11-21: thiết kế lại landing với glassmorphism
+
+- Giữ palette CTU navy/cyan/vàng và Readex Pro; thay bố cục cũ bằng header kính mờ, hero navy với kính lúp tra cứu thẻ quy chế/quy định, ảnh chụp giao diện chat thật, thẻ tính năng, thư viện tài liệu, câu hỏi mẫu, ba bước và FAQ.
+- Tài liệu vẫn lấy từ API công khai `GET /api/v1/documents/catalog/summary`, hiển thị toàn bộ tài liệu đã đồng bộ và liên kết văn bản gốc. Có trạng thái tải/lỗi/rỗng và nút thử lại; không thay danh sách thật bằng dữ liệu minh hoạ. Câu hỏi mẫu vẫn lấy từ `/api/v1/suggestions`.
+- CTA đưa người đã đăng nhập tới `/chat`, khách tới `/login`. Menu mobile đóng khi chọn liên kết, bấm bên ngoài hoặc Esc. Hỗ trợ theme sáng/tối, bàn phím và `prefers-reduced-motion`.
+- Hero hiện dùng `components/landing/DocumentSearchVisual.tsx`: SVG kính lúp quét nhẹ giữa hai thẻ tài liệu, tên/số quyết định lấy từ hai tài liệu đầu của catalog thật; lúc chưa có dữ liệu chỉ hiển thị nhãn chung. Chữ nằm trong SVG để rõ ở mọi kích thước; không cần ảnh gen hoặc ảnh khuôn viên. Kính lúp và vệt đánh dấu có chuyển động CSS, tắt khi giảm chuyển động; caption dẫn tới danh sách đầy đủ. `public/landing/chat-reference-preview.webp` vẫn là ảnh chụp trực tiếp UI, không chứa thông tin tài khoản. Thông tin nguồn ở `public/landing/ASSETS.md`.
+- Kiểm tra riêng hero kính lúp: build/lint đạt; 320/390/680/768/1024/1440px ở cả hai theme không tràn ngang. Kính lúp chuyển động, giảm chuyển động dừng animation, link caption tới đúng `#tai-lieu`, reload tải lại SVG/catalog bình thường và không có lỗi JavaScript.
+- Ví dụ trong ảnh dùng câu hỏi tự nhiên của sinh viên: “Mình mới vào năm nhất, học kỳ đầu có phải tự đăng ký môn không?”. Không yêu cầu người hỏi biết số Điều hay chỉ định độ dài; đã gọi chat thật và bot tự dẫn Điều 13, 14, rồi chụp lại UI.
+- Kiểm tra: build và lint đạt; Playwright đo 320/390/680/768/900/1024/1440px ở hai theme không tràn ngang. Đã thử menu mobile (Esc, bấm ngoài, chọn link), FAQ, giảm chuyển động, CTA khách → login/người đã đăng nhập → chat, catalog lỗi → tải lại/rỗng và suggestions lỗi. Ảnh preview: `artifacts/landing-glass-desktop.webp`, `artifacts/landing-glass-mobile.webp`.
+
+### 2026-11-21: hiệu ứng chờ trả lời
+
+- Theo lựa chọn mới của user, FE dùng lại ba chấm xám 8px nảy liên tục với chu kỳ 1,05 giây, lệch pha đều 1/3 vòng. Chuyển động bằng `transform`/`opacity`, `ease-in-out`, cao 6px; không có đoạn giữ cả ba chấm đứng yên (bản trước đo được khoảng 267ms). Bỏ ngôi sao, quầng sáng và chữ chuyển sắc; nhãn “Đang suy nghĩ…” chỉ dành cho trình đọc màn hình. Hỗ trợ theme sáng/tối.
+- Chỉ hiển thị khi tin bot còn `pending` và chưa có nội dung; token đầu tiên thay hiệu ứng bằng câu trả lời. Đang xếp hàng hiển thị vị trí thực từ SSE `queued`; Dừng/lỗi gỡ tin tạm như cũ.
+- Trình đọc màn hình nhận trạng thái qua `role="status"`. Theo yêu cầu user vẫn phải thấy ba chấm nảy: riêng indicator chat dùng biên độ 3px khi `prefers-reduced-motion: reduce` (thay vì 6px bình thường), không còn `animation: none`. Không thay đổi thiết lập hệ điều hành; các animation khác vẫn tuân theo giảm chuyển động như cũ.
+- Kiểm tra bản ba chấm: build/lint đạt; Playwright reload hội thoại thật 3 lần và chuyển landing → chat → hội thoại, lịch sử và ô nhập tải lại bình thường, không có lỗi JavaScript. SSE giả lập kiểm tra ba chấm chuyển động so le, xếp hàng, token đầu tiên, Dừng và reload khi đang chờ; không kẹt indicator. Đo 320/390/1440px ở theme sáng/tối không tràn ngang. Phát hiện Windows local có `MinAnimate=0`; rule giảm chuyển động cũ tắt indicator hoàn toàn, nên thay bằng nhịp nảy nhẹ theo yêu cầu user.
+- Sau khi bỏ đoạn nghỉ, đo 133 frame bằng `requestAnimationFrame` trong lúc SSE giả lập đang chờ: không có frame cả ba chấm đứng ở đáy, mỗi chấm đi từ 0 đến -6px, khoảng cách frame tối đa khoảng 17ms; animation không bị khởi động lại khi đồng hồ chat cập nhật. Build và reload hội thoại đạt.
+- Sau khi thay rule giảm chuyển động, kiểm tra lại cả `reduce` và `no-preference`: ba animation đều `running`, biên độ đo được lần lượt gần 3px/6px, mỗi chế độ 85 frame không có lúc cả ba cùng đứng yên. HTTP localhost:5173 đã phục vụ rule mới; reload khi dùng `reduce` tải hội thoại bình thường, không có lỗi JavaScript.
+
 - Phụ thuộc vào `admin-document-vectorization` / `admin-document-upload` để có vector DB chứa nội dung quy chế.
 - Rate limit: chưa định nghĩa con số cụ thể — cần quyết định trước khi code.
 - "Info referral": cần định nghĩa rõ format trả về (trích đoạn quy chế, số điều/khoản...).

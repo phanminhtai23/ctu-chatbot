@@ -1,0 +1,2366 @@
+{
+  "question": "Chương trình 151 TC, mình đã học 100 TC với ĐTBCTL 3,5. Trong 100 TC đó có 30 TC điều kiện và tổng TC điều kiện của chương trình cũng là 30. Còn bao nhiêu TC phải học, và để đạt xuất sắc thì cần điểm trung bình bao nhiêu ở phần còn lại?",
+  "startedAt": "2026-11-21T06:22:38.597Z",
+  "finishedAt": "2026-11-21T06:23:04.516Z",
+  "done": true,
+  "results": [
+    {
+      "label": "step_1",
+      "startedAt": "2026-11-21T06:22:42.447Z",
+      "feBeforeStreamS": 0.0008999999999068678,
+      "ttftS": 4.006,
+      "doneS": 4.579100000000093,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.03639999999990687,
+      "uiFirstS": 4.025399999999907,
+      "cached": false,
+      "answer": "Có thể bạn nhé 😊 Tối đa bạn đạt được là 3,71, cao hơn mức 3,60 của loại xuất sắc, nhưng 51 tín chỉ còn lại cần trung bình khoảng 3,74 (gần như toàn A) để giữ vững phong độ nha! ✨\n\nTheo Quyết định 3266/QĐ-ĐHCT (Điều 24 và Điều 34), cách tính chi tiết của mình như sau:\n- **Số tín chỉ tính điểm:** C = 100 − 30 = 70 tín chỉ đã học; T = 151 − 30 = 121 tín chỉ toàn chương trình. \n- **Số tín chỉ còn phải học:** 121 − 70 = 51 tín chỉ.\n- **Điểm trung bình cần đạt ở phần còn lại:** Để đạt hạng xuất sắc (từ 3,60 trở lên), bạn cần đạt trung bình 3,74/4,00 cho 51 tín chỉ còn lại.\n\nBạn có muốn mình tính thử xem nếu muốn đạt học bổng hoặc cần hỗ trợ thêm thông tin gì khác không nè? 📚",
+      "sources": [
+        {
+          "article": 24,
+          "n": null,
+          "title": "Điểm trung bình chung học kỳ, điểm trung bình chung năm học và điểm trung bình chung tích lũy",
+          "url": null,
+          "document_url": null
+        },
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "serverDurationS": 4.4,
+      "endedS": 4.579799999999814,
+      "ended": true,
+      "uiDoneS": 4.604,
+      "stage_seconds": {
+        "http_auth_validation_admission": 0.016989,
+        "queue_wait": 1.7e-05,
+        "checkpoint_graph_setup": 0.042795,
+        "rag_and_knowledge": 0.799987,
+        "route_classification": 1.029043,
+        "llm_extract": 1.001148,
+        "python_math": 0.000952,
+        "prompt_build_and_misc": 0.000611,
+        "answer_wait_for_first_text": 1.102972,
+        "answer_stream_and_finalize": 0.446462,
+        "final_checkpoint_and_db": 0.127907,
+        "browser_network_and_render": 0.035117
+      },
+      "server_done_s": 4.568883399973856,
+      "rag_details": {
+        "embedding_api_s": 0.758418,
+        "embedding_cache": [
+          {
+            "hit": false,
+            "duration_s": 0.758436
+          }
+        ],
+        "chroma_query_s": 0.002501,
+        "chroma_queries": 1,
+        "retrieved_articles": [
+          [
+            24,
+            34,
+            26,
+            30,
+            33
+          ]
+        ],
+        "knowledge_retrieval_s": 0.032302
+      },
+      "db_details": {
+        "checkpoint_get_tuple": 0.031991,
+        "checkpoint_put": 0.244337,
+        "checkpoint_put_writes": 0.095979,
+        "conversation_db_update": 0.014841,
+        "usage_db_insert": 0.008571
+      },
+      "llm_calls": [
+        {
+          "name": "llm_route",
+          "start_s": 0.8598924999823794,
+          "end_s": 1.888575499993749,
+          "duration_s": 1.0286830000113696,
+          "first_text_s": 1.8876568999839947,
+          "output_chars": 10,
+          "usage": {
+            "input_tokens": 467,
+            "output_tokens": 1,
+            "total_tokens": 468,
+            "cache_read_tokens": 0
+          }
+        },
+        {
+          "name": "llm_extract",
+          "start_s": 1.8891000999719836,
+          "end_s": 2.8902479999815114,
+          "duration_s": 1.0011479000095278,
+          "first_text_s": 2.844789699971443,
+          "output_chars": 248,
+          "usage": {
+            "input_tokens": 1161,
+            "output_tokens": 111,
+            "total_tokens": 1272,
+            "cache_read_tokens": 0
+          }
+        },
+        {
+          "name": "llm_answer",
+          "start_s": 2.8915413999930024,
+          "end_s": 4.440549899998587,
+          "duration_s": 1.5490085000055842,
+          "first_text_s": 3.9945135999878403,
+          "output_chars": 677,
+          "usage": {
+            "input_tokens": 5567,
+            "output_tokens": 257,
+            "total_tokens": 5824,
+            "cache_read_tokens": 0
+          }
+        }
+      ],
+      "provider_attempts": [
+        {
+          "name": "provider_attempt",
+          "start_s": 0.8873957999749109,
+          "end_s": 1.8885654999758117,
+          "duration_s": 1.0011697000009008,
+          "key_index": 1,
+          "phase": "route"
+        },
+        {
+          "name": "provider_attempt",
+          "start_s": 1.8891188999987207,
+          "end_s": 2.890218799991999,
+          "duration_s": 1.001099899993278,
+          "key_index": 1,
+          "phase": "extract"
+        },
+        {
+          "name": "provider_attempt",
+          "start_s": 2.899201799998991,
+          "end_s": 4.440528199978871,
+          "duration_s": 1.54132639997988,
+          "key_index": 1,
+          "phase": "answer"
+        }
+      ],
+      "answer_check_problems": [],
+      "stage_sum_s": 4.604002,
+      "raw_trace": {
+        "id": "567f0dfe8894",
+        "label": "step_1",
+        "start": 236628.8653968,
+        "spans": [
+          {
+            "name": "input_screen",
+            "start_s": 0.010661099979188293,
+            "end_s": 0.01136239999323152,
+            "duration_s": 0.0007013000140432268,
+            "answer_cached": false
+          },
+          {
+            "name": "queue_admission",
+            "start_s": 0.015491199999814853,
+            "end_s": 0.015508899989072233,
+            "duration_s": 1.7699989257380366e-05
+          },
+          {
+            "name": "rate_limit_and_admission",
+            "start_s": 0.011370599997462705,
+            "end_s": 0.015533599973423406,
+            "duration_s": 0.004162999975960702
+          },
+          {
+            "name": "queue_wait",
+            "start_s": 0.016984199988655746,
+            "end_s": 0.01700149997486733,
+            "duration_s": 1.7299986211583018e-05
+          },
+          {
+            "name": "checkpoint_get_tuple",
+            "start_s": 0.027118399972096086,
+            "end_s": 0.05300149999675341,
+            "duration_s": 0.025883100024657324
+          },
+          {
+            "name": "checkpoint_put",
+            "start_s": 0.05417159997159615,
+            "end_s": 0.10322649998124689,
+            "duration_s": 0.04905490000965074
+          },
+          {
+            "name": "checkpoint_put_writes",
+            "start_s": 0.058253199997125193,
+            "end_s": 0.15423219997319393,
+            "duration_s": 0.09597899997606874
+          },
+          {
+            "name": "checkpoint_put",
+            "start_s": 0.10336129998904653,
+            "end_s": 0.20370859999093227,
+            "duration_s": 0.10034730000188574
+          },
+          {
+            "name": "embedding_api",
+            "start_s": 0.06241839998983778,
+            "end_s": 0.8208361999713816,
+            "duration_s": 0.7584177999815438
+          },
+          {
+            "name": "query_embedding_cache",
+            "start_s": 0.06240699999034405,
+            "end_s": 0.8208433999971021,
+            "duration_s": 0.758436400006758,
+            "cache_hit": false
+          },
+          {
+            "name": "chroma_query",
+            "start_s": 0.8219254999712575,
+            "end_s": 0.8244263999804389,
+            "duration_s": 0.0025009000091813505,
+            "collection": "qd3266"
+          },
+          {
+            "name": "vector_search_total",
+            "start_s": 0.06121539999730885,
+            "end_s": 0.8244752999744378,
+            "duration_s": 0.763259899977129,
+            "collection": "qd3266",
+            "hits": 5
+          },
+          {
+            "name": "document_retrieval",
+            "start_s": 0.06120099997497164,
+            "end_s": 0.8273777999856975,
+            "duration_s": 0.7661768000107259,
+            "articles": [
+              24,
+              34,
+              26,
+              30,
+              33
+            ]
+          },
+          {
+            "name": "knowledge_retrieval",
+            "start_s": 0.8274062999989837,
+            "end_s": 0.8597086999798194,
+            "duration_s": 0.03230239998083562,
+            "hits": 0
+          },
+          {
+            "name": "provider_attempt",
+            "start_s": 0.8873957999749109,
+            "end_s": 1.8885654999758117,
+            "duration_s": 1.0011697000009008,
+            "key_index": 1,
+            "phase": "route"
+          },
+          {
+            "name": "llm_route",
+            "start_s": 0.8598924999823794,
+            "end_s": 1.888575499993749,
+            "duration_s": 1.0286830000113696,
+            "first_text_s": 1.8876568999839947,
+            "output_chars": 10,
+            "usage": {
+              "input_tokens": 467,
+              "output_tokens": 1,
+              "total_tokens": 468,
+              "cache_read_tokens": 0
+            }
+          },
+          {
+            "name": "route_classification",
+            "start_s": 0.8597865999909118,
+            "end_s": 1.8888296999793965,
+            "duration_s": 1.0290430999884848,
+            "route": "regulation"
+          },
+          {
+            "name": "provider_attempt",
+            "start_s": 1.8891188999987207,
+            "end_s": 2.890218799991999,
+            "duration_s": 1.001099899993278,
+            "key_index": 1,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_extract",
+            "start_s": 1.8891000999719836,
+            "end_s": 2.8902479999815114,
+            "duration_s": 1.0011479000095278,
+            "first_text_s": 2.844789699971443,
+            "output_chars": 248,
+            "usage": {
+              "input_tokens": 1161,
+              "output_tokens": 111,
+              "total_tokens": 1272,
+              "cache_read_tokens": 0
+            }
+          },
+          {
+            "name": "python_math",
+            "start_s": 2.8902761999925133,
+            "end_s": 2.891228599997703,
+            "duration_s": 0.0009524000051897019,
+            "report_chars": 1279
+          },
+          {
+            "name": "gpa_report_total",
+            "start_s": 1.8889668999763671,
+            "end_s": 2.8912467999907676,
+            "duration_s": 1.0022799000144005,
+            "report_chars": 1279
+          },
+          {
+            "name": "system_prompt_build",
+            "start_s": 2.891262799996184,
+            "end_s": 2.891363199974876,
+            "duration_s": 0.00010039997869171202,
+            "chars": 14499
+          },
+          {
+            "name": "llm_history_build",
+            "start_s": 2.8913829999801237,
+            "end_s": 2.8914122999995016,
+            "duration_s": 2.9300019377842546e-05
+          },
+          {
+            "name": "provider_attempt",
+            "start_s": 2.899201799998991,
+            "end_s": 4.440528199978871,
+            "duration_s": 1.54132639997988,
+            "key_index": 1,
+            "phase": "answer"
+          },
+          {
+            "name": "llm_answer",
+            "start_s": 2.8915413999930024,
+            "end_s": 4.440549899998587,
+            "duration_s": 1.5490085000055842,
+            "first_text_s": 3.9945135999878403,
+            "output_chars": 677,
+            "usage": {
+              "input_tokens": 5567,
+              "output_tokens": 257,
+              "total_tokens": 5824,
+              "cache_read_tokens": 0
+            }
+          },
+          {
+            "name": "generate_total",
+            "start_s": 0.05979619998834096,
+            "end_s": 4.4409678999800235,
+            "duration_s": 4.3811716999916825
+          },
+          {
+            "name": "checkpoint_put",
+            "start_s": 4.442472799972165,
+            "end_s": 4.537407799973153,
+            "duration_s": 0.0949350000009872
+          },
+          {
+            "name": "checkpoint_get_tuple",
+            "start_s": 4.5382167999923695,
+            "end_s": 4.5443246999930125,
+            "duration_s": 0.006107900000642985
+          },
+          {
+            "name": "conversation_db_update",
+            "start_s": 4.544695799995679,
+            "end_s": 4.559536999993725,
+            "duration_s": 0.01484119999804534
+          },
+          {
+            "name": "usage_db_insert",
+            "start_s": 4.55963299999712,
+            "end_s": 4.568204399984097,
+            "duration_s": 0.008571399986976758
+          }
+        ],
+        "marks": [
+          {
+            "name": "request_received",
+            "seconds": 6.299989763647318e-06
+          },
+          {
+            "name": "response_headers",
+            "seconds": 0.01611539997975342,
+            "status": 200
+          },
+          {
+            "name": "queue_wait_start",
+            "seconds": 0.016989099996862933
+          },
+          {
+            "name": "queue_wait_end",
+            "seconds": 0.017004699999233708
+          },
+          {
+            "name": "user_message_event",
+            "seconds": 0.017766899982234463
+          },
+          {
+            "name": "generate_start",
+            "seconds": 0.059799799986649305
+          },
+          {
+            "name": "llm_start",
+            "seconds": 0.8598957999784034,
+            "phase": "route"
+          },
+          {
+            "name": "llm_first_text",
+            "seconds": 1.8876600999792572,
+            "phase": "route"
+          },
+          {
+            "name": "llm_end",
+            "seconds": 1.8885789999912959,
+            "phase": "route"
+          },
+          {
+            "name": "llm_start",
+            "seconds": 1.8891024999902584,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_first_text",
+            "seconds": 2.84479389997432,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_end",
+            "seconds": 2.89025669998955,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_start",
+            "seconds": 2.8915459999989253,
+            "phase": "answer"
+          },
+          {
+            "name": "llm_first_text",
+            "seconds": 3.994516799983103,
+            "phase": "answer"
+          },
+          {
+            "name": "first_token_sse",
+            "seconds": 3.9958345999766607
+          },
+          {
+            "name": "llm_end",
+            "seconds": 4.44055549998302,
+            "phase": "answer"
+          },
+          {
+            "name": "generate_end",
+            "seconds": 4.440976099984255
+          },
+          {
+            "name": "done_sse",
+            "seconds": 4.568883399973856,
+            "cached": false
+          },
+          {
+            "name": "request_end",
+            "seconds": 4.572500499984017
+          }
+        ]
+      }
+    },
+    {
+      "label": "step_2",
+      "startedAt": "2026-11-21T06:22:47.344Z",
+      "feBeforeStreamS": 0.00030000000027939676,
+      "ttftS": 2.9725,
+      "doneS": 4.182100000000093,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.031300000000279396,
+      "uiFirstS": 3.023899999999907,
+      "cached": false,
+      "answer": "Có thể bạn nhé 😊 Tối đa bạn đạt được là 3,71, cao hơn mức 3,60 của loại xuất sắc, nhưng 51 tín chỉ (TC) còn lại bạn cần đạt điểm trung bình khoảng 3,74 nha. ✨\n\nDựa theo quy định và số liệu bạn đã cung cấp, mình tính toán cụ thể như sau:\n\n- **Số TC còn phải học:** Theo Điều 34 về hạng tốt nghiệp, sau khi loại bỏ 30 TC điều kiện, tổng số TC tính điểm của chương trình là 121 TC (151 - 30) và bạn đã tích lũy được 70 TC tính điểm (100 - 30). Số TC còn lại bạn cần học là **51 TC** (121 - 70).\n- **Điểm trung bình cần đạt ở phần còn lại:** \n  + Tổng điểm hệ 4 hiện có của bạn là 70 × 3,50 = 245 điểm.\n  + Để đạt mức xuất sắc (ĐTBCTL tối thiểu 3,60), tổng số điểm hệ 4 toàn khóa bạn cần đạt ít nhất là 121 × 3,60 = 435,6 điểm.\n  + Số điểm bạn cần phấn đấu thêm ở 51 TC còn lại là: 435,6 − 245 = 190,6 điểm.\n  + Vậy điểm trung bình ở phần còn lại bạn cần đạt là: 190,6 / 51 ≈ **3,74/4,00** (gần như toàn điểm A).\n\n⚠️ Tuy nhiên, điều này **chưa chắc chắn** đâu nha bạn! Nếu 51 TC còn lại mà bạn chỉ đạt điểm thấp (ví dụ điểm D là 1,0), thì ĐTBCTL chung cuộc sẽ rớt xuống còn 2,45 và không thể đạt xuất sắc nữa. Bạn phải giữ vững phong độ thật tốt ở giai đoạn cuối này nhé!\n\nBạn có muốn mình xem thêm về học bổng hay vấn đề học vụ nào khác không nè? 📚",
+      "sources": [
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "serverDurationS": 4,
+      "endedS": 4.182200000000186,
+      "ended": true,
+      "uiDoneS": 4.314600000000093,
+      "stage_seconds": {
+        "http_auth_validation_admission": 0.019686,
+        "queue_wait": 2.3e-05,
+        "checkpoint_graph_setup": 0.012616,
+        "rag_and_knowledge": 0.009142,
+        "route_classification": 0.916793,
+        "llm_extract": 0.849719,
+        "python_math": 0.000233,
+        "prompt_build_and_misc": 0.000501,
+        "answer_wait_for_first_text": 1.138669,
+        "answer_stream_and_finalize": 1.051738,
+        "final_checkpoint_and_db": 0.162585,
+        "browser_network_and_render": 0.152896
+      },
+      "server_done_s": 4.161703899997519,
+      "rag_details": {
+        "embedding_api_s": 0,
+        "embedding_cache": [
+          {
+            "hit": true,
+            "duration_s": 6e-06
+          }
+        ],
+        "chroma_query_s": 0.003741,
+        "chroma_queries": 1,
+        "retrieved_articles": [
+          [
+            24,
+            34,
+            26,
+            30,
+            33
+          ]
+        ],
+        "knowledge_retrieval_s": 0.001906
+      },
+      "db_details": {
+        "checkpoint_get_tuple": 0.013933,
+        "checkpoint_put": 0.243086,
+        "checkpoint_put_writes": 0.09514,
+        "conversation_db_update": 0.025525,
+        "usage_db_insert": 0.018605
+      },
+      "llm_calls": [
+        {
+          "name": "llm_route",
+          "start_s": 0.041626299993367866,
+          "end_s": 0.9582103999855462,
+          "duration_s": 0.9165840999921784,
+          "first_text_s": 0.9567402999964543,
+          "output_chars": 10,
+          "usage": {
+            "input_tokens": 467,
+            "output_tokens": 1,
+            "total_tokens": 468,
+            "cache_read_tokens": 0
+          }
+        },
+        {
+          "name": "llm_extract",
+          "start_s": 0.9586476999975275,
+          "end_s": 1.8083664999867324,
+          "duration_s": 0.8497187999892049,
+          "first_text_s": 1.8048361999972258,
+          "output_chars": 248,
+          "usage": {
+            "input_tokens": 1161,
+            "output_tokens": 111,
+            "total_tokens": 1272,
+            "cache_read_tokens": 0
+          }
+        },
+        {
+          "name": "llm_answer",
+          "start_s": 1.8087111999921035,
+          "end_s": 3.9977021999948192,
+          "duration_s": 2.1889910000027157,
+          "first_text_s": 2.947380099998554,
+          "output_chars": 1245,
+          "usage": {
+            "input_tokens": 5567,
+            "output_tokens": 461,
+            "total_tokens": 6028,
+            "cache_read_tokens": 2031
+          }
+        }
+      ],
+      "provider_attempts": [
+        {
+          "name": "provider_attempt",
+          "start_s": 0.04166580000310205,
+          "end_s": 0.9581869999819901,
+          "duration_s": 0.916521199978888,
+          "key_index": 1,
+          "phase": "route"
+        },
+        {
+          "name": "provider_attempt",
+          "start_s": 0.9586867000034545,
+          "end_s": 1.8083550999872386,
+          "duration_s": 0.8496683999837842,
+          "key_index": 1,
+          "phase": "extract"
+        },
+        {
+          "name": "provider_attempt",
+          "start_s": 1.808862899983069,
+          "end_s": 3.9976625999843236,
+          "duration_s": 2.1887997000012547,
+          "key_index": 1,
+          "phase": "answer"
+        }
+      ],
+      "answer_check_problems": [],
+      "stage_sum_s": 4.314602,
+      "raw_trace": {
+        "id": "f2811a5b06e3",
+        "label": "step_2",
+        "start": 236633.762675,
+        "spans": [
+          {
+            "name": "input_screen",
+            "start_s": 0.01182749998406507,
+            "end_s": 0.01231369999004528,
+            "duration_s": 0.0004862000059802085,
+            "answer_cached": false
+          },
+          {
+            "name": "queue_admission",
+            "start_s": 0.017120699980296195,
+            "end_s": 0.01715679999324493,
+            "duration_s": 3.610001294873655e-05
+          },
+          {
+            "name": "rate_limit_and_admission",
+            "start_s": 0.012332099984632805,
+            "end_s": 0.017189999984111637,
+            "duration_s": 0.004857899999478832
+          },
+          {
+            "name": "queue_wait",
+            "start_s": 0.01967889998923056,
+            "end_s": 0.01970229999278672,
+            "duration_s": 2.340000355616212e-05
+          },
+          {
+            "name": "checkpoint_get_tuple",
+            "start_s": 0.02199730000575073,
+            "end_s": 0.025475300004472956,
+            "duration_s": 0.0034779999987222254
+          },
+          {
+            "name": "query_embedding_cache",
+            "start_s": 0.03436269998201169,
+            "end_s": 0.034368199994787574,
+            "duration_s": 5.5000127758830786e-06,
+            "cache_hit": true
+          },
+          {
+            "name": "chroma_query",
+            "start_s": 0.035489700007019565,
+            "end_s": 0.03923100000247359,
+            "duration_s": 0.0037412999954540282,
+            "collection": "qd3266"
+          },
+          {
+            "name": "vector_search_total",
+            "start_s": 0.03314509999472648,
+            "end_s": 0.03932019998319447,
+            "duration_s": 0.006175099988467991,
+            "collection": "qd3266",
+            "hits": 5
+          },
+          {
+            "name": "document_retrieval",
+            "start_s": 0.033126499998616055,
+            "end_s": 0.039429299999028444,
+            "duration_s": 0.00630280000041239,
+            "articles": [
+              24,
+              34,
+              26,
+              30,
+              33
+            ]
+          },
+          {
+            "name": "knowledge_retrieval",
+            "start_s": 0.03945670000393875,
+            "end_s": 0.04136299999663606,
+            "duration_s": 0.0019062999926973134,
+            "hits": 0
+          },
+          {
+            "name": "checkpoint_put",
+            "start_s": 0.026625200000125915,
+            "end_s": 0.07703260000562295,
+            "duration_s": 0.05040740000549704
+          },
+          {
+            "name": "checkpoint_put_writes",
+            "start_s": 0.030818200000794604,
+            "end_s": 0.1259577999881003,
+            "duration_s": 0.0951395999873057
+          },
+          {
+            "name": "checkpoint_put",
+            "start_s": 0.07745509999222122,
+            "end_s": 0.17302489999565296,
+            "duration_s": 0.09556980000343174
+          },
+          {
+            "name": "provider_attempt",
+            "start_s": 0.04166580000310205,
+            "end_s": 0.9581869999819901,
+            "duration_s": 0.916521199978888,
+            "key_index": 1,
+            "phase": "route"
+          },
+          {
+            "name": "llm_route",
+            "start_s": 0.041626299993367866,
+            "end_s": 0.9582103999855462,
+            "duration_s": 0.9165840999921784,
+            "first_text_s": 0.9567402999964543,
+            "output_chars": 10,
+            "usage": {
+              "input_tokens": 467,
+              "output_tokens": 1,
+              "total_tokens": 468,
+              "cache_read_tokens": 0
+            }
+          },
+          {
+            "name": "route_classification",
+            "start_s": 0.04146549999131821,
+            "end_s": 0.9582583000010345,
+            "duration_s": 0.9167928000097163,
+            "route": "regulation"
+          },
+          {
+            "name": "provider_attempt",
+            "start_s": 0.9586867000034545,
+            "end_s": 1.8083550999872386,
+            "duration_s": 0.8496683999837842,
+            "key_index": 1,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_extract",
+            "start_s": 0.9586476999975275,
+            "end_s": 1.8083664999867324,
+            "duration_s": 0.8497187999892049,
+            "first_text_s": 1.8048361999972258,
+            "output_chars": 248,
+            "usage": {
+              "input_tokens": 1161,
+              "output_tokens": 111,
+              "total_tokens": 1272,
+              "cache_read_tokens": 0
+            }
+          },
+          {
+            "name": "python_math",
+            "start_s": 1.8083786999923177,
+            "end_s": 1.808611899992684,
+            "duration_s": 0.00023320000036619604,
+            "report_chars": 1279
+          },
+          {
+            "name": "gpa_report_total",
+            "start_s": 0.9584549999854062,
+            "end_s": 1.8086156999925151,
+            "duration_s": 0.850160700007109,
+            "report_chars": 1279
+          },
+          {
+            "name": "system_prompt_build",
+            "start_s": 1.808624700002838,
+            "end_s": 1.8086675999802537,
+            "duration_s": 4.2899977415800095e-05,
+            "chars": 14499
+          },
+          {
+            "name": "llm_history_build",
+            "start_s": 1.808673199993791,
+            "end_s": 1.8086815999995451,
+            "duration_s": 8.400005754083395e-06
+          },
+          {
+            "name": "provider_attempt",
+            "start_s": 1.808862899983069,
+            "end_s": 3.9976625999843236,
+            "duration_s": 2.1887997000012547,
+            "key_index": 1,
+            "phase": "answer"
+          },
+          {
+            "name": "llm_answer",
+            "start_s": 1.8087111999921035,
+            "end_s": 3.9977021999948192,
+            "duration_s": 2.1889910000027157,
+            "first_text_s": 2.947380099998554,
+            "output_chars": 1245,
+            "usage": {
+              "input_tokens": 5567,
+              "output_tokens": 461,
+              "total_tokens": 6028,
+              "cache_read_tokens": 2031
+            }
+          },
+          {
+            "name": "generate_total",
+            "start_s": 0.03231939999386668,
+            "end_s": 3.9990027000021655,
+            "duration_s": 3.966683300008299
+          },
+          {
+            "name": "checkpoint_put",
+            "start_s": 4.006207300000824,
+            "end_s": 4.103316199994879,
+            "duration_s": 0.09710889999405481
+          },
+          {
+            "name": "checkpoint_get_tuple",
+            "start_s": 4.104730299994117,
+            "end_s": 4.11518540000543,
+            "duration_s": 0.010455100011313334
+          },
+          {
+            "name": "conversation_db_update",
+            "start_s": 4.115914199996041,
+            "end_s": 4.1414394000021275,
+            "duration_s": 0.02552520000608638
+          },
+          {
+            "name": "usage_db_insert",
+            "start_s": 4.141571099986322,
+            "end_s": 4.1601761000056285,
+            "duration_s": 0.018605000019306317
+          }
+        ],
+        "marks": [
+          {
+            "name": "request_received",
+            "seconds": 8.500006515532732e-06
+          },
+          {
+            "name": "response_headers",
+            "seconds": 0.01842069998383522,
+            "status": 200
+          },
+          {
+            "name": "queue_wait_start",
+            "seconds": 0.0196857999835629
+          },
+          {
+            "name": "queue_wait_end",
+            "seconds": 0.019707600004039705
+          },
+          {
+            "name": "user_message_event",
+            "seconds": 0.020690100005595013
+          },
+          {
+            "name": "generate_start",
+            "seconds": 0.03232389999902807
+          },
+          {
+            "name": "llm_start",
+            "seconds": 0.04163039999548346,
+            "phase": "route"
+          },
+          {
+            "name": "llm_first_text",
+            "seconds": 0.956744199997047,
+            "phase": "route"
+          },
+          {
+            "name": "llm_end",
+            "seconds": 0.9582182999874931,
+            "phase": "route"
+          },
+          {
+            "name": "llm_start",
+            "seconds": 0.9586526000057347,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_first_text",
+            "seconds": 1.8048392999917269,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_end",
+            "seconds": 1.8083704999880865,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_start",
+            "seconds": 1.8087125000020023,
+            "phase": "answer"
+          },
+          {
+            "name": "llm_first_text",
+            "seconds": 2.9473881000012625,
+            "phase": "answer"
+          },
+          {
+            "name": "first_token_sse",
+            "seconds": 2.952115199994296
+          },
+          {
+            "name": "llm_end",
+            "seconds": 3.997713199991267,
+            "phase": "answer"
+          },
+          {
+            "name": "generate_end",
+            "seconds": 3.9991185999824665
+          },
+          {
+            "name": "done_sse",
+            "seconds": 4.161703899997519,
+            "cached": false
+          },
+          {
+            "name": "request_end",
+            "seconds": 4.169301499990979
+          }
+        ]
+      }
+    },
+    {
+      "label": "step_3",
+      "startedAt": "2026-11-21T06:22:52.258Z",
+      "feBeforeStreamS": 0.0006000000000931323,
+      "ttftS": 2.717100000000093,
+      "doneS": 4.164899999999907,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.04660000000009313,
+      "uiFirstS": 2.7345,
+      "cached": false,
+      "answer": "Có thể bạn nhé 😊 Với ĐTBCTL (điểm trung bình chung tích lũy) tối đa bạn có thể đạt được là **3,71**, cao hơn mức 3,60 để đạt hạng xuất sắc. \n\nDựa trên dữ liệu bạn cung cấp và quy định của Trường (theo Điều 24 và Điều 34), mình tính chi tiết cho bạn nha:\n\n* **Số tín chỉ (TC) còn lại phải học:** \n  * Tổng TC được tính điểm của chương trình: 151 TC - 30 TC điều kiện = 121 TC.\n  * Số TC đã học được tính điểm: 100 TC - 30 TC điều kiện = 70 TC.\n  * Số TC còn lại cần tích lũy: 121 TC - 70 TC = **51 TC**.\n\n* **Điểm trung bình cần đạt ở 51 TC còn lại để đạt hạng xuất sắc (từ 3,60):**\n  * Tổng điểm hệ 4 hiện có: 70 TC × 3,50 = 245 điểm.\n  * Tổng số điểm cần có cho toàn khóa (mục tiêu 3,60): 121 TC × 3,60 = 435,6 điểm.\n  * Điểm cần đạt trong 51 TC còn lại: (435,6 - 245) / 51 = **3,74 / 4,00**.\n  * *(Nếu 51 TC còn lại bạn đạt điểm tuyệt đối A thì ĐTBCTL tối đa toàn khóa của bạn sẽ là (245 + 51 × 4,0) / 121 = 3,71? À, tính theo công thức chính xác ở kết quả là tối đa đạt 3,71, và để chạm mốc 3,60 xuất sắc thì bạn cần duy trì điểm trung bình ở phần còn lại là khoảng 3,74, nghĩa là phải cố gắng đạt hầu hết điểm A đó nha!)*\n\nLưu ý nhỏ là kết quả này **chưa hoàn toàn chắc chắn**, vì nếu ở 51 TC còn lại mà điểm của bạn bị thấp (ví dụ chỉ đạt điểm D) thì ĐTBCTL sẽ giảm xuống đó. Cố gắng giữ vững phong độ nhé bạn! \n\nBạn có muốn mình tính toán thêm cho mục tiêu nào khác không nè? ✨",
+      "sources": [
+        {
+          "article": 24,
+          "n": null,
+          "title": "Điểm trung bình chung học kỳ, điểm trung bình chung năm học và điểm trung bình chung tích lũy",
+          "url": null,
+          "document_url": null
+        },
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "serverDurationS": 4,
+      "endedS": 4.164899999999907,
+      "ended": true,
+      "uiDoneS": 4.192899999999907,
+      "stage_seconds": {
+        "http_auth_validation_admission": 0.026343,
+        "queue_wait": 3e-05,
+        "checkpoint_graph_setup": 0.01986,
+        "rag_and_knowledge": 0.009988,
+        "route_classification": 0.818402,
+        "llm_extract": 0.725224,
+        "python_math": 0.00041,
+        "prompt_build_and_misc": 0.00066,
+        "answer_wait_for_first_text": 1.098304,
+        "answer_stream_and_finalize": 1.314495,
+        "final_checkpoint_and_db": 0.115849,
+        "browser_network_and_render": 0.063337
+      },
+      "server_done_s": 4.129563199996483,
+      "rag_details": {
+        "embedding_api_s": 0,
+        "embedding_cache": [
+          {
+            "hit": true,
+            "duration_s": 5e-06
+          }
+        ],
+        "chroma_query_s": 0.003825,
+        "chroma_queries": 1,
+        "retrieved_articles": [
+          [
+            24,
+            34,
+            26,
+            30,
+            33
+          ]
+        ],
+        "knowledge_retrieval_s": 0.001125
+      },
+      "db_details": {
+        "checkpoint_get_tuple": 0.008141,
+        "checkpoint_put": 0.233613,
+        "checkpoint_put_writes": 0.090823,
+        "conversation_db_update": 0.013005,
+        "usage_db_insert": 0.007322
+      },
+      "llm_calls": [
+        {
+          "name": "llm_route",
+          "start_s": 0.05632469998090528,
+          "end_s": 0.874578399991151,
+          "duration_s": 0.8182537000102457,
+          "first_text_s": 0.8724838999914937,
+          "output_chars": 10,
+          "usage": {
+            "input_tokens": 467,
+            "output_tokens": 1,
+            "total_tokens": 468,
+            "cache_read_tokens": 0
+          }
+        },
+        {
+          "name": "llm_extract",
+          "start_s": 0.875110399996629,
+          "end_s": 1.600334099988686,
+          "duration_s": 0.7252236999920569,
+          "first_text_s": 1.5723760999972,
+          "output_chars": 248,
+          "usage": {
+            "input_tokens": 1161,
+            "output_tokens": 111,
+            "total_tokens": 1272,
+            "cache_read_tokens": 0
+          }
+        },
+        {
+          "name": "llm_answer",
+          "start_s": 1.6009148999874014,
+          "end_s": 4.01326809998136,
+          "duration_s": 2.4123531999939587,
+          "first_text_s": 2.6992184999980964,
+          "output_chars": 1383,
+          "usage": {
+            "input_tokens": 5567,
+            "output_tokens": 528,
+            "total_tokens": 6095,
+            "cache_read_tokens": 2031
+          }
+        }
+      ],
+      "provider_attempts": [
+        {
+          "name": "provider_attempt",
+          "start_s": 0.05635599998640828,
+          "end_s": 0.8745624999864958,
+          "duration_s": 0.8182065000000875,
+          "key_index": 1,
+          "phase": "route"
+        },
+        {
+          "name": "provider_attempt",
+          "start_s": 0.8751483999949414,
+          "end_s": 1.6003139999811538,
+          "duration_s": 0.7251655999862123,
+          "key_index": 1,
+          "phase": "extract"
+        },
+        {
+          "name": "provider_attempt",
+          "start_s": 1.601208999985829,
+          "end_s": 4.013244199973997,
+          "duration_s": 2.4120351999881677,
+          "key_index": 1,
+          "phase": "answer"
+        }
+      ],
+      "answer_check_problems": [],
+      "stage_sum_s": 4.192902,
+      "raw_trace": {
+        "id": "fa3f29f422c2",
+        "label": "step_3",
+        "start": 236638.681776,
+        "spans": [
+          {
+            "name": "input_screen",
+            "start_s": 0.017386099993018433,
+            "end_s": 0.01791429999866523,
+            "duration_s": 0.000528200005646795,
+            "answer_cached": false
+          },
+          {
+            "name": "queue_admission",
+            "start_s": 0.0237351999967359,
+            "end_s": 0.02377799997339025,
+            "duration_s": 4.279997665435076e-05
+          },
+          {
+            "name": "rate_limit_and_admission",
+            "start_s": 0.017936599993845448,
+            "end_s": 0.023824599978979677,
+            "duration_s": 0.005887999985134229
+          },
+          {
+            "name": "queue_wait",
+            "start_s": 0.026334399997722358,
+            "end_s": 0.026364799996372312,
+            "duration_s": 3.0399998649954796e-05
+          },
+          {
+            "name": "checkpoint_get_tuple",
+            "start_s": 0.028985699987970293,
+            "end_s": 0.03393789997790009,
+            "duration_s": 0.004952199989929795
+          },
+          {
+            "name": "query_embedding_cache",
+            "start_s": 0.04991199998767115,
+            "end_s": 0.049917399999685585,
+            "duration_s": 5.4000120144337416e-06,
+            "cache_hit": true
+          },
+          {
+            "name": "chroma_query",
+            "start_s": 0.051056899974355474,
+            "end_s": 0.05488159999367781,
+            "duration_s": 0.0038247000193223357,
+            "collection": "qd3266"
+          },
+          {
+            "name": "vector_search_total",
+            "start_s": 0.04786589997820556,
+            "end_s": 0.054941699985647574,
+            "duration_s": 0.007075800007442012,
+            "collection": "qd3266",
+            "hits": 5
+          },
+          {
+            "name": "document_retrieval",
+            "start_s": 0.04784509999444708,
+            "end_s": 0.05500999998184852,
+            "duration_s": 0.007164899987401441,
+            "articles": [
+              24,
+              34,
+              26,
+              30,
+              33
+            ]
+          },
+          {
+            "name": "knowledge_retrieval",
+            "start_s": 0.05502569998498075,
+            "end_s": 0.05615089999628253,
+            "duration_s": 0.0011252000113017857,
+            "hits": 0
+          },
+          {
+            "name": "checkpoint_put",
+            "start_s": 0.03711739997379482,
+            "end_s": 0.08613469998817891,
+            "duration_s": 0.04901730001438409
+          },
+          {
+            "name": "checkpoint_put_writes",
+            "start_s": 0.0433156999933999,
+            "end_s": 0.13413849999778904,
+            "duration_s": 0.09082280000438914
+          },
+          {
+            "name": "checkpoint_put",
+            "start_s": 0.08678689997759648,
+            "end_s": 0.18210459998226725,
+            "duration_s": 0.09531770000467077
+          },
+          {
+            "name": "provider_attempt",
+            "start_s": 0.05635599998640828,
+            "end_s": 0.8745624999864958,
+            "duration_s": 0.8182065000000875,
+            "key_index": 1,
+            "phase": "route"
+          },
+          {
+            "name": "llm_route",
+            "start_s": 0.05632469998090528,
+            "end_s": 0.874578399991151,
+            "duration_s": 0.8182537000102457,
+            "first_text_s": 0.8724838999914937,
+            "output_chars": 10,
+            "usage": {
+              "input_tokens": 467,
+              "output_tokens": 1,
+              "total_tokens": 468,
+              "cache_read_tokens": 0
+            }
+          },
+          {
+            "name": "route_classification",
+            "start_s": 0.05621919999248348,
+            "end_s": 0.8746209999953862,
+            "duration_s": 0.8184018000029027,
+            "route": "regulation"
+          },
+          {
+            "name": "provider_attempt",
+            "start_s": 0.8751483999949414,
+            "end_s": 1.6003139999811538,
+            "duration_s": 0.7251655999862123,
+            "key_index": 1,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_extract",
+            "start_s": 0.875110399996629,
+            "end_s": 1.600334099988686,
+            "duration_s": 0.7252236999920569,
+            "first_text_s": 1.5723760999972,
+            "output_chars": 248,
+            "usage": {
+              "input_tokens": 1161,
+              "output_tokens": 111,
+              "total_tokens": 1272,
+              "cache_read_tokens": 0
+            }
+          },
+          {
+            "name": "python_math",
+            "start_s": 1.6003539999946952,
+            "end_s": 1.6007643999764696,
+            "duration_s": 0.00041039998177438974,
+            "report_chars": 1279
+          },
+          {
+            "name": "gpa_report_total",
+            "start_s": 0.874880099989241,
+            "end_s": 1.6007749999989755,
+            "duration_s": 0.7258949000097346,
+            "report_chars": 1279
+          },
+          {
+            "name": "system_prompt_build",
+            "start_s": 1.6007884999853559,
+            "end_s": 1.60082729998976,
+            "duration_s": 3.880000440403819e-05,
+            "chars": 14499
+          },
+          {
+            "name": "llm_history_build",
+            "start_s": 1.6008394999953452,
+            "end_s": 1.60085839999374,
+            "duration_s": 1.889999839477241e-05
+          },
+          {
+            "name": "provider_attempt",
+            "start_s": 1.601208999985829,
+            "end_s": 4.013244199973997,
+            "duration_s": 2.4120351999881677,
+            "key_index": 1,
+            "phase": "answer"
+          },
+          {
+            "name": "llm_answer",
+            "start_s": 1.6009148999874014,
+            "end_s": 4.01326809998136,
+            "duration_s": 2.4123531999939587,
+            "first_text_s": 2.6992184999980964,
+            "output_chars": 1383,
+            "usage": {
+              "input_tokens": 5567,
+              "output_tokens": 528,
+              "total_tokens": 6095,
+              "cache_read_tokens": 2031
+            }
+          },
+          {
+            "name": "generate_total",
+            "start_s": 0.046226699982071295,
+            "end_s": 4.013704799988773,
+            "duration_s": 3.9674781000067014
+          },
+          {
+            "name": "checkpoint_put",
+            "start_s": 4.01525810000021,
+            "end_s": 4.104535699996632,
+            "duration_s": 0.08927759999642149
+          },
+          {
+            "name": "checkpoint_get_tuple",
+            "start_s": 4.104930000001332,
+            "end_s": 4.108118999982253,
+            "duration_s": 0.0031889999809209257
+          },
+          {
+            "name": "conversation_db_update",
+            "start_s": 4.108323899999959,
+            "end_s": 4.121329199988395,
+            "duration_s": 0.013005299988435581
+          },
+          {
+            "name": "usage_db_insert",
+            "start_s": 4.121399299998302,
+            "end_s": 4.128720999986399,
+            "duration_s": 0.0073216999880969524
+          }
+        ],
+        "marks": [
+          {
+            "name": "request_received",
+            "seconds": 1.3999990187585354e-05
+          },
+          {
+            "name": "response_headers",
+            "seconds": 0.024886100000003353,
+            "status": 200
+          },
+          {
+            "name": "queue_wait_start",
+            "seconds": 0.02634279997437261
+          },
+          {
+            "name": "queue_wait_end",
+            "seconds": 0.026371499989181757
+          },
+          {
+            "name": "user_message_event",
+            "seconds": 0.027651499985950068
+          },
+          {
+            "name": "generate_start",
+            "seconds": 0.04623159999027848
+          },
+          {
+            "name": "llm_start",
+            "seconds": 0.05632799997692928,
+            "phase": "route"
+          },
+          {
+            "name": "llm_first_text",
+            "seconds": 0.8724908999865875,
+            "phase": "route"
+          },
+          {
+            "name": "llm_end",
+            "seconds": 0.8745842999778688,
+            "phase": "route"
+          },
+          {
+            "name": "llm_start",
+            "seconds": 0.8751153999764938,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_first_text",
+            "seconds": 1.5723822999862023,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_end",
+            "seconds": 1.600340499979211,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_start",
+            "seconds": 1.6009181999834254,
+            "phase": "answer"
+          },
+          {
+            "name": "llm_first_text",
+            "seconds": 2.6992219999956433,
+            "phase": "answer"
+          },
+          {
+            "name": "first_token_sse",
+            "seconds": 2.7016800999990664
+          },
+          {
+            "name": "llm_end",
+            "seconds": 4.013273399992613,
+            "phase": "answer"
+          },
+          {
+            "name": "generate_end",
+            "seconds": 4.0137137999990955
+          },
+          {
+            "name": "done_sse",
+            "seconds": 4.129563199996483,
+            "cached": false
+          },
+          {
+            "name": "request_end",
+            "seconds": 4.134278599987738
+          }
+        ]
+      }
+    },
+    {
+      "label": "step_4",
+      "startedAt": "2026-11-21T06:22:56.676Z",
+      "feBeforeStreamS": 0.00030000000027939676,
+      "ttftS": 2.841,
+      "doneS": 3.8489000000003726,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.026,
+      "uiFirstS": 2.8532000000001863,
+      "cached": false,
+      "answer": "Có thể bạn nhé 😊 Với kết quả hiện tại, ĐTBCTL tối đa bạn có thể đạt được là **3,71**, vượt qua ngưỡng 3,60 của hạng xuất sắc (Điều 34).\n\nDựa theo số liệu bạn cung cấp và đã loại bỏ các học phần điều kiện:\n- Tổng số tín chỉ (TC) tính điểm của chương trình là: 151 − 30 = 121 TC.\n- Số TC tính điểm bạn đã học là: 100 − 30 = 70 TC.\n- Số TC còn lại phải học là: 121 − 70 = 51 TC.\n- Tổng điểm hệ 4 bạn đang có là: 70 × 3,50 = 245 điểm.\n\nĐể đạt hạng **xuất sắc** (từ 3,60 trở lên):\n- Điểm trung bình bạn cần đạt ở **51 TC còn lại** là khoảng **3,74 / 4,00** (tức là gần như phải đạt toàn điểm A) để ĐTBCTL chung cuộc đạt tối thiểu 3,60.\n- **Lưu ý:** Mức này chưa hoàn toàn chắc chắn nha bạn, vì nếu 51 TC còn lại bạn học không tốt (ví dụ chỉ đạt điểm D), ĐTBCTL chung cuộc có thể rớt xuống 2,45 đấy. \n\nBạn có muốn mình tính thử mức điểm cần thiết cho các hạng khác như loại Giỏi không nè? ✨",
+      "sources": [
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "serverDurationS": 3.7,
+      "endedS": 3.8497000000001864,
+      "ended": true,
+      "uiDoneS": 3.8659000000003725,
+      "stage_seconds": {
+        "http_auth_validation_admission": 0.015507,
+        "queue_wait": 1.5e-05,
+        "checkpoint_graph_setup": 0.008714,
+        "rag_and_knowledge": 0.005225,
+        "route_classification": 0.803044,
+        "llm_extract": 0.729381,
+        "python_math": 0.000218,
+        "prompt_build_and_misc": 0.000343,
+        "answer_wait_for_first_text": 1.267116,
+        "answer_stream_and_finalize": 0.893737,
+        "final_checkpoint_and_db": 0.114626,
+        "browser_network_and_render": 0.027975
+      },
+      "server_done_s": 3.837925100000575,
+      "rag_details": {
+        "embedding_api_s": 0,
+        "embedding_cache": [
+          {
+            "hit": true,
+            "duration_s": 4e-06
+          }
+        ],
+        "chroma_query_s": 0.001832,
+        "chroma_queries": 1,
+        "retrieved_articles": [
+          [
+            24,
+            34,
+            26,
+            30,
+            33
+          ]
+        ],
+        "knowledge_retrieval_s": 0.000522
+      },
+      "db_details": {
+        "checkpoint_get_tuple": 0.005206,
+        "checkpoint_put": 0.232341,
+        "checkpoint_put_writes": 0.091412,
+        "conversation_db_update": 0.010667,
+        "usage_db_insert": 0.007562
+      },
+      "llm_calls": [
+        {
+          "name": "llm_route",
+          "start_s": 0.029532200016546994,
+          "end_s": 0.8324770000181161,
+          "duration_s": 0.8029448000015691,
+          "first_text_s": 0.8315682999964338,
+          "output_chars": 10,
+          "usage": {
+            "input_tokens": 467,
+            "output_tokens": 1,
+            "total_tokens": 468,
+            "cache_read_tokens": 0
+          }
+        },
+        {
+          "name": "llm_extract",
+          "start_s": 0.8327617000031751,
+          "end_s": 1.5621422000112943,
+          "duration_s": 0.7293805000081193,
+          "first_text_s": 1.557264800008852,
+          "output_chars": 248,
+          "usage": {
+            "input_tokens": 1161,
+            "output_tokens": 111,
+            "total_tokens": 1272,
+            "cache_read_tokens": 0
+          }
+        },
+        {
+          "name": "llm_answer",
+          "start_s": 1.5624458999955095,
+          "end_s": 3.72303799999645,
+          "duration_s": 2.1605921000009403,
+          "first_text_s": 2.8295622000005096,
+          "output_chars": 884,
+          "usage": {
+            "input_tokens": 5567,
+            "output_tokens": 330,
+            "total_tokens": 5897,
+            "cache_read_tokens": 2031
+          }
+        }
+      ],
+      "provider_attempts": [
+        {
+          "name": "provider_attempt",
+          "start_s": 0.029554200009442866,
+          "end_s": 0.8324668999994174,
+          "duration_s": 0.8029126999899745,
+          "key_index": 1,
+          "phase": "route"
+        },
+        {
+          "name": "provider_attempt",
+          "start_s": 0.8327788000169676,
+          "end_s": 1.562128899997333,
+          "duration_s": 0.7293500999803655,
+          "key_index": 1,
+          "phase": "extract"
+        },
+        {
+          "name": "provider_attempt",
+          "start_s": 1.5626163000124507,
+          "end_s": 3.723020200006431,
+          "duration_s": 2.1604038999939803,
+          "key_index": 1,
+          "phase": "answer"
+        }
+      ],
+      "answer_check_problems": [],
+      "stage_sum_s": 3.8659,
+      "raw_trace": {
+        "id": "2074230784cf",
+        "label": "step_4",
+        "start": 236643.0956679,
+        "spans": [
+          {
+            "name": "input_screen",
+            "start_s": 0.011345500010065734,
+            "end_s": 0.01163789999554865,
+            "duration_s": 0.00029239998548291624,
+            "answer_cached": false
+          },
+          {
+            "name": "queue_admission",
+            "start_s": 0.014423000015085563,
+            "end_s": 0.014441400009673089,
+            "duration_s": 1.8399994587525725e-05
+          },
+          {
+            "name": "rate_limit_and_admission",
+            "start_s": 0.011646400002064183,
+            "end_s": 0.014462499995715916,
+            "duration_s": 0.002816099993651733
+          },
+          {
+            "name": "queue_wait",
+            "start_s": 0.015503700007684529,
+            "end_s": 0.01551830000244081,
+            "duration_s": 1.4599994756281376e-05
+          },
+          {
+            "name": "checkpoint_get_tuple",
+            "start_s": 0.016869700019015,
+            "end_s": 0.01942970001255162,
+            "duration_s": 0.0025599999935366213
+          },
+          {
+            "name": "query_embedding_cache",
+            "start_s": 0.026161200017668307,
+            "end_s": 0.026165699993725866,
+            "duration_s": 4.499976057559252e-06,
+            "cache_hit": true
+          },
+          {
+            "name": "chroma_query",
+            "start_s": 0.026942500000586733,
+            "end_s": 0.028774800011888146,
+            "duration_s": 0.0018323000113014132,
+            "collection": "qd3266"
+          },
+          {
+            "name": "vector_search_total",
+            "start_s": 0.02540350001072511,
+            "end_s": 0.028831200004788116,
+            "duration_s": 0.003427699994063005,
+            "collection": "qd3266",
+            "hits": 5
+          },
+          {
+            "name": "document_retrieval",
+            "start_s": 0.025391200004378334,
+            "end_s": 0.02888970001367852,
+            "duration_s": 0.0034985000093001872,
+            "articles": [
+              24,
+              34,
+              26,
+              30,
+              33
+            ]
+          },
+          {
+            "name": "knowledge_retrieval",
+            "start_s": 0.028901400015456602,
+            "end_s": 0.02942320000147447,
+            "duration_s": 0.0005217999860178679,
+            "hits": 0
+          },
+          {
+            "name": "checkpoint_put",
+            "start_s": 0.020434000005479902,
+            "end_s": 0.06729579999228008,
+            "duration_s": 0.04686179998680018
+          },
+          {
+            "name": "checkpoint_put_writes",
+            "start_s": 0.023132000002078712,
+            "end_s": 0.11454400001093745,
+            "duration_s": 0.09141200000885874
+          },
+          {
+            "name": "checkpoint_put",
+            "start_s": 0.0676480999973137,
+            "end_s": 0.16344950001803227,
+            "duration_s": 0.09580140002071857
+          },
+          {
+            "name": "provider_attempt",
+            "start_s": 0.029554200009442866,
+            "end_s": 0.8324668999994174,
+            "duration_s": 0.8029126999899745,
+            "key_index": 1,
+            "phase": "route"
+          },
+          {
+            "name": "llm_route",
+            "start_s": 0.029532200016546994,
+            "end_s": 0.8324770000181161,
+            "duration_s": 0.8029448000015691,
+            "first_text_s": 0.8315682999964338,
+            "output_chars": 10,
+            "usage": {
+              "input_tokens": 467,
+              "output_tokens": 1,
+              "total_tokens": 468,
+              "cache_read_tokens": 0
+            }
+          },
+          {
+            "name": "route_classification",
+            "start_s": 0.029460699995979667,
+            "end_s": 0.8325043999939226,
+            "duration_s": 0.8030436999979429,
+            "route": "regulation"
+          },
+          {
+            "name": "provider_attempt",
+            "start_s": 0.8327788000169676,
+            "end_s": 1.562128899997333,
+            "duration_s": 0.7293500999803655,
+            "key_index": 1,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_extract",
+            "start_s": 0.8327617000031751,
+            "end_s": 1.5621422000112943,
+            "duration_s": 0.7293805000081193,
+            "first_text_s": 1.557264800008852,
+            "output_chars": 248,
+            "usage": {
+              "input_tokens": 1161,
+              "output_tokens": 111,
+              "total_tokens": 1272,
+              "cache_read_tokens": 0
+            }
+          },
+          {
+            "name": "python_math",
+            "start_s": 1.5621534000092652,
+            "end_s": 1.562371300009545,
+            "duration_s": 0.0002179000002797693,
+            "report_chars": 1279
+          },
+          {
+            "name": "gpa_report_total",
+            "start_s": 0.8326564000162762,
+            "end_s": 1.562375500012422,
+            "duration_s": 0.7297190999961458,
+            "report_chars": 1279
+          },
+          {
+            "name": "system_prompt_build",
+            "start_s": 1.562381900002947,
+            "end_s": 1.5624058000103105,
+            "duration_s": 2.3900007363408804e-05,
+            "chars": 14499
+          },
+          {
+            "name": "llm_history_build",
+            "start_s": 1.5624118999985512,
+            "end_s": 1.5624201000027824,
+            "duration_s": 8.200004231184721e-06
+          },
+          {
+            "name": "provider_attempt",
+            "start_s": 1.5626163000124507,
+            "end_s": 3.723020200006431,
+            "duration_s": 2.1604038999939803,
+            "key_index": 1,
+            "phase": "answer"
+          },
+          {
+            "name": "llm_answer",
+            "start_s": 1.5624458999955095,
+            "end_s": 3.72303799999645,
+            "duration_s": 2.1605921000009403,
+            "first_text_s": 2.8295622000005096,
+            "output_chars": 884,
+            "usage": {
+              "input_tokens": 5567,
+              "output_tokens": 330,
+              "total_tokens": 5897,
+              "cache_read_tokens": 2031
+            }
+          },
+          {
+            "name": "generate_total",
+            "start_s": 0.024231899995356798,
+            "end_s": 3.723296300013317,
+            "duration_s": 3.69906440001796
+          },
+          {
+            "name": "checkpoint_put",
+            "start_s": 3.7250652000075206,
+            "end_s": 3.814743399998406,
+            "duration_s": 0.08967819999088533
+          },
+          {
+            "name": "checkpoint_get_tuple",
+            "start_s": 3.8153214000049047,
+            "end_s": 3.8179670000099577,
+            "duration_s": 0.0026456000050529838
+          },
+          {
+            "name": "conversation_db_update",
+            "start_s": 3.818170700018527,
+            "end_s": 3.82883790001506,
+            "duration_s": 0.010667199996532872
+          },
+          {
+            "name": "usage_db_insert",
+            "start_s": 3.828901800006861,
+            "end_s": 3.8364635000179987,
+            "duration_s": 0.007561700011137873
+          }
+        ],
+        "marks": [
+          {
+            "name": "request_received",
+            "seconds": 8.700008038431406e-06
+          },
+          {
+            "name": "response_headers",
+            "seconds": 0.01498800000990741,
+            "status": 200
+          },
+          {
+            "name": "queue_wait_start",
+            "seconds": 0.015507000003708526
+          },
+          {
+            "name": "queue_wait_end",
+            "seconds": 0.01552139999694191
+          },
+          {
+            "name": "user_message_event",
+            "seconds": 0.016099700005725026
+          },
+          {
+            "name": "generate_start",
+            "seconds": 0.024235299992142245
+          },
+          {
+            "name": "llm_start",
+            "seconds": 0.02953440000419505,
+            "phase": "route"
+          },
+          {
+            "name": "llm_first_text",
+            "seconds": 0.8315718999947421,
+            "phase": "route"
+          },
+          {
+            "name": "llm_end",
+            "seconds": 0.8324811000202317,
+            "phase": "route"
+          },
+          {
+            "name": "llm_start",
+            "seconds": 0.8327635000168812,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_first_text",
+            "seconds": 1.5572675000003073,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_end",
+            "seconds": 1.5621456000080798,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_start",
+            "seconds": 1.562447100004647,
+            "phase": "answer"
+          },
+          {
+            "name": "llm_first_text",
+            "seconds": 2.829565399995772,
+            "phase": "answer"
+          },
+          {
+            "name": "first_token_sse",
+            "seconds": 2.831193100020755
+          },
+          {
+            "name": "llm_end",
+            "seconds": 3.7230426000023726,
+            "phase": "answer"
+          },
+          {
+            "name": "generate_end",
+            "seconds": 3.723299200006295
+          },
+          {
+            "name": "done_sse",
+            "seconds": 3.837925100000575,
+            "cached": false
+          },
+          {
+            "name": "request_end",
+            "seconds": 3.8429539000208024
+          }
+        ]
+      }
+    },
+    {
+      "label": "step_5",
+      "startedAt": "2026-11-21T06:23:00.741Z",
+      "feBeforeStreamS": 0.00019999999972060322,
+      "ttftS": 2.8625999999996274,
+      "doneS": 3.744,
+      "queued": [],
+      "status": 200,
+      "headersS": 0.0245,
+      "uiFirstS": 2.8735,
+      "cached": false,
+      "answer": "Có thể bạn nhé 😊 Với kết quả hiện tại, ĐTBCTL tối đa của bạn có thể đạt được là **3,71** (cao hơn mức 3,60 của hạng xuất sắc), nhưng bạn chưa thực sự chắc chắn giữ được mức này đâu nha! \n\nDưới đây là chi tiết cụ thể dựa trên quy định của trường mình nè:\n\n- **Số tín chỉ còn phải học:** \n  + C = 100 - 30 = 70 tín chỉ đã tích lũy tính điểm.\n  + T = 151 - 30 = 121 tổng tín chỉ tính điểm của toàn chương trình.\n  + Số tín chỉ còn lại = 121 - 70 = 51 tín chỉ.\n- **Điểm trung bình cần đạt ở phần còn lại (51 tín chỉ):** Bạn cần duy trì điểm trung bình từ **3,74/4,00** trở lên ở 51 tín chỉ còn lại mới chạm mốc xuất sắc (từ 3,60 trở lên theo Điều 34). \n\n*Lưu ý nhỏ:* Vì đây là mức khá cao (gần như toàn điểm A), nếu phần còn lại bạn chỉ đạt điểm thấp (ví dụ điểm D), ĐTBCTL chung cuộc có thể rớt xuống mức 2,45 đấy nhé! \n\nBạn có muốn mình tính thử cho các mức học lực khác hoặc cần hỏi thêm gì về quy chế không nè? ✨📚",
+      "sources": [
+        {
+          "article": 34,
+          "n": null,
+          "title": "Bằng tốt nghiệp và hạng tốt nghiệp",
+          "url": null,
+          "document_url": null
+        }
+      ],
+      "serverDurationS": 3.6,
+      "endedS": 3.7440999999996274,
+      "ended": true,
+      "uiDoneS": 3.7640999999996274,
+      "stage_seconds": {
+        "http_auth_validation_admission": 0.0144,
+        "queue_wait": 1.4e-05,
+        "checkpoint_graph_setup": 0.01052,
+        "rag_and_knowledge": 0.004243,
+        "route_classification": 0.525726,
+        "llm_extract": 1.066355,
+        "python_math": 0.000192,
+        "prompt_build_and_misc": 0.000297,
+        "answer_wait_for_first_text": 1.23015,
+        "answer_stream_and_finalize": 0.749553,
+        "final_checkpoint_and_db": 0.123301,
+        "browser_network_and_render": 0.03935
+      },
+      "server_done_s": 3.7247497999924235,
+      "rag_details": {
+        "embedding_api_s": 0,
+        "embedding_cache": [
+          {
+            "hit": true,
+            "duration_s": 3e-06
+          }
+        ],
+        "chroma_query_s": 0.001675,
+        "chroma_queries": 1,
+        "retrieved_articles": [
+          [
+            24,
+            34,
+            26,
+            30,
+            33
+          ]
+        ],
+        "knowledge_retrieval_s": 0.000478
+      },
+      "db_details": {
+        "checkpoint_get_tuple": 0.005275,
+        "checkpoint_put": 0.234096,
+        "checkpoint_put_writes": 0.086688,
+        "conversation_db_update": 0.011869,
+        "usage_db_insert": 0.008919
+      },
+      "llm_calls": [
+        {
+          "name": "llm_route",
+          "start_s": 0.029262600000947714,
+          "end_s": 0.5548774999915622,
+          "duration_s": 0.5256148999906145,
+          "first_text_s": 0.554108999989694,
+          "output_chars": 10,
+          "usage": {
+            "input_tokens": 467,
+            "output_tokens": 1,
+            "total_tokens": 468,
+            "cache_read_tokens": 0
+          }
+        },
+        {
+          "name": "llm_extract",
+          "start_s": 0.5551301999948919,
+          "end_s": 1.6214850999822374,
+          "duration_s": 1.0663548999873456,
+          "first_text_s": 1.4410802999918815,
+          "output_chars": 248,
+          "usage": {
+            "input_tokens": 1161,
+            "output_tokens": 111,
+            "total_tokens": 1272,
+            "cache_read_tokens": 0
+          }
+        },
+        {
+          "name": "llm_answer",
+          "start_s": 1.621746399992844,
+          "end_s": 3.6011882000020705,
+          "duration_s": 1.9794418000092264,
+          "first_text_s": 2.851896299980581,
+          "output_chars": 913,
+          "usage": {
+            "input_tokens": 5567,
+            "output_tokens": 319,
+            "total_tokens": 5886,
+            "cache_read_tokens": 2031
+          }
+        }
+      ],
+      "provider_attempts": [
+        {
+          "name": "provider_attempt",
+          "start_s": 0.029290099977515638,
+          "end_s": 0.5548688999842852,
+          "duration_s": 0.5255788000067696,
+          "key_index": 1,
+          "phase": "route"
+        },
+        {
+          "name": "provider_attempt",
+          "start_s": 0.5551443999866024,
+          "end_s": 1.6214757999987341,
+          "duration_s": 1.0663314000121318,
+          "key_index": 1,
+          "phase": "extract"
+        },
+        {
+          "name": "provider_attempt",
+          "start_s": 1.6218714999849908,
+          "end_s": 3.6011746999865863,
+          "duration_s": 1.9793032000015955,
+          "key_index": 1,
+          "phase": "answer"
+        }
+      ],
+      "answer_check_problems": [],
+      "stage_sum_s": 3.764101,
+      "raw_trace": {
+        "id": "0c6ea49bb1aa",
+        "label": "step_5",
+        "start": 236647.1593054,
+        "spans": [
+          {
+            "name": "input_screen",
+            "start_s": 0.009464899980230257,
+            "end_s": 0.009746199997607619,
+            "duration_s": 0.00028130001737736166,
+            "answer_cached": false
+          },
+          {
+            "name": "queue_admission",
+            "start_s": 0.013064400001894683,
+            "end_s": 0.013093199988361448,
+            "duration_s": 2.8799986466765404e-05
+          },
+          {
+            "name": "rate_limit_and_admission",
+            "start_s": 0.009753699996508658,
+            "end_s": 0.013120699994033203,
+            "duration_s": 0.0033669999975245446
+          },
+          {
+            "name": "queue_wait",
+            "start_s": 0.014396099984878674,
+            "end_s": 0.01441009997506626,
+            "duration_s": 1.3999990187585354e-05
+          },
+          {
+            "name": "checkpoint_get_tuple",
+            "start_s": 0.01593769999453798,
+            "end_s": 0.018677399988519028,
+            "duration_s": 0.0027396999939810485
+          },
+          {
+            "name": "query_embedding_cache",
+            "start_s": 0.026276699994923547,
+            "end_s": 0.0262792999856174,
+            "duration_s": 2.5999906938523054e-06,
+            "cache_hit": true
+          },
+          {
+            "name": "chroma_query",
+            "start_s": 0.02686149999499321,
+            "end_s": 0.028536099998746067,
+            "duration_s": 0.0016746000037528574,
+            "collection": "qd3266"
+          },
+          {
+            "name": "vector_search_total",
+            "start_s": 0.02549809997435659,
+            "end_s": 0.028583699982846156,
+            "duration_s": 0.003085600008489564,
+            "collection": "qd3266",
+            "hits": 5
+          },
+          {
+            "name": "document_retrieval",
+            "start_s": 0.02548659997410141,
+            "end_s": 0.0286437000031583,
+            "duration_s": 0.003157100029056892,
+            "articles": [
+              24,
+              34,
+              26,
+              30,
+              33
+            ]
+          },
+          {
+            "name": "knowledge_retrieval",
+            "start_s": 0.02865729999030009,
+            "end_s": 0.029135099990526214,
+            "duration_s": 0.0004778000002261251,
+            "hits": 0
+          },
+          {
+            "name": "checkpoint_put",
+            "start_s": 0.020039600000018254,
+            "end_s": 0.06647910000174306,
+            "duration_s": 0.04643950000172481
+          },
+          {
+            "name": "checkpoint_put_writes",
+            "start_s": 0.023980400001164526,
+            "end_s": 0.11066869998467155,
+            "duration_s": 0.08668829998350702
+          },
+          {
+            "name": "checkpoint_put",
+            "start_s": 0.06655029999092221,
+            "end_s": 0.1581609999993816,
+            "duration_s": 0.09161070000845939
+          },
+          {
+            "name": "provider_attempt",
+            "start_s": 0.029290099977515638,
+            "end_s": 0.5548688999842852,
+            "duration_s": 0.5255788000067696,
+            "key_index": 1,
+            "phase": "route"
+          },
+          {
+            "name": "llm_route",
+            "start_s": 0.029262600000947714,
+            "end_s": 0.5548774999915622,
+            "duration_s": 0.5256148999906145,
+            "first_text_s": 0.554108999989694,
+            "output_chars": 10,
+            "usage": {
+              "input_tokens": 467,
+              "output_tokens": 1,
+              "total_tokens": 468,
+              "cache_read_tokens": 0
+            }
+          },
+          {
+            "name": "route_classification",
+            "start_s": 0.02917569997953251,
+            "end_s": 0.5549021999759134,
+            "duration_s": 0.5257264999963809,
+            "route": "regulation"
+          },
+          {
+            "name": "provider_attempt",
+            "start_s": 0.5551443999866024,
+            "end_s": 1.6214757999987341,
+            "duration_s": 1.0663314000121318,
+            "key_index": 1,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_extract",
+            "start_s": 0.5551301999948919,
+            "end_s": 1.6214850999822374,
+            "duration_s": 1.0663548999873456,
+            "first_text_s": 1.4410802999918815,
+            "output_chars": 248,
+            "usage": {
+              "input_tokens": 1161,
+              "output_tokens": 111,
+              "total_tokens": 1272,
+              "cache_read_tokens": 0
+            }
+          },
+          {
+            "name": "python_math",
+            "start_s": 1.6214956999756396,
+            "end_s": 1.6216879999847151,
+            "duration_s": 0.00019230000907555223,
+            "report_chars": 1279
+          },
+          {
+            "name": "gpa_report_total",
+            "start_s": 0.5550312999985181,
+            "end_s": 1.6216920999868307,
+            "duration_s": 1.0666607999883126,
+            "report_chars": 1279
+          },
+          {
+            "name": "system_prompt_build",
+            "start_s": 1.62169809997431,
+            "end_s": 1.6217151999881025,
+            "duration_s": 1.71000137925148e-05,
+            "chars": 14499
+          },
+          {
+            "name": "llm_history_build",
+            "start_s": 1.6217193999909796,
+            "end_s": 1.6217268999898806,
+            "duration_s": 7.499998901039362e-06
+          },
+          {
+            "name": "provider_attempt",
+            "start_s": 1.6218714999849908,
+            "end_s": 3.6011746999865863,
+            "duration_s": 1.9793032000015955,
+            "key_index": 1,
+            "phase": "answer"
+          },
+          {
+            "name": "llm_answer",
+            "start_s": 1.621746399992844,
+            "end_s": 3.6011882000020705,
+            "duration_s": 1.9794418000092264,
+            "first_text_s": 2.851896299980581,
+            "output_chars": 913,
+            "usage": {
+              "input_tokens": 5567,
+              "output_tokens": 319,
+              "total_tokens": 5886,
+              "cache_read_tokens": 2031
+            }
+          },
+          {
+            "name": "generate_total",
+            "start_s": 0.024930199986556545,
+            "end_s": 3.6014433999953326,
+            "duration_s": 3.576513200008776
+          },
+          {
+            "name": "checkpoint_put",
+            "start_s": 3.602657699986594,
+            "end_s": 3.698703399975784,
+            "duration_s": 0.09604569998919033
+          },
+          {
+            "name": "checkpoint_get_tuple",
+            "start_s": 3.699337799975183,
+            "end_s": 3.7018728999828454,
+            "duration_s": 0.0025351000076625496
+          },
+          {
+            "name": "conversation_db_update",
+            "start_s": 3.702072899992345,
+            "end_s": 3.713942100002896,
+            "duration_s": 0.01186920001055114
+          },
+          {
+            "name": "usage_db_insert",
+            "start_s": 3.7141305999830365,
+            "end_s": 3.723049699998228,
+            "duration_s": 0.008919100015191361
+          }
+        ],
+        "marks": [
+          {
+            "name": "request_received",
+            "seconds": 7.299997378140688e-06
+          },
+          {
+            "name": "response_headers",
+            "seconds": 0.013841999985743314,
+            "status": 200
+          },
+          {
+            "name": "queue_wait_start",
+            "seconds": 0.01439969998318702
+          },
+          {
+            "name": "queue_wait_end",
+            "seconds": 0.01441299999714829
+          },
+          {
+            "name": "user_message_event",
+            "seconds": 0.015087299980223179
+          },
+          {
+            "name": "generate_start",
+            "seconds": 0.024932699976488948
+          },
+          {
+            "name": "llm_start",
+            "seconds": 0.029265599994687364,
+            "phase": "route"
+          },
+          {
+            "name": "llm_first_text",
+            "seconds": 0.5541125999880023,
+            "phase": "route"
+          },
+          {
+            "name": "llm_end",
+            "seconds": 0.5548806999868248,
+            "phase": "route"
+          },
+          {
+            "name": "llm_start",
+            "seconds": 0.5551314999756869,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_first_text",
+            "seconds": 1.4410832999856211,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_end",
+            "seconds": 1.6214892999851145,
+            "phase": "extract"
+          },
+          {
+            "name": "llm_start",
+            "seconds": 1.62174750000122,
+            "phase": "answer"
+          },
+          {
+            "name": "llm_first_text",
+            "seconds": 2.8518994999758434,
+            "phase": "answer"
+          },
+          {
+            "name": "first_token_sse",
+            "seconds": 2.8541764999972656
+          },
+          {
+            "name": "llm_end",
+            "seconds": 3.6011920000019018,
+            "phase": "answer"
+          },
+          {
+            "name": "generate_end",
+            "seconds": 3.6014488999790046
+          },
+          {
+            "name": "done_sse",
+            "seconds": 3.7247497999924235,
+            "cached": false
+          },
+          {
+            "name": "request_end",
+            "seconds": 3.7315828999853693
+          }
+        ]
+      }
+    }
+  ],
+  "mean_stage_seconds": {
+    "http_auth_validation_admission": 0.018585,
+    "queue_wait": 2e-05,
+    "checkpoint_graph_setup": 0.018901,
+    "rag_and_knowledge": 0.165717,
+    "route_classification": 0.818602,
+    "llm_extract": 0.874365,
+    "python_math": 0.000401,
+    "prompt_build_and_misc": 0.000482,
+    "answer_wait_for_first_text": 1.167442,
+    "answer_stream_and_finalize": 0.891197,
+    "final_checkpoint_and_db": 0.128854,
+    "browser_network_and_render": 0.063735
+  },
+  "totals": {
+    "mean_ui_done_s": 4.1483,
+    "mean_ui_first_text_s": 3.1021,
+    "all_actual_vector_search": true,
+    "all_uncached_answers": true,
+    "all_answer_checks_passed": true,
+    "provider_attempts": 15,
+    "provider_errors": 0,
+    "keys_used": [
+      1
+    ],
+    "llm_fraction_of_ui_wall_time": 0.9044,
+    "chroma_query_mean_ms": 2.715,
+    "warm_rag_mean_ms": 7.15
+  },
+  "notes": [
+    "Same hard question submitted five times sequentially in five new conversations through the real UI.",
+    "Browser measurements start at the native Send click. Existing empty conversations were created before the click.",
+    "UI first text and final render are measured with MutationObserver; stream done and token arrival are measured on a response clone.",
+    "Stage durations partition the end-to-end UI completion interval. Browser network/render is the remaining wall time outside the backend interval.",
+    "RAG details are nested within rag_and_knowledge and must not be added a second time.",
+    "Raw checkpoint operations can overlap graph generation; final_checkpoint_and_db measures only the post-generation critical path.",
+    "Query-vector cache stays enabled. Only the first request needs a query embedding RPC; every run still queries ChromaDB.",
+    "No document OCR, indexing or document embedding was run; only the first question embedding was created.",
+    "This is a small sequential local profile, not production latency or a load test."
+  ],
+  "finalState": {
+    "health": {
+      "BE": 200,
+      "FE": 200
+    },
+    "backend": "app.main:app; temporary timing wrapper removed",
+    "testBrowserClosed": true
+  }
+}

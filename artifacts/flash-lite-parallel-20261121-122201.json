@@ -1,0 +1,325 @@
+{
+  "started_at": "2026-11-21T12:22:01.838718+07:00",
+  "model": "gemini-3.5-flash-lite",
+  "configured_model": "gemini-3.5-flash-lite",
+  "key_policy": "first configured key, shared client, no key rotation or retries",
+  "scope": "local direct streaming LLM calls with the app system prompt and fixed document context",
+  "excluded": [
+    "HTTP endpoint",
+    "app admission queue",
+    "routing/extraction/tools",
+    "query embeddings",
+    "Postgres"
+  ],
+  "prompt": {
+    "articles": [
+      14,
+      13,
+      15,
+      16,
+      17
+    ],
+    "question": "Tóm tắt quy định đăng ký số tín chỉ trong học kỳ chính theo Điều 14. Trả lời bằng tiếng Việt khoảng 80 từ, chỉ dựa vào tài liệu được cung cấp.",
+    "input_chars": 11925,
+    "sha256": "deee9ca1088a5a0428012433cbab486d91db0682bff6e2a102aa48586531576a"
+  },
+  "max_attempts": 15,
+  "batches": [
+    {
+      "concurrency": 1,
+      "started_at": "2026-11-21T12:22:01.849723+07:00",
+      "requests": [
+        {
+          "request": 1,
+          "start_offset_s": 0.0,
+          "ttft_s": 5.844,
+          "returned_model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "total_s": 6.106,
+          "output_chars": 437,
+          "usage": {
+            "input_tokens": 3841,
+            "output_tokens": 127,
+            "total_tokens": 3968
+          }
+        },
+        {
+          "request": 2,
+          "start_offset_s": 6.1065,
+          "ttft_s": 3.535,
+          "returned_model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "total_s": 3.676,
+          "output_chars": 407,
+          "usage": {
+            "input_tokens": 3841,
+            "output_tokens": 112,
+            "total_tokens": 3953
+          }
+        },
+        {
+          "request": 3,
+          "start_offset_s": 9.7838,
+          "ttft_s": 2.97,
+          "returned_model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "total_s": 3.22,
+          "output_chars": 391,
+          "usage": {
+            "input_tokens": 3841,
+            "output_tokens": 109,
+            "total_tokens": 3950
+          }
+        }
+      ],
+      "summary": {
+        "attempted": 3,
+        "successful": 3,
+        "failed": 0,
+        "batch_wall_s": 13.005,
+        "completed_per_second": 0.231,
+        "ttft_s": {
+          "min": 2.97,
+          "median": 3.535,
+          "max": 5.844,
+          "mean": 4.116
+        },
+        "total_s": {
+          "min": 3.22,
+          "median": 3.676,
+          "max": 6.106,
+          "mean": 4.334
+        }
+      },
+      "finished_at": "2026-11-21T12:22:14.855636+07:00"
+    },
+    {
+      "concurrency": 4,
+      "started_at": "2026-11-21T12:22:14.864647+07:00",
+      "requests": [
+        {
+          "request": 1,
+          "start_offset_s": 0.0074,
+          "ttft_s": 2.683,
+          "returned_model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "total_s": 2.784,
+          "output_chars": 374,
+          "usage": {
+            "input_tokens": 3841,
+            "output_tokens": 104,
+            "total_tokens": 3945
+          }
+        },
+        {
+          "request": 2,
+          "start_offset_s": 0.0045,
+          "ttft_s": 14.032,
+          "returned_model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "total_s": 14.305,
+          "output_chars": 381,
+          "usage": {
+            "input_tokens": 3841,
+            "output_tokens": 107,
+            "total_tokens": 3948
+          }
+        },
+        {
+          "request": 3,
+          "start_offset_s": 0.0105,
+          "ttft_s": 2.113,
+          "returned_model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "total_s": 2.265,
+          "output_chars": 376,
+          "usage": {
+            "input_tokens": 3841,
+            "output_tokens": 105,
+            "total_tokens": 3946
+          }
+        },
+        {
+          "request": 4,
+          "start_offset_s": 0.0022,
+          "ttft_s": 2.701,
+          "returned_model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "total_s": 2.826,
+          "output_chars": 374,
+          "usage": {
+            "input_tokens": 3841,
+            "output_tokens": 104,
+            "total_tokens": 3945
+          }
+        }
+      ],
+      "summary": {
+        "attempted": 4,
+        "successful": 4,
+        "failed": 0,
+        "batch_wall_s": 14.311,
+        "completed_per_second": 0.28,
+        "ttft_s": {
+          "min": 2.113,
+          "median": 2.692,
+          "max": 14.032,
+          "mean": 5.382
+        },
+        "total_s": {
+          "min": 2.265,
+          "median": 2.805,
+          "max": 14.305,
+          "mean": 5.545
+        }
+      },
+      "finished_at": "2026-11-21T12:22:29.175847+07:00"
+    },
+    {
+      "concurrency": 8,
+      "started_at": "2026-11-21T12:22:29.185851+07:00",
+      "requests": [
+        {
+          "request": 1,
+          "start_offset_s": 0.0054,
+          "ttft_s": 15.703,
+          "returned_model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "total_s": 15.874,
+          "output_chars": 320,
+          "usage": {
+            "input_tokens": 3841,
+            "output_tokens": 98,
+            "total_tokens": 3939
+          }
+        },
+        {
+          "request": 2,
+          "start_offset_s": 0.0176,
+          "ttft_s": 1.402,
+          "returned_model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "total_s": 16.956,
+          "output_chars": 437,
+          "usage": {
+            "input_tokens": 3841,
+            "output_tokens": 127,
+            "total_tokens": 3968
+          }
+        },
+        {
+          "request": 3,
+          "start_offset_s": 0.0076,
+          "ttft_s": 15.977,
+          "returned_model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "total_s": 16.182,
+          "output_chars": 394,
+          "usage": {
+            "input_tokens": 3841,
+            "output_tokens": 108,
+            "total_tokens": 3949
+          }
+        },
+        {
+          "request": 4,
+          "start_offset_s": 0.0201,
+          "ttft_s": 1.684,
+          "returned_model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "total_s": 1.867,
+          "output_chars": 411,
+          "usage": {
+            "input_tokens": 3841,
+            "output_tokens": 116,
+            "total_tokens": 3957
+          }
+        },
+        {
+          "request": 5,
+          "start_offset_s": 0.0146,
+          "ttft_s": 1.403,
+          "returned_model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "total_s": 1.569,
+          "output_chars": 400,
+          "usage": {
+            "input_tokens": 3841,
+            "output_tokens": 115,
+            "total_tokens": 3956
+          }
+        },
+        {
+          "request": 6,
+          "start_offset_s": 0.0098,
+          "ttft_s": 5.394,
+          "returned_model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "total_s": 5.431,
+          "output_chars": 355,
+          "usage": {
+            "input_tokens": 3841,
+            "output_tokens": 96,
+            "total_tokens": 3937
+          }
+        },
+        {
+          "request": 7,
+          "start_offset_s": 0.0123,
+          "ttft_s": 17.804,
+          "returned_model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "total_s": 18.05,
+          "output_chars": 382,
+          "usage": {
+            "input_tokens": 3841,
+            "output_tokens": 107,
+            "total_tokens": 3948
+          }
+        },
+        {
+          "request": 8,
+          "start_offset_s": 0.0028,
+          "ttft_s": 1.991,
+          "returned_model": "gemini-3.5-flash-lite",
+          "ok": true,
+          "total_s": 2.272,
+          "output_chars": 448,
+          "usage": {
+            "input_tokens": 3841,
+            "output_tokens": 130,
+            "total_tokens": 3971
+          }
+        }
+      ],
+      "summary": {
+        "attempted": 8,
+        "successful": 8,
+        "failed": 0,
+        "batch_wall_s": 18.064,
+        "completed_per_second": 0.443,
+        "ttft_s": {
+          "min": 1.402,
+          "median": 3.692,
+          "max": 17.804,
+          "mean": 7.67
+        },
+        "total_s": {
+          "min": 1.569,
+          "median": 10.652,
+          "max": 18.05,
+          "mean": 9.775
+        }
+      },
+      "finished_at": "2026-11-21T12:22:47.249489+07:00"
+    }
+  ],
+  "finished_at": "2026-11-21T12:22:47.252277+07:00",
+  "actual_attempts": 15,
+  "measurement_notes": [
+    "Three serial baseline calls, then one burst of four and one burst of eight.",
+    "Identical prompt and one shared configured API key at all levels.",
+    "Provider prompt caching and cold/warm connections may affect successive batches.",
+    "This small sample measures burst latency, not sustained capacity or production HTTP throughput."
+  ]
+}

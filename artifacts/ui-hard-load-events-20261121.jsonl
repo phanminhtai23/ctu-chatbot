@@ -1,0 +1,944 @@
+{"kind": "chat_start", "at": 1795241203.4494298, "request_id": "2b0f32bf7a9f", "case": "t01"}
+{"kind": "chat_start", "at": 1795241203.455078, "request_id": "476b6c348460", "case": "b01"}
+{"kind": "chat_start", "at": 1795241203.4585981, "request_id": "ad3af325ef82", "case": "w04"}
+{"kind": "http_status", "at": 1795241203.4849577, "id": "2b0f32bf7a9f", "case": "t01", "status": 200, "seconds": 0.0341}
+{"kind": "http_status", "at": 1795241203.4885044, "id": "476b6c348460", "case": "b01", "status": 200, "seconds": 0.0329}
+{"kind": "http_status", "at": 1795241203.4895556, "id": "ad3af325ef82", "case": "w04", "status": 200, "seconds": 0.0312}
+{"kind": "chat_start", "at": 1795241203.5118833, "request_id": "86a0528c339e", "case": "s08"}
+{"kind": "http_status", "at": 1795241203.5428388, "id": "86a0528c339e", "case": "s08", "status": 200, "seconds": 0.0274}
+{"kind": "provider_attempt", "at": 1795241204.3811712, "request_id": "476b6c348460", "case": "b01", "key_index": 1, "call_id": "88e6dd9e1d"}
+{"kind": "provider_attempt", "at": 1795241204.4165518, "request_id": "2b0f32bf7a9f", "case": "t01", "key_index": 1, "call_id": "37d6142326"}
+{"kind": "provider_attempt", "at": 1795241204.420561, "request_id": "ad3af325ef82", "case": "w04", "key_index": 1, "call_id": "ca1ce39290"}
+{"kind": "provider_attempt", "at": 1795241204.445442, "request_id": "86a0528c339e", "case": "s08", "key_index": 1, "call_id": "91519f866d"}
+{"kind": "provider_first_chunk", "at": 1795241205.4954562, "request_id": "2b0f32bf7a9f", "case": "t01", "key_index": 1, "call_id": "37d6142326", "seconds": 1.1017}
+{"kind": "provider_first_chunk", "at": 1795241205.496455, "request_id": "ad3af325ef82", "case": "w04", "key_index": 1, "call_id": "ca1ce39290", "seconds": 1.104}
+{"kind": "provider_done", "at": 1795241205.5004513, "request_id": "2b0f32bf7a9f", "case": "t01", "key_index": 1, "call_id": "37d6142326", "seconds": 1.1071, "usage": {"input_tokens": 464, "output_tokens": 1, "total_tokens": 465}}
+{"kind": "provider_done", "at": 1795241205.5030856, "request_id": "ad3af325ef82", "case": "w04", "key_index": 1, "call_id": "ca1ce39290", "seconds": 1.1088, "usage": {"input_tokens": 467, "output_tokens": 1, "total_tokens": 468}}
+{"kind": "provider_attempt", "at": 1795241205.506605, "request_id": "2b0f32bf7a9f", "case": "t01", "key_index": 1, "call_id": "5ba9f1afe3"}
+{"kind": "provider_attempt", "at": 1795241205.5111392, "request_id": "ad3af325ef82", "case": "w04", "key_index": 1, "call_id": "f09ea950de"}
+{"kind": "provider_first_chunk", "at": 1795241205.7291565, "request_id": "476b6c348460", "case": "b01", "key_index": 1, "call_id": "88e6dd9e1d", "seconds": 1.3481}
+{"kind": "provider_done", "at": 1795241205.730157, "request_id": "476b6c348460", "case": "b01", "key_index": 1, "call_id": "88e6dd9e1d", "seconds": 1.3495, "usage": {"input_tokens": 486, "output_tokens": 1, "total_tokens": 487}}
+{"kind": "provider_attempt", "at": 1795241205.7327049, "request_id": "476b6c348460", "case": "b01", "key_index": 1, "call_id": "26669db4af"}
+{"kind": "provider_first_chunk", "at": 1795241205.8822465, "request_id": "86a0528c339e", "case": "s08", "key_index": 1, "call_id": "91519f866d", "seconds": 1.4438}
+{"kind": "provider_done", "at": 1795241205.8832352, "request_id": "86a0528c339e", "case": "s08", "key_index": 1, "call_id": "91519f866d", "seconds": 1.4451, "usage": {"input_tokens": 490, "output_tokens": 1, "total_tokens": 491}}
+{"kind": "provider_attempt", "at": 1795241205.8842509, "request_id": "86a0528c339e", "case": "s08", "key_index": 1, "call_id": "20b01977b2"}
+{"kind": "provider_first_chunk", "at": 1795241206.594542, "request_id": "2b0f32bf7a9f", "case": "t01", "key_index": 1, "call_id": "5ba9f1afe3", "seconds": 1.0908}
+{"kind": "provider_done", "at": 1795241206.6417098, "request_id": "2b0f32bf7a9f", "case": "t01", "key_index": 1, "call_id": "5ba9f1afe3", "seconds": 1.1386, "usage": {"input_tokens": 1158, "output_tokens": 149, "total_tokens": 1307}}
+{"kind": "provider_attempt", "at": 1795241206.6457157, "request_id": "2b0f32bf7a9f", "case": "t01", "key_index": 1, "call_id": "be59f25a94"}
+{"kind": "provider_first_chunk", "at": 1795241206.728157, "request_id": "476b6c348460", "case": "b01", "key_index": 1, "call_id": "26669db4af", "seconds": 0.9956}
+{"kind": "provider_first_chunk", "at": 1795241207.0045483, "request_id": "ad3af325ef82", "case": "w04", "key_index": 1, "call_id": "f09ea950de", "seconds": 1.4979}
+{"kind": "provider_done", "at": 1795241207.1231875, "request_id": "ad3af325ef82", "case": "w04", "key_index": 1, "call_id": "f09ea950de", "seconds": 1.6159, "usage": {"input_tokens": 1161, "output_tokens": 150, "total_tokens": 1311}}
+{"kind": "provider_attempt", "at": 1795241207.124698, "request_id": "ad3af325ef82", "case": "w04", "key_index": 1, "call_id": "f7d5e8bd0a"}
+{"kind": "provider_first_chunk", "at": 1795241207.155655, "request_id": "86a0528c339e", "case": "s08", "key_index": 1, "call_id": "20b01977b2", "seconds": 1.271}
+{"kind": "provider_done", "at": 1795241207.2420285, "request_id": "476b6c348460", "case": "b01", "key_index": 1, "call_id": "26669db4af", "seconds": 1.5089, "usage": {"input_tokens": 1180, "output_tokens": 287, "total_tokens": 1467}}
+{"kind": "provider_attempt", "at": 1795241207.2430868, "request_id": "476b6c348460", "case": "b01", "key_index": 1, "call_id": "d01b7a8ee0"}
+{"kind": "provider_done", "at": 1795241207.573639, "request_id": "86a0528c339e", "case": "s08", "key_index": 1, "call_id": "20b01977b2", "seconds": 1.6896, "usage": {"input_tokens": 1184, "output_tokens": 232, "total_tokens": 1416}}
+{"kind": "provider_attempt", "at": 1795241207.5746403, "request_id": "86a0528c339e", "case": "s08", "key_index": 1, "call_id": "6f946b724e"}
+{"kind": "provider_first_chunk", "at": 1795241207.8661098, "request_id": "2b0f32bf7a9f", "case": "t01", "key_index": 1, "call_id": "be59f25a94", "seconds": 1.221}
+{"kind": "first_token", "at": 1795241207.8696308, "id": "2b0f32bf7a9f", "case": "t01", "seconds": 4.4206}
+{"kind": "provider_first_chunk", "at": 1795241208.275573, "request_id": "476b6c348460", "case": "b01", "key_index": 1, "call_id": "d01b7a8ee0", "seconds": 1.0317}
+{"kind": "first_token", "at": 1795241208.2793124, "id": "476b6c348460", "case": "b01", "seconds": 4.8239}
+{"kind": "provider_first_chunk", "at": 1795241208.4141304, "request_id": "ad3af325ef82", "case": "w04", "key_index": 1, "call_id": "f7d5e8bd0a", "seconds": 1.2895}
+{"kind": "first_token", "at": 1795241208.4174845, "id": "ad3af325ef82", "case": "w04", "seconds": 4.959}
+{"kind": "provider_done", "at": 1795241208.5829084, "request_id": "2b0f32bf7a9f", "case": "t01", "key_index": 1, "call_id": "be59f25a94", "seconds": 1.9366, "usage": {"input_tokens": 5254, "output_tokens": 309, "total_tokens": 5563}}
+{"kind": "chat_done", "at": 1795241208.7085829, "id": "2b0f32bf7a9f", "case": "t01", "seconds": 5.2593, "cached": false, "server_duration": 5.0}
+{"kind": "chat_end", "at": 1795241208.7124085, "id": "2b0f32bf7a9f", "case": "t01", "seconds": 5.2635}
+{"kind": "chat_start", "at": 1795241208.9549837, "request_id": "79433f2d1c97", "case": "t02"}
+{"kind": "http_status", "at": 1795241208.9771075, "id": "79433f2d1c97", "case": "t02", "status": 200, "seconds": 0.0226}
+{"kind": "provider_done", "at": 1795241209.3048253, "request_id": "476b6c348460", "case": "b01", "key_index": 1, "call_id": "d01b7a8ee0", "seconds": 2.0613, "usage": {"input_tokens": 6160, "output_tokens": 495, "total_tokens": 6655}}
+{"kind": "provider_done", "at": 1795241209.3366973, "request_id": "ad3af325ef82", "case": "w04", "key_index": 1, "call_id": "f7d5e8bd0a", "seconds": 2.2121, "usage": {"input_tokens": 6103, "output_tokens": 385, "total_tokens": 6488}}
+{"kind": "provider_attempt", "at": 1795241209.4588048, "request_id": "79433f2d1c97", "case": "t02", "key_index": 1, "call_id": "888f985de6"}
+{"kind": "chat_done", "at": 1795241209.5210347, "id": "476b6c348460", "case": "b01", "seconds": 6.0664, "cached": false, "server_duration": 5.7}
+{"kind": "chat_end", "at": 1795241209.526784, "id": "476b6c348460", "case": "b01", "seconds": 6.0717}
+{"kind": "chat_done", "at": 1795241209.5466995, "id": "ad3af325ef82", "case": "w04", "seconds": 6.0888, "cached": false, "server_duration": 5.8}
+{"kind": "chat_end", "at": 1795241209.5520642, "id": "ad3af325ef82", "case": "w04", "seconds": 6.0936}
+{"kind": "chat_start", "at": 1795241209.85562, "request_id": "032b1f0de682", "case": "w06"}
+{"kind": "chat_start", "at": 1795241209.8579152, "request_id": "c3be222a550c", "case": "b02"}
+{"kind": "http_status", "at": 1795241209.8842053, "id": "c3be222a550c", "case": "b02", "status": 200, "seconds": 0.0256}
+{"kind": "http_status", "at": 1795241209.8857138, "id": "032b1f0de682", "case": "w06", "status": 200, "seconds": 0.03}
+{"kind": "provider_first_chunk", "at": 1795241210.2841246, "request_id": "79433f2d1c97", "case": "t02", "key_index": 1, "call_id": "888f985de6", "seconds": 0.8256}
+{"kind": "provider_done", "at": 1795241210.2881932, "request_id": "79433f2d1c97", "case": "t02", "key_index": 1, "call_id": "888f985de6", "seconds": 0.829, "usage": {"input_tokens": 464, "output_tokens": 1, "total_tokens": 465}}
+{"kind": "provider_attempt", "at": 1795241210.2892072, "request_id": "79433f2d1c97", "case": "t02", "key_index": 1, "call_id": "657a4bb0c9"}
+{"kind": "provider_attempt", "at": 1795241210.462183, "request_id": "032b1f0de682", "case": "w06", "key_index": 1, "call_id": "8a156bd84c"}
+{"kind": "provider_attempt", "at": 1795241210.6571815, "request_id": "c3be222a550c", "case": "b02", "key_index": 1, "call_id": "616774b300"}
+{"kind": "provider_first_chunk", "at": 1795241211.132954, "request_id": "79433f2d1c97", "case": "t02", "key_index": 1, "call_id": "657a4bb0c9", "seconds": 0.8442}
+{"kind": "provider_done", "at": 1795241211.2118595, "request_id": "79433f2d1c97", "case": "t02", "key_index": 1, "call_id": "657a4bb0c9", "seconds": 0.9226, "usage": {"input_tokens": 1158, "output_tokens": 158, "total_tokens": 1316}}
+{"kind": "provider_attempt", "at": 1795241211.2133746, "request_id": "79433f2d1c97", "case": "t02", "key_index": 1, "call_id": "b1ca91d63f"}
+{"kind": "provider_first_chunk", "at": 1795241211.5412354, "request_id": "032b1f0de682", "case": "w06", "key_index": 1, "call_id": "8a156bd84c", "seconds": 1.0791}
+{"kind": "provider_done", "at": 1795241211.5433123, "request_id": "032b1f0de682", "case": "w06", "key_index": 1, "call_id": "8a156bd84c", "seconds": 1.0818, "usage": {"input_tokens": 467, "output_tokens": 1, "total_tokens": 468}}
+{"kind": "provider_attempt", "at": 1795241211.544325, "request_id": "032b1f0de682", "case": "w06", "key_index": 1, "call_id": "ddb96b65af"}
+{"kind": "provider_first_chunk", "at": 1795241212.2602067, "request_id": "032b1f0de682", "case": "w06", "key_index": 1, "call_id": "ddb96b65af", "seconds": 0.7158}
+{"kind": "provider_done", "at": 1795241212.550978, "request_id": "032b1f0de682", "case": "w06", "key_index": 1, "call_id": "ddb96b65af", "seconds": 1.0055, "usage": {"input_tokens": 1161, "output_tokens": 153, "total_tokens": 1314}}
+{"kind": "provider_first_chunk", "at": 1795241212.5525002, "request_id": "79433f2d1c97", "case": "t02", "key_index": 1, "call_id": "b1ca91d63f", "seconds": 1.3384}
+{"kind": "provider_attempt", "at": 1795241212.5565135, "request_id": "032b1f0de682", "case": "w06", "key_index": 1, "call_id": "f8cbde87ac"}
+{"kind": "first_token", "at": 1795241212.560583, "id": "79433f2d1c97", "case": "t02", "seconds": 3.6018}
+{"kind": "provider_error", "at": 1795241212.6800923, "request_id": "032b1f0de682", "case": "w06", "key_index": 1, "call_id": "f8cbde87ac", "category": "rate_limited", "status": 429, "retry_after": 9, "before_first_chunk": true, "seconds": 0.1285}
+{"kind": "provider_attempt", "at": 1795241212.7226872, "request_id": "032b1f0de682", "case": "w06", "key_index": 2, "call_id": "a559f9bda4"}
+{"kind": "provider_done", "at": 1795241213.3073525, "request_id": "79433f2d1c97", "case": "t02", "key_index": 1, "call_id": "b1ca91d63f", "seconds": 2.0938, "usage": {"input_tokens": 5289, "output_tokens": 308, "total_tokens": 5597}}
+{"kind": "chat_done", "at": 1795241213.433249, "id": "79433f2d1c97", "case": "t02", "seconds": 4.4784, "cached": false, "server_duration": 4.3}
+{"kind": "chat_end", "at": 1795241213.439279, "id": "79433f2d1c97", "case": "t02", "seconds": 4.4844}
+{"kind": "provider_first_chunk", "at": 1795241213.9583805, "request_id": "032b1f0de682", "case": "w06", "key_index": 2, "call_id": "a559f9bda4", "seconds": 1.2359}
+{"kind": "first_token", "at": 1795241213.9618926, "id": "032b1f0de682", "case": "w06", "seconds": 4.1064}
+{"kind": "provider_done", "at": 1795241214.5931067, "request_id": "032b1f0de682", "case": "w06", "key_index": 2, "call_id": "a559f9bda4", "seconds": 1.8706, "usage": {"input_tokens": 6471, "output_tokens": 252, "total_tokens": 6723}}
+{"kind": "chat_done", "at": 1795241214.7149758, "id": "032b1f0de682", "case": "w06", "seconds": 4.8598, "cached": false, "server_duration": 4.7}
+{"kind": "chat_end", "at": 1795241214.7212641, "id": "032b1f0de682", "case": "w06", "seconds": 4.8659}
+{"kind": "provider_error", "at": 1795241267.5827868, "request_id": "86a0528c339e", "case": "s08", "key_index": 1, "call_id": "6f946b724e", "category": "other", "status": null, "retry_after": 60, "before_first_chunk": true, "seconds": 60.0076}
+{"kind": "error", "at": 1795241267.9986186, "id": "86a0528c339e", "case": "s08", "seconds": 64.487, "position": null, "code": "LLM_ERROR", "retry_after": null}
+{"kind": "chat_end", "at": 1795241268.004719, "id": "86a0528c339e", "case": "s08", "seconds": 64.4929}
+{"kind": "chat_start", "at": 1795241268.213055, "request_id": "9c609995d7b4", "case": "k03"}
+{"kind": "http_status", "at": 1795241268.2318244, "id": "9c609995d7b4", "case": "k03", "status": 200, "seconds": 0.0187}
+{"kind": "provider_attempt", "at": 1795241268.826733, "request_id": "9c609995d7b4", "case": "k03", "key_index": 2, "call_id": "ba41d70d83"}
+{"kind": "provider_first_chunk", "at": 1795241269.711235, "request_id": "9c609995d7b4", "case": "k03", "key_index": 2, "call_id": "ba41d70d83", "seconds": 0.8844}
+{"kind": "provider_done", "at": 1795241269.7122383, "request_id": "9c609995d7b4", "case": "k03", "key_index": 2, "call_id": "ba41d70d83", "seconds": 0.8858, "usage": {"input_tokens": 502, "output_tokens": 1, "total_tokens": 503}}
+{"kind": "provider_attempt", "at": 1795241269.7132366, "request_id": "9c609995d7b4", "case": "k03", "key_index": 2, "call_id": "d38348db8f"}
+{"kind": "provider_first_chunk", "at": 1795241269.9695325, "request_id": "c3be222a550c", "case": "b02", "key_index": 1, "call_id": "616774b300", "seconds": 59.3123}
+{"kind": "provider_done", "at": 1795241269.9715319, "request_id": "c3be222a550c", "case": "b02", "key_index": 1, "call_id": "616774b300", "seconds": 59.3139, "usage": {"input_tokens": 506, "output_tokens": 1, "total_tokens": 507}}
+{"kind": "provider_attempt", "at": 1795241269.9725335, "request_id": "c3be222a550c", "case": "b02", "key_index": 1, "call_id": "6f86cd3e9a"}
+{"kind": "provider_first_chunk", "at": 1795241270.8017719, "request_id": "9c609995d7b4", "case": "k03", "key_index": 2, "call_id": "d38348db8f", "seconds": 1.0891}
+{"kind": "provider_first_chunk", "at": 1795241270.820715, "request_id": "c3be222a550c", "case": "b02", "key_index": 1, "call_id": "6f86cd3e9a", "seconds": 0.8483}
+{"kind": "provider_done", "at": 1795241270.899968, "request_id": "9c609995d7b4", "case": "k03", "key_index": 2, "call_id": "d38348db8f", "seconds": 1.1864, "usage": {"input_tokens": 1196, "output_tokens": 120, "total_tokens": 1316}}
+{"kind": "provider_attempt", "at": 1795241270.900971, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "dabaef11df"}
+{"kind": "provider_done", "at": 1795241271.3431265, "request_id": "c3be222a550c", "case": "b02", "key_index": 1, "call_id": "6f86cd3e9a", "seconds": 1.3706, "usage": {"input_tokens": 1200, "output_tokens": 287, "total_tokens": 1487}}
+{"kind": "provider_attempt", "at": 1795241271.3441396, "request_id": "c3be222a550c", "case": "b02", "key_index": 1, "call_id": "06d94d330a"}
+{"kind": "provider_first_chunk", "at": 1795241272.0896595, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "dabaef11df", "seconds": 1.1886}
+{"kind": "provider_done", "at": 1795241272.0906754, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "dabaef11df", "seconds": 1.1902, "usage": {"input_tokens": 5197, "output_tokens": 20, "total_tokens": 5217}}
+{"kind": "provider_attempt", "at": 1795241272.092676, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "8f1a63268a"}
+{"kind": "provider_first_chunk", "at": 1795241272.5339859, "request_id": "c3be222a550c", "case": "b02", "key_index": 1, "call_id": "06d94d330a", "seconds": 1.1901}
+{"kind": "first_token", "at": 1795241272.5385947, "id": "c3be222a550c", "case": "b02", "seconds": 62.6803}
+{"kind": "provider_done", "at": 1795241273.1095736, "request_id": "c3be222a550c", "case": "b02", "key_index": 1, "call_id": "06d94d330a", "seconds": 1.7655, "usage": {"input_tokens": 5847, "output_tokens": 260, "total_tokens": 6107}}
+{"kind": "chat_done", "at": 1795241273.2329574, "id": "c3be222a550c", "case": "b02", "seconds": 63.3751, "cached": false, "server_duration": 63.2}
+{"kind": "chat_end", "at": 1795241273.2380571, "id": "c3be222a550c", "case": "b02", "seconds": 63.38}
+{"kind": "provider_first_chunk", "at": 1795241274.350997, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "8f1a63268a", "seconds": 2.2587}
+{"kind": "provider_done", "at": 1795241274.3530254, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "8f1a63268a", "seconds": 2.2603, "usage": {"input_tokens": 5240, "output_tokens": 20, "total_tokens": 5260}}
+{"kind": "provider_attempt", "at": 1795241274.3540158, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "77e7a2154d"}
+{"kind": "provider_first_chunk", "at": 1795241275.4888833, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "77e7a2154d", "seconds": 1.134}
+{"kind": "provider_done", "at": 1795241275.4924257, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "77e7a2154d", "seconds": 1.1378, "usage": {"input_tokens": 5282, "output_tokens": 20, "total_tokens": 5302}}
+{"kind": "provider_attempt", "at": 1795241275.4974217, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "c8c76ab264"}
+{"kind": "provider_first_chunk", "at": 1795241277.5992823, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "c8c76ab264", "seconds": 2.1026}
+{"kind": "provider_done", "at": 1795241277.6022942, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "c8c76ab264", "seconds": 2.1051, "usage": {"input_tokens": 5324, "output_tokens": 21, "total_tokens": 5345}}
+{"kind": "provider_attempt", "at": 1795241277.6050608, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "e23eb74e4f"}
+{"kind": "provider_first_chunk", "at": 1795241278.4499533, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "e23eb74e4f", "seconds": 0.8443}
+{"kind": "provider_done", "at": 1795241278.4524686, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "e23eb74e4f", "seconds": 0.8473, "usage": {"input_tokens": 5393, "output_tokens": 20, "total_tokens": 5413}}
+{"kind": "provider_attempt", "at": 1795241278.4544823, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "dc2b4a04ca"}
+{"kind": "provider_first_chunk", "at": 1795241280.006863, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "dc2b4a04ca", "seconds": 1.5534}
+{"kind": "provider_done", "at": 1795241280.0093834, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "dc2b4a04ca", "seconds": 1.5554, "usage": {"input_tokens": 5197, "output_tokens": 20, "total_tokens": 5217}}
+{"kind": "provider_attempt", "at": 1795241280.011391, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "672eea0c55"}
+{"kind": "provider_first_chunk", "at": 1795241280.8629017, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "672eea0c55", "seconds": 0.8516}
+{"kind": "provider_done", "at": 1795241280.8649013, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "672eea0c55", "seconds": 0.8539, "usage": {"input_tokens": 5240, "output_tokens": 20, "total_tokens": 5260}}
+{"kind": "provider_attempt", "at": 1795241280.8668964, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "9e346a0775"}
+{"kind": "provider_first_chunk", "at": 1795241282.282353, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "9e346a0775", "seconds": 1.4156}
+{"kind": "provider_done", "at": 1795241282.2843525, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "9e346a0775", "seconds": 1.4173, "usage": {"input_tokens": 5282, "output_tokens": 20, "total_tokens": 5302}}
+{"kind": "provider_attempt", "at": 1795241282.2853572, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "ca3ff691e2"}
+{"kind": "provider_first_chunk", "at": 1795241282.9855168, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "ca3ff691e2", "seconds": 0.7004}
+{"kind": "provider_done", "at": 1795241282.98752, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "ca3ff691e2", "seconds": 0.702, "usage": {"input_tokens": 5324, "output_tokens": 37, "total_tokens": 5361}}
+{"kind": "provider_attempt", "at": 1795241282.9885192, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "bbf7c69b59"}
+{"kind": "provider_first_chunk", "at": 1795241283.835907, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "bbf7c69b59", "seconds": 0.8472}
+{"kind": "provider_done", "at": 1795241283.8383746, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "bbf7c69b59", "seconds": 0.8497, "usage": {"input_tokens": 5421, "output_tokens": 27, "total_tokens": 5448}}
+{"kind": "provider_attempt", "at": 1795241283.8393745, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "97d0c6cb90"}
+{"kind": "provider_first_chunk", "at": 1795241285.1112792, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "97d0c6cb90", "seconds": 1.2719}
+{"kind": "first_token", "at": 1795241285.1132877, "id": "9c609995d7b4", "case": "k03", "seconds": 16.9008}
+{"kind": "provider_done", "at": 1795241286.19381, "request_id": "9c609995d7b4", "case": "k03", "key_index": 1, "call_id": "97d0c6cb90", "seconds": 2.354, "usage": {"input_tokens": 5061, "output_tokens": 469, "total_tokens": 5530}}
+{"kind": "chat_start", "at": 1795241286.3021178, "request_id": "4be05236babc", "case": "unlabelled"}
+{"kind": "http_status", "at": 1795241286.3288038, "id": "4be05236babc", "case": "unlabelled", "status": 200, "seconds": 0.0259}
+{"kind": "chat_done", "at": 1795241286.3399909, "id": "9c609995d7b4", "case": "k03", "seconds": 18.1257, "cached": false, "server_duration": 18.0}
+{"kind": "chat_end", "at": 1795241286.3581553, "id": "9c609995d7b4", "case": "k03", "seconds": 18.1413}
+{"kind": "provider_attempt", "at": 1795241286.9462686, "request_id": "4be05236babc", "case": "unlabelled", "key_index": 1, "call_id": "dc88e089db"}
+{"kind": "provider_first_chunk", "at": 1795241287.9486506, "request_id": "4be05236babc", "case": "unlabelled", "key_index": 1, "call_id": "dc88e089db", "seconds": 1.0029}
+{"kind": "provider_done", "at": 1795241287.9522147, "request_id": "4be05236babc", "case": "unlabelled", "key_index": 1, "call_id": "dc88e089db", "seconds": 1.0065, "usage": {"input_tokens": 394, "output_tokens": 2, "total_tokens": 396}}
+{"kind": "provider_attempt", "at": 1795241287.9532316, "request_id": "4be05236babc", "case": "unlabelled", "key_index": 1, "call_id": "d641c9cbbe"}
+{"kind": "provider_first_chunk", "at": 1795241288.6565056, "request_id": "4be05236babc", "case": "unlabelled", "key_index": 1, "call_id": "d641c9cbbe", "seconds": 0.7025}
+{"kind": "first_token", "at": 1795241288.661986, "id": "4be05236babc", "case": "unlabelled", "seconds": 2.3575}
+{"kind": "provider_done", "at": 1795241288.8859694, "request_id": "4be05236babc", "case": "unlabelled", "key_index": 1, "call_id": "d641c9cbbe", "seconds": 0.9317, "usage": {"input_tokens": 159, "output_tokens": 99, "total_tokens": 258}}
+{"kind": "chat_done", "at": 1795241289.0410702, "id": "4be05236babc", "case": "unlabelled", "seconds": 2.7386, "cached": false, "server_duration": 2.5}
+{"kind": "chat_end", "at": 1795241289.0519128, "id": "4be05236babc", "case": "unlabelled", "seconds": 2.7496}
+{"kind": "chat_start", "at": 1795241292.9973445, "request_id": "2bcf2740ce68", "case": "t04"}
+{"kind": "chat_start", "at": 1795241293.025791, "request_id": "c4f4162c890f", "case": "w03"}
+{"kind": "chat_start", "at": 1795241293.0302343, "request_id": "ada14f9a0d7a", "case": "k04"}
+{"kind": "http_status", "at": 1795241293.034674, "id": "2bcf2740ce68", "case": "t04", "status": 200, "seconds": 0.0372}
+{"kind": "chat_start", "at": 1795241293.0662684, "request_id": "52ddae4a2821", "case": "s01"}
+{"kind": "http_status", "at": 1795241293.0897055, "id": "c4f4162c890f", "case": "w03", "status": 200, "seconds": 0.0583}
+{"kind": "http_status", "at": 1795241293.1068635, "id": "ada14f9a0d7a", "case": "k04", "status": 200, "seconds": 0.0769}
+{"kind": "chat_start", "at": 1795241293.1260712, "request_id": "a0e5f2c2744c", "case": "b04"}
+{"kind": "chat_start", "at": 1795241293.133512, "request_id": "ddb532c70261", "case": "b03"}
+{"kind": "http_status", "at": 1795241293.1364884, "id": "52ddae4a2821", "case": "s01", "status": 200, "seconds": 0.0702}
+{"kind": "http_status", "at": 1795241293.169613, "id": "a0e5f2c2744c", "case": "b04", "status": 200, "seconds": 0.0474}
+{"kind": "queued", "at": 1795241293.172181, "id": "a0e5f2c2744c", "case": "b04", "seconds": 0.0497, "position": 1, "code": null, "retry_after": null}
+{"kind": "chat_start", "at": 1795241293.216356, "request_id": "f4659e64a5ee", "case": "t03"}
+{"kind": "chat_start", "at": 1795241293.2210908, "request_id": "4242dc37a3bb", "case": "w02"}
+{"kind": "http_status", "at": 1795241293.4048538, "id": "ddb532c70261", "case": "b03", "status": 200, "seconds": 0.2706}
+{"kind": "http_status", "at": 1795241293.4105558, "id": "4242dc37a3bb", "case": "w02", "status": 200, "seconds": 0.1897}
+{"kind": "http_status", "at": 1795241293.412736, "id": "f4659e64a5ee", "case": "t03", "status": 200, "seconds": 0.1961}
+{"kind": "queued", "at": 1795241293.4142518, "id": "ddb532c70261", "case": "b03", "seconds": 0.2809, "position": 2, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241293.4193373, "id": "f4659e64a5ee", "case": "t03", "seconds": 0.2023, "position": 4, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241293.4218001, "id": "4242dc37a3bb", "case": "w02", "seconds": 0.1999, "position": 3, "code": null, "retry_after": null}
+{"kind": "provider_attempt", "at": 1795241293.7073355, "request_id": "2bcf2740ce68", "case": "t04", "key_index": 1, "call_id": "02352fdb3e"}
+{"kind": "provider_attempt", "at": 1795241293.732393, "request_id": "c4f4162c890f", "case": "w03", "key_index": 1, "call_id": "901c8f52b4"}
+{"kind": "provider_attempt", "at": 1795241293.7576609, "request_id": "ada14f9a0d7a", "case": "k04", "key_index": 1, "call_id": "06800c5aeb"}
+{"kind": "provider_attempt", "at": 1795241293.8536534, "request_id": "52ddae4a2821", "case": "s01", "key_index": 1, "call_id": "5cf6117cea"}
+{"kind": "provider_error", "at": 1795241293.9681375, "request_id": "ada14f9a0d7a", "case": "k04", "key_index": 1, "call_id": "06800c5aeb", "category": "rate_limited", "status": 429, "retry_after": 47, "before_first_chunk": true, "seconds": 0.2104}
+{"kind": "provider_attempt", "at": 1795241293.9691377, "request_id": "ada14f9a0d7a", "case": "k04", "key_index": 2, "call_id": "45c387497c"}
+{"kind": "provider_error", "at": 1795241294.0231357, "request_id": "c4f4162c890f", "case": "w03", "key_index": 1, "call_id": "901c8f52b4", "category": "rate_limited", "status": 429, "retry_after": 47, "before_first_chunk": true, "seconds": 0.2907}
+{"kind": "provider_attempt", "at": 1795241294.0241308, "request_id": "c4f4162c890f", "case": "w03", "key_index": 2, "call_id": "bc5968bd1d"}
+{"kind": "provider_error", "at": 1795241294.0561793, "request_id": "52ddae4a2821", "case": "s01", "key_index": 1, "call_id": "5cf6117cea", "category": "rate_limited", "status": 429, "retry_after": 47, "before_first_chunk": true, "seconds": 0.2025}
+{"kind": "provider_attempt", "at": 1795241294.0571873, "request_id": "52ddae4a2821", "case": "s01", "key_index": 2, "call_id": "54efcdca26"}
+{"kind": "provider_first_chunk", "at": 1795241294.454802, "request_id": "2bcf2740ce68", "case": "t04", "key_index": 1, "call_id": "02352fdb3e", "seconds": 0.7476}
+{"kind": "provider_done", "at": 1795241294.4569402, "request_id": "2bcf2740ce68", "case": "t04", "key_index": 1, "call_id": "02352fdb3e", "seconds": 0.7493, "usage": {"input_tokens": 454, "output_tokens": 1, "total_tokens": 455}}
+{"kind": "provider_attempt", "at": 1795241294.4569402, "request_id": "2bcf2740ce68", "case": "t04", "key_index": 1, "call_id": "697bc7d9ad"}
+{"kind": "provider_first_chunk", "at": 1795241294.9933295, "request_id": "52ddae4a2821", "case": "s01", "key_index": 2, "call_id": "54efcdca26", "seconds": 0.9337}
+{"kind": "provider_first_chunk", "at": 1795241294.99848, "request_id": "ada14f9a0d7a", "case": "k04", "key_index": 2, "call_id": "45c387497c", "seconds": 1.0235}
+{"kind": "provider_done", "at": 1795241295.0016012, "request_id": "52ddae4a2821", "case": "s01", "key_index": 2, "call_id": "54efcdca26", "seconds": 0.9413, "usage": {"input_tokens": 472, "output_tokens": 1, "total_tokens": 473}}
+{"kind": "provider_done", "at": 1795241295.0031993, "request_id": "ada14f9a0d7a", "case": "k04", "key_index": 2, "call_id": "45c387497c", "seconds": 1.033, "usage": {"input_tokens": 473, "output_tokens": 1, "total_tokens": 474}}
+{"kind": "provider_attempt", "at": 1795241295.0042193, "request_id": "52ddae4a2821", "case": "s01", "key_index": 2, "call_id": "cf177699ac"}
+{"kind": "provider_attempt", "at": 1795241295.0109086, "request_id": "ada14f9a0d7a", "case": "k04", "key_index": 2, "call_id": "96ea64ccf0"}
+{"kind": "provider_first_chunk", "at": 1795241295.0967946, "request_id": "c4f4162c890f", "case": "w03", "key_index": 2, "call_id": "bc5968bd1d", "seconds": 1.0729}
+{"kind": "provider_done", "at": 1795241295.0998397, "request_id": "c4f4162c890f", "case": "w03", "key_index": 2, "call_id": "bc5968bd1d", "seconds": 1.0759, "usage": {"input_tokens": 458, "output_tokens": 1, "total_tokens": 459}}
+{"kind": "provider_attempt", "at": 1795241295.100835, "request_id": "c4f4162c890f", "case": "w03", "key_index": 2, "call_id": "e2c87597ce"}
+{"kind": "provider_first_chunk", "at": 1795241295.2949212, "request_id": "2bcf2740ce68", "case": "t04", "key_index": 1, "call_id": "697bc7d9ad", "seconds": 0.8373}
+{"kind": "provider_done", "at": 1795241295.3389323, "request_id": "2bcf2740ce68", "case": "t04", "key_index": 1, "call_id": "697bc7d9ad", "seconds": 0.8815, "usage": {"input_tokens": 1148, "output_tokens": 91, "total_tokens": 1239}}
+{"kind": "provider_attempt", "at": 1795241295.3399343, "request_id": "2bcf2740ce68", "case": "t04", "key_index": 1, "call_id": "7930fe31b3"}
+{"kind": "provider_error", "at": 1795241295.4382615, "request_id": "2bcf2740ce68", "case": "t04", "key_index": 1, "call_id": "7930fe31b3", "category": "rate_limited", "status": 429, "retry_after": 46, "before_first_chunk": true, "seconds": 0.0985}
+{"kind": "provider_attempt", "at": 1795241295.439797, "request_id": "2bcf2740ce68", "case": "t04", "key_index": 2, "call_id": "507b12fbec"}
+{"kind": "provider_first_chunk", "at": 1795241295.9608412, "request_id": "52ddae4a2821", "case": "s01", "key_index": 2, "call_id": "cf177699ac", "seconds": 0.9571}
+{"kind": "provider_done", "at": 1795241296.1096528, "request_id": "52ddae4a2821", "case": "s01", "key_index": 2, "call_id": "cf177699ac", "seconds": 1.1066, "usage": {"input_tokens": 1166, "output_tokens": 129, "total_tokens": 1295}}
+{"kind": "provider_attempt", "at": 1795241296.1109042, "request_id": "52ddae4a2821", "case": "s01", "key_index": 2, "call_id": "952c07be32"}
+{"kind": "provider_first_chunk", "at": 1795241296.3116534, "request_id": "c4f4162c890f", "case": "w03", "key_index": 2, "call_id": "e2c87597ce", "seconds": 1.2108}
+{"kind": "provider_first_chunk", "at": 1795241296.325088, "request_id": "ada14f9a0d7a", "case": "k04", "key_index": 2, "call_id": "96ea64ccf0", "seconds": 1.3195}
+{"kind": "provider_done", "at": 1795241296.3923197, "request_id": "c4f4162c890f", "case": "w03", "key_index": 2, "call_id": "e2c87597ce", "seconds": 1.2906, "usage": {"input_tokens": 1152, "output_tokens": 147, "total_tokens": 1299}}
+{"kind": "provider_attempt", "at": 1795241296.3934193, "request_id": "c4f4162c890f", "case": "w03", "key_index": 2, "call_id": "43794287d1"}
+{"kind": "provider_done", "at": 1795241296.4032557, "request_id": "ada14f9a0d7a", "case": "k04", "key_index": 2, "call_id": "96ea64ccf0", "seconds": 1.3982, "usage": {"input_tokens": 1167, "output_tokens": 81, "total_tokens": 1248}}
+{"kind": "provider_attempt", "at": 1795241296.4042585, "request_id": "ada14f9a0d7a", "case": "k04", "key_index": 2, "call_id": "d8413a65be"}
+{"kind": "provider_first_chunk", "at": 1795241296.687544, "request_id": "2bcf2740ce68", "case": "t04", "key_index": 2, "call_id": "507b12fbec", "seconds": 1.2485}
+{"kind": "first_token", "at": 1795241296.6915472, "id": "2bcf2740ce68", "case": "t04", "seconds": 3.6936}
+{"kind": "provider_first_chunk", "at": 1795241297.2921884, "request_id": "ada14f9a0d7a", "case": "k04", "key_index": 2, "call_id": "d8413a65be", "seconds": 0.8885}
+{"kind": "first_token", "at": 1795241297.3019428, "id": "ada14f9a0d7a", "case": "k04", "seconds": 4.27}
+{"kind": "provider_done", "at": 1795241297.3153946, "request_id": "2bcf2740ce68", "case": "t04", "key_index": 2, "call_id": "507b12fbec", "seconds": 1.8744, "usage": {"input_tokens": 5333, "output_tokens": 278, "total_tokens": 5611}}
+{"kind": "provider_first_chunk", "at": 1795241297.4128616, "request_id": "52ddae4a2821", "case": "s01", "key_index": 2, "call_id": "952c07be32", "seconds": 1.3013}
+{"kind": "first_token", "at": 1795241297.4227102, "id": "52ddae4a2821", "case": "s01", "seconds": 4.3555}
+{"kind": "chat_done", "at": 1795241297.5215774, "id": "2bcf2740ce68", "case": "t04", "seconds": 4.5241, "cached": false, "server_duration": 4.2}
+{"kind": "queued", "at": 1795241297.5260818, "id": "4242dc37a3bb", "case": "w02", "seconds": 4.305, "position": 2, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241297.5375228, "id": "2bcf2740ce68", "case": "t04", "seconds": 4.5387}
+{"kind": "provider_first_chunk", "at": 1795241297.7727368, "request_id": "c4f4162c890f", "case": "w03", "key_index": 2, "call_id": "43794287d1", "seconds": 1.3789}
+{"kind": "first_token", "at": 1795241297.7804022, "id": "c4f4162c890f", "case": "w03", "seconds": 4.754}
+{"kind": "provider_attempt", "at": 1795241298.018343, "request_id": "a0e5f2c2744c", "case": "b04", "key_index": 2, "call_id": "da40fea272"}
+{"kind": "chat_start", "at": 1795241298.0482328, "request_id": "52ea428a408d", "case": "t06"}
+{"kind": "http_status", "at": 1795241298.0921638, "id": "52ea428a408d", "case": "t06", "status": 200, "seconds": 0.0441}
+{"kind": "queued", "at": 1795241298.0944657, "id": "52ea428a408d", "case": "t06", "seconds": 0.0472, "position": 4, "code": null, "retry_after": null}
+{"kind": "provider_done", "at": 1795241298.1189868, "request_id": "52ddae4a2821", "case": "s01", "key_index": 2, "call_id": "952c07be32", "seconds": 2.0076, "usage": {"input_tokens": 5665, "output_tokens": 287, "total_tokens": 5952}}
+{"kind": "chat_done", "at": 1795241298.24261, "id": "52ddae4a2821", "case": "s01", "seconds": 5.1771, "cached": false, "server_duration": 4.9}
+{"kind": "queued", "at": 1795241298.2461584, "id": "f4659e64a5ee", "case": "t03", "seconds": 5.0293, "position": 3, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241298.2531261, "id": "f4659e64a5ee", "case": "t03", "seconds": 5.0363, "position": 2, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241298.2582226, "id": "52ddae4a2821", "case": "s01", "seconds": 5.1903}
+{"kind": "chat_start", "at": 1795241298.3348923, "request_id": "9ea7459667c4", "case": "unlabelled"}
+{"kind": "http_status", "at": 1795241298.359208, "id": "9ea7459667c4", "case": "unlabelled", "status": 200, "seconds": 0.0249}
+{"kind": "queued", "at": 1795241298.3602054, "id": "9ea7459667c4", "case": "unlabelled", "seconds": 0.0264, "position": 4, "code": null, "retry_after": null}
+{"kind": "provider_done", "at": 1795241298.5064209, "request_id": "ada14f9a0d7a", "case": "k04", "key_index": 2, "call_id": "d8413a65be", "seconds": 2.1026, "usage": {"input_tokens": 5728, "output_tokens": 529, "total_tokens": 6257}}
+{"kind": "provider_done", "at": 1795241298.610451, "request_id": "c4f4162c890f", "case": "w03", "key_index": 2, "call_id": "43794287d1", "seconds": 2.2167, "usage": {"input_tokens": 5998, "output_tokens": 297, "total_tokens": 6295}}
+{"kind": "provider_attempt", "at": 1795241298.723854, "request_id": "ddb532c70261", "case": "b03", "key_index": 2, "call_id": "2d2a70243a"}
+{"kind": "chat_start", "at": 1795241298.7488325, "request_id": "0e83bc922341", "case": "s02"}
+{"kind": "chat_done", "at": 1795241298.797027, "id": "ada14f9a0d7a", "case": "k04", "seconds": 5.7669, "cached": false, "server_duration": 5.2}
+{"kind": "queued", "at": 1795241298.8020604, "id": "52ea428a408d", "case": "t06", "seconds": 0.7542, "position": 2, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241298.8054662, "id": "f4659e64a5ee", "case": "t03", "seconds": 5.5888, "position": 1, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241298.8065999, "id": "9ea7459667c4", "case": "unlabelled", "seconds": 0.4719, "position": 3, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241298.8147683, "id": "ada14f9a0d7a", "case": "k04", "seconds": 5.7846}
+{"kind": "chat_done", "at": 1795241298.8508976, "id": "c4f4162c890f", "case": "w03", "seconds": 5.8248, "cached": false, "server_duration": 5.4}
+{"kind": "queued", "at": 1795241298.8560243, "id": "52ea428a408d", "case": "t06", "seconds": 0.8081, "position": 1, "code": null, "retry_after": null}
+{"kind": "http_status", "at": 1795241298.8602018, "id": "0e83bc922341", "case": "s02", "status": 200, "seconds": 0.1103}
+{"kind": "queued", "at": 1795241298.8629253, "id": "0e83bc922341", "case": "s02", "seconds": 0.1138, "position": 3, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241298.8690255, "id": "c4f4162c890f", "case": "w03", "seconds": 5.8428}
+{"kind": "provider_first_chunk", "at": 1795241298.878859, "request_id": "a0e5f2c2744c", "case": "b04", "key_index": 2, "call_id": "da40fea272", "seconds": 0.8596}
+{"kind": "provider_done", "at": 1795241298.8823402, "request_id": "a0e5f2c2744c", "case": "b04", "key_index": 2, "call_id": "da40fea272", "seconds": 0.8637, "usage": {"input_tokens": 476, "output_tokens": 1, "total_tokens": 477}}
+{"kind": "provider_attempt", "at": 1795241298.8858962, "request_id": "a0e5f2c2744c", "case": "b04", "key_index": 2, "call_id": "1885f0951f"}
+{"kind": "provider_attempt", "at": 1795241299.339367, "request_id": "4242dc37a3bb", "case": "w02", "key_index": 2, "call_id": "879ffec2ea"}
+{"kind": "chat_start", "at": 1795241299.4236352, "request_id": "4c234bdb5fdc", "case": "k05"}
+{"kind": "chat_start", "at": 1795241299.4468215, "request_id": "d212ee405858", "case": "w07"}
+{"kind": "http_status", "at": 1795241299.456476, "id": "4c234bdb5fdc", "case": "k05", "status": 200, "seconds": 0.0333}
+{"kind": "queued", "at": 1795241299.4610875, "id": "4c234bdb5fdc", "case": "k05", "seconds": 0.0372, "position": 4, "code": null, "retry_after": null}
+{"kind": "http_status", "at": 1795241299.48677, "id": "d212ee405858", "case": "w07", "status": 200, "seconds": 0.0401}
+{"kind": "queued", "at": 1795241299.4898615, "id": "d212ee405858", "case": "w07", "seconds": 0.0431, "position": 5, "code": null, "retry_after": null}
+{"kind": "provider_attempt", "at": 1795241299.4960349, "request_id": "f4659e64a5ee", "case": "t03", "key_index": 2, "call_id": "163fadd154"}
+{"kind": "provider_first_chunk", "at": 1795241299.7052548, "request_id": "a0e5f2c2744c", "case": "b04", "key_index": 2, "call_id": "1885f0951f", "seconds": 0.82}
+{"kind": "provider_first_chunk", "at": 1795241299.717304, "request_id": "ddb532c70261", "case": "b03", "key_index": 2, "call_id": "2d2a70243a", "seconds": 0.9928}
+{"kind": "provider_done", "at": 1795241299.7194054, "request_id": "ddb532c70261", "case": "b03", "key_index": 2, "call_id": "2d2a70243a", "seconds": 0.9946, "usage": {"input_tokens": 469, "output_tokens": 1, "total_tokens": 470}}
+{"kind": "provider_attempt", "at": 1795241299.7204022, "request_id": "ddb532c70261", "case": "b03", "key_index": 2, "call_id": "f29400e8e5"}
+{"kind": "provider_error", "at": 1795241299.8675978, "request_id": "ddb532c70261", "case": "b03", "key_index": 2, "call_id": "f29400e8e5", "category": "rate_limited", "status": 429, "retry_after": 41, "before_first_chunk": true, "seconds": 0.1474}
+{"kind": "queued", "at": 1795241299.8692725, "id": "9ea7459667c4", "case": "unlabelled", "seconds": 1.5334, "position": 2, "code": null, "retry_after": null}
+{"kind": "provider_attempt", "at": 1795241299.9216156, "request_id": "ddb532c70261", "case": "b03", "key_index": 3, "call_id": "0d1fc65ce1"}
+{"kind": "provider_first_chunk", "at": 1795241300.0848317, "request_id": "4242dc37a3bb", "case": "w02", "key_index": 2, "call_id": "879ffec2ea", "seconds": 0.7446}
+{"kind": "provider_done", "at": 1795241300.0863621, "request_id": "4242dc37a3bb", "case": "w02", "key_index": 2, "call_id": "879ffec2ea", "seconds": 0.7463, "usage": {"input_tokens": 451, "output_tokens": 1, "total_tokens": 452}}
+{"kind": "provider_attempt", "at": 1795241300.0868719, "request_id": "4242dc37a3bb", "case": "w02", "key_index": 2, "call_id": "573f8a841c"}
+{"kind": "provider_done", "at": 1795241300.28709, "request_id": "a0e5f2c2744c", "case": "b04", "key_index": 2, "call_id": "1885f0951f", "seconds": 1.4015, "usage": {"input_tokens": 1170, "output_tokens": 199, "total_tokens": 1369}}
+{"kind": "provider_attempt", "at": 1795241300.2891645, "request_id": "a0e5f2c2744c", "case": "b04", "key_index": 2, "call_id": "55d06b88de"}
+{"kind": "provider_error", "at": 1795241300.4138083, "request_id": "a0e5f2c2744c", "case": "b04", "key_index": 2, "call_id": "55d06b88de", "category": "rate_limited", "status": 429, "retry_after": 41, "before_first_chunk": true, "seconds": 0.1244}
+{"kind": "provider_attempt", "at": 1795241300.4153757, "request_id": "a0e5f2c2744c", "case": "b04", "key_index": 3, "call_id": "ece49b8046"}
+{"kind": "provider_first_chunk", "at": 1795241300.568793, "request_id": "f4659e64a5ee", "case": "t03", "key_index": 2, "call_id": "163fadd154", "seconds": 1.0725}
+{"kind": "provider_done", "at": 1795241300.5724113, "request_id": "f4659e64a5ee", "case": "t03", "key_index": 2, "call_id": "163fadd154", "seconds": 1.0765, "usage": {"input_tokens": 456, "output_tokens": 1, "total_tokens": 457}}
+{"kind": "provider_attempt", "at": 1795241300.573928, "request_id": "f4659e64a5ee", "case": "t03", "key_index": 2, "call_id": "3c408efb0a"}
+{"kind": "provider_error", "at": 1795241300.6825318, "request_id": "f4659e64a5ee", "case": "t03", "key_index": 2, "call_id": "3c408efb0a", "category": "rate_limited", "status": 429, "retry_after": 41, "before_first_chunk": true, "seconds": 0.1087}
+{"kind": "provider_attempt", "at": 1795241300.6836598, "request_id": "f4659e64a5ee", "case": "t03", "key_index": 3, "call_id": "a1af0ca413"}
+{"kind": "provider_first_chunk", "at": 1795241300.9282, "request_id": "4242dc37a3bb", "case": "w02", "key_index": 2, "call_id": "573f8a841c", "seconds": 0.8417}
+{"kind": "provider_first_chunk", "at": 1795241300.9791625, "request_id": "ddb532c70261", "case": "b03", "key_index": 3, "call_id": "0d1fc65ce1", "seconds": 1.0578}
+{"kind": "provider_done", "at": 1795241301.0721447, "request_id": "4242dc37a3bb", "case": "w02", "key_index": 2, "call_id": "573f8a841c", "seconds": 0.9848, "usage": {"input_tokens": 1145, "output_tokens": 150, "total_tokens": 1295}}
+{"kind": "provider_attempt", "at": 1795241301.0731573, "request_id": "4242dc37a3bb", "case": "w02", "key_index": 3, "call_id": "d99eccf08e"}
+{"kind": "provider_done", "at": 1795241301.3463838, "request_id": "ddb532c70261", "case": "b03", "key_index": 3, "call_id": "0d1fc65ce1", "seconds": 1.4249, "usage": {"input_tokens": 1163, "output_tokens": 238, "total_tokens": 1401}}
+{"kind": "provider_attempt", "at": 1795241301.349388, "request_id": "ddb532c70261", "case": "b03", "key_index": 3, "call_id": "e54316cbc9"}
+{"kind": "provider_first_chunk", "at": 1795241301.4340856, "request_id": "a0e5f2c2744c", "case": "b04", "key_index": 3, "call_id": "ece49b8046", "seconds": 1.0194}
+{"kind": "first_token", "at": 1795241301.4366958, "id": "a0e5f2c2744c", "case": "b04", "seconds": 8.3143}
+{"kind": "provider_first_chunk", "at": 1795241301.9868248, "request_id": "f4659e64a5ee", "case": "t03", "key_index": 3, "call_id": "a1af0ca413", "seconds": 1.3039}
+{"kind": "provider_done", "at": 1795241302.092233, "request_id": "a0e5f2c2744c", "case": "b04", "key_index": 3, "call_id": "ece49b8046", "seconds": 1.6767, "usage": {"input_tokens": 5266, "output_tokens": 323, "total_tokens": 5589}}
+{"kind": "provider_first_chunk", "at": 1795241302.2008004, "request_id": "ddb532c70261", "case": "b03", "key_index": 3, "call_id": "e54316cbc9", "seconds": 0.8515}
+{"kind": "first_token", "at": 1795241302.206468, "id": "ddb532c70261", "case": "b03", "seconds": 9.0699}
+{"kind": "chat_done", "at": 1795241302.228842, "id": "a0e5f2c2744c", "case": "b04", "seconds": 9.1072, "cached": false, "server_duration": 4.5}
+{"kind": "queued", "at": 1795241302.2340891, "id": "9ea7459667c4", "case": "unlabelled", "seconds": 3.8993, "position": 1, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241302.2357621, "id": "0e83bc922341", "case": "s02", "seconds": 3.4865, "position": 2, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241302.2375076, "id": "d212ee405858", "case": "w07", "seconds": 2.7907, "position": 4, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241302.2509158, "id": "a0e5f2c2744c", "case": "b04", "seconds": 9.126}
+{"kind": "provider_done", "at": 1795241302.368019, "request_id": "f4659e64a5ee", "case": "t03", "key_index": 3, "call_id": "a1af0ca413", "seconds": 1.6845, "usage": {"input_tokens": 1150, "output_tokens": 145, "total_tokens": 1295}}
+{"kind": "provider_attempt", "at": 1795241302.3700228, "request_id": "f4659e64a5ee", "case": "t03", "key_index": 3, "call_id": "c53ccf64ab"}
+{"kind": "provider_first_chunk", "at": 1795241302.4311104, "request_id": "4242dc37a3bb", "case": "w02", "key_index": 3, "call_id": "d99eccf08e", "seconds": 1.3574}
+{"kind": "first_token", "at": 1795241302.4341414, "id": "4242dc37a3bb", "case": "w02", "seconds": 9.2139}
+{"kind": "provider_attempt", "at": 1795241302.7768831, "request_id": "52ea428a408d", "case": "t06", "key_index": 3, "call_id": "2b7cb6288f"}
+{"kind": "chat_start", "at": 1795241302.799058, "request_id": "97e32a9015ae", "case": "b06"}
+{"kind": "http_status", "at": 1795241302.8294952, "id": "97e32a9015ae", "case": "b06", "status": 200, "seconds": 0.03}
+{"kind": "queued", "at": 1795241302.8321083, "id": "97e32a9015ae", "case": "b06", "seconds": 0.033, "position": 5, "code": null, "retry_after": null}
+{"kind": "provider_done", "at": 1795241302.90454, "request_id": "ddb532c70261", "case": "b03", "key_index": 3, "call_id": "e54316cbc9", "seconds": 1.5548, "usage": {"input_tokens": 6495, "output_tokens": 407, "total_tokens": 6902}}
+{"kind": "provider_done", "at": 1795241303.016434, "request_id": "4242dc37a3bb", "case": "w02", "key_index": 3, "call_id": "d99eccf08e", "seconds": 1.943, "usage": {"input_tokens": 5809, "output_tokens": 270, "total_tokens": 6079}}
+{"kind": "chat_done", "at": 1795241303.0360765, "id": "ddb532c70261", "case": "b03", "seconds": 9.9031, "cached": false, "server_duration": 4.6}
+{"kind": "queued", "at": 1795241303.040669, "id": "4c234bdb5fdc", "case": "k05", "seconds": 3.6169, "position": 3, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241303.0451188, "id": "4c234bdb5fdc", "case": "k05", "seconds": 3.6212, "position": 2, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241303.046223, "id": "ddb532c70261", "case": "b03", "seconds": 9.9126}
+{"kind": "chat_done", "at": 1795241303.145116, "id": "4242dc37a3bb", "case": "w02", "seconds": 9.924, "cached": false, "server_duration": 4.2}
+{"kind": "queued", "at": 1795241303.1491878, "id": "d212ee405858", "case": "w07", "seconds": 3.7019, "position": 3, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241303.1508071, "id": "97e32a9015ae", "case": "b06", "seconds": 0.3514, "position": 3, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241303.1519284, "id": "4c234bdb5fdc", "case": "k05", "seconds": 3.7283, "position": 1, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241303.1559718, "id": "d212ee405858", "case": "w07", "seconds": 3.71, "position": 2, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241303.158595, "id": "4242dc37a3bb", "case": "w02", "seconds": 9.9377}
+{"kind": "provider_first_chunk", "at": 1795241303.442323, "request_id": "f4659e64a5ee", "case": "t03", "key_index": 3, "call_id": "c53ccf64ab", "seconds": 1.0714}
+{"kind": "first_token", "at": 1795241303.4499168, "id": "f4659e64a5ee", "case": "t03", "seconds": 10.2334}
+{"kind": "chat_start", "at": 1795241303.5179718, "request_id": "916575c10203", "case": "b05"}
+{"kind": "http_status", "at": 1795241303.5451927, "id": "916575c10203", "case": "b05", "status": 200, "seconds": 0.0277}
+{"kind": "queued", "at": 1795241303.5521321, "id": "916575c10203", "case": "b05", "seconds": 0.0323, "position": 4, "code": null, "retry_after": null}
+{"kind": "chat_start", "at": 1795241303.635301, "request_id": "fc0896bf079b", "case": "w05"}
+{"kind": "provider_first_chunk", "at": 1795241303.6481972, "request_id": "52ea428a408d", "case": "t06", "key_index": 3, "call_id": "2b7cb6288f", "seconds": 0.8712}
+{"kind": "provider_done", "at": 1795241303.6524446, "request_id": "52ea428a408d", "case": "t06", "key_index": 3, "call_id": "2b7cb6288f", "seconds": 0.8758, "usage": {"input_tokens": 469, "output_tokens": 1, "total_tokens": 470}}
+{"kind": "provider_attempt", "at": 1795241303.6534467, "request_id": "52ea428a408d", "case": "t06", "key_index": 3, "call_id": "2ca24989b2"}
+{"kind": "http_status", "at": 1795241303.6644025, "id": "fc0896bf079b", "case": "w05", "status": 200, "seconds": 0.0263}
+{"kind": "queued", "at": 1795241303.6704152, "id": "fc0896bf079b", "case": "w05", "seconds": 0.0349, "position": 5, "code": null, "retry_after": null}
+{"kind": "provider_attempt", "at": 1795241303.7176335, "request_id": "0e83bc922341", "case": "s02", "key_index": 3, "call_id": "39aadb0018"}
+{"kind": "provider_done", "at": 1795241303.817064, "request_id": "f4659e64a5ee", "case": "t03", "key_index": 3, "call_id": "c53ccf64ab", "seconds": 1.4471, "usage": {"input_tokens": 5351, "output_tokens": 184, "total_tokens": 5535}}
+{"kind": "chat_done", "at": 1795241303.9353182, "id": "f4659e64a5ee", "case": "t03", "seconds": 10.7187, "cached": false, "server_duration": 4.9}
+{"kind": "queued", "at": 1795241303.938207, "id": "d212ee405858", "case": "w07", "seconds": 4.4915, "position": 1, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241303.9393785, "id": "fc0896bf079b", "case": "w05", "seconds": 0.304, "position": 4, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241303.943793, "id": "f4659e64a5ee", "case": "t03", "seconds": 10.7272}
+{"kind": "provider_attempt", "at": 1795241304.0901103, "request_id": "9ea7459667c4", "case": "unlabelled", "key_index": 3, "call_id": "ecb8af708d"}
+{"kind": "chat_start", "at": 1795241304.2465258, "request_id": "c1469fed9e93", "case": "t05"}
+{"kind": "http_status", "at": 1795241304.263983, "id": "c1469fed9e93", "case": "t05", "status": 200, "seconds": 0.0174}
+{"kind": "queued", "at": 1795241304.2666752, "id": "c1469fed9e93", "case": "t05", "seconds": 0.0209, "position": 5, "code": null, "retry_after": null}
+{"kind": "provider_first_chunk", "at": 1795241304.429507, "request_id": "52ea428a408d", "case": "t06", "key_index": 3, "call_id": "2ca24989b2", "seconds": 0.776}
+{"kind": "provider_attempt", "at": 1795241304.4426808, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 3, "call_id": "64e4cf25a9"}
+{"kind": "provider_done", "at": 1795241304.5115845, "request_id": "52ea428a408d", "case": "t06", "key_index": 3, "call_id": "2ca24989b2", "seconds": 0.8579, "usage": {"input_tokens": 1163, "output_tokens": 158, "total_tokens": 1321}}
+{"kind": "provider_attempt", "at": 1795241304.5121586, "request_id": "52ea428a408d", "case": "t06", "key_index": 3, "call_id": "825b2caf18"}
+{"kind": "provider_first_chunk", "at": 1795241304.655125, "request_id": "0e83bc922341", "case": "s02", "key_index": 3, "call_id": "39aadb0018", "seconds": 0.937}
+{"kind": "provider_done", "at": 1795241304.6591563, "request_id": "0e83bc922341", "case": "s02", "key_index": 3, "call_id": "39aadb0018", "seconds": 0.9416, "usage": {"input_tokens": 458, "output_tokens": 1, "total_tokens": 459}}
+{"kind": "provider_first_chunk", "at": 1795241304.6621675, "request_id": "9ea7459667c4", "case": "unlabelled", "key_index": 3, "call_id": "ecb8af708d", "seconds": 0.5717}
+{"kind": "provider_attempt", "at": 1795241304.66517, "request_id": "0e83bc922341", "case": "s02", "key_index": 3, "call_id": "5fa088927c"}
+{"kind": "provider_done", "at": 1795241304.6759775, "request_id": "9ea7459667c4", "case": "unlabelled", "key_index": 3, "call_id": "ecb8af708d", "seconds": 0.5749, "usage": {"input_tokens": 410, "output_tokens": 2, "total_tokens": 412}}
+{"kind": "provider_attempt", "at": 1795241304.6785135, "request_id": "9ea7459667c4", "case": "unlabelled", "key_index": 3, "call_id": "7e7412dc3b"}
+{"kind": "queued", "at": 1795241304.9486773, "id": "97e32a9015ae", "case": "b06", "seconds": 2.1503, "position": 2, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241304.9504375, "id": "916575c10203", "case": "b05", "seconds": 1.4321, "position": 3, "code": null, "retry_after": null}
+{"kind": "provider_first_chunk", "at": 1795241305.3323345, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 3, "call_id": "64e4cf25a9", "seconds": 0.8893}
+{"kind": "provider_done", "at": 1795241305.341427, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 3, "call_id": "64e4cf25a9", "seconds": 0.8976, "usage": {"input_tokens": 459, "output_tokens": 1, "total_tokens": 460}}
+{"kind": "provider_first_chunk", "at": 1795241305.3429332, "request_id": "0e83bc922341", "case": "s02", "key_index": 3, "call_id": "5fa088927c", "seconds": 0.6799}
+{"kind": "provider_attempt", "at": 1795241305.3439505, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 3, "call_id": "d5eb91b27f"}
+{"kind": "provider_done", "at": 1795241305.3566127, "request_id": "0e83bc922341", "case": "s02", "key_index": 3, "call_id": "5fa088927c", "seconds": 0.6949, "usage": {"input_tokens": 1152, "output_tokens": 127, "total_tokens": 1279}}
+{"kind": "provider_attempt", "at": 1795241305.3576174, "request_id": "0e83bc922341", "case": "s02", "key_index": 3, "call_id": "59a99c6808"}
+{"kind": "provider_first_chunk", "at": 1795241305.540484, "request_id": "52ea428a408d", "case": "t06", "key_index": 3, "call_id": "825b2caf18", "seconds": 1.028}
+{"kind": "first_token", "at": 1795241305.5424984, "id": "52ea428a408d", "case": "t06", "seconds": 7.4949}
+{"kind": "provider_first_chunk", "at": 1795241305.6618798, "request_id": "9ea7459667c4", "case": "unlabelled", "key_index": 3, "call_id": "7e7412dc3b", "seconds": 0.9841}
+{"kind": "first_token", "at": 1795241305.669046, "id": "9ea7459667c4", "case": "unlabelled", "seconds": 7.334}
+{"kind": "provider_first_chunk", "at": 1795241306.081655, "request_id": "0e83bc922341", "case": "s02", "key_index": 3, "call_id": "59a99c6808", "seconds": 0.7207}
+{"kind": "provider_done", "at": 1795241306.0869555, "request_id": "9ea7459667c4", "case": "unlabelled", "key_index": 3, "call_id": "7e7412dc3b", "seconds": 1.404, "usage": {"input_tokens": 279, "output_tokens": 101, "total_tokens": 380}}
+{"kind": "first_token", "at": 1795241306.091409, "id": "0e83bc922341", "case": "s02", "seconds": 7.3382}
+{"kind": "provider_first_chunk", "at": 1795241306.1013181, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 3, "call_id": "d5eb91b27f", "seconds": 0.7585}
+{"kind": "chat_done", "at": 1795241306.2193937, "id": "9ea7459667c4", "case": "unlabelled", "seconds": 7.8844, "cached": false, "server_duration": 3.0}
+{"kind": "queued", "at": 1795241306.2265284, "id": "97e32a9015ae", "case": "b06", "seconds": 3.4262, "position": 1, "code": null, "retry_after": null}
+{"kind": "provider_done", "at": 1795241306.2282434, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 3, "call_id": "d5eb91b27f", "seconds": 0.8848, "usage": {"input_tokens": 1153, "output_tokens": 120, "total_tokens": 1273}}
+{"kind": "provider_attempt", "at": 1795241306.2339003, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 3, "call_id": "ba30d930fa"}
+{"kind": "chat_end", "at": 1795241306.244737, "id": "9ea7459667c4", "case": "unlabelled", "seconds": 7.9057}
+{"kind": "provider_done", "at": 1795241306.468375, "request_id": "52ea428a408d", "case": "t06", "key_index": 3, "call_id": "825b2caf18", "seconds": 1.9552, "usage": {"input_tokens": 5377, "output_tokens": 346, "total_tokens": 5723}}
+{"kind": "chat_done", "at": 1795241306.5902374, "id": "52ea428a408d", "case": "t06", "seconds": 8.5424, "cached": false, "server_duration": 4.2}
+{"kind": "queued", "at": 1795241306.5936418, "id": "c1469fed9e93", "case": "t05", "seconds": 2.3472, "position": 4, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241306.594774, "id": "916575c10203", "case": "b05", "seconds": 3.0764, "position": 2, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241306.598689, "id": "fc0896bf079b", "case": "w05", "seconds": 2.9617, "position": 2, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241306.6040702, "id": "c1469fed9e93", "case": "t05", "seconds": 2.3573, "position": 3, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241306.6068485, "id": "916575c10203", "case": "b05", "seconds": 3.0871, "position": 1, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241306.6114082, "id": "52ea428a408d", "case": "t06", "seconds": 8.5627}
+{"kind": "provider_done", "at": 1795241306.6816797, "request_id": "0e83bc922341", "case": "s02", "key_index": 3, "call_id": "59a99c6808", "seconds": 1.3231, "usage": {"input_tokens": 5619, "output_tokens": 261, "total_tokens": 5880}}
+{"kind": "provider_attempt", "at": 1795241306.7251928, "request_id": "d212ee405858", "case": "w07", "key_index": 3, "call_id": "388b1aedd3"}
+{"kind": "chat_done", "at": 1795241306.8841991, "id": "0e83bc922341", "case": "s02", "seconds": 8.1353, "cached": false, "server_duration": 3.5}
+{"kind": "chat_end", "at": 1795241306.8937042, "id": "0e83bc922341", "case": "s02", "seconds": 8.1438}
+{"kind": "chat_start", "at": 1795241306.9334202, "request_id": "5f664893c309", "case": "t08"}
+{"kind": "http_status", "at": 1795241306.9608686, "id": "5f664893c309", "case": "t08", "status": 200, "seconds": 0.0275}
+{"kind": "queued", "at": 1795241306.9633942, "id": "5f664893c309", "case": "t08", "seconds": 0.03, "position": 3, "code": null, "retry_after": null}
+{"kind": "provider_attempt", "at": 1795241307.1019566, "request_id": "97e32a9015ae", "case": "b06", "key_index": 3, "call_id": "52c7c756b8"}
+{"kind": "chat_start", "at": 1795241307.1862552, "request_id": "9c1a3483024a", "case": "s03"}
+{"kind": "http_status", "at": 1795241307.2031865, "id": "9c1a3483024a", "case": "s03", "status": 200, "seconds": 0.0166}
+{"kind": "queued", "at": 1795241307.2054417, "id": "9c1a3483024a", "case": "s03", "seconds": 0.0189, "position": 4, "code": null, "retry_after": null}
+{"kind": "provider_error", "at": 1795241307.2207303, "request_id": "97e32a9015ae", "case": "b06", "key_index": 3, "call_id": "52c7c756b8", "category": "rate_limited", "status": 429, "retry_after": 34, "before_first_chunk": true, "seconds": 0.1189}
+{"kind": "provider_attempt", "at": 1795241307.283951, "request_id": "97e32a9015ae", "case": "b06", "key_index": 4, "call_id": "315a04c56f"}
+{"kind": "provider_attempt", "at": 1795241307.3926523, "request_id": "916575c10203", "case": "b05", "key_index": 4, "call_id": "b5bb22c3e3"}
+{"kind": "provider_first_chunk", "at": 1795241307.5252957, "request_id": "d212ee405858", "case": "w07", "key_index": 3, "call_id": "388b1aedd3", "seconds": 0.7997}
+{"kind": "provider_done", "at": 1795241307.5273714, "request_id": "d212ee405858", "case": "w07", "key_index": 3, "call_id": "388b1aedd3", "seconds": 0.8017, "usage": {"input_tokens": 457, "output_tokens": 1, "total_tokens": 458}}
+{"kind": "provider_attempt", "at": 1795241307.5279233, "request_id": "d212ee405858", "case": "w07", "key_index": 3, "call_id": "fdd2bfb8a9"}
+{"kind": "provider_error", "at": 1795241307.638279, "request_id": "d212ee405858", "case": "w07", "key_index": 3, "call_id": "fdd2bfb8a9", "category": "rate_limited", "status": 429, "retry_after": 34, "before_first_chunk": true, "seconds": 0.1106}
+{"kind": "provider_attempt", "at": 1795241307.6392815, "request_id": "d212ee405858", "case": "w07", "key_index": 4, "call_id": "9472c1d264"}
+{"kind": "queued", "at": 1795241307.895887, "id": "c1469fed9e93", "case": "t05", "seconds": 3.6496, "position": 2, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241307.897005, "id": "fc0896bf079b", "case": "w05", "seconds": 4.2619, "position": 1, "code": null, "retry_after": null}
+{"kind": "provider_first_chunk", "at": 1795241308.0884168, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 3, "call_id": "ba30d930fa", "seconds": 1.8574}
+{"kind": "provider_done", "at": 1795241308.0900085, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 3, "call_id": "ba30d930fa", "seconds": 1.8594, "usage": {"input_tokens": 5132, "output_tokens": 37, "total_tokens": 5169}}
+{"kind": "provider_attempt", "at": 1795241308.0921388, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 3, "call_id": "99229055a0"}
+{"kind": "provider_error", "at": 1795241308.2070818, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 3, "call_id": "99229055a0", "category": "rate_limited", "status": 429, "retry_after": 33, "before_first_chunk": true, "seconds": 0.1154}
+{"kind": "provider_attempt", "at": 1795241308.2080815, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 4, "call_id": "272ca72585"}
+{"kind": "provider_first_chunk", "at": 1795241308.7735424, "request_id": "97e32a9015ae", "case": "b06", "key_index": 4, "call_id": "315a04c56f", "seconds": 1.4898}
+{"kind": "provider_done", "at": 1795241308.7750273, "request_id": "97e32a9015ae", "case": "b06", "key_index": 4, "call_id": "315a04c56f", "seconds": 1.4916, "usage": {"input_tokens": 475, "output_tokens": 1, "total_tokens": 476}}
+{"kind": "provider_attempt", "at": 1795241308.7762308, "request_id": "97e32a9015ae", "case": "b06", "key_index": 4, "call_id": "281a65ab97"}
+{"kind": "provider_first_chunk", "at": 1795241308.922153, "request_id": "916575c10203", "case": "b05", "key_index": 4, "call_id": "b5bb22c3e3", "seconds": 1.5273}
+{"kind": "provider_first_chunk", "at": 1795241308.9241564, "request_id": "d212ee405858", "case": "w07", "key_index": 4, "call_id": "9472c1d264", "seconds": 1.283}
+{"kind": "provider_done", "at": 1795241308.9292283, "request_id": "916575c10203", "case": "b05", "key_index": 4, "call_id": "b5bb22c3e3", "seconds": 1.5325, "usage": {"input_tokens": 489, "output_tokens": 1, "total_tokens": 490}}
+{"kind": "provider_attempt", "at": 1795241308.9397168, "request_id": "916575c10203", "case": "b05", "key_index": 4, "call_id": "6f893028f7"}
+{"kind": "provider_done", "at": 1795241308.9935555, "request_id": "d212ee405858", "case": "w07", "key_index": 4, "call_id": "9472c1d264", "seconds": 1.3542, "usage": {"input_tokens": 1151, "output_tokens": 196, "total_tokens": 1347}}
+{"kind": "provider_attempt", "at": 1795241308.995797, "request_id": "d212ee405858", "case": "w07", "key_index": 4, "call_id": "4f8e188003"}
+{"kind": "provider_first_chunk", "at": 1795241309.627237, "request_id": "97e32a9015ae", "case": "b06", "key_index": 4, "call_id": "281a65ab97", "seconds": 0.8508}
+{"kind": "provider_done", "at": 1795241309.8400567, "request_id": "97e32a9015ae", "case": "b06", "key_index": 4, "call_id": "281a65ab97", "seconds": 1.0643, "usage": {"input_tokens": 1169, "output_tokens": 100, "total_tokens": 1269}}
+{"kind": "provider_attempt", "at": 1795241309.8420806, "request_id": "97e32a9015ae", "case": "b06", "key_index": 4, "call_id": "a40037f0c9"}
+{"kind": "provider_first_chunk", "at": 1795241309.9175217, "request_id": "916575c10203", "case": "b05", "key_index": 4, "call_id": "6f893028f7", "seconds": 0.9772}
+{"kind": "provider_done", "at": 1795241310.0980866, "request_id": "916575c10203", "case": "b05", "key_index": 4, "call_id": "6f893028f7", "seconds": 1.1582, "usage": {"input_tokens": 1183, "output_tokens": 95, "total_tokens": 1278}}
+{"kind": "provider_attempt", "at": 1795241310.0997653, "request_id": "916575c10203", "case": "b05", "key_index": 4, "call_id": "c812e55a71"}
+{"kind": "provider_first_chunk", "at": 1795241310.2047057, "request_id": "d212ee405858", "case": "w07", "key_index": 4, "call_id": "4f8e188003", "seconds": 1.2088}
+{"kind": "first_token", "at": 1795241310.2124264, "id": "d212ee405858", "case": "w07", "seconds": 10.7643}
+{"kind": "provider_first_chunk", "at": 1795241310.485385, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 4, "call_id": "272ca72585", "seconds": 2.2768}
+{"kind": "provider_done", "at": 1795241310.5045047, "request_id": "d212ee405858", "case": "w07", "key_index": 4, "call_id": "4f8e188003", "seconds": 1.5089, "usage": {"input_tokens": 6499, "output_tokens": 163, "total_tokens": 6662}}
+{"kind": "provider_done", "at": 1795241310.551559, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 4, "call_id": "272ca72585", "seconds": 2.343, "usage": {"input_tokens": 5229, "output_tokens": 28, "total_tokens": 5257}}
+{"kind": "provider_attempt", "at": 1795241310.5549839, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 4, "call_id": "88096a2b64"}
+{"kind": "chat_done", "at": 1795241310.7138805, "id": "d212ee405858", "case": "w07", "seconds": 11.268, "cached": false, "server_duration": 4.2}
+{"kind": "queued", "at": 1795241310.7321923, "id": "c1469fed9e93", "case": "t05", "seconds": 6.486, "position": 1, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241310.7338762, "id": "5f664893c309", "case": "t08", "seconds": 3.8003, "position": 2, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241310.734401, "id": "9c1a3483024a", "case": "s03", "seconds": 3.5484, "position": 3, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241310.7743533, "id": "d212ee405858", "case": "w07", "seconds": 11.3272}
+{"kind": "provider_first_chunk", "at": 1795241311.0361, "request_id": "97e32a9015ae", "case": "b06", "key_index": 4, "call_id": "a40037f0c9", "seconds": 1.1933}
+{"kind": "provider_done", "at": 1795241311.0391192, "request_id": "97e32a9015ae", "case": "b06", "key_index": 4, "call_id": "a40037f0c9", "seconds": 1.1969, "usage": {"input_tokens": 5780, "output_tokens": 40, "total_tokens": 5820}}
+{"kind": "provider_attempt", "at": 1795241311.042172, "request_id": "97e32a9015ae", "case": "b06", "key_index": 4, "call_id": "5e93e717cd"}
+{"kind": "chat_start", "at": 1795241311.2645495, "request_id": "d25654d8ce6a", "case": "w09"}
+{"kind": "provider_attempt", "at": 1795241311.3053286, "request_id": "fc0896bf079b", "case": "w05", "key_index": 4, "call_id": "6ad828451c"}
+{"kind": "provider_first_chunk", "at": 1795241311.331074, "request_id": "916575c10203", "case": "b05", "key_index": 4, "call_id": "c812e55a71", "seconds": 1.2315}
+{"kind": "provider_done", "at": 1795241311.3346741, "request_id": "916575c10203", "case": "b05", "key_index": 4, "call_id": "c812e55a71", "seconds": 1.2352, "usage": {"input_tokens": 5648, "output_tokens": 48, "total_tokens": 5696}}
+{"kind": "provider_attempt", "at": 1795241311.3382003, "request_id": "916575c10203", "case": "b05", "key_index": 4, "call_id": "f2cec37521"}
+{"kind": "http_status", "at": 1795241311.349487, "id": "d25654d8ce6a", "case": "w09", "status": 200, "seconds": 0.0848}
+{"kind": "queued", "at": 1795241311.3540323, "id": "d25654d8ce6a", "case": "w09", "seconds": 0.0898, "position": 4, "code": null, "retry_after": null}
+{"kind": "provider_first_chunk", "at": 1795241311.743746, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 4, "call_id": "88096a2b64", "seconds": 1.1896}
+{"kind": "first_token", "at": 1795241311.7472723, "id": "4c234bdb5fdc", "case": "k05", "seconds": 12.3237}
+{"kind": "provider_first_chunk", "at": 1795241312.157744, "request_id": "97e32a9015ae", "case": "b06", "key_index": 4, "call_id": "5e93e717cd", "seconds": 1.1163}
+{"kind": "first_token", "at": 1795241312.1614115, "id": "97e32a9015ae", "case": "b06", "seconds": 9.3623}
+{"kind": "provider_first_chunk", "at": 1795241312.174743, "request_id": "fc0896bf079b", "case": "w05", "key_index": 4, "call_id": "6ad828451c", "seconds": 0.8693}
+{"kind": "provider_done", "at": 1795241312.1779578, "request_id": "fc0896bf079b", "case": "w05", "key_index": 4, "call_id": "6ad828451c", "seconds": 0.8736, "usage": {"input_tokens": 462, "output_tokens": 1, "total_tokens": 463}}
+{"kind": "provider_attempt", "at": 1795241312.1790621, "request_id": "fc0896bf079b", "case": "w05", "key_index": 4, "call_id": "14fd470d8e"}
+{"kind": "provider_done", "at": 1795241312.4557867, "request_id": "4c234bdb5fdc", "case": "k05", "key_index": 4, "call_id": "88096a2b64", "seconds": 1.9004, "usage": {"input_tokens": 5420, "output_tokens": 307, "total_tokens": 5727}}
+{"kind": "provider_done", "at": 1795241312.5035658, "request_id": "97e32a9015ae", "case": "b06", "key_index": 4, "call_id": "5e93e717cd", "seconds": 1.4623, "usage": {"input_tokens": 5883, "output_tokens": 228, "total_tokens": 6111}}
+{"kind": "provider_first_chunk", "at": 1795241312.5965033, "request_id": "916575c10203", "case": "b05", "key_index": 4, "call_id": "f2cec37521", "seconds": 1.2589}
+{"kind": "first_token", "at": 1795241312.6005023, "id": "916575c10203", "case": "b05", "seconds": 9.0829}
+{"kind": "chat_done", "at": 1795241312.6855748, "id": "4c234bdb5fdc", "case": "k05", "seconds": 13.2616, "cached": false, "server_duration": 8.5}
+{"kind": "queued", "at": 1795241312.6922703, "id": "9c1a3483024a", "case": "s03", "seconds": 5.5054, "position": 2, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241312.6934419, "id": "d25654d8ce6a", "case": "w09", "seconds": 1.4284, "position": 3, "code": null, "retry_after": null}
+{"kind": "chat_done", "at": 1795241312.6963172, "id": "97e32a9015ae", "case": "b06", "seconds": 9.8963, "cached": false, "server_duration": 5.9}
+{"kind": "queued", "at": 1795241312.7080135, "id": "d25654d8ce6a", "case": "w09", "seconds": 1.4416, "position": 2, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241312.7119129, "id": "9c1a3483024a", "case": "s03", "seconds": 5.5246, "position": 1, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241312.7200797, "id": "4c234bdb5fdc", "case": "k05", "seconds": 13.2963}
+{"kind": "chat_end", "at": 1795241312.7264426, "id": "97e32a9015ae", "case": "b06", "seconds": 9.9274}
+{"kind": "provider_first_chunk", "at": 1795241312.737885, "request_id": "fc0896bf079b", "case": "w05", "key_index": 4, "call_id": "14fd470d8e", "seconds": 0.5586}
+{"kind": "provider_done", "at": 1795241312.8597956, "request_id": "fc0896bf079b", "case": "w05", "key_index": 4, "call_id": "14fd470d8e", "seconds": 0.6812, "usage": {"input_tokens": 1156, "output_tokens": 149, "total_tokens": 1305}}
+{"kind": "provider_attempt", "at": 1795241312.861689, "request_id": "fc0896bf079b", "case": "w05", "key_index": 4, "call_id": "7551b9640c"}
+{"kind": "provider_done", "at": 1795241313.1400182, "request_id": "916575c10203", "case": "b05", "key_index": 4, "call_id": "f2cec37521", "seconds": 1.8018, "usage": {"input_tokens": 5767, "output_tokens": 326, "total_tokens": 6093}}
+{"kind": "chat_start", "at": 1795241313.1587641, "request_id": "e90415120c44", "case": "k06"}
+{"kind": "chat_start", "at": 1795241313.1815193, "request_id": "0e23c53a317f", "case": "b08"}
+{"kind": "http_status", "at": 1795241313.1943123, "id": "e90415120c44", "case": "k06", "status": 200, "seconds": 0.0334}
+{"kind": "queued", "at": 1795241313.2004588, "id": "e90415120c44", "case": "k06", "seconds": 0.0418, "position": 3, "code": null, "retry_after": null}
+{"kind": "provider_attempt", "at": 1795241313.2127352, "request_id": "c1469fed9e93", "case": "t05", "key_index": 4, "call_id": "1644be307b"}
+{"kind": "http_status", "at": 1795241313.2252676, "id": "0e23c53a317f", "case": "b08", "status": 200, "seconds": 0.0458}
+{"kind": "queued", "at": 1795241313.2282858, "id": "0e23c53a317f", "case": "b08", "seconds": 0.0487, "position": 4, "code": null, "retry_after": null}
+{"kind": "chat_done", "at": 1795241313.2701488, "id": "916575c10203", "case": "b05", "seconds": 9.7518, "cached": false, "server_duration": 6.2}
+{"kind": "queued", "at": 1795241313.2753317, "id": "d25654d8ce6a", "case": "w09", "seconds": 2.0103, "position": 1, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241313.2770314, "id": "e90415120c44", "case": "k06", "seconds": 0.1179, "position": 2, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241313.2785783, "id": "0e23c53a317f", "case": "b08", "seconds": 0.0993, "position": 3, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241313.285315, "id": "916575c10203", "case": "b05", "seconds": 9.7669}
+{"kind": "provider_attempt", "at": 1795241313.401326, "request_id": "5f664893c309", "case": "t08", "key_index": 4, "call_id": "9fb1ad8710"}
+{"kind": "chat_start", "at": 1795241313.6437929, "request_id": "39ecf5b30fdc", "case": "b07"}
+{"kind": "http_status", "at": 1795241313.6646392, "id": "39ecf5b30fdc", "case": "b07", "status": 200, "seconds": 0.0205}
+{"kind": "queued", "at": 1795241313.667181, "id": "39ecf5b30fdc", "case": "b07", "seconds": 0.0234, "position": 4, "code": null, "retry_after": null}
+{"kind": "provider_attempt", "at": 1795241313.7693965, "request_id": "9c1a3483024a", "case": "s03", "key_index": 4, "call_id": "a27dea3a77"}
+{"kind": "provider_first_chunk", "at": 1795241314.0110242, "request_id": "fc0896bf079b", "case": "w05", "key_index": 4, "call_id": "7551b9640c", "seconds": 1.1487}
+{"kind": "first_token", "at": 1795241314.017519, "id": "fc0896bf079b", "case": "w05", "seconds": 10.3823}
+{"kind": "provider_first_chunk", "at": 1795241314.0256739, "request_id": "c1469fed9e93", "case": "t05", "key_index": 4, "call_id": "1644be307b", "seconds": 0.809}
+{"kind": "provider_done", "at": 1795241314.0300758, "request_id": "c1469fed9e93", "case": "t05", "key_index": 4, "call_id": "1644be307b", "seconds": 0.8182, "usage": {"input_tokens": 473, "output_tokens": 1, "total_tokens": 474}}
+{"kind": "provider_attempt", "at": 1795241314.0335174, "request_id": "c1469fed9e93", "case": "t05", "key_index": 4, "call_id": "d254331e8b"}
+{"kind": "provider_error", "at": 1795241314.151695, "request_id": "c1469fed9e93", "case": "t05", "key_index": 4, "call_id": "d254331e8b", "category": "rate_limited", "status": 429, "retry_after": 27, "before_first_chunk": true, "seconds": 0.1183}
+{"kind": "provider_attempt", "at": 1795241314.1896694, "request_id": "c1469fed9e93", "case": "t05", "key_index": 5, "call_id": "6a7171c067"}
+{"kind": "provider_first_chunk", "at": 1795241314.3106425, "request_id": "9c1a3483024a", "case": "s03", "key_index": 4, "call_id": "a27dea3a77", "seconds": 0.5397}
+{"kind": "provider_first_chunk", "at": 1795241314.315752, "request_id": "5f664893c309", "case": "t08", "key_index": 4, "call_id": "9fb1ad8710", "seconds": 0.9089}
+{"kind": "provider_done", "at": 1795241314.3186107, "request_id": "9c1a3483024a", "case": "s03", "key_index": 4, "call_id": "a27dea3a77", "seconds": 0.5476, "usage": {"input_tokens": 457, "output_tokens": 1, "total_tokens": 458}}
+{"kind": "provider_done", "at": 1795241314.3203042, "request_id": "5f664893c309", "case": "t08", "key_index": 4, "call_id": "9fb1ad8710", "seconds": 0.9178, "usage": {"input_tokens": 459, "output_tokens": 1, "total_tokens": 460}}
+{"kind": "provider_attempt", "at": 1795241314.3208585, "request_id": "9c1a3483024a", "case": "s03", "key_index": 4, "call_id": "4941c722f0"}
+{"kind": "provider_attempt", "at": 1795241314.3270524, "request_id": "5f664893c309", "case": "t08", "key_index": 4, "call_id": "8c0d6c21cf"}
+{"kind": "provider_error", "at": 1795241314.454862, "request_id": "9c1a3483024a", "case": "s03", "key_index": 4, "call_id": "4941c722f0", "category": "rate_limited", "status": 429, "retry_after": 27, "before_first_chunk": true, "seconds": 0.1348}
+{"kind": "provider_attempt", "at": 1795241314.4558632, "request_id": "9c1a3483024a", "case": "s03", "key_index": 5, "call_id": "8bf639cdb2"}
+{"kind": "provider_done", "at": 1795241314.6111107, "request_id": "fc0896bf079b", "case": "w05", "key_index": 4, "call_id": "7551b9640c", "seconds": 1.7487, "usage": {"input_tokens": 6529, "output_tokens": 231, "total_tokens": 6760}}
+{"kind": "chat_done", "at": 1795241314.7326272, "id": "fc0896bf079b", "case": "w05", "seconds": 11.0972, "cached": false, "server_duration": 3.8}
+{"kind": "queued", "at": 1795241314.7366714, "id": "e90415120c44", "case": "k06", "seconds": 1.5777, "position": 1, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241314.738534, "id": "39ecf5b30fdc", "case": "b07", "seconds": 1.0942, "position": 3, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241314.7479773, "id": "fc0896bf079b", "case": "w05", "seconds": 11.1115}
+{"kind": "chat_start", "at": 1795241315.220718, "request_id": "bce0d8d76ad9", "case": "w08"}
+{"kind": "http_status", "at": 1795241315.245493, "id": "bce0d8d76ad9", "case": "w08", "status": 200, "seconds": 0.0248}
+{"kind": "queued", "at": 1795241315.2485123, "id": "bce0d8d76ad9", "case": "w08", "seconds": 0.0278, "position": 4, "code": null, "retry_after": null}
+{"kind": "provider_attempt", "at": 1795241315.278133, "request_id": "d25654d8ce6a", "case": "w09", "key_index": 5, "call_id": "3ec8035881"}
+{"kind": "provider_first_chunk", "at": 1795241315.2935584, "request_id": "5f664893c309", "case": "t08", "key_index": 4, "call_id": "8c0d6c21cf", "seconds": 0.9721}
+{"kind": "provider_done", "at": 1795241315.3997357, "request_id": "5f664893c309", "case": "t08", "key_index": 4, "call_id": "8c0d6c21cf", "seconds": 1.0787, "usage": {"input_tokens": 1153, "output_tokens": 158, "total_tokens": 1311}}
+{"kind": "provider_attempt", "at": 1795241315.4007382, "request_id": "5f664893c309", "case": "t08", "key_index": 4, "call_id": "3e9175b248"}
+{"kind": "queued", "at": 1795241315.7345746, "id": "0e23c53a317f", "case": "b08", "seconds": 2.5553, "position": 2, "code": null, "retry_after": null}
+{"kind": "provider_first_chunk", "at": 1795241315.8320808, "request_id": "c1469fed9e93", "case": "t05", "key_index": 5, "call_id": "6a7171c067", "seconds": 1.643}
+{"kind": "provider_first_chunk", "at": 1795241315.842667, "request_id": "9c1a3483024a", "case": "s03", "key_index": 5, "call_id": "8bf639cdb2", "seconds": 1.3873}
+{"kind": "provider_done", "at": 1795241315.9488328, "request_id": "c1469fed9e93", "case": "t05", "key_index": 5, "call_id": "6a7171c067", "seconds": 1.7594, "usage": {"input_tokens": 1167, "output_tokens": 119, "total_tokens": 1286}}
+{"kind": "provider_attempt", "at": 1795241315.9498346, "request_id": "c1469fed9e93", "case": "t05", "key_index": 5, "call_id": "2031bee758"}
+{"kind": "provider_done", "at": 1795241315.9569902, "request_id": "9c1a3483024a", "case": "s03", "key_index": 5, "call_id": "8bf639cdb2", "seconds": 1.5016, "usage": {"input_tokens": 1151, "output_tokens": 127, "total_tokens": 1278}}
+{"kind": "provider_attempt", "at": 1795241315.9579859, "request_id": "9c1a3483024a", "case": "s03", "key_index": 5, "call_id": "eaa71fcee3"}
+{"kind": "provider_first_chunk", "at": 1795241316.1842442, "request_id": "d25654d8ce6a", "case": "w09", "key_index": 5, "call_id": "3ec8035881", "seconds": 0.906}
+{"kind": "provider_done", "at": 1795241316.1878743, "request_id": "d25654d8ce6a", "case": "w09", "key_index": 5, "call_id": "3ec8035881", "seconds": 0.9098, "usage": {"input_tokens": 456, "output_tokens": 1, "total_tokens": 457}}
+{"kind": "provider_attempt", "at": 1795241316.1888938, "request_id": "d25654d8ce6a", "case": "w09", "key_index": 5, "call_id": "26072ace2a"}
+{"kind": "provider_first_chunk", "at": 1795241316.2761064, "request_id": "5f664893c309", "case": "t08", "key_index": 4, "call_id": "3e9175b248", "seconds": 0.8743}
+{"kind": "first_token", "at": 1795241316.2823439, "id": "5f664893c309", "case": "t08", "seconds": 9.3456}
+{"kind": "provider_first_chunk", "at": 1795241316.9651456, "request_id": "c1469fed9e93", "case": "t05", "key_index": 5, "call_id": "2031bee758", "seconds": 1.0147}
+{"kind": "first_token", "at": 1795241316.9699445, "id": "c1469fed9e93", "case": "t05", "seconds": 12.7242}
+{"kind": "provider_done", "at": 1795241317.0013888, "request_id": "5f664893c309", "case": "t08", "key_index": 4, "call_id": "3e9175b248", "seconds": 1.5999, "usage": {"input_tokens": 5401, "output_tokens": 334, "total_tokens": 5735}}
+{"kind": "provider_first_chunk", "at": 1795241317.0710113, "request_id": "d25654d8ce6a", "case": "w09", "key_index": 5, "call_id": "26072ace2a", "seconds": 0.8818}
+{"kind": "chat_done", "at": 1795241317.132086, "id": "5f664893c309", "case": "t08", "seconds": 10.1972, "cached": false, "server_duration": 4.2}
+{"kind": "chat_end", "at": 1795241317.1499307, "id": "5f664893c309", "case": "t08", "seconds": 10.2164}
+{"kind": "provider_first_chunk", "at": 1795241317.4190316, "request_id": "9c1a3483024a", "case": "s03", "key_index": 5, "call_id": "eaa71fcee3", "seconds": 1.4602}
+{"kind": "first_token", "at": 1795241317.4301918, "id": "9c1a3483024a", "case": "s03", "seconds": 10.2392}
+{"kind": "provider_done", "at": 1795241317.4883058, "request_id": "d25654d8ce6a", "case": "w09", "key_index": 5, "call_id": "26072ace2a", "seconds": 1.2997, "usage": {"input_tokens": 1150, "output_tokens": 195, "total_tokens": 1345}}
+{"kind": "provider_attempt", "at": 1795241317.4905455, "request_id": "d25654d8ce6a", "case": "w09", "key_index": 5, "call_id": "8b2fb46bf2"}
+{"kind": "chat_start", "at": 1795241317.65302, "request_id": "4600ef099989", "case": "t10"}
+{"kind": "http_status", "at": 1795241317.6763709, "id": "4600ef099989", "case": "t10", "status": 200, "seconds": 0.0237}
+{"kind": "queued", "at": 1795241317.6794443, "id": "4600ef099989", "case": "t10", "seconds": 0.0263, "position": 4, "code": null, "retry_after": null}
+{"kind": "provider_attempt", "at": 1795241317.706783, "request_id": "e90415120c44", "case": "k06", "key_index": 5, "call_id": "ec7343ec86"}
+{"kind": "provider_done", "at": 1795241317.8629558, "request_id": "9c1a3483024a", "case": "s03", "key_index": 5, "call_id": "eaa71fcee3", "seconds": 1.9045, "usage": {"input_tokens": 6369, "output_tokens": 258, "total_tokens": 6627}}
+{"kind": "chat_done", "at": 1795241317.9772575, "id": "9c1a3483024a", "case": "s03", "seconds": 10.7912, "cached": false, "server_duration": 4.6}
+{"kind": "queued", "at": 1795241317.985141, "id": "bce0d8d76ad9", "case": "w08", "seconds": 2.7632, "position": 3, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241317.9868112, "id": "39ecf5b30fdc", "case": "b07", "seconds": 4.3429, "position": 1, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241317.9879463, "id": "4600ef099989", "case": "t10", "seconds": 0.3351, "position": 3, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241317.994495, "id": "bce0d8d76ad9", "case": "w08", "seconds": 2.7734, "position": 2, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241317.997871, "id": "9c1a3483024a", "case": "s03", "seconds": 10.8098}
+{"kind": "chat_start", "at": 1795241318.3217864, "request_id": "89cfbb97347a", "case": "k07"}
+{"kind": "http_status", "at": 1795241318.33895, "id": "89cfbb97347a", "case": "k07", "status": 200, "seconds": 0.0175}
+{"kind": "queued", "at": 1795241318.3409543, "id": "89cfbb97347a", "case": "k07", "seconds": 0.0197, "position": 4, "code": null, "retry_after": null}
+{"kind": "provider_first_chunk", "at": 1795241318.3996193, "request_id": "d25654d8ce6a", "case": "w09", "key_index": 5, "call_id": "8b2fb46bf2", "seconds": 0.9091}
+{"kind": "first_token", "at": 1795241318.4023266, "id": "d25654d8ce6a", "case": "w09", "seconds": 7.1375}
+{"kind": "provider_done", "at": 1795241318.4507694, "request_id": "c1469fed9e93", "case": "t05", "key_index": 5, "call_id": "2031bee758", "seconds": 2.5006, "usage": {"input_tokens": 5263, "output_tokens": 389, "total_tokens": 5652}}
+{"kind": "provider_attempt", "at": 1795241318.4843683, "request_id": "0e23c53a317f", "case": "b08", "key_index": 5, "call_id": "06cba56022"}
+{"kind": "chat_done", "at": 1795241318.6223197, "id": "c1469fed9e93", "case": "t05", "seconds": 14.3764, "cached": false, "server_duration": 5.8}
+{"kind": "chat_end", "at": 1795241318.6335835, "id": "c1469fed9e93", "case": "t05", "seconds": 14.3874}
+{"kind": "provider_first_chunk", "at": 1795241318.6397526, "request_id": "e90415120c44", "case": "k06", "key_index": 5, "call_id": "ec7343ec86", "seconds": 0.9301}
+{"kind": "provider_done", "at": 1795241318.649151, "request_id": "e90415120c44", "case": "k06", "key_index": 5, "call_id": "ec7343ec86", "seconds": 0.942, "usage": {"input_tokens": 481, "output_tokens": 1, "total_tokens": 482}}
+{"kind": "provider_attempt", "at": 1795241318.655022, "request_id": "e90415120c44", "case": "k06", "key_index": 5, "call_id": "d170ed2ded"}
+{"kind": "chat_start", "at": 1795241318.9621243, "request_id": "2de2d2c42531", "case": "t07"}
+{"kind": "http_status", "at": 1795241318.9843376, "id": "2de2d2c42531", "case": "t07", "status": 200, "seconds": 0.0215}
+{"kind": "queued", "at": 1795241318.9863322, "id": "2de2d2c42531", "case": "t07", "seconds": 0.0238, "position": 4, "code": null, "retry_after": null}
+{"kind": "provider_done", "at": 1795241319.1000662, "request_id": "d25654d8ce6a", "case": "w09", "key_index": 5, "call_id": "8b2fb46bf2", "seconds": 1.6094, "usage": {"input_tokens": 5872, "output_tokens": 253, "total_tokens": 6125}}
+{"kind": "provider_attempt", "at": 1795241319.1241584, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 5, "call_id": "c0ec1ed724"}
+{"kind": "chat_done", "at": 1795241319.2302222, "id": "d25654d8ce6a", "case": "w09", "seconds": 7.9651, "cached": false, "server_duration": 4.3}
+{"kind": "queued", "at": 1795241319.2349632, "id": "4600ef099989", "case": "t10", "seconds": 1.582, "position": 2, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241319.2372541, "id": "2de2d2c42531", "case": "t07", "seconds": 0.2746, "position": 3, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241319.239702, "id": "89cfbb97347a", "case": "k07", "seconds": 0.9176, "position": 2, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241319.2443533, "id": "4600ef099989", "case": "t10", "seconds": 1.5902, "position": 1, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241319.2472115, "id": "d25654d8ce6a", "case": "w09", "seconds": 7.9826}
+{"kind": "provider_first_chunk", "at": 1795241319.4167612, "request_id": "0e23c53a317f", "case": "b08", "key_index": 5, "call_id": "06cba56022", "seconds": 0.9325}
+{"kind": "provider_done", "at": 1795241319.4182794, "request_id": "0e23c53a317f", "case": "b08", "key_index": 5, "call_id": "06cba56022", "seconds": 0.9343, "usage": {"input_tokens": 468, "output_tokens": 1, "total_tokens": 469}}
+{"kind": "provider_attempt", "at": 1795241319.4192967, "request_id": "0e23c53a317f", "case": "b08", "key_index": 5, "call_id": "bdfe40f0f3"}
+{"kind": "provider_first_chunk", "at": 1795241319.433644, "request_id": "e90415120c44", "case": "k06", "key_index": 5, "call_id": "d170ed2ded", "seconds": 0.7772}
+{"kind": "chat_start", "at": 1795241319.4933748, "request_id": "3d05360e3318", "case": "t11"}
+{"kind": "http_status", "at": 1795241319.5111992, "id": "3d05360e3318", "case": "t11", "status": 200, "seconds": 0.0176}
+{"kind": "queued", "at": 1795241319.513226, "id": "3d05360e3318", "case": "t11", "seconds": 0.0196, "position": 4, "code": null, "retry_after": null}
+{"kind": "provider_done", "at": 1795241319.5683043, "request_id": "e90415120c44", "case": "k06", "key_index": 5, "call_id": "d170ed2ded", "seconds": 0.9139, "usage": {"input_tokens": 1175, "output_tokens": 83, "total_tokens": 1258}}
+{"kind": "provider_attempt", "at": 1795241319.5703158, "request_id": "e90415120c44", "case": "k06", "key_index": 5, "call_id": "3d75e62c00"}
+{"kind": "provider_attempt", "at": 1795241319.7685325, "request_id": "bce0d8d76ad9", "case": "w08", "key_index": 5, "call_id": "9f86318c46"}
+{"kind": "provider_first_chunk", "at": 1795241320.0824575, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 5, "call_id": "c0ec1ed724", "seconds": 0.9577}
+{"kind": "provider_done", "at": 1795241320.0855806, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 5, "call_id": "c0ec1ed724", "seconds": 0.9605, "usage": {"input_tokens": 472, "output_tokens": 1, "total_tokens": 473}}
+{"kind": "provider_attempt", "at": 1795241320.0855806, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 5, "call_id": "6c95d1ec11"}
+{"kind": "provider_first_chunk", "at": 1795241320.6433177, "request_id": "bce0d8d76ad9", "case": "w08", "key_index": 5, "call_id": "9f86318c46", "seconds": 0.8739}
+{"kind": "provider_done", "at": 1795241320.6494162, "request_id": "bce0d8d76ad9", "case": "w08", "key_index": 5, "call_id": "9f86318c46", "seconds": 0.8803, "usage": {"input_tokens": 464, "output_tokens": 1, "total_tokens": 465}}
+{"kind": "provider_attempt", "at": 1795241320.6539388, "request_id": "bce0d8d76ad9", "case": "w08", "key_index": 5, "call_id": "441e58b6d0"}
+{"kind": "provider_first_chunk", "at": 1795241320.6554644, "request_id": "e90415120c44", "case": "k06", "key_index": 5, "call_id": "3d75e62c00", "seconds": 1.0833}
+{"kind": "first_token", "at": 1795241320.6702874, "id": "e90415120c44", "case": "k06", "seconds": 7.5113}
+{"kind": "provider_first_chunk", "at": 1795241321.4268916, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 5, "call_id": "6c95d1ec11", "seconds": 1.3408}
+{"kind": "provider_done", "at": 1795241321.4591188, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 5, "call_id": "6c95d1ec11", "seconds": 1.3732, "usage": {"input_tokens": 1166, "output_tokens": 79, "total_tokens": 1245}}
+{"kind": "provider_attempt", "at": 1795241321.4601226, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 5, "call_id": "1e8b5a70af"}
+{"kind": "provider_first_chunk", "at": 1795241321.6412296, "request_id": "bce0d8d76ad9", "case": "w08", "key_index": 5, "call_id": "441e58b6d0", "seconds": 0.9902}
+{"kind": "provider_done", "at": 1795241321.8165371, "request_id": "bce0d8d76ad9", "case": "w08", "key_index": 5, "call_id": "441e58b6d0", "seconds": 1.1653, "usage": {"input_tokens": 1158, "output_tokens": 149, "total_tokens": 1307}}
+{"kind": "provider_attempt", "at": 1795241321.8200753, "request_id": "bce0d8d76ad9", "case": "w08", "key_index": 5, "call_id": "12ff11bb6d"}
+{"kind": "provider_done", "at": 1795241321.9044714, "request_id": "e90415120c44", "case": "k06", "key_index": 5, "call_id": "3d75e62c00", "seconds": 2.334, "usage": {"input_tokens": 6301, "output_tokens": 590, "total_tokens": 6891}}
+{"kind": "chat_done", "at": 1795241322.0385509, "id": "e90415120c44", "case": "k06", "seconds": 8.8803, "cached": false, "server_duration": 4.7}
+{"kind": "queued", "at": 1795241322.0430121, "id": "89cfbb97347a", "case": "k07", "seconds": 3.721, "position": 1, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241322.0463903, "id": "3d05360e3318", "case": "t11", "seconds": 2.5515, "position": 3, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241322.0642378, "id": "e90415120c44", "case": "k06", "seconds": 8.9058}
+{"kind": "chat_start", "at": 1795241322.367975, "request_id": "9360cdd8c347", "case": "k08"}
+{"kind": "http_status", "at": 1795241322.3937814, "id": "9360cdd8c347", "case": "k08", "status": 200, "seconds": 0.0252}
+{"kind": "queued", "at": 1795241322.3966193, "id": "9360cdd8c347", "case": "k08", "seconds": 0.0285, "position": 4, "code": null, "retry_after": null}
+{"kind": "provider_attempt", "at": 1795241322.5344317, "request_id": "4600ef099989", "case": "t10", "key_index": 5, "call_id": "2881154e01"}
+{"kind": "provider_error", "at": 1795241322.654959, "request_id": "4600ef099989", "case": "t10", "key_index": 5, "call_id": "2881154e01", "category": "rate_limited", "status": 429, "retry_after": 19, "before_first_chunk": true, "seconds": 0.1209}
+{"kind": "provider_attempt", "at": 1795241322.695544, "request_id": "4600ef099989", "case": "t10", "key_index": 6, "call_id": "12e683af16"}
+{"kind": "provider_first_chunk", "at": 1795241322.7537134, "request_id": "bce0d8d76ad9", "case": "w08", "key_index": 5, "call_id": "12ff11bb6d", "seconds": 0.9345}
+{"kind": "first_token", "at": 1795241322.756705, "id": "bce0d8d76ad9", "case": "w08", "seconds": 7.5358}
+{"kind": "queued", "at": 1795241323.0541852, "id": "2de2d2c42531", "case": "t07", "seconds": 4.0916, "position": 2, "code": null, "retry_after": null}
+{"kind": "provider_first_chunk", "at": 1795241323.3069496, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 5, "call_id": "1e8b5a70af", "seconds": 1.8468}
+{"kind": "provider_done", "at": 1795241323.3091025, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 5, "call_id": "1e8b5a70af", "seconds": 1.8486, "usage": {"input_tokens": 5107, "output_tokens": 35, "total_tokens": 5142}}
+{"kind": "provider_attempt", "at": 1795241323.3101723, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 5, "call_id": "cc9ec26580"}
+{"kind": "provider_error", "at": 1795241323.4531252, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 5, "call_id": "cc9ec26580", "category": "rate_limited", "status": 429, "retry_after": 18, "before_first_chunk": true, "seconds": 0.1429}
+{"kind": "provider_attempt", "at": 1795241323.4541283, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 6, "call_id": "ce2a6ce18b"}
+{"kind": "provider_done", "at": 1795241324.0409415, "request_id": "bce0d8d76ad9", "case": "w08", "key_index": 5, "call_id": "12ff11bb6d", "seconds": 2.2223, "usage": {"input_tokens": 6551, "output_tokens": 460, "total_tokens": 7011}}
+{"kind": "provider_first_chunk", "at": 1795241324.1163905, "request_id": "4600ef099989", "case": "t10", "key_index": 6, "call_id": "12e683af16", "seconds": 1.4224}
+{"kind": "provider_done", "at": 1795241324.1183968, "request_id": "4600ef099989", "case": "t10", "key_index": 6, "call_id": "12e683af16", "seconds": 1.4238, "usage": {"input_tokens": 452, "output_tokens": 1, "total_tokens": 453}}
+{"kind": "provider_attempt", "at": 1795241324.1183968, "request_id": "4600ef099989", "case": "t10", "key_index": 6, "call_id": "b1d70b7faf"}
+{"kind": "chat_done", "at": 1795241324.1552792, "id": "bce0d8d76ad9", "case": "w08", "seconds": 8.9348, "cached": false, "server_duration": 4.8}
+{"kind": "queued", "at": 1795241324.1593196, "id": "3d05360e3318", "case": "t11", "seconds": 4.6656, "position": 2, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241324.160849, "id": "2de2d2c42531", "case": "t07", "seconds": 5.1978, "position": 1, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241324.169818, "id": "bce0d8d76ad9", "case": "w08", "seconds": 8.9475}
+{"kind": "chat_start", "at": 1795241324.429129, "request_id": "b8c2ff708d83", "case": "w11"}
+{"kind": "http_status", "at": 1795241324.4484117, "id": "b8c2ff708d83", "case": "w11", "status": 200, "seconds": 0.0205}
+{"kind": "queued", "at": 1795241324.4508152, "id": "b8c2ff708d83", "case": "w11", "seconds": 0.0222, "position": 4, "code": null, "retry_after": null}
+{"kind": "provider_attempt", "at": 1795241324.6662004, "request_id": "89cfbb97347a", "case": "k07", "key_index": 6, "call_id": "6859f0cfe2"}
+{"kind": "provider_first_chunk", "at": 1795241324.9471138, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 6, "call_id": "ce2a6ce18b", "seconds": 1.4934}
+{"kind": "provider_done", "at": 1795241324.9496584, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 6, "call_id": "ce2a6ce18b", "seconds": 1.4955, "usage": {"input_tokens": 5178, "output_tokens": 24, "total_tokens": 5202}}
+{"kind": "provider_attempt", "at": 1795241324.9516551, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 6, "call_id": "c1873cf0a3"}
+{"kind": "queued", "at": 1795241325.1592534, "id": "9360cdd8c347", "case": "k08", "seconds": 2.7917, "position": 3, "code": null, "retry_after": null}
+{"kind": "provider_first_chunk", "at": 1795241325.247433, "request_id": "4600ef099989", "case": "t10", "key_index": 6, "call_id": "b1d70b7faf", "seconds": 1.129}
+{"kind": "first_token", "at": 1795241325.251422, "id": "4600ef099989", "case": "t10", "seconds": 7.5982}
+{"kind": "provider_first_chunk", "at": 1795241325.6719239, "request_id": "89cfbb97347a", "case": "k07", "key_index": 6, "call_id": "6859f0cfe2", "seconds": 1.0052}
+{"kind": "provider_done", "at": 1795241325.6739235, "request_id": "89cfbb97347a", "case": "k07", "key_index": 6, "call_id": "6859f0cfe2", "seconds": 1.0069, "usage": {"input_tokens": 471, "output_tokens": 1, "total_tokens": 472}}
+{"kind": "provider_attempt", "at": 1795241325.6746187, "request_id": "89cfbb97347a", "case": "k07", "key_index": 6, "call_id": "10fd9ac4f5"}
+{"kind": "provider_done", "at": 1795241325.8882158, "request_id": "4600ef099989", "case": "t10", "key_index": 6, "call_id": "b1d70b7faf", "seconds": 1.7694, "usage": {"input_tokens": 5191, "output_tokens": 107, "total_tokens": 5298}}
+{"kind": "provider_attempt", "at": 1795241325.8902292, "request_id": "4600ef099989", "case": "t10", "key_index": 6, "call_id": "3de031d087"}
+{"kind": "provider_first_chunk", "at": 1795241326.0824575, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 6, "call_id": "c1873cf0a3", "seconds": 1.1312}
+{"kind": "first_token", "at": 1795241326.0869699, "id": "39ecf5b30fdc", "case": "b07", "seconds": 12.4429}
+{"kind": "provider_first_chunk", "at": 1795241326.950591, "request_id": "89cfbb97347a", "case": "k07", "key_index": 6, "call_id": "10fd9ac4f5", "seconds": 1.2758}
+{"kind": "provider_done", "at": 1795241327.0567985, "request_id": "89cfbb97347a", "case": "k07", "key_index": 6, "call_id": "10fd9ac4f5", "seconds": 1.3825, "usage": {"input_tokens": 1165, "output_tokens": 159, "total_tokens": 1324}}
+{"kind": "provider_attempt", "at": 1795241327.0584476, "request_id": "89cfbb97347a", "case": "k07", "key_index": 6, "call_id": "75f3096e93"}
+{"kind": "provider_done", "at": 1795241327.1188557, "request_id": "39ecf5b30fdc", "case": "b07", "key_index": 6, "call_id": "c1873cf0a3", "seconds": 2.1674, "usage": {"input_tokens": 5351, "output_tokens": 366, "total_tokens": 5717}}
+{"kind": "chat_done", "at": 1795241327.2347858, "id": "39ecf5b30fdc", "case": "b07", "seconds": 13.5915, "cached": false, "server_duration": 8.5}
+{"kind": "queued", "at": 1795241327.2382624, "id": "9360cdd8c347", "case": "k08", "seconds": 4.8699, "position": 2, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241327.24843, "id": "39ecf5b30fdc", "case": "b07", "seconds": 13.6016}
+{"kind": "provider_first_chunk", "at": 1795241327.5165515, "request_id": "4600ef099989", "case": "t10", "key_index": 6, "call_id": "3de031d087", "seconds": 1.6256}
+{"kind": "chat_start", "at": 1795241327.5471141, "request_id": "a8d39a87ccfc", "case": "s04"}
+{"kind": "http_status", "at": 1795241327.5640702, "id": "a8d39a87ccfc", "case": "s04", "status": 200, "seconds": 0.0177}
+{"kind": "queued", "at": 1795241327.5660675, "id": "a8d39a87ccfc", "case": "s04", "seconds": 0.0189, "position": 4, "code": null, "retry_after": null}
+{"kind": "provider_attempt", "at": 1795241327.723679, "request_id": "2de2d2c42531", "case": "t07", "key_index": 6, "call_id": "9e40ec565f"}
+{"kind": "provider_done", "at": 1795241327.7529166, "request_id": "4600ef099989", "case": "t10", "key_index": 6, "call_id": "3de031d087", "seconds": 1.8621, "usage": {"input_tokens": 5456, "output_tokens": 102, "total_tokens": 5558}}
+{"kind": "chat_done", "at": 1795241327.8699238, "id": "4600ef099989", "case": "t10", "seconds": 10.217, "cached": false, "server_duration": 5.7}
+{"kind": "queued", "at": 1795241327.8726127, "id": "b8c2ff708d83", "case": "w11", "seconds": 3.4439, "position": 3, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241327.8737597, "id": "9360cdd8c347", "case": "k08", "seconds": 5.5058, "position": 1, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241327.874982, "id": "a8d39a87ccfc", "case": "s04", "seconds": 0.3279, "position": 3, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241327.8830054, "id": "b8c2ff708d83", "case": "w11", "seconds": 3.4542, "position": 2, "code": null, "retry_after": null}
+{"kind": "chat_end", "at": 1795241327.8847632, "id": "4600ef099989", "case": "t10", "seconds": 10.2317}
+{"kind": "provider_first_chunk", "at": 1795241328.214368, "request_id": "89cfbb97347a", "case": "k07", "key_index": 6, "call_id": "75f3096e93", "seconds": 1.1555}
+{"kind": "first_token", "at": 1795241328.2173595, "id": "89cfbb97347a", "case": "k07", "seconds": 9.8958}
+{"kind": "provider_first_chunk", "at": 1795241328.3430288, "request_id": "2de2d2c42531", "case": "t07", "key_index": 6, "call_id": "9e40ec565f", "seconds": 0.6187}
+{"kind": "provider_done", "at": 1795241328.344543, "request_id": "2de2d2c42531", "case": "t07", "key_index": 6, "call_id": "9e40ec565f", "seconds": 0.6208, "usage": {"input_tokens": 462, "output_tokens": 1, "total_tokens": 463}}
+{"kind": "provider_attempt", "at": 1795241328.3465571, "request_id": "2de2d2c42531", "case": "t07", "key_index": 6, "call_id": "8bc9565a8e"}
+{"kind": "provider_attempt", "at": 1795241328.369335, "request_id": "3d05360e3318", "case": "t11", "key_index": 6, "call_id": "fd3f1147ae"}
+{"kind": "provider_first_chunk", "at": 1795241329.1966329, "request_id": "3d05360e3318", "case": "t11", "key_index": 6, "call_id": "fd3f1147ae", "seconds": 0.8272}
+{"kind": "provider_done", "at": 1795241329.1986313, "request_id": "3d05360e3318", "case": "t11", "key_index": 6, "call_id": "fd3f1147ae", "seconds": 0.8291, "usage": {"input_tokens": 466, "output_tokens": 1, "total_tokens": 467}}
+{"kind": "provider_attempt", "at": 1795241329.1986313, "request_id": "3d05360e3318", "case": "t11", "key_index": 6, "call_id": "0236975cf8"}
+{"kind": "provider_first_chunk", "at": 1795241329.3569715, "request_id": "2de2d2c42531", "case": "t07", "key_index": 6, "call_id": "8bc9565a8e", "seconds": 1.0108}
+{"kind": "provider_done", "at": 1795241329.7161725, "request_id": "2de2d2c42531", "case": "t07", "key_index": 6, "call_id": "8bc9565a8e", "seconds": 1.3699, "usage": {"input_tokens": 1156, "output_tokens": 119, "total_tokens": 1275}}
+{"kind": "provider_attempt", "at": 1795241329.7171679, "request_id": "2de2d2c42531", "case": "t07", "key_index": 6, "call_id": "d45a132591"}
+{"kind": "provider_done", "at": 1795241329.8098311, "request_id": "89cfbb97347a", "case": "k07", "key_index": 6, "call_id": "75f3096e93", "seconds": 2.7507, "usage": {"input_tokens": 5969, "output_tokens": 597, "total_tokens": 6566}}
+{"kind": "provider_first_chunk", "at": 1795241329.9194167, "request_id": "3d05360e3318", "case": "t11", "key_index": 6, "call_id": "0236975cf8", "seconds": 0.7203}
+{"kind": "chat_done", "at": 1795241329.9237547, "id": "89cfbb97347a", "case": "k07", "seconds": 11.6019, "cached": false, "server_duration": 5.6}
+{"kind": "chat_end", "at": 1795241329.931572, "id": "89cfbb97347a", "case": "k07", "seconds": 11.6089}
+{"kind": "provider_done", "at": 1795241330.1388874, "request_id": "3d05360e3318", "case": "t11", "key_index": 6, "call_id": "0236975cf8", "seconds": 0.94, "usage": {"input_tokens": 1160, "output_tokens": 93, "total_tokens": 1253}}
+{"kind": "provider_attempt", "at": 1795241330.1398804, "request_id": "3d05360e3318", "case": "t11", "key_index": 6, "call_id": "b539ca9852"}
+{"kind": "provider_attempt", "at": 1795241330.3966937, "request_id": "9360cdd8c347", "case": "k08", "key_index": 6, "call_id": "32d246d9d1"}
+{"kind": "provider_first_chunk", "at": 1795241330.9242442, "request_id": "2de2d2c42531", "case": "t07", "key_index": 6, "call_id": "d45a132591", "seconds": 1.2081}
+{"kind": "first_token", "at": 1795241330.9273536, "id": "2de2d2c42531", "case": "t07", "seconds": 11.9646}
+{"kind": "queued", "at": 1795241330.9283707, "id": "a8d39a87ccfc", "case": "s04", "seconds": 3.3813, "position": 2, "code": null, "retry_after": null}
+{"kind": "queued", "at": 1795241330.9299362, "id": "b8c2ff708d83", "case": "w11", "seconds": 6.5014, "position": 1, "code": null, "retry_after": null}
+{"kind": "provider_first_chunk", "at": 1795241331.0553665, "request_id": "3d05360e3318", "case": "t11", "key_index": 6, "call_id": "b539ca9852", "seconds": 0.9154}
+{"kind": "first_token", "at": 1795241331.0617235, "id": "3d05360e3318", "case": "t11", "seconds": 11.566}
+{"kind": "provider_done", "at": 1795241331.5640278, "request_id": "3d05360e3318", "case": "t11", "key_index": 6, "call_id": "b539ca9852", "seconds": 1.424, "usage": {"input_tokens": 5301, "output_tokens": 237, "total_tokens": 5538}}
+{"kind": "provider_first_chunk", "at": 1795241331.6300287, "request_id": "9360cdd8c347", "case": "k08", "key_index": 6, "call_id": "32d246d9d1", "seconds": 1.2337}
+{"kind": "provider_done", "at": 1795241331.632025, "request_id": "9360cdd8c347", "case": "k08", "key_index": 6, "call_id": "32d246d9d1", "seconds": 1.2353, "usage": {"input_tokens": 469, "output_tokens": 1, "total_tokens": 470}}
+{"kind": "provider_attempt", "at": 1795241331.632025, "request_id": "9360cdd8c347", "case": "k08", "key_index": 6, "call_id": "ead1fc74a6"}
+{"kind": "provider_done", "at": 1795241331.6454434, "request_id": "2de2d2c42531", "case": "t07", "key_index": 6, "call_id": "d45a132591", "seconds": 1.9281, "usage": {"input_tokens": 5346, "output_tokens": 277, "total_tokens": 5623}}
+{"kind": "chat_done", "at": 1795241331.7792776, "id": "3d05360e3318", "case": "t11", "seconds": 12.2862, "cached": false, "server_duration": 3.7}
+{"kind": "chat_done", "at": 1795241331.7847905, "id": "2de2d2c42531", "case": "t07", "seconds": 12.8222, "cached": false, "server_duration": 4.4}
+{"kind": "chat_end", "at": 1795241331.8024197, "id": "3d05360e3318", "case": "t11", "seconds": 12.3059}
+{"kind": "chat_end", "at": 1795241331.8111708, "id": "2de2d2c42531", "case": "t07", "seconds": 12.8483}
+{"kind": "chat_start", "at": 1795241332.0245097, "request_id": "f503d0ca126e", "case": "t09"}
+{"kind": "http_status", "at": 1795241332.0408528, "id": "f503d0ca126e", "case": "t09", "status": 200, "seconds": 0.0161}
+{"kind": "queued", "at": 1795241332.0448246, "id": "f503d0ca126e", "case": "t09", "seconds": 0.0187, "position": 1, "code": null, "retry_after": null}
+{"kind": "provider_attempt", "at": 1795241332.2582746, "request_id": "b8c2ff708d83", "case": "w11", "key_index": 6, "call_id": "dab2057597"}
+{"kind": "provider_error", "at": 1795241332.3803205, "request_id": "b8c2ff708d83", "case": "w11", "key_index": 6, "call_id": "dab2057597", "category": "rate_limited", "status": 429, "retry_after": 9, "before_first_chunk": true, "seconds": 0.1221}
+{"kind": "provider_attempt", "at": 1795241332.4162707, "request_id": "b8c2ff708d83", "case": "w11", "key_index": 7, "call_id": "30d43579c5"}
+{"kind": "provider_attempt", "at": 1795241332.4313674, "request_id": "a8d39a87ccfc", "case": "s04", "key_index": 7, "call_id": "852ca16c5f"}
+{"kind": "provider_first_chunk", "at": 1795241332.4669855, "request_id": "9360cdd8c347", "case": "k08", "key_index": 6, "call_id": "ead1fc74a6", "seconds": 0.8349}
+{"kind": "provider_done", "at": 1795241332.5161011, "request_id": "9360cdd8c347", "case": "k08", "key_index": 6, "call_id": "ead1fc74a6", "seconds": 0.8833, "usage": {"input_tokens": 1163, "output_tokens": 115, "total_tokens": 1278}}
+{"kind": "provider_attempt", "at": 1795241332.5166295, "request_id": "9360cdd8c347", "case": "k08", "key_index": 6, "call_id": "b41992b742"}
+{"kind": "provider_first_chunk", "at": 1795241333.615021, "request_id": "9360cdd8c347", "case": "k08", "key_index": 6, "call_id": "b41992b742", "seconds": 1.099}
+{"kind": "first_token", "at": 1795241333.6185477, "id": "9360cdd8c347", "case": "k08", "seconds": 11.2504}
+{"kind": "provider_first_chunk", "at": 1795241333.7847612, "request_id": "b8c2ff708d83", "case": "w11", "key_index": 7, "call_id": "30d43579c5", "seconds": 1.3687}
+{"kind": "provider_done", "at": 1795241333.7873788, "request_id": "b8c2ff708d83", "case": "w11", "key_index": 7, "call_id": "30d43579c5", "seconds": 1.3714, "usage": {"input_tokens": 457, "output_tokens": 1, "total_tokens": 458}}
+{"kind": "provider_attempt", "at": 1795241333.7900577, "request_id": "b8c2ff708d83", "case": "w11", "key_index": 7, "call_id": "a34419b111"}
+{"kind": "provider_done", "at": 1795241334.9796112, "request_id": "9360cdd8c347", "case": "k08", "key_index": 6, "call_id": "b41992b742", "seconds": 2.4629, "usage": {"input_tokens": 5142, "output_tokens": 464, "total_tokens": 5606}}
+{"kind": "chat_done", "at": 1795241335.0955489, "id": "9360cdd8c347", "case": "k08", "seconds": 12.7279, "cached": false, "server_duration": 5.0}
+{"kind": "chat_end", "at": 1795241335.105992, "id": "9360cdd8c347", "case": "k08", "seconds": 12.7368}
+{"kind": "provider_attempt", "at": 1795241335.611923, "request_id": "f503d0ca126e", "case": "t09", "key_index": 7, "call_id": "7c197f4289"}
+{"kind": "provider_first_chunk", "at": 1795241336.5969021, "request_id": "f503d0ca126e", "case": "t09", "key_index": 7, "call_id": "7c197f4289", "seconds": 0.9855}
+{"kind": "provider_done", "at": 1795241336.598913, "request_id": "f503d0ca126e", "case": "t09", "key_index": 7, "call_id": "7c197f4289", "seconds": 0.9869, "usage": {"input_tokens": 443, "output_tokens": 1, "total_tokens": 444}}
+{"kind": "provider_attempt", "at": 1795241336.598913, "request_id": "f503d0ca126e", "case": "t09", "key_index": 7, "call_id": "54b7e3d87a"}
+{"kind": "provider_first_chunk", "at": 1795241337.5848618, "request_id": "f503d0ca126e", "case": "t09", "key_index": 7, "call_id": "54b7e3d87a", "seconds": 0.9855}
+{"kind": "provider_done", "at": 1795241337.6920547, "request_id": "f503d0ca126e", "case": "t09", "key_index": 7, "call_id": "54b7e3d87a", "seconds": 1.0928, "usage": {"input_tokens": 1137, "output_tokens": 113, "total_tokens": 1250}}
+{"kind": "provider_attempt", "at": 1795241337.6930466, "request_id": "f503d0ca126e", "case": "t09", "key_index": 7, "call_id": "b9ceb120d3"}
+{"kind": "provider_error", "at": 1795241338.0499616, "request_id": "f503d0ca126e", "case": "t09", "key_index": 7, "call_id": "b9ceb120d3", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.3567}
+{"kind": "provider_attempt", "at": 1795241338.077986, "request_id": "f503d0ca126e", "case": "t09", "key_index": 8, "call_id": "d8591cab82"}
+{"kind": "provider_error", "at": 1795241338.5398433, "request_id": "f503d0ca126e", "case": "t09", "key_index": 8, "call_id": "d8591cab82", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4623}
+{"kind": "provider_attempt", "at": 1795241338.569024, "request_id": "f503d0ca126e", "case": "t09", "key_index": 9, "call_id": "dd04459bb3"}
+{"kind": "provider_error", "at": 1795241339.0423796, "request_id": "f503d0ca126e", "case": "t09", "key_index": 9, "call_id": "dd04459bb3", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.473}
+{"kind": "provider_attempt", "at": 1795241339.0717285, "request_id": "f503d0ca126e", "case": "t09", "key_index": 10, "call_id": "316b2b0f1d"}
+{"kind": "provider_error", "at": 1795241339.568282, "request_id": "f503d0ca126e", "case": "t09", "key_index": 10, "call_id": "316b2b0f1d", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4964}
+{"kind": "provider_attempt", "at": 1795241339.5951278, "request_id": "f503d0ca126e", "case": "t09", "key_index": 11, "call_id": "b0741a6edd"}
+{"kind": "provider_first_chunk", "at": 1795241341.46319, "request_id": "f503d0ca126e", "case": "t09", "key_index": 11, "call_id": "b0741a6edd", "seconds": 1.8679}
+{"kind": "first_token", "at": 1795241341.4687748, "id": "f503d0ca126e", "case": "t09", "seconds": 9.4427}
+{"kind": "provider_done", "at": 1795241341.9679587, "request_id": "f503d0ca126e", "case": "t09", "key_index": 11, "call_id": "b0741a6edd", "seconds": 2.3723, "usage": {"input_tokens": 5365, "output_tokens": 287, "total_tokens": 5652}}
+{"kind": "chat_done", "at": 1795241342.2507365, "id": "f503d0ca126e", "case": "t09", "seconds": 10.2261, "cached": false, "server_duration": 6.9}
+{"kind": "chat_end", "at": 1795241342.255168, "id": "f503d0ca126e", "case": "t09", "seconds": 10.2305}
+{"kind": "provider_error", "at": 1795241379.4378927, "request_id": "0e23c53a317f", "case": "b08", "key_index": 5, "call_id": "bdfe40f0f3", "category": "other", "status": null, "retry_after": 60, "before_first_chunk": true, "seconds": 60.019}
+{"kind": "provider_attempt", "at": 1795241379.4530303, "request_id": "0e23c53a317f", "case": "b08", "key_index": 11, "call_id": "103a3bdb0a"}
+{"kind": "provider_error", "at": 1795241379.9852903, "request_id": "0e23c53a317f", "case": "b08", "key_index": 11, "call_id": "103a3bdb0a", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.532}
+{"kind": "provider_attempt", "at": 1795241380.0125606, "request_id": "0e23c53a317f", "case": "b08", "key_index": 12, "call_id": "c1d7a089c5"}
+{"kind": "provider_error", "at": 1795241380.5346637, "request_id": "0e23c53a317f", "case": "b08", "key_index": 12, "call_id": "c1d7a089c5", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.5219}
+{"kind": "provider_attempt", "at": 1795241380.5701096, "request_id": "0e23c53a317f", "case": "b08", "key_index": 13, "call_id": "cf04169b5e"}
+{"kind": "provider_error", "at": 1795241381.0642202, "request_id": "0e23c53a317f", "case": "b08", "key_index": 13, "call_id": "cf04169b5e", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4946}
+{"kind": "provider_attempt", "at": 1795241381.0914664, "request_id": "0e23c53a317f", "case": "b08", "key_index": 14, "call_id": "b2f017e153"}
+{"kind": "provider_error", "at": 1795241381.593004, "request_id": "0e23c53a317f", "case": "b08", "key_index": 14, "call_id": "b2f017e153", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.5011}
+{"kind": "provider_attempt", "at": 1795241381.6194572, "request_id": "0e23c53a317f", "case": "b08", "key_index": 15, "call_id": "f92aeedf43"}
+{"kind": "provider_error", "at": 1795241382.080584, "request_id": "0e23c53a317f", "case": "b08", "key_index": 15, "call_id": "f92aeedf43", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4613}
+{"kind": "provider_attempt", "at": 1795241382.1083274, "request_id": "0e23c53a317f", "case": "b08", "key_index": 16, "call_id": "62c5ee384d"}
+{"kind": "provider_error", "at": 1795241382.6174994, "request_id": "0e23c53a317f", "case": "b08", "key_index": 16, "call_id": "62c5ee384d", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.5084}
+{"kind": "provider_attempt", "at": 1795241382.6442602, "request_id": "0e23c53a317f", "case": "b08", "key_index": 17, "call_id": "4747473ec2"}
+{"kind": "provider_error", "at": 1795241383.0943182, "request_id": "0e23c53a317f", "case": "b08", "key_index": 17, "call_id": "4747473ec2", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4498}
+{"kind": "provider_attempt", "at": 1795241383.121607, "request_id": "0e23c53a317f", "case": "b08", "key_index": 18, "call_id": "32293ac6ac"}
+{"kind": "provider_error", "at": 1795241383.6267788, "request_id": "0e23c53a317f", "case": "b08", "key_index": 18, "call_id": "32293ac6ac", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.5054}
+{"kind": "provider_attempt", "at": 1795241383.6536696, "request_id": "0e23c53a317f", "case": "b08", "key_index": 19, "call_id": "28b965583d"}
+{"kind": "provider_error", "at": 1795241384.112133, "request_id": "0e23c53a317f", "case": "b08", "key_index": 19, "call_id": "28b965583d", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4591}
+{"kind": "provider_attempt", "at": 1795241384.1395404, "request_id": "0e23c53a317f", "case": "b08", "key_index": 20, "call_id": "8430cb48ac"}
+{"kind": "provider_error", "at": 1795241384.6570692, "request_id": "0e23c53a317f", "case": "b08", "key_index": 20, "call_id": "8430cb48ac", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.5183}
+{"kind": "provider_attempt", "at": 1795241384.658081, "request_id": "0e23c53a317f", "case": "b08", "key_index": 1, "call_id": "befa67c381"}
+{"kind": "provider_error", "at": 1795241385.355467, "request_id": "0e23c53a317f", "case": "b08", "key_index": 1, "call_id": "befa67c381", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.6973}
+{"kind": "provider_attempt", "at": 1795241385.3570783, "request_id": "0e23c53a317f", "case": "b08", "key_index": 2, "call_id": "3b3dafd691"}
+{"kind": "provider_error", "at": 1795241385.8745768, "request_id": "0e23c53a317f", "case": "b08", "key_index": 2, "call_id": "3b3dafd691", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.5176}
+{"kind": "provider_attempt", "at": 1795241385.8755932, "request_id": "0e23c53a317f", "case": "b08", "key_index": 3, "call_id": "0cebfd1370"}
+{"kind": "provider_error", "at": 1795241386.5633838, "request_id": "0e23c53a317f", "case": "b08", "key_index": 3, "call_id": "0cebfd1370", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.6878}
+{"kind": "provider_attempt", "at": 1795241386.5643759, "request_id": "0e23c53a317f", "case": "b08", "key_index": 4, "call_id": "1533a0f1c6"}
+{"kind": "provider_error", "at": 1795241387.263273, "request_id": "0e23c53a317f", "case": "b08", "key_index": 4, "call_id": "1533a0f1c6", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.6988}
+{"kind": "provider_attempt", "at": 1795241387.263273, "request_id": "0e23c53a317f", "case": "b08", "key_index": 5, "call_id": "3468ee1288"}
+{"kind": "provider_error", "at": 1795241387.9593503, "request_id": "0e23c53a317f", "case": "b08", "key_index": 5, "call_id": "3468ee1288", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.6955}
+{"kind": "provider_attempt", "at": 1795241387.9599316, "request_id": "0e23c53a317f", "case": "b08", "key_index": 6, "call_id": "19cc4a5186"}
+{"kind": "provider_error", "at": 1795241388.639765, "request_id": "0e23c53a317f", "case": "b08", "key_index": 6, "call_id": "19cc4a5186", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.6798}
+{"kind": "error", "at": 1795241388.7884815, "id": "0e23c53a317f", "case": "b08", "seconds": 75.6097, "position": null, "code": "LLM_RATE_LIMITED", "retry_after": 10}
+{"kind": "chat_end", "at": 1795241388.7939146, "id": "0e23c53a317f", "case": "b08", "seconds": 75.6145}
+{"kind": "chat_start", "at": 1795241389.0339189, "request_id": "8ef2eeca3514", "case": "s05"}
+{"kind": "http_status", "at": 1795241389.0497677, "id": "8ef2eeca3514", "case": "s05", "status": 200, "seconds": 0.0161}
+{"kind": "error", "at": 1795241389.795331, "id": "8ef2eeca3514", "case": "s05", "seconds": 0.7617, "position": null, "code": "LLM_RATE_LIMITED", "retry_after": 9}
+{"kind": "chat_end", "at": 1795241389.7984815, "id": "8ef2eeca3514", "case": "s05", "seconds": 0.7649}
+{"kind": "provider_error", "at": 1795241392.545867, "request_id": "a8d39a87ccfc", "case": "s04", "key_index": 7, "call_id": "852ca16c5f", "category": "other", "status": null, "retry_after": 60, "before_first_chunk": true, "seconds": 60.1147}
+{"kind": "error", "at": 1795241392.6958327, "id": "a8d39a87ccfc", "case": "s04", "seconds": 65.1492, "position": null, "code": "LLM_RATE_LIMITED", "retry_after": 6}
+{"kind": "chat_end", "at": 1795241392.6998687, "id": "a8d39a87ccfc", "case": "s04", "seconds": 65.1528}
+{"kind": "provider_error", "at": 1795241393.897854, "request_id": "b8c2ff708d83", "case": "w11", "key_index": 7, "call_id": "a34419b111", "category": "other", "status": null, "retry_after": 60, "before_first_chunk": true, "seconds": 60.1078}
+{"kind": "error", "at": 1795241394.047493, "id": "b8c2ff708d83", "case": "w11", "seconds": 69.6191, "position": null, "code": "LLM_RATE_LIMITED", "retry_after": 5}
+{"kind": "chat_end", "at": 1795241394.0514016, "id": "b8c2ff708d83", "case": "w11", "seconds": 69.6226}
+{"kind": "chat_start", "at": 1795241459.5132263, "request_id": "bb3cc3ab8206", "case": "unlabelled"}
+{"kind": "http_status", "at": 1795241459.5293612, "id": "bb3cc3ab8206", "case": "unlabelled", "status": 200, "seconds": 0.0165}
+{"kind": "provider_attempt", "at": 1795241460.6013067, "request_id": "bb3cc3ab8206", "case": "unlabelled", "key_index": 7, "call_id": "d883158391"}
+{"kind": "provider_first_chunk", "at": 1795241461.6287909, "request_id": "bb3cc3ab8206", "case": "unlabelled", "key_index": 7, "call_id": "d883158391", "seconds": 1.0281}
+{"kind": "first_token", "at": 1795241461.6317813, "id": "bb3cc3ab8206", "case": "unlabelled", "seconds": 2.1184}
+{"kind": "provider_done", "at": 1795241461.6961195, "request_id": "bb3cc3ab8206", "case": "unlabelled", "key_index": 7, "call_id": "d883158391", "seconds": 1.0951, "usage": {"input_tokens": 377, "output_tokens": 93, "total_tokens": 470}}
+{"kind": "chat_done", "at": 1795241461.8095334, "id": "bb3cc3ab8206", "case": "unlabelled", "seconds": 2.2967, "cached": false, "server_duration": 2.1}
+{"kind": "chat_end", "at": 1795241461.813526, "id": "bb3cc3ab8206", "case": "unlabelled", "seconds": 2.3001}
+{"kind": "chat_start", "at": 1795241489.6464393, "request_id": "7b9cd2a530ba", "case": "recheck_b08"}
+{"kind": "http_status", "at": 1795241489.6606941, "id": "7b9cd2a530ba", "case": "recheck_b08", "status": 200, "seconds": 0.0148}
+{"kind": "chat_start", "at": 1795241489.6863775, "request_id": "b7e6e7a0649d", "case": "recheck_s08"}
+{"kind": "http_status", "at": 1795241489.7013621, "id": "b7e6e7a0649d", "case": "recheck_s08", "status": 200, "seconds": 0.0152}
+{"kind": "provider_attempt", "at": 1795241490.238708, "request_id": "7b9cd2a530ba", "case": "recheck_b08", "key_index": 7, "call_id": "835450ab3c"}
+{"kind": "provider_attempt", "at": 1795241490.3202362, "request_id": "b7e6e7a0649d", "case": "recheck_s08", "key_index": 7, "call_id": "7297bdb0e7"}
+{"kind": "provider_first_chunk", "at": 1795241491.2332613, "request_id": "b7e6e7a0649d", "case": "recheck_s08", "key_index": 7, "call_id": "7297bdb0e7", "seconds": 0.913}
+{"kind": "provider_done", "at": 1795241491.2342584, "request_id": "b7e6e7a0649d", "case": "recheck_s08", "key_index": 7, "call_id": "7297bdb0e7", "seconds": 0.9144, "usage": {"input_tokens": 455, "output_tokens": 1, "total_tokens": 456}}
+{"kind": "provider_attempt", "at": 1795241491.2352583, "request_id": "b7e6e7a0649d", "case": "recheck_s08", "key_index": 7, "call_id": "0d705b43af"}
+{"kind": "provider_first_chunk", "at": 1795241491.3775232, "request_id": "7b9cd2a530ba", "case": "recheck_b08", "key_index": 7, "call_id": "835450ab3c", "seconds": 1.1387}
+{"kind": "provider_done", "at": 1795241491.3785164, "request_id": "7b9cd2a530ba", "case": "recheck_b08", "key_index": 7, "call_id": "835450ab3c", "seconds": 1.14, "usage": {"input_tokens": 433, "output_tokens": 1, "total_tokens": 434}}
+{"kind": "provider_attempt", "at": 1795241491.3785164, "request_id": "7b9cd2a530ba", "case": "recheck_b08", "key_index": 7, "call_id": "5bec8e5a78"}
+{"kind": "provider_first_chunk", "at": 1795241492.238635, "request_id": "b7e6e7a0649d", "case": "recheck_s08", "key_index": 7, "call_id": "0d705b43af", "seconds": 1.0031}
+{"kind": "provider_first_chunk", "at": 1795241492.2411513, "request_id": "7b9cd2a530ba", "case": "recheck_b08", "key_index": 7, "call_id": "5bec8e5a78", "seconds": 0.8605}
+{"kind": "provider_done", "at": 1795241492.4705093, "request_id": "7b9cd2a530ba", "case": "recheck_b08", "key_index": 7, "call_id": "5bec8e5a78", "seconds": 1.0913, "usage": {"input_tokens": 1127, "output_tokens": 100, "total_tokens": 1227}}
+{"kind": "provider_attempt", "at": 1795241492.4715052, "request_id": "7b9cd2a530ba", "case": "recheck_b08", "key_index": 7, "call_id": "f959c4b6a4"}
+{"kind": "provider_done", "at": 1795241492.6937582, "request_id": "b7e6e7a0649d", "case": "recheck_s08", "key_index": 7, "call_id": "0d705b43af", "seconds": 1.4583, "usage": {"input_tokens": 1149, "output_tokens": 324, "total_tokens": 1473}}
+{"kind": "provider_attempt", "at": 1795241492.694294, "request_id": "b7e6e7a0649d", "case": "recheck_s08", "key_index": 7, "call_id": "d29ed8fc57"}
+{"kind": "provider_error", "at": 1795241493.1510253, "request_id": "b7e6e7a0649d", "case": "recheck_s08", "key_index": 7, "call_id": "d29ed8fc57", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4563}
+{"kind": "provider_attempt", "at": 1795241493.151547, "request_id": "b7e6e7a0649d", "case": "recheck_s08", "key_index": 8, "call_id": "27c01788ac"}
+{"kind": "provider_error", "at": 1795241493.612124, "request_id": "b7e6e7a0649d", "case": "recheck_s08", "key_index": 8, "call_id": "27c01788ac", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4606}
+{"kind": "provider_attempt", "at": 1795241493.6132448, "request_id": "b7e6e7a0649d", "case": "recheck_s08", "key_index": 9, "call_id": "51a72031a3"}
+{"kind": "provider_first_chunk", "at": 1795241493.7794886, "request_id": "7b9cd2a530ba", "case": "recheck_b08", "key_index": 7, "call_id": "f959c4b6a4", "seconds": 1.3085}
+{"kind": "provider_done", "at": 1795241493.782023, "request_id": "7b9cd2a530ba", "case": "recheck_b08", "key_index": 7, "call_id": "f959c4b6a4", "seconds": 1.3108, "usage": {"input_tokens": 5227, "output_tokens": 42, "total_tokens": 5269}}
+{"kind": "provider_attempt", "at": 1795241493.7836545, "request_id": "7b9cd2a530ba", "case": "recheck_b08", "key_index": 7, "call_id": "e0f427c032"}
+{"kind": "provider_first_chunk", "at": 1795241495.2096655, "request_id": "7b9cd2a530ba", "case": "recheck_b08", "key_index": 7, "call_id": "e0f427c032", "seconds": 1.4263}
+{"kind": "first_token", "at": 1795241495.212664, "id": "7b9cd2a530ba", "case": "recheck_b08", "seconds": 5.5662}
+{"kind": "provider_done", "at": 1795241495.625797, "request_id": "7b9cd2a530ba", "case": "recheck_b08", "key_index": 7, "call_id": "e0f427c032", "seconds": 1.8418, "usage": {"input_tokens": 5334, "output_tokens": 207, "total_tokens": 5541}}
+{"kind": "provider_first_chunk", "at": 1795241495.6773367, "request_id": "b7e6e7a0649d", "case": "recheck_s08", "key_index": 9, "call_id": "51a72031a3", "seconds": 2.064}
+{"kind": "first_token", "at": 1795241495.6803386, "id": "b7e6e7a0649d", "case": "recheck_s08", "seconds": 5.9941}
+{"kind": "chat_done", "at": 1795241495.742072, "id": "7b9cd2a530ba", "case": "recheck_b08", "seconds": 6.0954, "cached": false, "server_duration": 6.0}
+{"kind": "chat_end", "at": 1795241495.745898, "id": "7b9cd2a530ba", "case": "recheck_b08", "seconds": 6.0995}
+{"kind": "chat_start", "at": 1795241495.9521296, "request_id": "a49d29f07a7c", "case": "recheck_w11"}
+{"kind": "http_status", "at": 1795241495.966318, "id": "a49d29f07a7c", "case": "recheck_w11", "status": 200, "seconds": 0.0142}
+{"kind": "provider_attempt", "at": 1795241496.5453796, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 9, "call_id": "db2ea7bd4a"}
+{"kind": "provider_done", "at": 1795241496.6147425, "request_id": "b7e6e7a0649d", "case": "recheck_s08", "key_index": 9, "call_id": "51a72031a3", "seconds": 3.0021, "usage": {"input_tokens": 5792, "output_tokens": 399, "total_tokens": 6191}}
+{"kind": "chat_done", "at": 1795241496.733152, "id": "b7e6e7a0649d", "case": "recheck_s08", "seconds": 7.0467, "cached": false, "server_duration": 6.8}
+{"kind": "chat_end", "at": 1795241496.7369628, "id": "b7e6e7a0649d", "case": "recheck_s08", "seconds": 7.0506}
+{"kind": "provider_error", "at": 1795241496.7694354, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 9, "call_id": "db2ea7bd4a", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.2244}
+{"kind": "provider_attempt", "at": 1795241496.7704556, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 10, "call_id": "8341324eee"}
+{"kind": "chat_start", "at": 1795241496.993547, "request_id": "566baf55cc99", "case": "recheck_s04"}
+{"kind": "http_status", "at": 1795241497.0085514, "id": "566baf55cc99", "case": "recheck_s04", "status": 200, "seconds": 0.015}
+{"kind": "provider_error", "at": 1795241497.0244567, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 10, "call_id": "8341324eee", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.2535}
+{"kind": "provider_attempt", "at": 1795241497.0255232, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 11, "call_id": "155a2ca3cd"}
+{"kind": "provider_error", "at": 1795241497.267516, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 11, "call_id": "155a2ca3cd", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.2417}
+{"kind": "provider_attempt", "at": 1795241497.268519, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 12, "call_id": "3683157acd"}
+{"kind": "provider_attempt", "at": 1795241497.4263406, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 12, "call_id": "483f473787"}
+{"kind": "provider_error", "at": 1795241497.7479541, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 12, "call_id": "483f473787", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.3215}
+{"kind": "provider_attempt", "at": 1795241497.7484941, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 13, "call_id": "52ea58a9b1"}
+{"kind": "provider_first_chunk", "at": 1795241498.7445297, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 12, "call_id": "3683157acd", "seconds": 1.476}
+{"kind": "provider_done", "at": 1795241498.7460399, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 12, "call_id": "3683157acd", "seconds": 1.4777, "usage": {"input_tokens": 422, "output_tokens": 1, "total_tokens": 423}}
+{"kind": "provider_attempt", "at": 1795241498.7466145, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 12, "call_id": "095bb027a5"}
+{"kind": "provider_first_chunk", "at": 1795241499.4180908, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 13, "call_id": "52ea58a9b1", "seconds": 1.6694}
+{"kind": "provider_done", "at": 1795241499.4200394, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 13, "call_id": "52ea58a9b1", "seconds": 1.6713, "usage": {"input_tokens": 416, "output_tokens": 1, "total_tokens": 417}}
+{"kind": "provider_attempt", "at": 1795241499.4200394, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 13, "call_id": "5cf0bb0e08"}
+{"kind": "provider_first_chunk", "at": 1795241499.877093, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 12, "call_id": "095bb027a5", "seconds": 1.1304}
+{"kind": "provider_done", "at": 1795241500.1851137, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 12, "call_id": "095bb027a5", "seconds": 1.4384, "usage": {"input_tokens": 1116, "output_tokens": 192, "total_tokens": 1308}}
+{"kind": "provider_attempt", "at": 1795241500.186121, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 12, "call_id": "384a73ce46"}
+{"kind": "provider_first_chunk", "at": 1795241500.2938294, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 13, "call_id": "5cf0bb0e08", "seconds": 0.8735}
+{"kind": "provider_done", "at": 1795241500.4473073, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 13, "call_id": "5cf0bb0e08", "seconds": 1.0262, "usage": {"input_tokens": 1110, "output_tokens": 127, "total_tokens": 1237}}
+{"kind": "provider_attempt", "at": 1795241500.44986, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 13, "call_id": "c9e23c324d"}
+{"kind": "provider_error", "at": 1795241500.5726597, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 12, "call_id": "384a73ce46", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.3859}
+{"kind": "provider_attempt", "at": 1795241500.5736778, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 13, "call_id": "db4369ba9a"}
+{"kind": "provider_error", "at": 1795241500.8362086, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 13, "call_id": "c9e23c324d", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.3866}
+{"kind": "provider_attempt", "at": 1795241500.8373475, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 14, "call_id": "0d375b363b"}
+{"kind": "provider_error", "at": 1795241501.0976725, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 13, "call_id": "db4369ba9a", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.5244}
+{"kind": "provider_attempt", "at": 1795241501.0986798, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 14, "call_id": "1ec37c3dd9"}
+{"kind": "provider_error", "at": 1795241501.3650768, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 14, "call_id": "0d375b363b", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.5279}
+{"kind": "provider_attempt", "at": 1795241501.3660698, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 15, "call_id": "97b2ef582c"}
+{"kind": "provider_error", "at": 1795241501.5870614, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 14, "call_id": "1ec37c3dd9", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4882}
+{"kind": "provider_attempt", "at": 1795241501.5880656, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 15, "call_id": "84733afbae"}
+{"kind": "provider_error", "at": 1795241501.8297076, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 15, "call_id": "97b2ef582c", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4642}
+{"kind": "provider_attempt", "at": 1795241501.8332224, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 16, "call_id": "346e7b886f"}
+{"kind": "provider_error", "at": 1795241502.0439107, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 15, "call_id": "84733afbae", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4557}
+{"kind": "provider_attempt", "at": 1795241502.0439107, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 16, "call_id": "d4f393862c"}
+{"kind": "provider_error", "at": 1795241502.362162, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 16, "call_id": "346e7b886f", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.5299}
+{"kind": "provider_attempt", "at": 1795241502.3626723, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 17, "call_id": "b541b7cda3"}
+{"kind": "provider_error", "at": 1795241502.5778387, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 16, "call_id": "d4f393862c", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.5338}
+{"kind": "provider_attempt", "at": 1795241502.5788345, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 17, "call_id": "63a5ac7b6d"}
+{"kind": "provider_error", "at": 1795241502.7982135, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 17, "call_id": "b541b7cda3", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4349}
+{"kind": "provider_attempt", "at": 1795241502.7982135, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 18, "call_id": "02fc36d4d5"}
+{"kind": "provider_error", "at": 1795241503.045824, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 17, "call_id": "63a5ac7b6d", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4669}
+{"kind": "provider_attempt", "at": 1795241503.0468233, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 18, "call_id": "319a7695f9"}
+{"kind": "provider_error", "at": 1795241503.3261259, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 18, "call_id": "02fc36d4d5", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.5269}
+{"kind": "provider_attempt", "at": 1795241503.3261259, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 19, "call_id": "07b24322ba"}
+{"kind": "provider_error", "at": 1795241503.5937984, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 18, "call_id": "319a7695f9", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.5463}
+{"kind": "provider_attempt", "at": 1795241503.5937984, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 19, "call_id": "673ae566d4"}
+{"kind": "provider_error", "at": 1795241503.781245, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 19, "call_id": "07b24322ba", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4542}
+{"kind": "provider_attempt", "at": 1795241503.7817543, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 20, "call_id": "1f9ca197a3"}
+{"kind": "provider_error", "at": 1795241504.0460331, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 19, "call_id": "673ae566d4", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4524}
+{"kind": "provider_attempt", "at": 1795241504.047046, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 20, "call_id": "9809a629e5"}
+{"kind": "provider_error", "at": 1795241504.2981348, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 20, "call_id": "1f9ca197a3", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.516}
+{"kind": "provider_attempt", "at": 1795241504.2992225, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 1, "call_id": "dab831c8e5"}
+{"kind": "provider_error", "at": 1795241504.5485444, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 20, "call_id": "9809a629e5", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.5012}
+{"kind": "provider_attempt", "at": 1795241504.5495324, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 1, "call_id": "91fb527d0d"}
+{"kind": "provider_error", "at": 1795241504.976444, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 1, "call_id": "dab831c8e5", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.6776}
+{"kind": "provider_attempt", "at": 1795241504.9779723, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 2, "call_id": "fc8ffb7b50"}
+{"kind": "provider_error", "at": 1795241505.0468407, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 1, "call_id": "91fb527d0d", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4963}
+{"kind": "provider_attempt", "at": 1795241505.048379, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 2, "call_id": "ef51b4c95e"}
+{"kind": "provider_error", "at": 1795241505.6872983, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 2, "call_id": "fc8ffb7b50", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.7097}
+{"kind": "provider_attempt", "at": 1795241505.6882923, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 3, "call_id": "68334450a6"}
+{"kind": "provider_error", "at": 1795241505.7269068, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 2, "call_id": "ef51b4c95e", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.6793}
+{"kind": "provider_attempt", "at": 1795241505.7279258, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 3, "call_id": "5344cc9aec"}
+{"kind": "provider_error", "at": 1795241506.3903685, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 3, "call_id": "68334450a6", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.7019}
+{"kind": "provider_attempt", "at": 1795241506.3914897, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 4, "call_id": "3175a88a2a"}
+{"kind": "provider_error", "at": 1795241506.4182098, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 3, "call_id": "5344cc9aec", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.6903}
+{"kind": "provider_attempt", "at": 1795241506.4191995, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 4, "call_id": "3ff2b4078b"}
+{"kind": "provider_error", "at": 1795241506.9086242, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 4, "call_id": "3175a88a2a", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.5178}
+{"kind": "provider_attempt", "at": 1795241506.9096384, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 5, "call_id": "886b3edf16"}
+{"kind": "provider_error", "at": 1795241507.1274047, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 4, "call_id": "3ff2b4078b", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.708}
+{"kind": "provider_attempt", "at": 1795241507.1280046, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 5, "call_id": "c899e8f38f"}
+{"kind": "provider_error", "at": 1795241507.597924, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 5, "call_id": "886b3edf16", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.6878}
+{"kind": "provider_attempt", "at": 1795241507.597924, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 6, "call_id": "1e5da7147d"}
+{"kind": "provider_error", "at": 1795241507.622749, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 5, "call_id": "c899e8f38f", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4948}
+{"kind": "provider_attempt", "at": 1795241507.6235392, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 6, "call_id": "4a95cbc8a8"}
+{"kind": "provider_error", "at": 1795241508.3152514, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 6, "call_id": "1e5da7147d", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.7164}
+{"kind": "provider_attempt", "at": 1795241508.3172543, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 7, "call_id": "24696e8b9f"}
+{"kind": "provider_error", "at": 1795241508.3217633, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 6, "call_id": "4a95cbc8a8", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.6939}
+{"kind": "provider_attempt", "at": 1795241508.3227658, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 7, "call_id": "d823923bc7"}
+{"kind": "provider_error", "at": 1795241508.7789073, "request_id": "566baf55cc99", "case": "recheck_s04", "key_index": 7, "call_id": "24696e8b9f", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.4625}
+{"kind": "provider_error", "at": 1795241508.8247542, "request_id": "a49d29f07a7c", "case": "recheck_w11", "key_index": 7, "call_id": "d823923bc7", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.5024}
+{"kind": "error", "at": 1795241509.027649, "id": "566baf55cc99", "case": "recheck_s04", "seconds": 12.0337, "position": null, "code": "LLM_RATE_LIMITED", "retry_after": 45}
+{"kind": "chat_end", "at": 1795241509.0331886, "id": "566baf55cc99", "case": "recheck_s04", "seconds": 12.0394}
+{"kind": "error", "at": 1795241509.0806546, "id": "a49d29f07a7c", "case": "recheck_w11", "seconds": 13.1284, "position": null, "code": "LLM_RATE_LIMITED", "retry_after": 45}
+{"kind": "chat_end", "at": 1795241509.0901744, "id": "a49d29f07a7c", "case": "recheck_w11", "seconds": 13.1386}
+{"kind": "chat_start", "at": 1795241537.750485, "request_id": "ad757c69259b", "case": "unlabelled"}
+{"kind": "http_status", "at": 1795241537.766042, "id": "ad757c69259b", "case": "unlabelled", "status": 200, "seconds": 0.0148}
+{"kind": "error", "at": 1795241538.894602, "id": "ad757c69259b", "case": "unlabelled", "seconds": 1.1434, "position": null, "code": "LLM_RATE_LIMITED", "retry_after": 15}
+{"kind": "chat_end", "at": 1795241538.8986323, "id": "ad757c69259b", "case": "unlabelled", "seconds": 1.1477}
+{"kind": "chat_start", "at": 1795241554.7092388, "request_id": "5592cf69068d", "case": "recheck_s05"}
+{"kind": "http_status", "at": 1795241554.723389, "id": "5592cf69068d", "case": "recheck_s05", "status": 200, "seconds": 0.0141}
+{"kind": "chat_start", "at": 1795241554.8073978, "request_id": "227ea7119939", "case": "recheck_k08"}
+{"kind": "http_status", "at": 1795241554.8231351, "id": "227ea7119939", "case": "recheck_k08", "status": 200, "seconds": 0.0158}
+{"kind": "provider_attempt", "at": 1795241555.33578, "request_id": "5592cf69068d", "case": "recheck_s05", "key_index": 8, "call_id": "2850f81e04"}
+{"kind": "provider_attempt", "at": 1795241555.406458, "request_id": "227ea7119939", "case": "recheck_k08", "key_index": 8, "call_id": "bd0af217a4"}
+{"kind": "provider_error", "at": 1795241555.5682445, "request_id": "5592cf69068d", "case": "recheck_s05", "key_index": 8, "call_id": "2850f81e04", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.2324}
+{"kind": "error", "at": 1795241555.7170103, "id": "5592cf69068d", "case": "recheck_s05", "seconds": 1.0077, "position": null, "code": "LLM_RATE_LIMITED", "retry_after": 2}
+{"kind": "chat_end", "at": 1795241555.7208767, "id": "5592cf69068d", "case": "recheck_s05", "seconds": 1.0119}
+{"kind": "provider_error", "at": 1795241555.7712712, "request_id": "227ea7119939", "case": "recheck_k08", "key_index": 8, "call_id": "bd0af217a4", "category": "rate_limited", "status": 429, "retry_after": 60, "before_first_chunk": true, "seconds": 0.3647}
+{"kind": "error", "at": 1795241555.9166994, "id": "227ea7119939", "case": "recheck_k08", "seconds": 1.109, "position": null, "code": "LLM_RATE_LIMITED", "retry_after": 2}
+{"kind": "chat_end", "at": 1795241555.9203694, "id": "227ea7119939", "case": "recheck_k08", "seconds": 1.1129}
+{"kind": "chat_start", "at": 1795241556.561805, "request_id": "2f8bcaacebf3", "case": "unlabelled"}
+{"kind": "http_status", "at": 1795241556.575191, "id": "2f8bcaacebf3", "case": "unlabelled", "status": 200, "seconds": 0.0134}
+{"kind": "error", "at": 1795241556.8740296, "id": "2f8bcaacebf3", "case": "unlabelled", "seconds": 0.3119, "position": null, "code": "LLM_RATE_LIMITED", "retry_after": 1}
+{"kind": "chat_end", "at": 1795241556.8770306, "id": "2f8bcaacebf3", "case": "unlabelled", "seconds": 0.3151}
+{"kind": "chat_start", "at": 1795241563.7299695, "request_id": "b9f1eb724cbf", "case": "unlabelled"}
+{"kind": "http_status", "at": 1795241563.7431166, "id": "b9f1eb724cbf", "case": "unlabelled", "status": 200, "seconds": 0.014}
+{"kind": "provider_attempt", "at": 1795241563.7674599, "request_id": "b9f1eb724cbf", "case": "unlabelled", "key_index": 9, "call_id": "0cb2fdd5b6"}
+{"kind": "provider_first_chunk", "at": 1795241564.6005108, "request_id": "b9f1eb724cbf", "case": "unlabelled", "key_index": 9, "call_id": "0cb2fdd5b6", "seconds": 0.833}
+{"kind": "provider_done", "at": 1795241564.6015325, "request_id": "b9f1eb724cbf", "case": "unlabelled", "key_index": 9, "call_id": "0cb2fdd5b6", "seconds": 0.8344, "usage": {"input_tokens": 452, "output_tokens": 1, "total_tokens": 453}}
+{"kind": "provider_attempt", "at": 1795241564.602499, "request_id": "b9f1eb724cbf", "case": "unlabelled", "key_index": 9, "call_id": "774511d2c1"}
+{"kind": "provider_first_chunk", "at": 1795241565.448401, "request_id": "b9f1eb724cbf", "case": "unlabelled", "key_index": 9, "call_id": "774511d2c1", "seconds": 0.846}
+{"kind": "provider_done", "at": 1795241565.5860577, "request_id": "b9f1eb724cbf", "case": "unlabelled", "key_index": 9, "call_id": "774511d2c1", "seconds": 0.9841, "usage": {"input_tokens": 1457, "output_tokens": 108, "total_tokens": 1565}}
+{"kind": "provider_attempt", "at": 1795241565.5880556, "request_id": "b9f1eb724cbf", "case": "unlabelled", "key_index": 9, "call_id": "729db0cc3e"}
+{"kind": "provider_first_chunk", "at": 1795241566.9022717, "request_id": "b9f1eb724cbf", "case": "unlabelled", "key_index": 9, "call_id": "729db0cc3e", "seconds": 1.3141}
+{"kind": "first_token", "at": 1795241566.904275, "id": "b9f1eb724cbf", "case": "unlabelled", "seconds": 3.1752}
+{"kind": "provider_done", "at": 1795241567.957104, "request_id": "b9f1eb724cbf", "case": "unlabelled", "key_index": 9, "call_id": "729db0cc3e", "seconds": 2.369, "usage": {"input_tokens": 6477, "output_tokens": 413, "total_tokens": 6890}}
+{"kind": "chat_done", "at": 1795241568.0764306, "id": "b9f1eb724cbf", "case": "unlabelled", "seconds": 4.3469, "cached": false, "server_duration": 4.2}
+{"kind": "chat_end", "at": 1795241568.0804236, "id": "b9f1eb724cbf", "case": "unlabelled", "seconds": 4.3507}
+{"kind": "chat_start", "at": 1795241619.819319, "request_id": "0bc4835e5b8f", "case": "verify_k08"}
+{"kind": "http_status", "at": 1795241619.836814, "id": "0bc4835e5b8f", "case": "verify_k08", "status": 200, "seconds": 0.0182}
+{"kind": "provider_attempt", "at": 1795241619.8594403, "request_id": "0bc4835e5b8f", "case": "verify_k08", "key_index": 9, "call_id": "bfeec93cc9"}
+{"kind": "provider_first_chunk", "at": 1795241620.7655616, "request_id": "0bc4835e5b8f", "case": "verify_k08", "key_index": 9, "call_id": "bfeec93cc9", "seconds": 0.9062}
+{"kind": "provider_done", "at": 1795241620.7670717, "request_id": "0bc4835e5b8f", "case": "verify_k08", "key_index": 9, "call_id": "bfeec93cc9", "seconds": 0.9078, "usage": {"input_tokens": 434, "output_tokens": 1, "total_tokens": 435}}
+{"kind": "provider_attempt", "at": 1795241620.768233, "request_id": "0bc4835e5b8f", "case": "verify_k08", "key_index": 9, "call_id": "7dfae41f39"}
+{"kind": "provider_first_chunk", "at": 1795241621.8668904, "request_id": "0bc4835e5b8f", "case": "verify_k08", "key_index": 9, "call_id": "7dfae41f39", "seconds": 1.0991}
+{"kind": "provider_done", "at": 1795241621.914809, "request_id": "0bc4835e5b8f", "case": "verify_k08", "key_index": 9, "call_id": "7dfae41f39", "seconds": 1.1467, "usage": {"input_tokens": 1128, "output_tokens": 115, "total_tokens": 1243}}
+{"kind": "provider_attempt", "at": 1795241621.914809, "request_id": "0bc4835e5b8f", "case": "verify_k08", "key_index": 9, "call_id": "f3b3115060"}
+{"kind": "provider_first_chunk", "at": 1795241623.454053, "request_id": "0bc4835e5b8f", "case": "verify_k08", "key_index": 9, "call_id": "f3b3115060", "seconds": 1.5393}
+{"kind": "first_token", "at": 1795241623.456593, "id": "0bc4835e5b8f", "case": "verify_k08", "seconds": 3.6375}
+{"kind": "provider_done", "at": 1795241624.3317475, "request_id": "0bc4835e5b8f", "case": "verify_k08", "key_index": 9, "call_id": "f3b3115060", "seconds": 2.416, "usage": {"input_tokens": 5107, "output_tokens": 380, "total_tokens": 5487}}
+{"kind": "chat_done", "at": 1795241624.4443376, "id": "0bc4835e5b8f", "case": "verify_k08", "seconds": 4.6254, "cached": false, "server_duration": 4.5}
+{"kind": "chat_end", "at": 1795241624.4487598, "id": "0bc4835e5b8f", "case": "verify_k08", "seconds": 4.6293}

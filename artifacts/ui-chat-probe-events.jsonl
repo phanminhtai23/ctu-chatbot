@@ -1,0 +1,79 @@
+{"kind": "chat_start", "at": 1795240197.2260578, "request_id": "9940a5186508", "mode": "observe"}
+{"kind": "http_status", "at": 1795240197.2478886, "request_id": "9940a5186508", "status": 200, "seconds": 0.0218}
+{"kind": "provider_attempt", "at": 1795240198.2216535, "request_id": "9940a5186508", "key_index": 1}
+{"kind": "provider_done", "at": 1795240199.0431745, "request_id": "9940a5186508", "key_index": 1, "seconds": 0.8215}
+{"kind": "provider_attempt", "at": 1795240199.0471914, "request_id": "9940a5186508", "key_index": 1}
+{"kind": "first_token", "at": 1795240200.4190674, "request_id": "9940a5186508", "seconds": 3.1932}
+{"kind": "provider_done", "at": 1795240200.5162632, "request_id": "9940a5186508", "key_index": 1, "seconds": 1.469}
+{"kind": "chat_done", "at": 1795240200.6462295, "request_id": "9940a5186508", "seconds": 3.4207, "cached": false, "server_duration": 3.2}
+{"kind": "chat_end", "at": 1795240200.6520557, "request_id": "9940a5186508", "attempts": 2, "seconds": 3.4262}
+{"kind": "chat_start", "at": 1795240212.2519875, "request_id": "4303a34f5a51", "mode": "observe"}
+{"kind": "http_status", "at": 1795240212.2686546, "request_id": "4303a34f5a51", "status": 200, "seconds": 0.0165}
+{"kind": "provider_attempt", "at": 1795240212.290966, "request_id": "4303a34f5a51", "key_index": 1}
+{"kind": "provider_done", "at": 1795240213.1626632, "request_id": "4303a34f5a51", "key_index": 1, "seconds": 0.8718}
+{"kind": "provider_attempt", "at": 1795240213.1636574, "request_id": "4303a34f5a51", "key_index": 1}
+{"kind": "first_token", "at": 1795240215.271715, "request_id": "4303a34f5a51", "seconds": 3.0198}
+{"kind": "provider_done", "at": 1795240215.37555, "request_id": "4303a34f5a51", "key_index": 1, "seconds": 2.2118}
+{"kind": "chat_done", "at": 1795240215.4938686, "request_id": "4303a34f5a51", "seconds": 3.2421, "cached": false, "server_duration": 3.1}
+{"kind": "chat_end", "at": 1795240215.4980314, "request_id": "4303a34f5a51", "attempts": 2, "seconds": 3.2458}
+{"kind": "chat_start", "at": 1795240237.3014824, "request_id": "087baeed47a2", "mode": "observe"}
+{"kind": "http_status", "at": 1795240237.3159149, "request_id": "087baeed47a2", "status": 200, "seconds": 0.0144}
+{"kind": "provider_attempt", "at": 1795240237.3322368, "request_id": "087baeed47a2", "key_index": 1}
+{"kind": "provider_done", "at": 1795240237.9279692, "request_id": "087baeed47a2", "key_index": 1, "seconds": 0.5958}
+{"kind": "provider_attempt", "at": 1795240237.92898, "request_id": "087baeed47a2", "key_index": 1}
+{"kind": "first_token", "at": 1795240239.071297, "request_id": "087baeed47a2", "seconds": 1.7701}
+{"kind": "provider_done", "at": 1795240239.2426455, "request_id": "087baeed47a2", "key_index": 1, "seconds": 1.3135}
+{"kind": "chat_done", "at": 1795240239.3643608, "request_id": "087baeed47a2", "seconds": 2.0629, "cached": false, "server_duration": 1.9}
+{"kind": "chat_end", "at": 1795240239.3677194, "request_id": "087baeed47a2", "attempts": 2, "seconds": 2.0665}
+{"kind": "chat_start", "at": 1795240256.873388, "request_id": "6045f187c7f5", "mode": "429-once"}
+{"kind": "http_status", "at": 1795240256.8886518, "request_id": "6045f187c7f5", "status": 200, "seconds": 0.0154}
+{"kind": "injected_key_error", "at": 1795240256.9028935, "request_id": "6045f187c7f5", "key_index": 1, "status": 429}
+{"kind": "provider_attempt", "at": 1795240256.9304821, "request_id": "6045f187c7f5", "key_index": 2}
+{"kind": "provider_done", "at": 1795240258.0906446, "request_id": "6045f187c7f5", "key_index": 2, "seconds": 1.1595}
+{"kind": "provider_attempt", "at": 1795240258.0916405, "request_id": "6045f187c7f5", "key_index": 2}
+{"kind": "first_token", "at": 1795240259.2977855, "request_id": "6045f187c7f5", "seconds": 2.4244}
+{"kind": "provider_done", "at": 1795240259.4549115, "request_id": "6045f187c7f5", "key_index": 2, "seconds": 1.363}
+{"kind": "chat_done", "at": 1795240259.5791407, "request_id": "6045f187c7f5", "seconds": 2.7059, "cached": false, "server_duration": 2.6}
+{"kind": "chat_end", "at": 1795240259.584435, "request_id": "6045f187c7f5", "attempts": 3, "seconds": 2.7113}
+{"kind": "chat_start", "at": 1795240288.0142744, "request_id": "2489be7ebb4d", "mode": "observe"}
+{"kind": "http_status", "at": 1795240288.0270226, "request_id": "2489be7ebb4d", "status": 200, "seconds": 0.0135}
+{"kind": "provider_attempt", "at": 1795240288.0437224, "request_id": "2489be7ebb4d", "key_index": 2}
+{"kind": "provider_done", "at": 1795240288.7261102, "request_id": "2489be7ebb4d", "key_index": 2, "seconds": 0.6824}
+{"kind": "provider_attempt", "at": 1795240288.7261102, "request_id": "2489be7ebb4d", "key_index": 2}
+{"kind": "first_token", "at": 1795240289.817514, "request_id": "2489be7ebb4d", "seconds": 1.8043}
+{"kind": "provider_done", "at": 1795240289.9968748, "request_id": "2489be7ebb4d", "key_index": 2, "seconds": 1.2701}
+{"kind": "chat_done", "at": 1795240290.1050339, "request_id": "2489be7ebb4d", "seconds": 2.0907, "cached": false, "server_duration": 2.0}
+{"kind": "chat_end", "at": 1795240290.1081893, "request_id": "2489be7ebb4d", "attempts": 2, "seconds": 2.094}
+{"kind": "chat_start", "at": 1795240291.8511057, "request_id": "90b54cd44583", "mode": "invalid-once"}
+{"kind": "http_status", "at": 1795240291.8659892, "request_id": "90b54cd44583", "status": 200, "seconds": 0.0148}
+{"kind": "injected_key_error", "at": 1795240291.880188, "request_id": "90b54cd44583", "key_index": 2, "status": 400}
+{"kind": "provider_attempt", "at": 1795240291.9069934, "request_id": "90b54cd44583", "key_index": 3}
+{"kind": "provider_done", "at": 1795240293.09755, "request_id": "90b54cd44583", "key_index": 3, "seconds": 1.1907}
+{"kind": "provider_attempt", "at": 1795240293.0985398, "request_id": "90b54cd44583", "key_index": 3}
+{"kind": "first_token", "at": 1795240294.221448, "request_id": "90b54cd44583", "seconds": 2.3702}
+{"kind": "provider_done", "at": 1795240294.3597827, "request_id": "90b54cd44583", "key_index": 3, "seconds": 1.2607}
+{"kind": "chat_done", "at": 1795240294.4743724, "request_id": "90b54cd44583", "seconds": 2.6228, "cached": false, "server_duration": 2.5}
+{"kind": "chat_end", "at": 1795240294.4775934, "request_id": "90b54cd44583", "attempts": 3, "seconds": 2.6261}
+{"kind": "chat_start", "at": 1795240319.4671977, "request_id": "dab0401ee434", "mode": "429-all"}
+{"kind": "http_status", "at": 1795240319.4896424, "request_id": "dab0401ee434", "status": 200, "seconds": 0.0229}
+{"kind": "injected_key_error", "at": 1795240319.5068839, "request_id": "dab0401ee434", "key_index": 3, "status": 429}
+{"kind": "injected_key_error", "at": 1795240319.574586, "request_id": "dab0401ee434", "key_index": 4, "status": 429}
+{"kind": "injected_key_error", "at": 1795240319.6475077, "request_id": "dab0401ee434", "key_index": 5, "status": 429}
+{"kind": "injected_key_error", "at": 1795240319.7075229, "request_id": "dab0401ee434", "key_index": 6, "status": 429}
+{"kind": "injected_key_error", "at": 1795240319.7713418, "request_id": "dab0401ee434", "key_index": 7, "status": 429}
+{"kind": "injected_key_error", "at": 1795240319.8340445, "request_id": "dab0401ee434", "key_index": 8, "status": 429}
+{"kind": "injected_key_error", "at": 1795240319.8631327, "request_id": "dab0401ee434", "key_index": 9, "status": 429}
+{"kind": "injected_key_error", "at": 1795240319.893708, "request_id": "dab0401ee434", "key_index": 10, "status": 429}
+{"kind": "injected_key_error", "at": 1795240319.920623, "request_id": "dab0401ee434", "key_index": 11, "status": 429}
+{"kind": "injected_key_error", "at": 1795240319.9477196, "request_id": "dab0401ee434", "key_index": 12, "status": 429}
+{"kind": "injected_key_error", "at": 1795240319.981481, "request_id": "dab0401ee434", "key_index": 13, "status": 429}
+{"kind": "injected_key_error", "at": 1795240320.0105793, "request_id": "dab0401ee434", "key_index": 14, "status": 429}
+{"kind": "injected_key_error", "at": 1795240320.0398622, "request_id": "dab0401ee434", "key_index": 15, "status": 429}
+{"kind": "injected_key_error", "at": 1795240320.0676847, "request_id": "dab0401ee434", "key_index": 16, "status": 429}
+{"kind": "injected_key_error", "at": 1795240320.0945146, "request_id": "dab0401ee434", "key_index": 17, "status": 429}
+{"kind": "injected_key_error", "at": 1795240320.1363611, "request_id": "dab0401ee434", "key_index": 18, "status": 429}
+{"kind": "injected_key_error", "at": 1795240320.1707768, "request_id": "dab0401ee434", "key_index": 19, "status": 429}
+{"kind": "injected_key_error", "at": 1795240320.1996007, "request_id": "dab0401ee434", "key_index": 20, "status": 429}
+{"kind": "injected_key_error", "at": 1795240320.1996007, "request_id": "dab0401ee434", "key_index": 1, "status": 429}
+{"kind": "error", "at": 1795240320.3702729, "request_id": "dab0401ee434", "seconds": 0.9031, "code": "LLM_RATE_LIMITED", "position": null}
+{"kind": "chat_end", "at": 1795240320.373915, "request_id": "dab0401ee434", "attempts": 19, "seconds": 0.907}

@@ -87,3 +87,43 @@
 .sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgb(255 255 255 / 0.52);
 }
+
+/* Ba chấm nảy so le, chỉ dùng transform/opacity để không làm dịch bố cục. */
+.chat-thinking-dots {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 5px;
+  height: 20px;
+}
+
+.chat-thinking-dot {
+  display: block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+  opacity: 0.45;
+  animation: chat-thinking-bounce 1.05s ease-in-out infinite;
+}
+
+.chat-thinking-dot:nth-child(1) { animation-delay: -0.7s; }
+.chat-thinking-dot:nth-child(2) { animation-delay: -0.35s; }
+
+@keyframes chat-thinking-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.45; }
+  50% { transform: translateY(-6px); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* User yêu cầu vẫn thấy ba chấm nảy khi Windows tắt animation. Giảm biên độ thay vì tắt hẳn. */
+  .chat-thinking-dot {
+    animation-name: chat-thinking-bounce-gentle;
+  }
+}
+
+@keyframes chat-thinking-bounce-gentle {
+  0%, 100% { transform: translateY(0); opacity: 0.45; }
+  50% { transform: translateY(-3px); opacity: 1; }
+}

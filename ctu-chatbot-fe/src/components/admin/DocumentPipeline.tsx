@@ -108,7 +108,7 @@ function Duration({ seconds, running }: { seconds: number | null; running?: bool
 function Dot({ state, index }: { state: StageState; index: number }) {
   return (
     <span
-      className={`flex size-7 flex-none items-center justify-center rounded-full border-2 sm:size-8 text-xs font-bold ${stateClass[state].dot}`}
+      className={`flex size-9 flex-none items-center justify-center rounded-2xl border-2 text-xs font-bold shadow-sm transition-all sm:size-10 ${stateClass[state].dot}`}
       aria-hidden="true"
     >
       {state === 'done' ? '✓' : state === 'failed' ? '!' : state === 'running' ? <span className="size-2.5 animate-pulse rounded-full bg-current" /> : index + 1}
@@ -255,8 +255,8 @@ export default function DocumentPipeline({ job, editable, syncEnabled, action, o
             </div>
             <section
               aria-label={t(`admin.doc.stage.${stage.key}` as TranslationKey)}
-              className={`mb-4 min-w-0 flex-1 rounded-xl border-2 bg-surface p-3 sm:p-4 ${
-                isCurrent ? `${stateClass[state].ring} shadow-sm` : state === 'done' ? 'border-line' : 'border-line opacity-80'
+              className={`mb-4 min-w-0 flex-1 rounded-2xl border-2 bg-surface p-4 shadow-sm transition-all duration-200 sm:p-5 ${
+                isCurrent ? `${stateClass[state].ring} shadow-md shadow-ctu-navy/5` : state === 'done' ? 'border-[#2E9E5B]/30 bg-[#2E9E5B]/[0.025]' : 'border-line/80'
               } ${last ? 'mb-0' : ''}`}
             >
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
@@ -300,7 +300,7 @@ export default function DocumentPipeline({ job, editable, syncEnabled, action, o
                   <summary className="cursor-pointer px-3 py-2 text-sm font-semibold text-accent">
                     {t(stage.key === 'extract' ? 'admin.doc.ocrPreview' : 'admin.doc.cleanPreview')}
                   </summary>
-                  <pre className="m-0 max-h-80 overflow-auto whitespace-pre-wrap break-words border-t border-line bg-tint p-3 font-mono text-xs text-heading">
+                  <pre className="m-0 max-h-[28rem] overflow-auto whitespace-pre-wrap break-words border-t border-line bg-tint/60 p-4 font-mono text-xs leading-relaxed text-heading">
                     {previewText}
                   </pre>
                 </details>

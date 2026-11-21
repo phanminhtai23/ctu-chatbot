@@ -173,6 +173,17 @@ jobs:
           for attempt in $(seq 1 60); do
             if curl --fail --silent http://127.0.0.1:8080/health >/dev/null; then
               echo "Deployment is healthy"
+              for component in backend frontend; do
+                image_repo="ghcr.io/$IMAGE_OWNER/$IMAGE_NAME-$component"
+                docker image ls --format '{{.Tag}}' "$image_repo" | while IFS= read -r old_tag; do
+                  case "$old_tag" in
+                    "$IMAGE_TAG"|latest) continue ;;
+                  esac
+                  if [[ "$old_tag" =~ ^[0-9a-f]{40}$ ]]; then
+                    docker image rm "$image_repo:$old_tag" || true
+                  fi
+                done
+              done
               exit 0
             fi
             sleep 5

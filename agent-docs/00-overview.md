@@ -19,12 +19,12 @@ Chatbot hỗ trợ sinh viên CTU (Can Tho University) tra cứu và hỏi đáp
 ## Tech flow
 
 1. User hỏi → FE gửi request → BE (FastAPI).
-2. BE dùng LangGraph để định tuyến câu hỏi; tuyến tài liệu truy vấn ChromaDB và lấy các Điều liên quan.
-3. BE gọi Gemini, kết hợp ngữ cảnh phù hợp rồi stream câu trả lời về FE.
+2. BE kiểm tra quyền, attachment, câu trả lời có sẵn, rate limit và hàng đợi trước khi chạy LangGraph.
+3. Trong node `generate`, BE truy vấn tài liệu/kiến thức trước rồi mới chọn route từ catalog đang bật; Gemini tạo câu trả lời theo prompt và nguồn của route, sau đó stream về FE.
 4. Admin quản lý route và review tài liệu ở `/admin/documents`. Catalog hiện tại lưu các version trong `vector-docs/`; upload, Extract/OCR, Clean và Sync là các thao tác riêng.
 5. GitHub Actions kiểm tra PR; khi commit được đưa vào `main`, build/push image `linux/arm64` lên GHCR rồi triển khai stack Docker Compose trên server.
 
-> Chi tiết vận hành/deploy xem `DEPLOY.md`; cấu trúc và quy trình catalog tài liệu xem `vector-docs/README.md` và `features/admin-document-upload.md`.
+> Chi tiết vận hành/deploy xem `DEPLOY.md`; luồng request và sơ đồ chat xem `ctu-chatbot-be/README.md`; cấu trúc và quy trình catalog tài liệu xem `vector-docs/README.md` và `features/admin-document-upload.md`.
 
 ## Cấu trúc code hiện tại
 

@@ -1,6 +1,6 @@
 # Feature: user-profile-edit
 
-- **Status:** in-progress (name/birthday + cài đặt đã xong FE+BE+DB; avatar chưa làm)
+- **Status:** in-progress (hồ sơ, avatar và tuỳ chọn đã có FE+BE+DB; giao diện cài đặt dùng thanh tab dọc)
 - **Scope:** FE, BE, DB
 
 ## What
@@ -33,3 +33,10 @@ Trang `/profile` được thay bằng hộp thoại (`components/ProfileDialog.t
 
 ### 2026-11-08: hộp thoại chia tab
 `ProfileDialog` giờ có thanh tab: **Cài đặt** (ảnh đại diện + form hồ sơ + đăng xuất), **Dung lượng** (`MyFiles`: thanh dung lượng + danh sách tệp, xoá bớt) và **Ủng hộ** (`DonateSection`; tab chỉ hiện khi admin đã tải mã QR). Chuyển tab chỉ ẩn/hiện (không huỷ) nên form đang nhập dở không mất. Mở từ thanh dung lượng ở sidebar thì vào thẳng tab Dung lượng (prop `scrollToFiles` giữ tên cũ). Hộp thoại có chiều cao cố định để đổi tab không bị nhảy.
+
+### 2026-11-21: tab bên trái, hộp thoại rộng hơn
+
+- `ProfileDialog` rộng tối đa 1280px, cao tối đa 860px và không vượt 92dvh. Header và thanh tab bên trái cố định, nội dung từng tab cuộn riêng.
+- Tab **Cài đặt**, **Nguồn hỏi**, **Dung lượng**, **Ủng hộ** có icon, trạng thái chọn rõ ràng; dưới 640px thu gọn nhãn thành icon có tên truy cập. Điều hướng bàn phím dùng ArrowUp/ArrowDown, Home/End theo `aria-orientation="vertical"`.
+- Form chia nhóm Hồ sơ và Tuỳ chọn hiển thị; họ tên/ngày sinh nằm cùng hàng trên desktop. Nút Lưu và Đăng xuất ở footer cố định của tab Cài đặt.
+- Chuyển tab vẫn giữ form đang nhập; lối tắt dung lượng vẫn mở trực tiếp tab Dung lượng.

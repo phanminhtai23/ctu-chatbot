@@ -1,0 +1,597 @@
+[
+  {
+    "id": "b01",
+    "article": 24,
+    "question": "Học kỳ này mình học: Toán 3 TC điểm A, Lý 3 TC điểm B+, Giáo dục thể chất 1 TC điểm A, Ngoại ngữ căn bản 3 TC điểm C, Hóa 2 TC điểm F. Tính ĐTBCHK và xếp loại học tập giúp mình.",
+    "must": [
+      [
+        "2[,.]59"
+      ],
+      [
+        "khá"
+      ]
+    ],
+    "forbid": [],
+    "formula": true,
+    "lead": "",
+    "sent_question": "Học kỳ này mình học: Toán 3 TC điểm A, Lý 3 TC điểm B+, Giáo dục thể chất 1 TC điểm A, Ngoại ngữ căn bản 3 TC điểm C, Hóa 2 TC điểm F. Tính ĐTBCHK và xếp loại học tập giúp mình. H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "t01",
+    "article": 34,
+    "question": "Chương trình của mình 120 TC, ĐTBCTL 3,7, mình có 6 TC bị điểm F (không phải học cải thiện). Mình tốt nghiệp loại gì?",
+    "must": [
+      [
+        "xuất sắc"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "xuất sắc",
+    "sent_question": "Chương trình của mình 120 TC, ĐTBCTL 3,7, mình có 6 TC bị điểm F (không phải học cải thiện). Mình tốt nghiệp loại gì? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "s08",
+    "article": 9,
+    "question": "Ba bạn: A có ĐTBCHK 3,65 và ĐRL 91; B có ĐTBCHK 3,9 và ĐRL 88; C có ĐTBCHK 3,3 và ĐRL 80. Xếp thứ tự ưu tiên xét học bổng giúp mình.",
+    "must": [
+      [
+        "\\ba\\b[^.\\n]{0,120}(xuất sắc)"
+      ],
+      [
+        "\\bb\\b[^.\\n]{0,120}giỏi"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "\\ba\\b\\s*(>|->|→|, rồi|rồi đến|tiếp theo)\\s*\\bb\\b|\\ba\\b[^.\\n]{0,160}(trước|đầu tiên|thứ nhất|ưu tiên|cao nhất)",
+    "sent_question": "Ba bạn: A có ĐTBCHK 3,65 và ĐRL 91; B có ĐTBCHK 3,9 và ĐRL 88; C có ĐTBCHK 3,3 và ĐRL 80. Xếp thứ tự ưu tiên xét học bổng giúp mình. H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "w04",
+    "article": 18,
+    "question": "Mình là sinh viên K48, học kỳ này đăng ký 16 TC và rớt đúng 8 TC, ĐTBCHK 1,5. Mình có bị cảnh báo học tập không?",
+    "must": [
+      [
+        "50\\s?%|vượt quá"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "\\bkhông\\b|\\bchưa\\b",
+    "sent_question": "Mình là sinh viên K48, học kỳ này đăng ký 16 TC và rớt đúng 8 TC, ĐTBCHK 1,5. Mình có bị cảnh báo học tập không? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "b02",
+    "article": 24,
+    "question": "Các môn: Toán 3 TC điểm A, Lý 3 TC điểm B+, Giáo dục thể chất 1 TC điểm A, Ngoại ngữ căn bản 3 TC điểm C, Hóa 2 TC điểm F. Điểm trung bình chung tích lũy (ĐTBCTL) của riêng những môn này là bao nhiêu, biết ĐTBCTL không tính F và học phần điều kiện?",
+    "must": [
+      [
+        "3[,.]75"
+      ]
+    ],
+    "forbid": [],
+    "formula": true,
+    "lead": "",
+    "sent_question": "Các môn: Toán 3 TC điểm A, Lý 3 TC điểm B+, Giáo dục thể chất 1 TC điểm A, Ngoại ngữ căn bản 3 TC điểm C, Hóa 2 TC điểm F. Điểm trung bình chung tích lũy (ĐTBCTL) của riêng những môn này là bao nhiêu, biết ĐTBCTL không tính F và học phần điều kiện? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "t02",
+    "article": 34,
+    "question": "Chương trình 120 TC, ĐTBCTL của mình 3,7, mình có 7 TC bị điểm F (không phải học cải thiện). Mình tốt nghiệp loại gì?",
+    "must": [
+      [
+        "giỏi"
+      ],
+      [
+        "giảm"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "giỏi",
+    "sent_question": "Chương trình 120 TC, ĐTBCTL của mình 3,7, mình có 7 TC bị điểm F (không phải học cải thiện). Mình tốt nghiệp loại gì? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "k03",
+    "article": 34,
+    "question": "Chương trình 151 TC, mình đã học 100 TC với ĐTBCTL 3,5. Trong 100 TC đó có 30 TC điều kiện và tổng TC điều kiện của chương trình cũng là 30. Còn bao nhiêu TC phải học, và để đạt xuất sắc thì cần điểm trung bình bao nhiêu ở phần còn lại?",
+    "must": [
+      [
+        "\\b51\\b"
+      ],
+      [
+        "3[,.]7[34]"
+      ]
+    ],
+    "forbid": [],
+    "formula": true,
+    "lead": "",
+    "sent_question": "Chương trình 151 TC, mình đã học 100 TC với ĐTBCTL 3,5. Trong 100 TC đó có 30 TC điều kiện và tổng TC điều kiện của chương trình cũng là 30. Còn bao nhiêu TC phải học, và để đạt xuất sắc thì cần điểm trung bình bao nhiêu ở phần còn lại? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "w06",
+    "article": 18,
+    "question": "Mình K46, nợ 30 TC từ đầu khóa học, ĐTBCHK học kỳ này là 2,0. Mình có bị cảnh báo học tập vì nợ tín chỉ không?",
+    "must": [
+      [
+        "47"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "\\bkhông\\b|\\bchưa\\b",
+    "sent_question": "Mình K46, nợ 30 TC từ đầu khóa học, ĐTBCHK học kỳ này là 2,0. Mình có bị cảnh báo học tập vì nợ tín chỉ không? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "b03",
+    "article": 24,
+    "question": "Mình học Toán 3 TC điểm A, Lý 2 TC rút môn (điểm W), Hóa 3 TC điểm I, Văn 4 TC điểm B. ĐTBCHK của mình là bao nhiêu?",
+    "must": [
+      [
+        "3[,.]43"
+      ]
+    ],
+    "forbid": [],
+    "formula": true,
+    "lead": "",
+    "sent_question": "Mình học Toán 3 TC điểm A, Lý 2 TC rút môn (điểm W), Hóa 3 TC điểm I, Văn 4 TC điểm B. ĐTBCHK của mình là bao nhiêu? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "t03",
+    "article": 34,
+    "question": "ĐTBCTL của mình 3,3 (loại giỏi), nhưng mình từng bị kỷ luật cảnh cáo cấp Trường. Mình tốt nghiệp loại gì?",
+    "must": [
+      [
+        "khá"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "khá",
+    "sent_question": "ĐTBCTL của mình 3,3 (loại giỏi), nhưng mình từng bị kỷ luật cảnh cáo cấp Trường. Mình tốt nghiệp loại gì? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "s01",
+    "article": 9,
+    "question": "Kỳ trước mình chỉ đăng ký 10 tín chỉ (không phải do Trường bố trí), ĐTBCHK 3,7 và ĐRL 95. Mình có được xét học bổng khuyến khích học tập không?",
+    "must": [
+      [
+        "12 (tc|tín chỉ)|12 tín"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "\\bkhông\\b|\\bchưa\\b",
+    "sent_question": "Kỳ trước mình chỉ đăng ký 10 tín chỉ (không phải do Trường bố trí), ĐTBCHK 3,7 và ĐRL 95. Mình có được xét học bổng khuyến khích học tập không? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "w02",
+    "article": 18,
+    "question": "ĐTBCHK học kỳ thứ ba của mình đúng bằng 1,00. Mình có bị cảnh báo học tập không?",
+    "must": [
+      [
+        "dưới 1[,.]00?"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "\\bkhông\\b|\\bchưa\\b",
+    "sent_question": "ĐTBCHK học kỳ thứ ba của mình đúng bằng 1,00. Mình có bị cảnh báo học tập không? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "b04",
+    "article": 22,
+    "question": "Môn X 3 TC được 8,4 điểm, môn Y 2 TC được 6,9 điểm, môn Z 4 TC được 5,4 điểm (thang 10). Tính ĐTBCHK và xếp loại.",
+    "must": [
+      [
+        "2[,.]39"
+      ],
+      [
+        "trung bình"
+      ]
+    ],
+    "forbid": [],
+    "formula": true,
+    "lead": "",
+    "sent_question": "Môn X 3 TC được 8,4 điểm, môn Y 2 TC được 6,9 điểm, môn Z 4 TC được 5,4 điểm (thang 10). Tính ĐTBCHK và xếp loại. H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "t04",
+    "article": 34,
+    "question": "ĐTBCTL của mình 3,3 (loại giỏi), mình chỉ từng bị khiển trách cấp Trường. Mình tốt nghiệp loại gì?",
+    "must": [
+      [
+        "giỏi"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "giỏi",
+    "sent_question": "ĐTBCTL của mình 3,3 (loại giỏi), mình chỉ từng bị khiển trách cấp Trường. Mình tốt nghiệp loại gì? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "k04",
+    "article": 34,
+    "question": "Chương trình 120 TC, mình đã học 90 TC với ĐTBCTL 3,0. Mình có thể tốt nghiệp loại giỏi không? Cần bao nhiêu điểm trung bình ở 30 TC còn lại?",
+    "must": [
+      [
+        "3[,.]8"
+      ],
+      [
+        "3[,.]25"
+      ]
+    ],
+    "forbid": [],
+    "formula": true,
+    "lead": "\\bcó\\b",
+    "sent_question": "Chương trình 120 TC, mình đã học 90 TC với ĐTBCTL 3,0. Mình có thể tốt nghiệp loại giỏi không? Cần bao nhiêu điểm trung bình ở 30 TC còn lại? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "w03",
+    "article": 18,
+    "question": "Mình là sinh viên K48, học kỳ này đăng ký 16 TC nhưng rớt 9 TC. Mình có bị cảnh báo học tập không?",
+    "must": [
+      [
+        "50\\s?%"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "\\bcó\\b|\\bđược\\b|\\bbị\\b",
+    "sent_question": "Mình là sinh viên K48, học kỳ này đăng ký 16 TC nhưng rớt 9 TC. Mình có bị cảnh báo học tập không? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "b05",
+    "article": 24,
+    "question": "HK1 mình học 15 TC có ĐTBCHK 3,0; HK2 học 10 TC có ĐTBCHK 3,6; HK3 học 5 TC có ĐTBCHK 2,0. Điểm trung bình chung năm học (ĐTBCNH) là bao nhiêu?",
+    "must": [
+      [
+        "3[,.]03"
+      ]
+    ],
+    "forbid": [
+      "2[,.]87"
+    ],
+    "formula": true,
+    "lead": "",
+    "sent_question": "HK1 mình học 15 TC có ĐTBCHK 3,0; HK2 học 10 TC có ĐTBCHK 3,6; HK3 học 5 TC có ĐTBCHK 2,0. Điểm trung bình chung năm học (ĐTBCNH) là bao nhiêu? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "t05",
+    "article": 34,
+    "question": "Chương trình 120 TC, ĐTBCTL 3,7. Mình có 4 TC bị F ở học phần thường và 5 TC bị F ở học phần đăng ký học cải thiện. Tốt nghiệp loại gì?",
+    "must": [
+      [
+        "xuất sắc"
+      ],
+      [
+        "cải thiện"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "xuất sắc",
+    "sent_question": "Chương trình 120 TC, ĐTBCTL 3,7. Mình có 4 TC bị F ở học phần thường và 5 TC bị F ở học phần đăng ký học cải thiện. Tốt nghiệp loại gì? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "s02",
+    "article": 9,
+    "question": "Mình có ĐTBCHK 3,5 và ĐRL 85 nhưng kỳ trước bị một môn điểm F. Mình có được xét học bổng không?",
+    "must": [
+      [
+        "điểm d|dưới điểm d|điểm f|học phần"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "\\bkhông\\b|\\bchưa\\b",
+    "sent_question": "Mình có ĐTBCHK 3,5 và ĐRL 85 nhưng kỳ trước bị một môn điểm F. Mình có được xét học bổng không? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "w05",
+    "article": 18,
+    "question": "Mình K47, nợ 25 TC từ đầu khóa học, ĐTBCHK học kỳ này là 2,0. Mình có bị cảnh báo học tập không?",
+    "must": [
+      [
+        "24"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "\\bcó\\b|\\bđược\\b|\\bbị\\b",
+    "sent_question": "Mình K47, nợ 25 TC từ đầu khóa học, ĐTBCHK học kỳ này là 2,0. Mình có bị cảnh báo học tập không? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "b06",
+    "article": 24,
+    "question": "Mình đã tích lũy 60 TC với ĐTBCTL 3,2. Học kỳ này mình học 15 TC, đều đạt, ĐTBCHK là 2,4. ĐTBCTL mới của mình là bao nhiêu?",
+    "must": [
+      [
+        "3[,.]04"
+      ]
+    ],
+    "forbid": [],
+    "formula": true,
+    "lead": "",
+    "sent_question": "Mình đã tích lũy 60 TC với ĐTBCTL 3,2. Học kỳ này mình học 15 TC, đều đạt, ĐTBCHK là 2,4. ĐTBCTL mới của mình là bao nhiêu? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "t06",
+    "article": 34,
+    "question": "ĐTBCTL của mình 3,8, mình có 8 TC bị F trên chương trình 120 TC và từng bị kỷ luật cảnh cáo cấp Trường. Hạng tốt nghiệp của mình là gì?",
+    "must": [
+      [
+        "giỏi"
+      ],
+      [
+        "một mức"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "giỏi",
+    "sent_question": "ĐTBCTL của mình 3,8, mình có 8 TC bị F trên chương trình 120 TC và từng bị kỷ luật cảnh cáo cấp Trường. Hạng tốt nghiệp của mình là gì? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "k05",
+    "article": 34,
+    "question": "Chương trình 130 TC, mình đã học 120 TC với ĐTBCTL 3,5. Mình có thể lên loại xuất sắc không?",
+    "must": [
+      [
+        "3[,.]54"
+      ]
+    ],
+    "forbid": [],
+    "formula": true,
+    "lead": "không (thể|được|đạt)|không nhé|không bạn",
+    "sent_question": "Chương trình 130 TC, mình đã học 120 TC với ĐTBCTL 3,5. Mình có thể lên loại xuất sắc không? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "w07",
+    "article": 18,
+    "question": "Mình K48 đang học năm thứ hai, ĐTBC tích lũy là 1,35. Mình có bị cảnh báo học tập không?",
+    "must": [
+      [
+        "1[,.]4"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "\\bcó\\b|\\bđược\\b|\\bbị\\b",
+    "sent_question": "Mình K48 đang học năm thứ hai, ĐTBC tích lũy là 1,35. Mình có bị cảnh báo học tập không? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "b07",
+    "article": 24,
+    "question": "Mình có 60 TC tích lũy với ĐTBCTL 3,0. Học kỳ này mình học 15 TC, cần đạt điểm trung bình học kỳ bao nhiêu để ĐTBCTL lên 3,2?",
+    "must": [
+      [
+        "4[,.]0"
+      ],
+      [
+        "toàn a|tất cả[^.\\n]{0,25}\\ba\\b|điểm a|tối đa|4[,.]0"
+      ]
+    ],
+    "forbid": [],
+    "formula": true,
+    "lead": "",
+    "sent_question": "Mình có 60 TC tích lũy với ĐTBCTL 3,0. Học kỳ này mình học 15 TC, cần đạt điểm trung bình học kỳ bao nhiêu để ĐTBCTL lên 3,2? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "t07",
+    "article": 34,
+    "question": "ĐTBCTL của mình 3,0 (loại khá), có 10 TC bị điểm F trên chương trình 120 TC. Tốt nghiệp loại gì?",
+    "must": [
+      [
+        "khá"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "khá",
+    "sent_question": "ĐTBCTL của mình 3,0 (loại khá), có 10 TC bị điểm F trên chương trình 120 TC. Tốt nghiệp loại gì? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "s03",
+    "article": 9,
+    "question": "Kỳ trước mình bị khiển trách cấp Trường, ĐTBCHK 3,9 và ĐRL 92. Mình có được xét học bổng không?",
+    "must": [
+      [
+        "khiển trách"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "\\bkhông\\b|\\bchưa\\b",
+    "sent_question": "Kỳ trước mình bị khiển trách cấp Trường, ĐTBCHK 3,9 và ĐRL 92. Mình có được xét học bổng không? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "w08",
+    "article": 18,
+    "question": "Mình K48 đang học năm thứ hai, ĐTBC tích lũy là 1,45 và các tiêu chí khác đều ổn. Mình có bị cảnh báo học tập không?",
+    "must": [
+      [
+        "1[,.]4"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "\\bkhông\\b|\\bchưa\\b",
+    "sent_question": "Mình K48 đang học năm thứ hai, ĐTBC tích lũy là 1,45 và các tiêu chí khác đều ổn. Mình có bị cảnh báo học tập không? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "b08",
+    "article": 17,
+    "question": "ĐTBCTL của mình là 3,0 với 90 TC tích lũy. Mình học cải thiện một môn 3 TC từ điểm C lên điểm A thì ĐTBCTL mới là bao nhiêu?",
+    "must": [
+      [
+        "3[,.]07"
+      ]
+    ],
+    "forbid": [],
+    "formula": true,
+    "lead": "",
+    "sent_question": "ĐTBCTL của mình là 3,0 với 90 TC tích lũy. Mình học cải thiện một môn 3 TC từ điểm C lên điểm A thì ĐTBCTL mới là bao nhiêu? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "t08",
+    "article": 34,
+    "question": "ĐTBCTL 3,5 (loại giỏi), có 8 TC bị điểm F trên chương trình 120 TC. Mình tốt nghiệp loại gì?",
+    "must": [
+      [
+        "khá"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "khá",
+    "sent_question": "ĐTBCTL 3,5 (loại giỏi), có 8 TC bị điểm F trên chương trình 120 TC. Mình tốt nghiệp loại gì? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "k06",
+    "article": 32,
+    "question": "Chương trình 150 TC, mình đã học 100 TC với ĐTBCTL 1,8. Để đủ điều kiện tốt nghiệp (ĐTBCTL từ 2,0) thì 50 TC còn lại cần đạt điểm trung bình bao nhiêu?",
+    "must": [
+      [
+        "2[,.]4"
+      ]
+    ],
+    "forbid": [],
+    "formula": true,
+    "lead": "",
+    "sent_question": "Chương trình 150 TC, mình đã học 100 TC với ĐTBCTL 1,8. Để đủ điều kiện tốt nghiệp (ĐTBCTL từ 2,0) thì 50 TC còn lại cần đạt điểm trung bình bao nhiêu? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "w09",
+    "article": 18,
+    "question": "Mình K48 đang học năm thứ ba, ĐTBC tích lũy là 1,5. Mình có bị cảnh báo học tập không?",
+    "must": [
+      [
+        "1[,.]6"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "\\bcó\\b|\\bđược\\b|\\bbị\\b",
+    "sent_question": "Mình K48 đang học năm thứ ba, ĐTBC tích lũy là 1,5. Mình có bị cảnh báo học tập không? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "s04",
+    "article": 9,
+    "question": "ĐTBCHK của mình là 3,3 còn ĐRL là 79 thì mình thuộc mức học bổng nào?",
+    "must": [
+      [
+        "mức khá|loại khá"
+      ],
+      [
+        "\\btốt\\b|chưa đủ|không đủ|dưới 80"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "",
+    "sent_question": "ĐTBCHK của mình là 3,3 còn ĐRL là 79 thì mình thuộc mức học bổng nào? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "t09",
+    "article": 34,
+    "question": "ĐTBCTL của mình đúng 3,19. Mình tốt nghiệp loại gì?",
+    "must": [
+      [
+        "khá"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "khá",
+    "sent_question": "ĐTBCTL của mình đúng 3,19. Mình tốt nghiệp loại gì? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "k07",
+    "article": 34,
+    "question": "Mình đã học 60 trên 120 TC với ĐTBCTL 3,9. Mình đã chắc chắn tốt nghiệp xuất sắc chưa, cần giữ điểm trung bình bao nhiêu ở 60 TC còn lại?",
+    "must": [
+      [
+        "3[,.]3"
+      ]
+    ],
+    "forbid": [],
+    "formula": true,
+    "lead": "chưa|không chắc",
+    "sent_question": "Mình đã học 60 trên 120 TC với ĐTBCTL 3,9. Mình đã chắc chắn tốt nghiệp xuất sắc chưa, cần giữ điểm trung bình bao nhiêu ở 60 TC còn lại? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "w11",
+    "article": 18,
+    "question": "Mình đã bị cảnh báo học tập, học kỳ kế tiếp ĐTBCHK của mình đúng 1,00. Mình có bị buộc thôi học không?",
+    "must": [
+      [
+        "1[,.]00?"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "\\bkhông\\b|\\bchưa\\b",
+    "sent_question": "Mình đã bị cảnh báo học tập, học kỳ kế tiếp ĐTBCHK của mình đúng 1,00. Mình có bị buộc thôi học không? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "s05",
+    "article": 9,
+    "question": "Bạn A có ĐTBCHK 3,5 và ĐRL 88, bạn B có ĐTBCHK 3,5 và ĐRL 84, cả hai đều đủ điều kiện. Ai được ưu tiên học bổng?",
+    "must": [
+      [
+        "\\ba\\b[^.\\n]{0,100}(ưu tiên|trước|được)"
+      ],
+      [
+        "đrl|rèn luyện"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "",
+    "sent_question": "Bạn A có ĐTBCHK 3,5 và ĐRL 88, bạn B có ĐTBCHK 3,5 và ĐRL 84, cả hai đều đủ điều kiện. Ai được ưu tiên học bổng? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "t10",
+    "article": 32,
+    "question": "ĐTBCTL của mình là 1,95 và đã học đủ tín chỉ. Mình có được công nhận tốt nghiệp không?",
+    "must": [
+      [
+        "2[,.]00?"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "\\bkhông\\b|\\bchưa\\b",
+    "sent_question": "ĐTBCTL của mình là 1,95 và đã học đủ tín chỉ. Mình có được công nhận tốt nghiệp không? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "k08",
+    "article": 34,
+    "question": "Chương trình 120 TC, mình mới học 20 TC với ĐTBCTL 4,0. Mình có thể đạt loại xuất sắc không, cần điểm trung bình bao nhiêu ở phần còn lại?",
+    "must": [
+      [
+        "3[,.]52"
+      ]
+    ],
+    "forbid": [],
+    "formula": true,
+    "lead": "\\bcó\\b",
+    "sent_question": "Chương trình 120 TC, mình mới học 20 TC với ĐTBCTL 4,0. Mình có thể đạt loại xuất sắc không, cần điểm trung bình bao nhiêu ở phần còn lại? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  },
+  {
+    "id": "t11",
+    "article": 32,
+    "question": "ĐTBCTL 3,0 nhưng điểm trung bình các học phần GDQP&AN của mình là 4,8 (thang 10). Mình có đủ điều kiện tốt nghiệp không?",
+    "must": [
+      [
+        "5[,.]0"
+      ]
+    ],
+    "forbid": [],
+    "formula": false,
+    "lead": "\\bkhông\\b|\\bchưa\\b",
+    "sent_question": "ĐTBCTL 3,0 nhưng điểm trung bình các học phần GDQP&AN của mình là 4,8 (thang 10). Mình có đủ điều kiện tốt nghiệp không? H?y gi?i th?ch c?n c? v? ki?m tra k? c?c m?c b?ng ng??ng."
+  }
+]

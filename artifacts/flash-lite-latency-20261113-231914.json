@@ -1,0 +1,181 @@
+{
+  "started_at": "2026-11-13T23:19:14.325770+07:00",
+  "requested_model": "gemini-3.5-flash-lite",
+  "configured_model": "gemini-3.5-flash-lite",
+  "scope": "local direct SDK and real chat graph; no HTTP, queue, production network or Postgres",
+  "key_policy": "first configured key only; no key rotation",
+  "max_llm_calls": 12,
+  "runs": [
+    {
+      "label": "direct_control_1",
+      "ttft_s": 1.835,
+      "ok": true,
+      "total_s": 1.852,
+      "output_chars": 2,
+      "llm_calls": [
+        {
+          "tools_bound": false,
+          "input_chars": 27,
+          "ttft_s": 1.826,
+          "model_name": "gemini-3.5-flash-lite",
+          "finish_reason": "STOP",
+          "total_s": 1.844,
+          "output_chars": 2
+        }
+      ]
+    },
+    {
+      "label": "direct_control_2",
+      "ttft_s": 0.878,
+      "ok": true,
+      "total_s": 0.924,
+      "output_chars": 2,
+      "llm_calls": [
+        {
+          "tools_bound": false,
+          "input_chars": 27,
+          "ttft_s": 0.87,
+          "model_name": "gemini-3.5-flash-lite",
+          "finish_reason": "STOP",
+          "total_s": 0.915,
+          "output_chars": 2
+        }
+      ]
+    },
+    {
+      "label": "direct_control_3",
+      "ttft_s": 1.083,
+      "ok": true,
+      "total_s": 1.13,
+      "output_chars": 2,
+      "llm_calls": [
+        {
+          "tools_bound": false,
+          "input_chars": 27,
+          "ttft_s": 1.076,
+          "model_name": "gemini-3.5-flash-lite",
+          "finish_reason": "STOP",
+          "total_s": 1.123,
+          "output_chars": 2
+        }
+      ]
+    },
+    {
+      "label": "graph_explicit_article",
+      "ttft_s": 2.644,
+      "stage_log": "Thời gian lượt chat (giây): embed+rag=0.72 kien_thuc_bo_sung=0.05 phan_loai_tuyen=0.84 dung_prompt=0.0 token_dau=1.03 sinh_cau_tra_loi=0.28 | tổng=2.92 | tuyến=regulation",
+      "ok": true,
+      "total_s": 2.92,
+      "output_chars": 279,
+      "llm_calls": [
+        {
+          "tools_bound": false,
+          "input_chars": 1372,
+          "ttft_s": 0.794,
+          "model_name": "gemini-3.5-flash-lite",
+          "finish_reason": "STOP",
+          "total_s": 0.838,
+          "output_chars": 10
+        },
+        {
+          "tools_bound": true,
+          "input_chars": 12844,
+          "ttft_s": 1.029,
+          "model_name": "gemini-3.5-flash-lite",
+          "finish_reason": "STOP",
+          "total_s": 1.303,
+          "output_chars": 279
+        }
+      ]
+    },
+    {
+      "label": "graph_general_regulation",
+      "ttft_s": 2.719,
+      "stage_log": "Thời gian lượt chat (giây): embed+rag=0.59 kien_thuc_bo_sung=0.0 phan_loai_tuyen=0.92 dung_prompt=0.0 token_dau=1.19 sinh_cau_tra_loi=0.66 | tổng=3.36 | tuyến=regulation",
+      "ok": true,
+      "total_s": 3.366,
+      "output_chars": 723,
+      "llm_calls": [
+        {
+          "tools_bound": false,
+          "input_chars": 1360,
+          "ttft_s": 0.859,
+          "model_name": "gemini-3.5-flash-lite",
+          "finish_reason": "STOP",
+          "total_s": 0.908,
+          "output_chars": 10
+        },
+        {
+          "tools_bound": true,
+          "input_chars": 15251,
+          "ttft_s": 1.187,
+          "model_name": "gemini-3.5-flash-lite",
+          "finish_reason": "STOP",
+          "total_s": 1.832,
+          "output_chars": 723
+        }
+      ]
+    },
+    {
+      "label": "graph_gpa",
+      "ttft_s": 4.942,
+      "stage_log": "Thời gian lượt chat (giây): embed+rag=0.64 kien_thuc_bo_sung=0.0 phan_loai_tuyen=1.19 dung_prompt=1.91 token_dau=1.2 sinh_cau_tra_loi=0.53 | tổng=5.47 | tuyến=regulation",
+      "ok": true,
+      "total_s": 5.48,
+      "output_chars": 489,
+      "llm_calls": [
+        {
+          "tools_bound": false,
+          "input_chars": 1419,
+          "ttft_s": 1.137,
+          "model_name": "gemini-3.5-flash-lite",
+          "finish_reason": "STOP",
+          "total_s": 1.181,
+          "output_chars": 10
+        },
+        {
+          "tools_bound": false,
+          "input_chars": 3458,
+          "ttft_s": 1.643,
+          "model_name": "gemini-3.5-flash-lite",
+          "finish_reason": "STOP",
+          "total_s": 1.905,
+          "output_chars": 273
+        },
+        {
+          "tools_bound": true,
+          "input_chars": 13089,
+          "ttft_s": 1.184,
+          "model_name": "gemini-3.5-flash-lite",
+          "finish_reason": "STOP",
+          "total_s": 1.72,
+          "output_chars": 489
+        }
+      ]
+    }
+  ],
+  "rag_collection": "qd3266",
+  "rag_articles": 36,
+  "direct_control_summary": {
+    "successful_samples": 3,
+    "median_ttft_s": 1.083,
+    "median_total_s": 1.13
+  },
+  "graph_summary": {
+    "successful_samples": 3,
+    "median_ttft_s": 2.719,
+    "median_total_s": 3.366
+  },
+  "llm_calls_total": 10,
+  "finished_at": "2026-11-13T23:20:05.930319+07:00",
+  "token_usage_collected": false,
+  "measurement_notes": [
+    "Sequential live calls from the local Windows machine; one configured API key, no rotation.",
+    "Three direct OK controls, followed by three distinct chat scenarios; not paired identical payloads.",
+    "Existing local Chroma vectors; only query embeddings ran, no document ingest or indexing.",
+    "Graph uses in-memory checkpoints; excludes HTTP/auth, queue, browser network and production Postgres.",
+    "Seven-second pauses are outside measured intervals.",
+    "Token usage omitted: the initial probe retained only the final zero-usage stream delta.",
+    "No matching prior benchmark is available for a before/after comparison."
+  ]
+}

@@ -13,28 +13,34 @@ def blocks_to_highlights(blocks: list[dict], page: int, previous: int | None, ar
         if not isinstance(block, dict):
             continue
         article = block.get("article")
-        box = block.get("box_2d")
-        if isinstance(box, list) and len(box) == 1 and isinstance(box[0], list):
-            box = box[0]  # Gemini đôi khi trả [[ymin, xmin, ymax, xmax]]
-        if not isinstance(box, list) or len(box) != 4 or article is None:
+        raw_boxes = block.get("box_2d")
+        if not isinstance(raw_boxes, list) or article is None:
             continue
         try:
             article = int(article)
-            values = [float(v) for v in box]
         except (TypeError, ValueError):
             continue
-        if values[0] < 60 and (values[3] - values[1]) < 100:
-            continue  # số trang ở đầu trang
+        # Gemini may return one rectangle, [[rectangle]], or several rectangles for a long paragraph.
+        boxes = [raw_boxes] if len(raw_boxes) == 4 and all(not isinstance(value, list) for value in raw_boxes) else raw_boxes
         if previous is not None and article < previous:
             continue  # số Điều lùi lại: model nhầm, bỏ khối này
-        y0, x0, y1, x1 = (max(0.0, min(1.0, v / 1000)) for v in values)
-        y0, y1 = max(0.0, y0 - PAD_Y), min(1.0, y1 + PAD_Y)
-        x0, x1 = max(0.0, x0 - PAD_X), min(1.0, x1 + PAD_X)
-        if y1 <= y0 or x1 <= x0:
-            continue
-        previous = article
-        entry = articles.setdefault(article, {"highlights": []})
-        entry["highlights"].append({"page": page, "box": [round(y0, 4), round(x0, 4), round(y1, 4), round(x1, 4)]})
+        for box in boxes:
+            if not isinstance(box, list) or len(box) != 4:
+                continue
+            try:
+                values = [float(value) for value in box]
+            except (TypeError, ValueError):
+                continue
+            if values[0] < 60 and (values[3] - values[1]) < 100:
+                continue  # số trang ở đầu trang
+            y0, x0, y1, x1 = (max(0.0, min(1.0, value / 1000)) for value in values)
+            y0, y1 = max(0.0, y0 - PAD_Y), min(1.0, y1 + PAD_Y)
+            x0, x1 = max(0.0, x0 - PAD_X), min(1.0, x1 + PAD_X)
+            if y1 <= y0 or x1 <= x0:
+                continue
+            previous = article
+            entry = articles.setdefault(article, {"highlights": []})
+            entry["highlights"].append({"page": page, "box": [round(y0, 4), round(x0, 4), round(y1, 4), round(x1, 4)]})
     return previous
 
 

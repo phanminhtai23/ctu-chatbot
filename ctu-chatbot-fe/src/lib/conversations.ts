@@ -1,7 +1,9 @@
 import { apiFetch, apiStream } from './api'
 
 /** Một Điều của quy định mà câu trả lời đã dựa vào (bấm để xem trong PDF). */
-export type SourceRef = { article: number; title: string }
+export type SourceRef = { article: number; title: string; document_url?: string | null }
+
+export const referenceKey = (source: SourceRef) => `${source.document_url ?? ''}#${source.article}`
 
 /** Một trang web mà câu trả lời (về chuyện ngoài quy chế) đã tra cứu. */
 export type WebSourceRef = { title: string; url: string; n?: number | null }
@@ -11,21 +13,16 @@ export type AnySourceRef = {
   article?: number | null
   title: string
   url?: string | null
-  document_url?: string
+  document_url?: string | null
   n?: number | null
 }
 
-export const articleSources = (sources: AnySourceRef[] = []): SourceRef[] =>
-  sources.filter((s): s is SourceRef => typeof s.article === 'number' && !s.document_url)
-
-export type DocumentSourceRef = { article: number; title: string; document_url: string }
-
-export const documentSources = (sources: AnySourceRef[] = []): DocumentSourceRef[] =>
+export const referenceSources = (sources: AnySourceRef[] = []): SourceRef[] =>
   sources.filter(
-    (s): s is DocumentSourceRef =>
+    (s): s is SourceRef =>
       typeof s.article === 'number' &&
-      typeof s.document_url === 'string' &&
-      /^\/api\/v1\/documents\/catalog\/[a-z][a-z0-9-]{1,39}\/[0-9]{14}-[0-9a-f]{6}\/source$/.test(s.document_url),
+      (!s.document_url ||
+        /^\/api\/v1\/documents\/catalog\/[a-z][a-z0-9-]{1,39}\/[0-9]{14}-[0-9a-f]{6}\/source$/.test(s.document_url)),
   )
 
 /** Chỉ nhận http(s): không để `javascript:` hay scheme lạ lọt vào href. */

@@ -376,7 +376,11 @@ class IngestPipeline:
             previous = layout_mod.blocks_to_highlights(blocks, page, previous, articles)
             self._progress(step, done, len(pages), "trang")
         layout = layout_mod.build_layout(
-            articles, titles, self.state["page_sizes"], document="QD3266", title=_document_title(self.state["markdown"])
+            articles,
+            titles,
+            self.state["page_sizes"],
+            document=self.state.get("document_id", "document"),
+            title=_document_title(self.state["markdown"]),
         )
         storage.atomic_write_text(self.ctx.directory / "layout.json", json.dumps(layout, ensure_ascii=False, indent=1))
         missing = sorted(set(titles) - set(articles))

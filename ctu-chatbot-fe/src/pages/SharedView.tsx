@@ -33,7 +33,7 @@ export default function SharedView() {
   const [elapsed, setElapsed] = useState(0)
   const [chatError, setChatError] = useState<string | null>(null)
   const [errorDialog, setErrorDialog] = useState<ChatErrorInfo | null>(null)
-  const [reference, setReference] = useState<{ article: number; sources: SourceRef[] } | null>(null)
+  const [reference, setReference] = useState<SourceRef | null>(null)
   const abortRef = useRef<AbortController | null>(null)
   const startedAtRef = useRef(0)
   const busyRef = useRef(false)
@@ -235,8 +235,8 @@ export default function SharedView() {
                     key={m.id}
                     message={m}
                     liveElapsed={elapsed}
-                    onOpenReference={(article, sources) => setReference({ article, sources })}
-                    activeArticle={reference?.article ?? null}
+                    onOpenReference={setReference}
+                    activeSource={reference}
                   />
                 ))}
               </div>
@@ -264,12 +264,7 @@ export default function SharedView() {
         </main>
 
         {reference !== null && (
-          <ReferencePanel
-            article={reference.article}
-            sources={reference.sources}
-            onSelect={(article) => setReference((prev) => (prev ? { ...prev, article } : prev))}
-            onClose={() => setReference(null)}
-          />
+          <ReferencePanel source={reference} onClose={() => setReference(null)} />
         )}
       </div>
     </div>

@@ -415,11 +415,7 @@ export default function Chat() {
   }, [])
 
   // Điều đang xem trong cửa sổ tham chiếu bên phải (null = đóng)
-  const [reference, setReference] = useState<{ article: number; sources: SourceRef[] } | null>(null)
-  const openReference = useCallback(
-    (article: number, sources: SourceRef[]) => setReference({ article, sources }),
-    [],
-  )
+  const [reference, setReference] = useState<SourceRef | null>(null)
   const closeReference = useCallback(() => setReference(null), [])
 
   const activeTitle = conversations.find((c) => c.id === conversationId)?.title
@@ -694,8 +690,8 @@ export default function Chat() {
                   message={m}
                   liveElapsed={elapsed}
                   onReport={(msg) => setFeedback({ open: true, type: 'answer_issue', messageId: msg.id })}
-                  onOpenReference={openReference}
-                  activeArticle={reference?.article ?? null}
+                  onOpenReference={setReference}
+                  activeSource={reference}
                 />
               ))}
             </div>
@@ -717,12 +713,7 @@ export default function Chat() {
       </main>
 
       {reference !== null && (
-        <ReferencePanel
-          article={reference.article}
-          sources={reference.sources}
-          onSelect={(article) => setReference((prev) => (prev ? { ...prev, article } : prev))}
-          onClose={closeReference}
-        />
+        <ReferencePanel source={reference} onClose={closeReference} />
       )}
     </div>
   )

@@ -19,7 +19,7 @@ Hãy chép lại CHÍNH XÁC toàn bộ chữ trên từng trang.
 - Bảng: viết dạng Markdown (| cột 1 | cột 2 |, kèm dòng | --- | --- |). Công thức: viết bằng chữ và ký hiệu thường, KHÔNG dùng LaTeX.
 - Giữ cả số trang nếu có. Không tóm tắt, không bình luận, không thêm ``` hay lời dẫn."""
 
-LOCATE_PROMPT = """Đây là trang {page} của văn bản "Quy định công tác học vụ" (tiếng Việt, bản scan).
+LOCATE_PROMPT = """Đây là trang {page} của một văn bản quy định tiếng Việt (bản scan).
 Hãy xác định MỌI khối văn bản trên trang theo thứ tự đọc: tiêu đề "Điều N. ...", từng đoạn văn, từng khoản (1., 2., a), b)...), và từng bảng.
 Với mỗi khối trả về:
 - "box_2d": [ymin, xmin, ymax, xmax] chuẩn hoá về 0-1000, ôm sát khối chữ.

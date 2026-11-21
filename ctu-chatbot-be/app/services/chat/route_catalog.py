@@ -24,6 +24,7 @@ DEFAULT_CONFIG = {
             "prompt": "Câu hỏi về quy chế đào tạo, tín chỉ, điểm, học bổng, đăng ký học phần, cảnh báo học tập, tốt nghiệp và các quy định học vụ.",
             "collection": "qd3266",
             "source": "documents/qd3266/current/clean.md",
+            "decision_no": "3266/QĐ-ĐHCT (08/2024)",
         },
         {
             "id": "external",

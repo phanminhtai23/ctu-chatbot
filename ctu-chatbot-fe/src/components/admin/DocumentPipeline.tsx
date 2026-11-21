@@ -11,7 +11,7 @@ type StageState = 'pending' | 'running' | 'done' | 'failed'
 const STAGES: { key: StageKey; steps: CatalogStep['key'][]; icon: 'upload' | 'image' | 'doc' | 'sparkles'; live?: boolean }[] = [
   { key: 'upload', steps: ['upload'], icon: 'upload' },
   { key: 'extract', steps: ['render', 'ocr'], icon: 'image' },
-  { key: 'clean', steps: ['normalize', 'chunk'], icon: 'doc' },
+  { key: 'clean', steps: ['normalize', 'chunk', 'layout'], icon: 'doc' },
   { key: 'sync', steps: ['embed', 'sync'], icon: 'sparkles', live: true },
 ]
 

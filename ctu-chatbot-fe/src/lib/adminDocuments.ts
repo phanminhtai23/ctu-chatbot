@@ -105,7 +105,7 @@ export function uploadErrorCode(err: unknown): string {
 }
 
 export type CatalogStep = {
-  key: 'upload' | 'render' | 'ocr' | 'normalize' | 'chunk' | 'embed' | 'sync' | 'extract' | 'clean'
+  key: 'upload' | 'render' | 'ocr' | 'normalize' | 'chunk' | 'layout' | 'embed' | 'sync' | 'extract' | 'clean'
   title: string
   status: 'pending' | 'running' | 'done' | 'warning' | 'failed'
   summary?: string

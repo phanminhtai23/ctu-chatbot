@@ -1,15 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useI18n } from '../../i18n'
+import { API_BASE_URL } from '../../lib/api'
 import type { SourceRef } from '../../lib/conversations'
 import { getDocLayout, pageImageUrl, type DocLayout } from '../../lib/documents'
 import Icon from '../Icon'
 
 type Props = {
   /** Số Điều đang được tô sáng */
-  article: number
-  /** Các tham chiếu của câu trả lời đang xem: bấm để chuyển qua lại ngay trong cửa sổ này */
-  sources: SourceRef[]
-  onSelect: (article: number) => void
+  source: SourceRef
   onClose: () => void
 }
 
@@ -17,13 +15,17 @@ const ZOOM_STEPS = [1, 1.4, 1.8]
 
 /**
  * Cửa sổ bên phải hiển thị TOÀN BỘ văn bản quy định: tự cuộn tới đoạn được tham chiếu và tô vàng đoạn đó.
- * Người dùng có thể lật sang trang khác, chuyển sang tham chiếu khác của cùng câu trả lời, phóng to/thu nhỏ.
+ * Người dùng có thể lật trang, phóng to và thu nhỏ.
  * PDF gốc là bản scan nên mỗi trang là một ảnh; khung tô sáng đặt theo toạ độ chuẩn hoá 0..1.
  */
-export default function ReferencePanel({ article, sources, onSelect, onClose }: Props) {
+export default function ReferencePanel({ source, onClose }: Props) {
   const { t } = useI18n()
-  const [layout, setLayout] = useState<DocLayout | null>(null)
-  const [error, setError] = useState(false)
+  const { article } = source
+  const documentUrl = source.document_url || null
+  const [loaded, setLoaded] = useState<{ documentUrl: string | null; layout: DocLayout | null } | null>(null)
+  const result = loaded?.documentUrl === documentUrl ? loaded : null
+  const layout = result?.layout ?? null
+  const error = result !== null && !layout
   const [zoomIdx, setZoomIdx] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -32,17 +34,18 @@ export default function ReferencePanel({ article, sources, onSelect, onClose }: 
 
   useEffect(() => {
     let alive = true
-    getDocLayout()
+    setCurrentPage(1)
+    getDocLayout(documentUrl)
       .then((data) => {
-        if (alive) setLayout(data)
+        if (alive) setLoaded({ documentUrl, layout: data })
       })
       .catch(() => {
-        if (alive) setError(true)
+        if (alive) setLoaded({ documentUrl, layout: null })
       })
     return () => {
       alive = false
     }
-  }, [])
+  }, [documentUrl])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -53,11 +56,14 @@ export default function ReferencePanel({ article, sources, onSelect, onClose }: 
   }, [onClose])
 
   const entry = layout?.articles[String(article)]
+  const hasHighlight = !!entry?.highlights.length
+  const articleTitle = entry?.title || source.title
   const highlightPages = useMemo(
     () => (entry ? [...new Set(entry.highlights.map((h) => h.page))].sort((a, b) => a - b) : []),
     [entry],
   )
   const pageCount = layout?.page_count ?? 0
+  const pdfUrl = documentUrl ? `${API_BASE_URL.replace(/\/$/, '')}${documentUrl}` : null
 
   const scrollToHighlight = useCallback((smooth = true) => {
     highlightRef.current?.scrollIntoView({ block: 'center', behavior: smooth ? 'smooth' : 'auto' })
@@ -94,12 +100,7 @@ export default function ReferencePanel({ article, sources, onSelect, onClose }: 
   }
 
   let firstAssigned = false
-  const rangeLabel =
-    highlightPages.length === 0
-      ? ''
-      : highlightPages.length === 1
-        ? `${t('ref.page')} ${highlightPages[0]}`
-        : `${t('ref.pages')} ${highlightPages[0]}–${highlightPages[highlightPages.length - 1]}`
+  const documentLabel = [layout?.title || t('ref.docName'), layout?.decision_no].filter(Boolean).join(' · ')
 
   const iconButton =
     'inline-flex size-9 flex-none cursor-pointer items-center justify-center rounded-lg border-0 bg-transparent text-lg text-white hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40'
@@ -117,17 +118,14 @@ export default function ReferencePanel({ article, sources, onSelect, onClose }: 
         <div className="min-w-0 flex-1 leading-snug">
           <div className="truncate text-[15px] font-semibold">
             {t('ref.articlePrefix')} {article}
-            {entry?.title ? `. ${entry.title}` : ''}
+            {articleTitle ? `. ${articleTitle}` : ''}
           </div>
-          <div className="truncate text-xs opacity-80">
-            {t('ref.docName')}
-            {rangeLabel ? ` · ${rangeLabel}` : ''}
-          </div>
+          <div className="break-words text-xs opacity-80">{documentLabel}</div>
         </div>
         <button
           type="button"
           onClick={() => setZoomIdx((i) => Math.max(0, i - 1))}
-          disabled={zoomIdx === 0}
+          disabled={!layout || zoomIdx === 0}
           aria-label={t('ref.zoomOut')}
           title={t('ref.zoomOut')}
           className={iconButton}
@@ -137,7 +135,7 @@ export default function ReferencePanel({ article, sources, onSelect, onClose }: 
         <button
           type="button"
           onClick={() => setZoomIdx((i) => Math.min(ZOOM_STEPS.length - 1, i + 1))}
-          disabled={zoomIdx === ZOOM_STEPS.length - 1}
+          disabled={!layout || zoomIdx === ZOOM_STEPS.length - 1}
           aria-label={t('ref.zoomIn')}
           title={t('ref.zoomIn')}
           className={iconButton}
@@ -148,32 +146,6 @@ export default function ReferencePanel({ article, sources, onSelect, onClose }: 
           <Icon name="close" size={20} />
         </button>
       </div>
-
-      {/* Chuyển qua lại giữa các tham chiếu của câu trả lời */}
-      {sources.length > 1 && (
-        <div className="flex flex-wrap items-center gap-2 border-b border-line bg-surface px-3 py-2" role="tablist" aria-label={t('ref.switch')}>
-          {sources.map((source) => {
-            const active = source.article === article
-            return (
-              <button
-                key={source.article}
-                type="button"
-                role="tab"
-                aria-selected={active}
-                onClick={() => onSelect(source.article)}
-                title={`${t('ref.articlePrefix')} ${source.article}. ${source.title}`}
-                className={`max-w-full cursor-pointer truncate rounded-full border px-3 py-1 font-sans text-[13px] ${
-                  active
-                    ? 'border-ctu-navy bg-ctu-navy font-semibold text-white'
-                    : 'border-ctu-cyan bg-surface font-normal text-accent hover:bg-tint'
-                }`}
-              >
-                {t('ref.articlePrefix')} {source.article}
-              </button>
-            )
-          })}
-        </div>
-      )}
 
       {/* Thanh lật trang */}
       <div className="flex items-center gap-2 border-b border-line bg-surface px-3 py-2 text-sm">
@@ -189,7 +161,7 @@ export default function ReferencePanel({ article, sources, onSelect, onClose }: 
         <button
           type="button"
           onClick={() => scrollToHighlight(true)}
-          disabled={!entry}
+          disabled={!hasHighlight}
           className="ml-auto inline-flex min-h-8 cursor-pointer items-center gap-1.5 rounded-md border border-ctu-gold-active bg-ctu-gold-active/20 px-3 py-1 font-sans text-[13px] font-normal text-heading hover:bg-ctu-gold-active/40 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <Icon name="arrow" size={14} />
@@ -197,18 +169,24 @@ export default function ReferencePanel({ article, sources, onSelect, onClose }: 
         </button>
       </div>
 
-      <div ref={scrollRef} onScroll={updateCurrentPage} className="min-h-0 flex-1 overflow-auto bg-tint p-3 sm:p-4">
+      <div key={documentUrl ?? 'qd3266'} ref={scrollRef} onScroll={updateCurrentPage} className="min-h-0 flex-1 overflow-auto bg-tint p-3 sm:p-4">
         {!layout && !error && <p role="status">{t('ref.loading')}</p>}
-        {error && (
+        {error && !pdfUrl && (
           <p role="alert" className="text-[#8A1216] dark:text-[#FFB4B7]">
             {t('ref.error')}
           </p>
         )}
-        {layout && !entry && <p role="status">{t('ref.notFound')}</p>}
+        {((layout && !hasHighlight) || (error && pdfUrl)) && <p role="status">{t('ref.notFound')}</p>}
+        {error && pdfUrl && (
+          <iframe
+            src={pdfUrl}
+            title={t('ref.title')}
+            className="h-full min-h-[60vh] w-full border-0"
+          />
+        )}
 
         {layout && (
           <div className="mx-auto flex flex-col gap-4" style={{ width: `${ZOOM_STEPS[zoomIdx] * 100}%` }}>
-            {entry && <p className="m-0 text-xs text-muted">{t('ref.hint')}</p>}
             {Array.from({ length: layout.page_count }, (_, i) => i + 1).map((page) => {
               const size = layout.pages[String(page)]
               const highlights = entry ? entry.highlights.filter((h) => h.page === page) : []
@@ -226,7 +204,7 @@ export default function ReferencePanel({ article, sources, onSelect, onClose }: 
                     style={{ aspectRatio: size ? `${size.width} / ${size.height}` : '210 / 297' }}
                   >
                     <img
-                      src={pageImageUrl(page)}
+                      src={pageImageUrl(page, documentUrl)}
                       alt={`${t('ref.page')} ${page}`}
                       loading={near ? 'eager' : 'lazy'}
                       className="absolute inset-0 size-full select-none object-contain"

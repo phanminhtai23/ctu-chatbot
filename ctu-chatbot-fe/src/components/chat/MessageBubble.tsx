@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useFormatDate } from '../../hooks/useFormatDate'
 import { useI18n } from '../../i18n'
-import { articleSources, documentSources, webSources, type ChatMessage, type SourceRef } from '../../lib/conversations'
+import { referenceKey, referenceSources, webSources, type ChatMessage, type SourceRef } from '../../lib/conversations'
 import { formatBytes, formatSeconds } from '../../lib/format'
 import Icon from '../Icon'
 import Markdown from './Markdown'
@@ -19,10 +19,10 @@ type Props = {
   liveElapsed: number
   /** Không truyền = ẩn nút "Báo câu trả lời sai" (ví dụ khách xem qua liên kết chia sẻ) */
   onReport?: (message: UiMessage) => void
-  /** Mở cửa sổ xem Điều được tham chiếu; kèm danh sách tham chiếu của tin này để chuyển qua lại trong cửa sổ */
-  onOpenReference: (article: number, sources: SourceRef[]) => void
+  /** Mở cửa sổ xem Điều được tham chiếu */
+  onOpenReference: (source: SourceRef) => void
   /** Điều đang mở trong cửa sổ tham chiếu (null nếu đang đóng) */
-  activeArticle: number | null
+  activeSource: SourceRef | null
 }
 
 function ThinkingIndicator({ queuePosition }: { queuePosition?: number }) {
@@ -66,14 +66,24 @@ function SentAt({ iso }: { iso: string | null }) {
   )
 }
 
-export default function MessageBubble({ message, liveElapsed, onReport, onOpenReference, activeArticle }: Props) {
+export default function MessageBubble({ message, liveElapsed, onReport, onOpenReference, activeSource }: Props) {
   const { t } = useI18n()
-  const sources = useMemo(() => articleSources(message.sources), [message.sources])
-  const documents = useMemo(() => documentSources(message.sources), [message.sources])
+  const sources = useMemo(() => referenceSources(message.sources), [message.sources])
   const web = useMemo(() => webSources(message.sources), [message.sources])
+  // Chỉ gắn liên kết trong câu trả lời nếu số Điều xác định được một nguồn duy nhất.
+  const inlineSources = useMemo(() => {
+    const byArticle = new Map<number, SourceRef | null>()
+    for (const source of sources) {
+      byArticle.set(source.article, byArticle.has(source.article) ? null : source)
+    }
+    return byArticle
+  }, [sources])
   const content = useMemo(
-    () => (message.pending ? message.content : linkifyArticles(message.content, new Set(sources.map((s) => s.article)))),
-    [message.content, message.pending, sources],
+    () => (message.pending ? message.content : linkifyArticles(
+      message.content,
+      new Set([...inlineSources].filter(([, source]) => source !== null).map(([article]) => article)),
+    )),
+    [message.content, message.pending, inlineSources],
   )
 
   if (message.role === 'user') {
@@ -111,14 +121,22 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
   }
 
   const seconds = message.pending ? liveElapsed : message.duration_seconds
-  const open = (article: number) => onOpenReference(article, sources)
+  const activeKey = activeSource ? referenceKey(activeSource) : null
+  const openInline = (article: number) => {
+    const source = inlineSources.get(article)
+    if (source) onOpenReference(source)
+  }
+  const activeInline = activeSource ? inlineSources.get(activeSource.article) : null
   return (
     <div className="group relative flex w-full min-w-0 flex-col items-start">
       <div className="w-full min-w-0">
         <div className="break-words text-[15px] leading-[1.6] text-heading">
           <div className="[&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
             {message.content ? (
-              <Markdown onReference={sources.length > 0 ? open : undefined} activeArticle={activeArticle}>
+              <Markdown
+                onReference={sources.length > 0 ? openInline : undefined}
+                activeArticle={activeInline && referenceKey(activeInline) === activeKey ? activeInline.article : null}
+              >
                 {content}
               </Markdown>
             ) : message.pending ? (
@@ -132,12 +150,12 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
             <span className="text-[13px] text-muted">{t('ref.label')}</span>
             <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
               {sources.map((source) => {
-                const active = source.article === activeArticle
+                const active = referenceKey(source) === activeKey
                 return (
-                  <li key={source.article}>
+                  <li key={referenceKey(source)}>
                     <button
                       type="button"
-                      onClick={() => open(source.article)}
+                      onClick={() => onOpenReference(source)}
                       aria-pressed={active}
                       title={`${t('ref.open')}: ${t('ref.articlePrefix')} ${source.article}. ${source.title}`}
                       className={`flex min-h-9 w-full cursor-pointer items-center gap-2 rounded-md border bg-surface px-3 py-1.5 text-left font-sans text-[13px] font-normal text-accent hover:bg-tint ${
@@ -156,31 +174,6 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
                   </li>
                 )
               })}
-            </ul>
-          </div>
-        )}
-
-        {!message.pending && documents.length > 0 && (
-          <div className="mt-2 flex flex-col gap-1.5" aria-label={t('ref.label')}>
-            <span className="text-[13px] text-muted">{t('ref.label')}</span>
-            <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
-              {documents.map((source) => (
-                <li key={`${source.document_url}-${source.article}`}>
-                  <a
-                    href={source.document_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={source.title}
-                    className="flex min-h-9 w-full items-center gap-2 rounded-md border border-ctu-cyan bg-surface px-3 py-1.5 font-sans text-[13px] font-normal text-accent no-underline hover:bg-tint"
-                  >
-                    <Icon name="doc" size={14} className="flex-none" />
-                    <span className="flex-none rounded bg-tint px-1.5 text-xs font-semibold text-accent">
-                      {t('ref.articlePrefix')} {source.article}
-                    </span>
-                    <span className="min-w-0 flex-1 truncate">{source.title}</span>
-                  </a>
-                </li>
-              ))}
             </ul>
           </div>
         )}

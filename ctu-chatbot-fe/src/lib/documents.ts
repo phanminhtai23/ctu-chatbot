@@ -1,6 +1,4 @@
-import { apiFetch } from './api'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+import { API_BASE_URL, apiFetch } from './api'
 
 /** Khung chữ nhật chuẩn hoá 0..1 trên trang: [trên, trái, dưới, phải]. */
 export type Box = [number, number, number, number]
@@ -8,23 +6,32 @@ export type Highlight = { page: number; box: Box }
 
 export type DocLayout = {
   title: string
+  decision_no?: string
   page_count: number
   pages: Record<string, { width: number; height: number }>
   articles: Record<string, { title: string; highlights: Highlight[] }>
 }
 
-let cached: Promise<DocLayout> | null = null
+const layoutCache = new Map<string, Promise<DocLayout>>()
+const documentPath = (documentUrl?: string | null) =>
+  documentUrl?.replace(/\/source$/, '') || '/api/v1/documents/qd3266'
 
-/** Vị trí từng Điều trong PDF quy định; chỉ tải một lần cho cả phiên. */
-export function getDocLayout(): Promise<DocLayout> {
-  cached ??= (apiFetch('/api/v1/documents/qd3266/layout') as Promise<DocLayout>).catch((err) => {
-    cached = null // lần sau thử lại
-    throw err
-  })
-  return cached
+/** Tải vị trí các Điều theo đúng phiên bản PDF của tham chiếu. */
+export function getDocLayout(documentUrl?: string | null): Promise<DocLayout> {
+  const base = documentPath(documentUrl)
+  let request = layoutCache.get(base)
+  if (!request) {
+    request = (apiFetch(`${base}/layout`) as Promise<DocLayout>).catch((err) => {
+      layoutCache.delete(base)
+      throw err
+    })
+    layoutCache.set(base, request)
+  }
+  return request
 }
 
-export const pageImageUrl = (page: number) => `${API_BASE_URL}/api/v1/documents/qd3266/pages/${page}.jpg`
+export const pageImageUrl = (page: number, documentUrl?: string | null) =>
+  `${API_BASE_URL.replace(/\/$/, '')}${documentPath(documentUrl)}/pages/${page}.jpg`
 
 export type SourceRoute = {
   id: string

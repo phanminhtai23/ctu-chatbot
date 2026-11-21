@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 from app.api.deps import get_current_user, get_document_catalog
 from app.core.config import settings
 from app.services.chat import route_catalog
-from app.services.ingest.catalog import CatalogError, DocumentCatalog
+from app.services.ingest.catalog import BUILTIN_ROUTE, BUILTIN_SLUG, CatalogError, DocumentCatalog
 from app.services.ingest.storage import active_data_dir
 
 router = APIRouter(prefix="/documents", tags=["documents"])
@@ -78,12 +78,26 @@ def _layout() -> dict:
     return cached[1]
 
 
+def _with_document_details(layout: dict, slug: str, fallback_title: str) -> dict:
+    try:
+        nodes = route_catalog.load_config()["nodes"]
+    except ValueError:
+        nodes = route_catalog.DEFAULT_CONFIG["nodes"]
+    route_id = BUILTIN_ROUTE if slug == BUILTIN_SLUG else slug
+    node = next(
+        (n for n in nodes if n["kind"] == "document" and (n["id"] == route_id or n.get("document_slug") == slug)),
+        {},
+    )
+    return {**layout, "title": node.get("label") or fallback_title, "decision_no": node.get("decision_no", "")}
+
+
 # Văn bản quy định là tài liệu công khai của Trường và FE hiển thị ảnh bằng thẻ <img> (không gắn được header
 # Authorization), nên hai endpoint này không yêu cầu đăng nhập.
 @router.get("/qd3266/layout")
 def get_layout() -> dict:
     """Số trang, kích thước ảnh và vị trí (trang + khung chữ nhật chuẩn hoá 0..1) của từng Điều."""
-    return _layout()
+    layout = _layout()
+    return _with_document_details(layout, BUILTIN_SLUG, layout["title"])
 
 
 @router.get("/qd3266/pages/{page}.jpg")
@@ -103,4 +117,31 @@ def get_catalog_source(slug: str, version: str, catalog: DocumentCatalog = Depen
         path = catalog.source_file(slug, version)
     except CatalogError as exc:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Document not found") from exc
-    return FileResponse(path, media_type="application/pdf", filename=f"{slug}-{version}.pdf")
+    return FileResponse(
+        path,
+        media_type="application/pdf",
+        filename=f"{slug}-{version}.pdf",
+        content_disposition_type="inline",
+    )
+
+
+@router.get("/catalog/{slug}/{version}/layout")
+def get_catalog_layout(slug: str, version: str, catalog: DocumentCatalog = Depends(get_document_catalog)) -> dict:
+    try:
+        path = catalog.layout_file(slug, version)
+        layout = json.loads(path.read_text(encoding="utf-8"))
+        title = catalog.get_job(slug, version)["title"]
+    except (CatalogError, OSError, json.JSONDecodeError) as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Document layout not found") from exc
+    return _with_document_details(layout, slug, title)
+
+
+@router.get("/catalog/{slug}/{version}/pages/{page}.jpg")
+def get_catalog_page_image(
+    slug: str, version: str, page: int, catalog: DocumentCatalog = Depends(get_document_catalog)
+) -> FileResponse:
+    try:
+        path, _ = catalog.page_image(slug, version, page)
+    except CatalogError as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Document page not found") from exc
+    return FileResponse(path, media_type="image/jpeg", headers=_CACHE_HEADERS)

@@ -40,6 +40,7 @@ _DETAIL_STEPS = (
     ("ocr", "Nhận dạng chữ (OCR) bằng Gemini"),
     ("normalize", "Chuẩn hóa văn bản"),
     ("chunk", "Tách nội dung theo từng Điều"),
+    ("layout", "Xác định vị trí từng Điều trên trang"),
     ("embed", "Vector hóa từng Điều"),
     ("sync", "Lưu tuyến tài liệu vào catalog"),
 )
@@ -192,12 +193,13 @@ class DocumentCatalog:
             "ocr": extracted,
             "normalize": cleaned,
             "chunk": cleaned,
+            "layout": cleaned,
             "embed": synced,
             "sync": synced,
         }
         failure_stage = {
             "extract": {"render", "ocr"},
-            "clean": {"normalize", "chunk"},
+            "clean": {"normalize", "chunk", "layout"},
             "sync": {"embed", "sync"},
         }
         steps = []
@@ -332,6 +334,24 @@ class DocumentCatalog:
         if not path.is_file():
             raise CatalogError("DOCUMENT_VERSION_NOT_FOUND")
         return path
+
+    def layout_file(self, slug: str, job_id: str) -> Path:
+        self._read_job(slug, job_id)
+        path = self._version_dir(slug, job_id) / "layout.json"
+        if not path.is_file():
+            raise CatalogError("DOCUMENT_LAYOUT_NOT_FOUND")
+        return path
+
+    def page_image(self, slug: str, job_id: str, page: int) -> tuple[Path, int]:
+        layout_path = self.layout_file(slug, job_id)
+        layout = json.loads(layout_path.read_text(encoding="utf-8"))
+        page_count = int(layout.get("page_count", 0))
+        if page < 1 or page > page_count:
+            raise CatalogError("DOCUMENT_PAGE_NOT_FOUND")
+        path = self._version_dir(slug, job_id) / "pages" / f"page-{page:02d}.jpg"
+        if not path.is_file():
+            raise CatalogError("DOCUMENT_PAGE_NOT_FOUND")
+        return path, page_count
 
     def list_jobs(self, limit: int = 30) -> list[dict]:
         jobs = []
@@ -480,6 +500,60 @@ class DocumentCatalog:
                 summary=f"Đã tạo {len(chunks)} chunk theo Điều",
                 metrics=[{"label": "Số chunk", "value": str(len(chunks))}],
             )
+            self._update_step(job, "layout", "running", summary="Đang xác định vị trí Điều trên từng trang")
+            self._save_job(job)
+            layout_working = Path(settings.documents_dir)
+            if not layout_working.is_absolute():
+                layout_working = Path(__file__).resolve().parents[3] / layout_working
+            layout_working = layout_working / "catalog-staging" / f"{job_id}-layout"
+            if layout_working.exists():
+                shutil.rmtree(layout_working)
+            layout_working.mkdir(parents=True)
+            try:
+                shutil.copyfile(directory / job["filename"], layout_working / "source.pdf")
+                layout_job = Job(id=job_id, filename=job["filename"], size_bytes=job["size_bytes"])
+
+                def save_layout_progress(_: Job) -> None:
+                    detail = layout_job.step("layout")
+                    if detail.status == "pending":
+                        return
+                    self._update_step(
+                        job,
+                        "layout",
+                        detail.status,
+                        summary=detail.summary,
+                        progress=detail.progress,
+                        metrics=detail.metrics,
+                        rows=detail.rows,
+                        error=detail.error,
+                    )
+                    self._save_job(job)
+
+                layout_pipeline = IngestPipeline(
+                    IngestContext(
+                        job=layout_job,
+                        directory=layout_working,
+                        vision=self._vision_factory(),
+                        embedder=self._embedder_factory(),
+                        chroma_path=default_chroma_path(),
+                        save=save_layout_progress,
+                    )
+                )
+                layout_pipeline._run_step("render", layout_pipeline._render)
+                layout_pipeline.state.update(
+                    first_page=result.first_page,
+                    markdown=result.markdown,
+                    chunks=chunks,
+                    document_id=slug,
+                )
+                layout_pipeline._run_step("layout", layout_pipeline._layout)
+                shutil.copyfile(layout_working / "layout.json", directory / "layout.json")
+                pages_target = directory / "pages"
+                if pages_target.exists():
+                    shutil.rmtree(pages_target)
+                shutil.copytree(layout_working / "pages", pages_target)
+            finally:
+                shutil.rmtree(layout_working, ignore_errors=True)
             job["status"] = "cleaned"
             job["error"] = ""
             job["clean_preview"] = result.markdown[:6000]

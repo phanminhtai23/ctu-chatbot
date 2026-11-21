@@ -99,7 +99,6 @@ export default function ReferencePanel({ source, onClose }: Props) {
     pageRefs.current[target]?.scrollIntoView({ block: 'start', behavior: 'smooth' })
   }
 
-  let firstAssigned = false
   const documentLabel = [layout?.title || t('ref.docName'), layout?.decision_no].filter(Boolean).join(' · ')
 
   const iconButton =
@@ -210,31 +209,24 @@ export default function ReferencePanel({ source, onClose }: Props) {
                       className="absolute inset-0 size-full select-none object-contain"
                       draggable={false}
                     />
-                    {highlights.map((h, i) => {
-                      const [y0, x0, y1, x1] = h.box
-                      const assign = !firstAssigned
-                      firstAssigned = true
-                      return (
-                        <div
-                          key={i}
-                          ref={
-                            assign
-                              ? (el) => {
-                                  highlightRef.current = el
-                                }
-                              : undefined
-                          }
-                          aria-hidden="true"
-                          className="pointer-events-none absolute rounded-[3px] bg-[#FBC500]/40 ring-2 ring-[#FBC500] mix-blend-multiply"
-                          style={{
-                            top: `${y0 * 100}%`,
-                            left: `${x0 * 100}%`,
-                            height: `${(y1 - y0) * 100}%`,
-                            width: `${(x1 - x0) * 100}%`,
-                          }}
-                        />
-                      )
-                    })}
+                    {highlights.length > 0 && (
+                      // Pha màu một lần trên cả lớp để các vùng giao nhau có cùng độ đậm.
+                      <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-40 mix-blend-multiply">
+                        {highlights.map(({ box: [y0, x0, y1, x1] }, i) => (
+                          <div
+                            key={i}
+                            ref={page === highlightPages[0] && i === 0 ? highlightRef : undefined}
+                            className="absolute rounded-[3px] bg-[#FBC500]"
+                            style={{
+                              top: `${y0 * 100}%`,
+                              left: `${x0 * 100}%`,
+                              height: `${(y1 - y0) * 100}%`,
+                              width: `${(x1 - x0) * 100}%`,
+                            }}
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <figcaption className="mt-1 text-center text-xs text-muted">
                     {t('ref.page')} {page} / {layout.page_count}

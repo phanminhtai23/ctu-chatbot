@@ -6,6 +6,7 @@ import { pickGreeting, type Greeting } from '../lib/greetings'
 import { markWelcomed } from '../lib/me'
 import Fireworks from './Fireworks'
 import FunDialog from './FunDialog'
+import '../app-routes.css'
 
 /**
  * Hộp thoại chào mừng người dùng mới: pháo hoa, GIF ngẫu nhiên, lời chúc mừng. Hiện đúng MỘT lần cho mỗi tài khoản

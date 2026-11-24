@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import proofSmall from '../assets/landing-preview-480.webp?no-inline'
+import proofCompact from '../assets/landing-preview-640.webp?no-inline'
 import proofMedium from '../assets/landing-preview-768.webp?no-inline'
 import { useAuth } from '../auth'
 import BrandLockup from '../components/BrandLockup'
@@ -8,7 +8,7 @@ import Icon from '../components/Icon'
 import DocumentSearchVisual from '../components/landing/DocumentSearchVisual'
 import PrefToggles from '../components/PrefToggles'
 import { useI18n } from '../i18n'
-import type { TranslationKey } from '../i18n/vi'
+import type { LandingTranslationKey } from '../i18n/vi-landing'
 import { getCatalogSummary, type CatalogSummary } from '../lib/documents'
 import { getSuggestions, type Suggestion } from '../lib/suggestions'
 import './Landing.css'
@@ -16,17 +16,17 @@ import './Landing.css'
 type IconName = Parameters<typeof Icon>[0]['name']
 const COPYRIGHT_YEAR = new Date().getFullYear()
 const proofOriginal = '/landing/chat-reference-preview.webp'
-const features: { icon: IconName; title: TranslationKey; text: TranslationKey }[] = [
+const features: { icon: IconName; title: LandingTranslationKey; text: LandingTranslationKey }[] = [
   { icon: 'calc', title: 'feat2.t', text: 'feat2.x' },
   { icon: 'shield', title: 'feat3.t', text: 'feat3.x' },
   { icon: 'chat', title: 'feat4.t', text: 'feat4.x' },
 ]
-const steps: { icon: IconName; title: TranslationKey; text: TranslationKey }[] = [
+const steps: { icon: IconName; title: LandingTranslationKey; text: LandingTranslationKey }[] = [
   { icon: 'users', title: 'step1.t', text: 'step1.x' },
   { icon: 'chat', title: 'step2.t', text: 'step2.x' },
   { icon: 'doc', title: 'step3.t', text: 'step3.x' },
 ]
-const faqs: { question: TranslationKey; answer: TranslationKey }[] = [
+const faqs: { question: LandingTranslationKey; answer: LandingTranslationKey }[] = [
   { question: 'landing.faq.account.q', answer: 'landing.faq.account.a' },
   { question: 'landing.faq.sources.q', answer: 'landing.faq.sources.a' },
   { question: 'landing.faq.pick.q', answer: 'landing.faq.pick.a' },
@@ -36,7 +36,6 @@ export default function Landing() {
   const { t } = useI18n()
   const { user } = useAuth()
   const chatPath = user ? '/chat' : '/login'
-  const rootRef = useRef<HTMLDivElement>(null)
   const catalogSection = useRef<HTMLElement>(null)
   const samplesSection = useRef<HTMLElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
@@ -100,24 +99,6 @@ export default function Landing() {
     }
   }, [menuOpen])
 
-  useEffect(() => {
-    const root = rootRef.current
-    if (!root || !('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue
-          entry.target.classList.add('is-visible')
-          observer.unobserve(entry.target)
-        }
-      },
-      { threshold: 0.08 },
-    )
-    root.classList.add('lp-reveal-on')
-    root.querySelectorAll('[data-reveal]').forEach((element) => observer.observe(element))
-    return () => observer.disconnect()
-  }, [summary, samples])
-
   const closeMenu = () => setMenuOpen(false)
   const retryCatalog = async () => {
     setCatalogState('loading')
@@ -130,14 +111,14 @@ export default function Landing() {
   }
 
   return (
-    <div id="top" ref={rootRef} className="landing-page">
+    <div id="top" className="landing-page">
       <a className="lp-skip" href="#landing-main">
         {t('landing.skip')}
       </a>
       <header className="lp-header lp-container">
-        <Link to="/" className="lp-brand" aria-label={t('brand.app')} onClick={closeMenu}>
+        <a href="/" className="lp-brand" aria-label={t('brand.app')} onClick={closeMenu}>
           <BrandLockup size={44} />
-        </Link>
+        </a>
         <nav id="landing-nav" aria-label={t('brand.mainNav')} className={'lp-nav' + (menuOpen ? ' is-open' : '')}>
           <a href="#can-cu" onClick={closeMenu}>
             {t('landing.nav.explore')}
@@ -156,10 +137,10 @@ export default function Landing() {
         </nav>
         <div className="lp-header__tools">
           <PrefToggles compact />
-          <Link to={chatPath} className="lp-button lp-button--nav">
+          <a href={chatPath} className="lp-button lp-button--nav">
             {user ? t('landing.openChat') : t('nav.login')}
             <Icon name="arrow" size={16} />
-          </Link>
+          </a>
           <button
             ref={menuButtonRef}
             type="button"
@@ -189,10 +170,10 @@ export default function Landing() {
               </h1>
               <p className="lp-hero__desc">{t('landing.hero.desc')}</p>
               <div className="lp-actions">
-                <Link to={chatPath} className="lp-button lp-button--gold">
+                <a href={chatPath} className="lp-button lp-button--gold">
                   {t('hero.cta')}
                   <Icon name="arrow" size={20} />
-                </Link>
+                </a>
                 <a href="#can-cu" className="lp-hero__secondary">
                   <span>
                     <Icon name="arrow" size={16} />
@@ -226,7 +207,7 @@ export default function Landing() {
         </section>
 
         <section id="can-cu" className="lp-section lp-container" aria-labelledby="proof-title">
-          <div className="lp-section-heading" data-reveal>
+          <div className="lp-section-heading">
             <div>
               <p className="lp-eyebrow">{t('landing.proof.eyebrow')}</p>
               <h2 id="proof-title">
@@ -237,7 +218,7 @@ export default function Landing() {
             </div>
             <p className="lp-section-heading__desc">{t('proof.text')}</p>
           </div>
-          <figure className="lp-product lp-glass" data-reveal>
+          <figure className="lp-product lp-glass">
             <div className="lp-product__bar">
               <span className="lp-window-dots" aria-hidden="true">
                 <i />
@@ -266,8 +247,8 @@ export default function Landing() {
             >
               <img
                 src={proofMedium}
-                srcSet={`${proofSmall} 480w, ${proofMedium} 768w, ${proofOriginal} 1300w`}
-                sizes="(max-width: 720px) calc(100vw - 40px), (max-width: 1200px) calc(100vw - 80px), 1120px"
+                srcSet={`${proofSmall} 480w, ${proofCompact} 640w, ${proofMedium} 768w, ${proofOriginal} 1300w`}
+                sizes="(max-width: 680px) calc(100vw - 56px), min(1216px, calc(91.6vw - 24px))"
                 alt={t('landing.proof.imageAlt')}
                 width="1300"
                 height="900"
@@ -289,7 +270,7 @@ export default function Landing() {
           </figure>
           <ul id="tinh-nang" className="lp-features">
             {features.map((feature, index) => (
-              <li key={feature.title} className="lp-feature lp-glass" data-reveal>
+              <li key={feature.title} className="lp-feature lp-glass">
                 <div className="lp-feature__top">
                   <span className="lp-feature__icon">
                     <Icon name={feature.icon} size={24} />
@@ -305,7 +286,7 @@ export default function Landing() {
 
         <section ref={catalogSection} id="tai-lieu" className="lp-library" aria-labelledby="docs-title">
           <div className="lp-container">
-            <div className="lp-section-heading" data-reveal>
+            <div className="lp-section-heading">
               <div>
                 <p className="lp-eyebrow">{t('landing.docs.eyebrow')}</p>
                 <h2 id="docs-title">
@@ -344,7 +325,7 @@ export default function Landing() {
               (summary.documents.length > 0 ? (
                 <ul className="lp-documents">
                   {summary.documents.map((doc, index) => (
-                    <li key={doc.id} className="lp-document lp-glass" data-reveal>
+                    <li key={doc.id} className="lp-document lp-glass">
                       <div className="lp-document__top">
                         <span className="lp-document__icon">
                           <Icon name="doc" size={27} />
@@ -386,7 +367,7 @@ export default function Landing() {
 
         {showSamples && (
           <section ref={samplesSection} id="cau-hoi-mau" className="lp-section lp-container" aria-labelledby="samples-title">
-            <div className="lp-section-heading" data-reveal>
+            <div className="lp-section-heading">
               <div>
                 <p className="lp-eyebrow">{t('landing.samples.eyebrow')}</p>
                 <h2 id="samples-title">
@@ -400,8 +381,8 @@ export default function Landing() {
             {samples === null && <p role="status" className="lp-catalog-state lp-glass">{t('common.loading')}</p>}
             <ul className="lp-samples">
               {samples?.slice(0, 4).map((sample, index) => (
-                <li key={sample.id} data-reveal>
-                  <Link to={chatPath} className="lp-sample lp-glass">
+                <li key={sample.id}>
+                  <a href={chatPath} className="lp-sample lp-glass">
                     <div className="lp-sample__top">
                       <span className="lp-pill">{sample.category}</span>
                       <span className="lp-sample__number">0{index + 1}</span>
@@ -413,7 +394,7 @@ export default function Landing() {
                         <Icon name="arrow" size={19} />
                       </span>
                     </span>
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -421,14 +402,14 @@ export default function Landing() {
         )}
 
         <section id="cach-hoat-dong" className="lp-section lp-container lp-get-started" aria-labelledby="steps-title">
-          <div className="lp-centered" data-reveal>
+          <div className="lp-centered">
             <p className="lp-eyebrow">{t('landing.steps.eyebrow')}</p>
             <h2 id="steps-title">{t('steps.title')}</h2>
             <p>{t('landing.steps.desc')}</p>
           </div>
           <ol className="lp-steps">
             {steps.map((step, index) => (
-              <li key={step.title} data-reveal>
+              <li key={step.title}>
                 <div className="lp-step__visual">
                   <span className="lp-step__icon lp-glass">
                     <Icon name={step.icon} size={26} />
@@ -443,14 +424,14 @@ export default function Landing() {
         </section>
 
         <section className="lp-faq lp-container" aria-labelledby="faq-title">
-          <div data-reveal>
+          <div>
             <p className="lp-eyebrow">{t('landing.faq.eyebrow')}</p>
             <h2 id="faq-title">{t('landing.faq.title')}</h2>
             <p>{t('landing.faq.desc')}</p>
           </div>
           <div className="lp-faq__list">
             {faqs.map((faq) => (
-              <details key={faq.question} className="lp-glass" data-reveal>
+              <details key={faq.question} className="lp-glass">
                 <summary>
                   {t(faq.question)}
                   <Icon name="plus" size={18} />
@@ -461,26 +442,26 @@ export default function Landing() {
           </div>
         </section>
 
-        <section className="lp-cta lp-container" aria-labelledby="close-title" data-reveal>
+        <section className="lp-cta lp-container" aria-labelledby="close-title">
           <span className="lp-cta__spark" aria-hidden="true">
             <Icon name="sparkles" size={44} />
           </span>
           <p className="lp-eyebrow lp-eyebrow--light">{t('landing.cta.eyebrow')}</p>
           <h2 id="close-title">{t('landing.cta.title')}</h2>
           <p>{t('cta.sub')}</p>
-          <Link to={chatPath} className="lp-button lp-button--gold">
+          <a href={chatPath} className="lp-button lp-button--gold">
             {t('hero.cta')}
             <Icon name="arrow" size={20} />
-          </Link>
+          </a>
         </section>
       </main>
 
       <footer className="lp-footer lp-container">
         <div className="lp-footer__main">
           <div>
-            <Link to="/" className="lp-brand">
+            <a href="/" className="lp-brand">
               <BrandLockup size={40} />
-            </Link>
+            </a>
             <p>{t('footer.desc')}</p>
           </div>
           <nav aria-label={t('footer.links')}>

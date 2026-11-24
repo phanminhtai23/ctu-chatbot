@@ -1,19 +1,23 @@
 import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react'
-import vi, { type TranslationKey } from './vi'
+import type { TranslationKey } from './vi'
+import viLanding from './vi-landing'
 
-// Ứng dụng chỉ có tiếng Việt: giữ lớp `t(key)` để mọi chữ trên giao diện vẫn nằm ở một chỗ (i18n/vi.ts).
+// Trang chủ dùng từ điển nhỏ. Các trang ứng dụng tải từ điển đầy đủ khi cần.
 type I18nValue = {
   t: (key: TranslationKey) => string
 }
 
 const I18nContext = createContext<I18nValue | null>(null)
 
-export function I18nProvider({ children }: { children: ReactNode }) {
+export function I18nProvider({ children, messages = viLanding }: {
+  children: ReactNode
+  messages?: Partial<Record<TranslationKey, string>>
+}) {
   useEffect(() => {
     document.documentElement.lang = 'vi'
   }, [])
 
-  const value = useMemo<I18nValue>(() => ({ t: (key) => vi[key] }), [])
+  const value = useMemo<I18nValue>(() => ({ t: (key) => messages[key] ?? key }), [messages])
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
 }

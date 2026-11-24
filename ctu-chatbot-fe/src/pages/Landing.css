@@ -1022,19 +1022,6 @@
 .lp-footer__legal > p {
   text-align: right;
 }
-.lp-reveal-on [data-reveal] {
-  transition:
-    opacity 0.65s ease,
-    translate 0.65s ease;
-}
-.lp-reveal-on [data-reveal]:not(.is-visible) {
-  opacity: 0;
-  translate: 0 20px;
-}
-.lp-reveal-on [data-reveal]:focus-within {
-  opacity: 1;
-  translate: none;
-}
 @media (min-width: 1600px) {
   .lp-hero__grid {
     padding-top: 64px;
@@ -1471,10 +1458,6 @@
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
-  }
-  .lp-reveal-on [data-reveal]:not(.is-visible) {
-    opacity: 1;
-    translate: none;
   }
 }
 @supports not (backdrop-filter: blur(1px)) {

@@ -30,12 +30,10 @@ export default function SharedView() {
   const [messages, setMessages] = useState<UiMessage[]>([])
   const [draft, setDraft] = useState('')
   const [busy, setBusy] = useState(false)
-  const [elapsed, setElapsed] = useState(0)
   const [chatError, setChatError] = useState<string | null>(null)
   const [errorDialog, setErrorDialog] = useState<ChatErrorInfo | null>(null)
   const [reference, setReference] = useState<SourceRef | null>(null)
   const abortRef = useRef<AbortController | null>(null)
-  const startedAtRef = useRef(0)
   const busyRef = useRef(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const stickRef = useRef(true) // đang ở cuối khung chat thì tự cuộn theo tin mới; cuộn lên đọc thì thôi
@@ -80,12 +78,6 @@ export default function SharedView() {
   }, [load, status])
 
   useEffect(() => {
-    if (!busy) return
-    const id = setInterval(() => setElapsed((performance.now() - startedAtRef.current) / 1000), 100)
-    return () => clearInterval(id)
-  }, [busy])
-
-  useEffect(() => {
     const el = scrollRef.current
     if (el && stickRef.current) el.scrollTop = el.scrollHeight
   }, [messages, view?.title])
@@ -103,8 +95,6 @@ export default function SharedView() {
     let userId = `tmp-user-${stamp}`
     const controller = new AbortController()
     abortRef.current = controller
-    startedAtRef.current = performance.now()
-    setElapsed(0)
     setBusy(true)
     setChatError(null)
     setDraft('')
@@ -127,9 +117,7 @@ export default function SharedView() {
           },
           onToken: (piece) => setMessages((list) => list.map((m) => (m.id === tempBotId ? { ...m, content: m.content + piece } : m))),
           onDone: ({ assistant_message }) => {
-            const total = Math.round(((performance.now() - startedAtRef.current) / 1000) * 10) / 10
-            setElapsed(total)
-            setMessages((list) => list.map((m) => (m.id === tempBotId ? { ...assistant_message, duration_seconds: total } : m)))
+            setMessages((list) => list.map((m) => (m.id === tempBotId ? assistant_message : m)))
           },
         },
         controller.signal,
@@ -234,7 +222,6 @@ export default function SharedView() {
                   <MessageBubble
                     key={m.id}
                     message={m}
-                    liveElapsed={elapsed}
                     onOpenReference={setReference}
                     activeSource={reference}
                   />

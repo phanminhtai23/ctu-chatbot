@@ -4,7 +4,7 @@ from collections.abc import Callable, Iterator
 
 
 class KeyPool:
-    """Danh sách API key xoay vòng. Dùng một key cho đến khi nó hết hạn mức thì chuyển key khác.
+    """Danh sách API key, bỏ qua key đang trong thời gian nghỉ.
 
     Key bị "nghỉ" (cooldown) sẽ bị bỏ qua cho đến khi hết thời gian nghỉ. Thread-safe vì FastAPI
     chạy các endpoint đồng bộ trong thread pool. Lớp này không giữ/ghi log giá trị key.
@@ -20,10 +20,12 @@ class KeyPool:
     def __len__(self) -> int:
         return len(self._keys)
 
-    def candidates(self) -> Iterator[tuple[int, str]]:
-        """Lần lượt các (vị trí, key) đang dùng được, bắt đầu từ key hiện tại rồi vòng tiếp."""
+    def candidates(self, *, round_robin: bool = False) -> Iterator[tuple[int, str]]:
+        """Lần lượt các key dùng được; round_robin phân phối điểm bắt đầu giữa các lượt."""
         with self._lock:
             start = self._current
+            if round_robin and self._keys:
+                self._current = (start + 1) % len(self._keys)
         for offset in range(len(self._keys)):
             idx = (start + offset) % len(self._keys)
             with self._lock:
@@ -32,15 +34,12 @@ class KeyPool:
                 yield idx, self._keys[idx]
 
     def mark_ok(self, idx: int) -> None:
-        """Key này vừa chạy được: giữ nó làm key hiện tại."""
-        with self._lock:
-            self._current = idx
-            self._blocked_until.pop(idx, None)
+        """Không xóa cooldown do một request khác vừa ghi nhận."""
 
     def block(self, idx: int, seconds: float) -> None:
         """Cho key nghỉ `seconds` giây và chuyển key hiện tại sang key kế tiếp."""
         with self._lock:
-            self._blocked_until[idx] = self._clock() + seconds
+            self._blocked_until[idx] = max(self._blocked_until.get(idx, 0), self._clock() + seconds)
             if self._current == idx and self._keys:
                 self._current = (idx + 1) % len(self._keys)
 

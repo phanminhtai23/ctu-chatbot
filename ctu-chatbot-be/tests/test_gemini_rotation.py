@@ -108,11 +108,11 @@ def test_not_configured_without_keys():
         client.invoke(MESSAGES)
 
 
-def test_uses_first_key_and_sticks_to_it(monkeypatch):
+def test_distributes_requests_across_keys(monkeypatch):
     client, log = make_client(monkeypatch, ["k1", "k2"], {"k1": "ok1", "k2": "ok2"})
     assert client.invoke(MESSAGES).content == "ok1"
-    assert client.invoke(MESSAGES).content == "ok1"
-    assert log == ["k1", "k1"]
+    assert client.invoke(MESSAGES).content == "ok2"
+    assert log == ["k1", "k2"]
 
 
 def test_rotates_to_next_key_when_rate_limited_and_stays_there(monkeypatch):
@@ -156,6 +156,16 @@ def test_key_comes_back_after_cooldown(monkeypatch):
     script["k2"] = RATE_LIMIT
     assert client.invoke(MESSAGES).content == "ok1"
     assert log == ["k2", "k1"]
+
+
+def test_late_success_does_not_cancel_cooldown():
+    clock = Clock()
+    pool = KeyPool(["k1", "k2"], clock=clock)
+    pool.block(0, 60)
+    pool.mark_ok(0)
+    assert list(pool.candidates()) == [(1, "k2")]
+    clock.now += 61
+    assert len(list(pool.candidates())) == 2
 
 
 def test_non_key_errors_do_not_burn_other_keys(monkeypatch):

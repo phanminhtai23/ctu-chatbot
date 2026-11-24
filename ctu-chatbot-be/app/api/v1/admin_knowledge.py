@@ -1,4 +1,6 @@
 import uuid
+import math
+from datetime import datetime, timezone
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
@@ -71,6 +73,17 @@ class EntryPatch(BaseModel):
 class KnowledgeSnapshot(BaseModel):
     version: Literal[1] = 1
     entries: list[EntryIn]
+
+
+class TransferEntry(EntryIn):
+    vector: list[float] | None = None
+
+
+class KnowledgeTransfer(BaseModel):
+    version: Literal[1] = 1
+    model: str
+    dimension: int
+    entries: list[TransferEntry]
 
 
 class TestIn(BaseModel):
@@ -209,6 +222,54 @@ def export_snapshot(db: Session = Depends(get_db)) -> dict:
     except OSError:
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, detail="KNOWLEDGE_EXPORT_UNAVAILABLE") from None
     return {"count": len(snapshot.entries)}
+
+
+@router.get("/transfer")
+def export_transfer(db: Session = Depends(get_db), store: KnowledgeStore = Depends(require_knowledge_store)) -> dict:
+    rows = list(db.scalars(select(KnowledgeEntry).order_by(KnowledgeEntry.question_key)))
+    vectors = store.vectors([str(row.id) for row in rows if kb.status_of(row) == "embedded"])
+    return KnowledgeTransfer(
+        model=settings.embedding_model, dimension=settings.embedding_dim,
+        entries=[TransferEntry(question=row.question, answer=row.answer, vector=vectors.get(str(row.id))) for row in rows],
+    ).model_dump()
+
+
+@router.post("/transfer")
+def import_transfer(
+    body: KnowledgeTransfer, admin: User = Depends(require_admin), db: Session = Depends(get_db),
+    store: KnowledgeStore = Depends(require_knowledge_store),
+) -> dict:
+    if body.model != settings.embedding_model or body.dimension != settings.embedding_dim:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="KNOWLEDGE_EMBEDDING_MISMATCH")
+    keys = [kb.question_key(item.question) for item in body.entries]
+    if len(keys) != len(set(keys)) or any(
+        item.vector is not None and (len(item.vector) != body.dimension or not all(math.isfinite(v) for v in item.vector))
+        for item in body.entries
+    ):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="KNOWLEDGE_SNAPSHOT_INVALID")
+    existing = {row.question_key: row for row in db.scalars(select(KnowledgeEntry))}
+    added = updated = embedded = 0
+    for key, item in zip(keys, body.entries):
+        row = existing.get(key)
+        if row is None:
+            row = KnowledgeEntry(question_key=key, question=item.question, answer=item.answer, created_by=admin.id)
+            db.add(row)
+            added += 1
+        else:
+            updated += int((row.question, row.answer) != (item.question, item.answer))
+            row.question, row.answer = item.question, item.answer
+        row.embedded_hash = None
+        row.embedded_at = None
+        db.commit()
+        if item.vector is not None:
+            store.upsert_vector(str(row.id), row.question, row.answer, item.vector)
+            row.embedded_hash = kb.content_hash(row.question, row.answer)
+            row.embedded_at = datetime.now(timezone.utc)
+            db.commit()
+            embedded += 1
+        else:
+            store.delete([str(row.id)])
+    return {"added": added, "updated": updated, "embedded": embedded}
 
 
 @router.post("/sync")

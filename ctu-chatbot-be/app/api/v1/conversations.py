@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+import time
 import uuid
 from collections.abc import Iterator
 from dataclasses import asdict
@@ -240,6 +241,7 @@ def send_message(
     db: Session = Depends(get_db),
     graph=Depends(get_chat_graph),
 ):
+    turn_started_at = time.monotonic()
     conv, level = _accessible(db, user, conversation_id, need="chat")
     conv_id, user_id, author = conv.id, user.id, _author(user, level)
     routes = user.document_routes
@@ -260,7 +262,7 @@ def send_message(
             holding = conversation_guard.acquire(conv_id)
             if not holding:
                 raise HTTPException(status.HTTP_409_CONFLICT, detail="CONVERSATION_BUSY")
-            user_msg, bot_msg = run_turn(graph, conv_id, text, author, attachments, routes)
+            user_msg, bot_msg = run_turn(graph, conv_id, text, author, attachments, routes, turn_started_at=turn_started_at)
     except QueueTimeout as exc:
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE, detail="SERVER_BUSY", headers={"Retry-After": str(exc.retry_after)}
@@ -321,6 +323,7 @@ def stream_response(
     db: Session, user: User, conv: Conversation, body: SendMessageIn, graph, sessionmaker, author: str | None
 ) -> StreamingResponse:
     """Phần dùng chung của mọi cách gửi tin có stream (chủ sở hữu, được chia sẻ theo email, liên kết chia sẻ có quyền chat)."""
+    turn_started_at = time.monotonic()
     conv_id, user_id = conv.id, user.id
     routes = user.document_routes
     text = body.text
@@ -341,7 +344,7 @@ def stream_response(
                 if not holding:
                     yield _sse("error", {"code": "CONVERSATION_BUSY"})
                     return
-                turn = stream_turn(graph, conv_id, text, author, attachments, routes)
+                turn = stream_turn(graph, conv_id, text, author, attachments, routes, turn_started_at=turn_started_at)
             for event in turn:
                 kind = event["type"]
                 if kind == "user_message":

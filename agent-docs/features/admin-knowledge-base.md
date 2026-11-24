@@ -1,5 +1,17 @@
 # Admin: kiến thức bổ sung (hỏi - đáp) + embedding vào vector DB
 
+## Sao chép từ server về local
+
+Hai backend cần chạy phiên bản có API `/api/v1/admin/knowledge/transfer` và cùng cấu hình model, số chiều embedding. Đăng nhập admin ở cả hai môi trường. Trên mỗi trang, lấy access token `ctu-token` trong Application > Local Storage của trình duyệt, giữ riêng token server và local.
+
+Chạy từ thư mục `ctu-chatbot-be` và nhập hai token khi được hỏi:
+
+```powershell
+.\venv\Scripts\python.exe scripts/pull_knowledge.py https://ctu-chatbot.io.vn http://127.0.0.1:8000
+```
+
+Lệnh sao chép các cặp hỏi đáp và vector đã nhúng mà không gọi lại API embedding. Mục đang chờ vẫn ở trạng thái chờ. Mục trùng câu hỏi được cập nhật theo server, mục chỉ có ở local được giữ lại. Có thể chạy lại khi cần đồng bộ tiếp.
+
 ## Mục tiêu
 Admin nhập thêm cặp câu hỏi - câu trả lời (ký túc xá, giờ thư viện, thủ tục... ngoài quy chế), bấm Embedding để đưa vào vector DB; chatbot tra cứu cùng với văn bản quy chế và trả lời theo đó.
 

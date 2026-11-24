@@ -138,7 +138,7 @@ class GeminiClient:
         if len(self._pool) == 0:
             raise LLMNotConfigured("No GEMINI_API_KEY_* is set")
 
-        for idx, key in self._pool.candidates():
+        for idx, key in self._pool.candidates(round_robin=True):
             model = self._client(idx, key)
             if tools:
                 model = model.bind_tools(list(tools))
@@ -183,7 +183,7 @@ class GeminiClient:
         if len(self._pool) == 0:
             raise LLMNotConfigured("No GEMINI_API_KEY_* is set")
 
-        for idx, key in self._pool.candidates():
+        for idx, key in self._pool.candidates(round_robin=True):
             try:
                 reply = self._client(idx, key).invoke(list(messages))
             except Exception as exc:  # noqa: BLE001 - phân loại rồi quyết định đổi key hay báo lỗi

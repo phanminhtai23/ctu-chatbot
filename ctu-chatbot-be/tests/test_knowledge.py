@@ -64,6 +64,21 @@ def _add(client, headers, question="Ký túc xá khu A có bao nhiêu phòng?", 
     return client.post(URL, headers=headers, json={"question": question, "answer": answer})
 
 
+def test_transfer_preserves_vectors_and_pending_entries(client, store, embedder, admin_headers, monkeypatch):
+    monkeypatch.setattr(settings, "embedding_dim", embedder.DIM)
+    _add(client, admin_headers, "Câu đã nhúng?", "Trả lời A")
+    assert client.post(f"{URL}/embed", headers=admin_headers).status_code == 200
+    _add(client, admin_headers, "Câu đang chờ?", "Trả lời B")
+    snapshot = client.get(f"{URL}/transfer", headers=admin_headers).json()
+    assert sum(entry["vector"] is not None for entry in snapshot["entries"]) == 1
+    fresh = KnowledgeStore(embedder)
+    app.dependency_overrides[get_knowledge_store_optional] = lambda: fresh
+    assert client.post(f"{URL}/transfer", headers=admin_headers, json=snapshot).json()["embedded"] == 1
+    assert fresh.count() == 1
+    assert client.post(f"{URL}/transfer", headers=admin_headers, json={**snapshot, "model": "other"}).status_code == 422
+    assert client.get(f"{URL}/transfer").status_code == 401
+
+
 # ---- quyền ----
 
 

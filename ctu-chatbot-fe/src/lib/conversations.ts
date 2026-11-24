@@ -45,6 +45,7 @@ export type ChatMessage = {
   created_at: string | null
   /** Thời gian chờ chatbot trả lời (giây); chỉ tin của bot, tin cũ có thể không có */
   duration_seconds: number | null
+  first_token_seconds?: number | null
   /** Tham chiếu quy định; chỉ tin của bot, tin cũ có thể không có */
   sources?: AnySourceRef[]
   /** Câu trả lời có sẵn của câu hỏi gợi ý (trả ngay, không gọi LLM) */

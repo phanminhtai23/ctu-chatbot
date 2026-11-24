@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+log_deploy_error() {
+    local status=$1 line=$2 command=$3
+    printf "Deploy failed at %s:%d (exit %d): %s\n" "${BASH_SOURCE[1]:-$0}" "$line" "$status" "$command" >&2
+    exit "$status"
+}
+trap 'log_deploy_error "$?" "$LINENO" "$BASH_COMMAND"' ERR
 
 project=/home/opc/projects/ctu-chatbot
 stage=${1:?Missing deployment staging directory}
@@ -72,6 +78,7 @@ legacy_frontends() {
 
 finish() {
     local result=$?
+    trap - ERR
     set +e
     if (( result != 0 )) && ! "$published"; then
         if "$links_changed"; then

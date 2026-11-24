@@ -55,6 +55,8 @@ def test_stream_result_is_persisted_with_wait_time(client, auth_headers):
     conv_id = _new_conversation(client, auth_headers)
     done = parse_sse(_stream(client, auth_headers, conv_id, "câu hỏi").text)[-1][1]
     assert done["assistant_message"]["duration_seconds"] is not None
+    first_token = done["assistant_message"]["first_token_seconds"]
+    assert first_token >= 0
 
     detail = client.get(f"/api/v1/conversations/{conv_id}", headers=auth_headers).json()
     assert [m["role"] for m in detail["messages"]] == ["user", "assistant"]
@@ -62,6 +64,8 @@ def test_stream_result_is_persisted_with_wait_time(client, auth_headers):
     bot = detail["messages"][1]
     assert bot["duration_seconds"] == done["assistant_message"]["duration_seconds"]
     assert bot["duration_seconds"] >= 0
+    assert detail["messages"][0]["first_token_seconds"] is None
+    assert bot["first_token_seconds"] == first_token
     assert bot["id"] == done["assistant_message"]["id"]
 
 
@@ -69,6 +73,7 @@ def test_non_stream_endpoint_also_reports_wait_time(client, auth_headers):
     conv_id = _new_conversation(client, auth_headers)
     res = client.post(f"/api/v1/conversations/{conv_id}/messages", headers=auth_headers, json={"content": "điểm D có đậu không"})
     assert res.json()["assistant_message"]["duration_seconds"] is not None
+    assert res.json()["assistant_message"]["first_token_seconds"] is not None
 
 
 def test_stream_keeps_memory_across_turns(client, auth_headers, fake_llm):

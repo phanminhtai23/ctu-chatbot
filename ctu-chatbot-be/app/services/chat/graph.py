@@ -199,6 +199,9 @@ def retrieve_knowledge(retriever, history: list[BaseMessage]) -> list:
 def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retriever: DocumentRetriever | None = None):
     def generate(state: MessagesState, writer: StreamWriter, config: RunnableConfig) -> dict:
         started = time.monotonic()
+        configurable = config.get("configurable") or {}
+        turn_started = configurable.get("turn_started_at", started)
+        first_token_seconds: float | None = None
         steps: dict[str, float] = {}  # thời gian từng node của lượt này, ghi log ở cuối để biết chậm ở đâu
         last = started
 
@@ -212,7 +215,7 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
         catalog = route_catalog.load_config() if retriever is not None else route_catalog.DEFAULT_CONFIG
         route_nodes = route_catalog.enabled_nodes(catalog)
         # Người dùng có thể chọn chỉ hỏi một số tài liệu / web; chào hỏi và ngoài phạm vi luôn mở.
-        allowed = (config.get("configurable") or {}).get("allowed_routes")
+        allowed = configurable.get("allowed_routes")
         if allowed:
             chosen = [n for n in route_nodes if n["kind"] not in {"document", "web"} or n["id"] in allowed]
             if any(n["kind"] in {"document", "web"} for n in chosen):  # lựa chọn lỗi thời (tuyến đã xoá) thì bỏ qua
@@ -298,13 +301,15 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
         can_use_tools = can_use_tools and bool(tools)
 
         def run(msgs: list[BaseMessage], use_tools: bool) -> str:
+            nonlocal first_token_seconds
             # Client nào gọi được công cụ (máy tính, so sánh số) thì dùng vòng lặp công cụ; còn lại stream thẳng.
             answer_stream = stream_with_tools(llm, msgs, tools=tools, tool_log=tool_log) if use_tools else llm.stream(msgs)
             collected: list[str] = []
             for chunk in answer_stream:
                 text = message_text(chunk)
                 if text:
-                    if not collected and "token_dau" not in steps:
+                    if first_token_seconds is None:
+                        first_token_seconds = round(time.monotonic() - turn_started, 1)
                         lap("token_dau")  # từ lúc dựng xong prompt tới token đầu tiên của câu trả lời
                     collected.append(text)
                     writer({"token": text})  # đẩy từng đoạn ra cho client (chỉ có tác dụng khi stream_mode="custom")
@@ -335,7 +340,7 @@ def build_chat_graph(llm: ChatModel, checkpointer: BaseCheckpointSaver, retrieve
             content=answer,
             additional_kwargs={
                 "created_at": now_iso(),
-                # Thời gian chờ chatbot trả lời, lưu cùng tin nhắn nên mở lại cuộc trò chuyện vẫn hiển thị.
+                "first_token_seconds": first_token_seconds,
                 "duration_seconds": round(time.monotonic() - started, 1),
                 # `retrieved`: các Điều đã đưa cho LLM làm ngữ cảnh (để kiểm thử/gỡ lỗi).
                 # `sources`: các Điều câu trả lời thực sự nhắc tới, hiện cho người dùng làm tham chiếu.

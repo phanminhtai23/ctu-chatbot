@@ -178,16 +178,7 @@ export default function Chat() {
   }, [pending])
   // Lỗi khi gửi tin (bị giới hạn tốc độ, chatbot bận, lỗi LLM...) hiện trong hộp thoại có GIF; lỗi khác vẫn dùng banner.
   const [errorDialog, setErrorDialog] = useState<ChatErrorInfo | null>(null)
-  const [elapsed, setElapsed] = useState(0)
   const abortRef = useRef<AbortController | null>(null)
-  const startedAtRef = useRef(0)
-
-  // Đồng hồ chạy trong lúc chờ chatbot; khi xong, tin của bot hiện con số chính xác do server đo.
-  useEffect(() => {
-    if (!busy) return
-    const id = setInterval(() => setElapsed((performance.now() - startedAtRef.current) / 1000), 100)
-    return () => clearInterval(id)
-  }, [busy])
 
   const send = useCallback(
     async (text: string) => {
@@ -204,8 +195,6 @@ export default function Chat() {
 
       const controller = new AbortController()
       abortRef.current = controller
-      startedAtRef.current = performance.now()
-      setElapsed(0)
       setBusy(true)
       setChatError(null)
       setDraft('')
@@ -243,13 +232,7 @@ export default function Chat() {
             onToken: (piece) =>
               setMessages((list) => list.map((m) => (m.id === tempBotId ? { ...m, content: m.content + piece } : m))),
             onDone: ({ assistant_message, conversation }) => {
-              // Con số cuối chính là con số đồng hồ đang chạy: tính từ lúc người dùng bấm gửi tới lúc nhận đủ câu trả lời
-              // (gồm cả thời gian chờ hàng đợi và mạng), không đổi sang số server đo nên không bị "nhảy".
-              const total = Math.round(((performance.now() - startedAtRef.current) / 1000) * 10) / 10
-              setElapsed(total)
-              setMessages((list) =>
-                list.map((m) => (m.id === tempBotId ? { ...assistant_message, duration_seconds: total } : m)),
-              )
+              setMessages((list) => list.map((m) => (m.id === tempBotId ? assistant_message : m)))
               if (conversation) {
                 setConversations((list) => [conversation, ...list.filter((c) => c.id !== conversation.id)])
               }
@@ -688,7 +671,6 @@ export default function Chat() {
                 <MessageBubble
                   key={m.id}
                   message={m}
-                  liveElapsed={elapsed}
                   onReport={(msg) => setFeedback({ open: true, type: 'answer_issue', messageId: msg.id })}
                   onOpenReference={setReference}
                   activeSource={reference}

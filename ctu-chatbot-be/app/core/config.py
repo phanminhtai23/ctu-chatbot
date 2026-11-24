@@ -2,6 +2,7 @@ import os
 import re
 
 from dotenv import dotenv_values
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -10,6 +11,8 @@ class Settings(BaseSettings):
 
     env: str = "dev"
     database_url: str = "postgresql://ctu:ctu_dev_password@localhost:5433/ctu_chatbot"
+    db_pool_size: int = Field(default=10, ge=1)
+    db_max_overflow: int = Field(default=20, ge=0)
     deepseek_api_key: str = ""
 
     # LLM (Gemini). Điền GEMINI_API_KEY hoặc GEMINI_API_KEY_N (không giới hạn N) trong .env.

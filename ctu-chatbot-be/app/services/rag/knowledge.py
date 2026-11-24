@@ -39,6 +39,16 @@ class KnowledgeStore:
     def ids(self) -> set[str]:
         return set(self._collection.get()["ids"])
 
+    def vectors(self, ids: list[str]) -> dict[str, list[float]]:
+        if not ids:
+            return {}
+        result = self._collection.get(ids=ids, include=["embeddings"])
+        vectors = result["embeddings"]
+        return {entry_id: list(map(float, vector)) for entry_id, vector in zip(result["ids"], vectors)}
+
+    def upsert_vector(self, entry_id: str, question: str, answer: str, vector: list[float]) -> None:
+        self._collection.upsert(ids=[entry_id], embeddings=[vector], documents=[question], metadatas=[{"answer": answer}])
+
     def upsert(self, entries: list[tuple[str, str, str]]) -> None:
         """entries: [(id, câu hỏi, câu trả lời)]. Đã có thì ghi đè."""
         if not entries:

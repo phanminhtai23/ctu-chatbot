@@ -627,7 +627,7 @@ const vi = {
   'chat.deleteText': 'toàn bộ tin nhắn sẽ bị xoá vĩnh viễn, không khôi phục được.',
   'chat.stop': 'Dừng trả lời',
   'chat.thinking': 'Đang suy nghĩ…',
-  'chat.waited': 'Thời gian chờ chatbot trả lời',
+  'chat.waited': 'Thời gian đến đoạn trả lời đầu tiên',
   'chat.emptyTitle': 'Bạn muốn hỏi gì về quy chế học vụ?',
   'chat.emptyHint': 'Hỏi bằng tiếng Việt hoặc tiếng Anh. Câu trả lời chỉ mang tính tham khảo.',
   'chat.attachHint': 'Đính kèm PDF hoặc ảnh (tối đa {max} mỗi tệp, {count} tệp mỗi tin)',

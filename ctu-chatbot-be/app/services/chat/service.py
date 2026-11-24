@@ -50,6 +50,7 @@ class ChatMessage:
     content: str
     created_at: str | None
     duration_seconds: float | None = None  # chỉ có ở tin của bot: thời gian chờ chatbot trả lời
+    first_token_seconds: float | None = None
     sources: list[dict] = field(default_factory=list)  # chỉ có ở tin của bot: [{article, title}] hoặc [{title, url}]
     cached: bool = False  # chỉ có ở tin của bot: câu trả lời có sẵn của câu hỏi gợi ý (không gọi LLM)
     author_name: str | None = None  # chỉ có ở tin của người dùng khi người gửi KHÔNG phải chủ cuộc trò chuyện
@@ -73,6 +74,7 @@ def to_chat_message(message: BaseMessage) -> ChatMessage | None:
         content=text,
         created_at=extra.get("created_at"),
         duration_seconds=extra.get("duration_seconds"),
+        first_token_seconds=extra.get("first_token_seconds"),
         sources=_mentioned_sources(list(extra.get("sources") or []), text) if role == "assistant" else [],
         cached=bool(extra.get("cached")) if role == "assistant" else False,
         author_name=extra.get("author_name") if role == "user" else None,
@@ -80,11 +82,15 @@ def to_chat_message(message: BaseMessage) -> ChatMessage | None:
     )
 
 
-def _config(conversation_id: uuid.UUID, routes: list[str] | None = None) -> dict:
+def _config(
+    conversation_id: uuid.UUID, routes: list[str] | None = None, *, turn_started_at: float | None = None
+) -> dict:
     """`routes` = các tuyến người dùng chọn để hỏi (None = tất cả); đồ thị đọc từ `configurable.allowed_routes`."""
     configurable: dict = {"thread_id": str(conversation_id)}
     if routes:
         configurable["allowed_routes"] = list(routes)
+    if turn_started_at is not None:
+        configurable["turn_started_at"] = turn_started_at
     return {"configurable": configurable}
 
 
@@ -125,13 +131,15 @@ def run_turn(
     author_name: str | None = None,
     attachments: list[dict] | None = None,
     routes: list[str] | None = None,
+    *,
+    turn_started_at: float | None = None,
 ) -> tuple[ChatMessage, ChatMessage]:
     """Thêm tin của người dùng, chạy đồ thị, trả về (tin người dùng, câu trả lời của bot).
 
     Lịch sử lấy từ checkpoint của `thread_id`, nên bot nhớ các lượt trước kể cả sau khi khởi động lại server.
     Nếu LLM lỗi, tin của người dùng bị gỡ khỏi lịch sử để gửi lại không bị trùng.
     """
-    config = _config(conversation_id, routes)
+    config = _config(conversation_id, routes, turn_started_at=turn_started_at)
     human = _new_human_message(text, author_name, attachments)
     try:
         result = graph.invoke({"messages": [human]}, config)
@@ -198,13 +206,15 @@ def stream_turn(
     author_name: str | None = None,
     attachments: list[dict] | None = None,
     routes: list[str] | None = None,
+    *,
+    turn_started_at: float | None = None,
 ) -> Iterator[dict]:
     """Như run_turn nhưng trả từng sự kiện: user_message, rồi nhiều token, cuối cùng done.
 
     Nếu LLM lỗi hoặc client ngắt kết nối giữa chừng, tin của người dùng bị gỡ khỏi lịch sử
     (không để lại tin "mồ côi" không có câu trả lời).
     """
-    config = _config(conversation_id, routes)
+    config = _config(conversation_id, routes, turn_started_at=turn_started_at)
     human = _new_human_message(text, author_name, attachments)
     yield {"type": "user_message", "message": to_chat_message(human)}
 

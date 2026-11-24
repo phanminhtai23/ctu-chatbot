@@ -43,6 +43,7 @@ class ChatMessageOut(BaseModel):
     content: str
     created_at: str | None
     duration_seconds: float | None = None  # thời gian chờ chatbot trả lời (chỉ tin của bot)
+    first_token_seconds: float | None = None
     sources: list[SourceOut] = Field(default_factory=list)  # tham chiếu quy định (chỉ tin của bot)
     cached: bool = False  # câu trả lời có sẵn của câu hỏi gợi ý (không gọi LLM)
     author_name: str | None = None  # tin của người dùng do người khác gửi trong cuộc trò chuyện được chia sẻ

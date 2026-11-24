@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useFormatDate } from '../../hooks/useFormatDate'
 import { useI18n } from '../../i18n'
 import { referenceKey, referenceSources, webSources, type ChatMessage, type SourceRef } from '../../lib/conversations'
@@ -15,14 +15,31 @@ export type UiMessage = ChatMessage & {
 
 type Props = {
   message: UiMessage
-  /** Giây đã chờ tính đến hiện tại — chỉ dùng cho tin đang trả lời */
-  liveElapsed: number
   /** Không truyền = ẩn nút "Báo câu trả lời sai" (ví dụ khách xem qua liên kết chia sẻ) */
   onReport?: (message: UiMessage) => void
   /** Mở cửa sổ xem Điều được tham chiếu */
   onOpenReference: (source: SourceRef) => void
   /** Điều đang mở trong cửa sổ tham chiếu (null nếu đang đóng) */
   activeSource: SourceRef | null
+}
+
+function WaitingClock() {
+  const { t } = useI18n()
+  const [startedAt] = useState(() => performance.now())
+  const [seconds, setSeconds] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => setSeconds((performance.now() - startedAt) / 1000), 100)
+    return () => clearInterval(interval)
+  }, [startedAt])
+
+  return (
+    <span className="inline-flex items-center gap-1.5 tabular-nums" title={t('chat.waited')}>
+      <Icon name="clock" size={14} />
+      <span className="sr-only">{t('chat.waited')}: </span>
+      {formatSeconds(seconds)}
+    </span>
+  )
 }
 
 function ThinkingIndicator({ queuePosition }: { queuePosition?: number }) {
@@ -66,7 +83,7 @@ function SentAt({ iso }: { iso: string | null }) {
   )
 }
 
-export default function MessageBubble({ message, liveElapsed, onReport, onOpenReference, activeSource }: Props) {
+export default function MessageBubble({ message, onReport, onOpenReference, activeSource }: Props) {
   const { t } = useI18n()
   const sources = useMemo(() => referenceSources(message.sources), [message.sources])
   const web = useMemo(() => webSources(message.sources), [message.sources])
@@ -120,7 +137,7 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
     )
   }
 
-  const seconds = message.pending ? liveElapsed : message.duration_seconds
+  const seconds = message.pending ? null : message.first_token_seconds
   const activeKey = activeSource ? referenceKey(activeSource) : null
   const openInline = (article: number) => {
     const source = inlineSources.get(article)
@@ -205,14 +222,10 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
           </div>
         )}
 
-        {/* Chỉ hiện khi rê chuột / focus vào tin (màn hình cảm ứng không có hover nên luôn hiện); tin đang trả lời luôn hiện để thấy đồng hồ chờ. */}
-        <div
-          className={`mt-1 flex flex-wrap items-center gap-x-3 gap-y-0 text-[13px] ${
-            message.pending ? '' : 'opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100'
-          }`}
-        >
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0 text-[13px]">
+          {message.pending && !message.content && <WaitingClock />}
           {seconds != null && (
-            <span className="inline-flex items-center gap-1.5 tabular-nums" title={t('chat.waited')}>
+            <span className="inline-flex items-center gap-1.5 tabular-nums opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100" title={t('chat.waited')}>
               <Icon name="clock" size={14} />
               <span className="sr-only">{t('chat.waited')}: </span>
               {formatSeconds(seconds)}
@@ -222,7 +235,7 @@ export default function MessageBubble({ message, liveElapsed, onReport, onOpenRe
             <button
               type="button"
               onClick={() => onReport(message)}
-              className="inline-flex min-h-8 cursor-pointer items-center gap-2 rounded-lg border-0 bg-transparent px-2 py-0.5 font-sans text-[13px] font-normal text-muted hover:bg-tint hover:text-accent"
+              className="inline-flex min-h-8 cursor-pointer items-center gap-2 rounded-lg border-0 bg-transparent px-2 py-0.5 font-sans text-[13px] font-normal text-muted opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 hover:bg-tint hover:text-accent [@media(hover:none)]:opacity-100"
             >
               <Icon name="flag" size={16} />
               {t('chat.reportAnswer')}

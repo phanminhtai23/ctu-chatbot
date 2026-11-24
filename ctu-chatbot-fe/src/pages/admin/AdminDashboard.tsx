@@ -5,7 +5,7 @@ import Icon from '../../components/Icon'
 import { useFormatDate } from '../../hooks/useFormatDate'
 import { useI18n } from '../../i18n'
 import type { TranslationKey } from '../../i18n/vi'
-import { downloadStatsCsv, getStats, type Granularity, type Period, type Stats, type StatsQuery } from '../../lib/adminStats'
+import { downloadStatsCsv, getGeminiQuota, getStats, type GeminiQuota, type Granularity, type Period, type Stats, type StatsQuery } from '../../lib/adminStats'
 import AdminLayout from './AdminLayout'
 
 const PRESETS = ['1', '7', '30', '90', '180', '365', '730', 'custom'] as const
@@ -187,6 +187,8 @@ export default function AdminDashboard() {
     if (customTo) setDraftTo(customTo)
   }, [customFrom, customTo])
   const [stats, setStats] = useState<Stats | null>(null)
+  const [quota, setQuota] = useState<GeminiQuota | null>(null)
+  const [quotaError, setQuotaError] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
 
@@ -215,6 +217,21 @@ export default function AdminDashboard() {
   useEffect(() => {
     load()
   }, [load])
+
+  useEffect(() => {
+    let active = true
+    const loadQuota = async () => {
+      try {
+        const result = await getGeminiQuota()
+        if (active) { setQuota(result); setQuotaError(false) }
+      } catch {
+        if (active) setQuotaError(true)
+      }
+    }
+    void loadQuota()
+    const timer = setInterval(loadQuota, 15000)
+    return () => { active = false; clearInterval(timer) }
+  }, [])
 
   const applyCustom = () => {
     if (!draftFrom || !draftTo || draftFrom > draftTo) {
@@ -247,6 +264,30 @@ export default function AdminDashboard() {
 
   return (
     <AdminLayout title={t('admin.dash.title')} subtitle={t('admin.dash.subtitle')}>
+      <div className="mb-6 grid grid-cols-1 items-stretch gap-4 xl:grid-cols-2">
+        {stats && (
+          <Card title={t('admin.dash.system')}>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <Mini label={t('admin.dash.totalUsers')} value={number(stats.totals.users)} />
+              <Mini label={t('admin.dash.lockedAccounts')} value={number(stats.totals.users - stats.totals.active_accounts)} />
+              <Mini label={t('admin.dash.allMessages')} value={number(stats.totals.messages)} hint={`${number(stats.totals.conversations)} ${t('admin.dash.totalConversations').toLowerCase()}`} />
+            </div>
+          </Card>
+        )}
+        <Card title="Quota Gemini ước tính" hint={quota ? `${quota.model} · ${number(quota.key_count)} key` : undefined}>
+          {quotaError && <p role="alert" className="text-sm">Không tải được quota Gemini. Hệ thống sẽ thử lại.</p>}
+          {quota && (
+            <>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Mini label="Đã dùng / phút" value={`${number(quota.minute.completed_chats)} / ${number(quota.minute.capacity)}`} hint={quota.minute.capacity ? `${percent(quota.minute.completed_chats / quota.minute.capacity)} đã sử dụng` : 'Chưa có hạn mức'} />
+                <Mini label="Đã dùng / ngày" value={`${number(quota.day.completed_chats)} / ${number(quota.day.capacity)}`} hint={`${quota.day.capacity ? `${percent(quota.day.completed_chats / quota.day.capacity)} đã sử dụng` : 'Chưa có hạn mức'} · Đặt lại ${formatDate(quota.day_reset_at)}`} />
+              </div>
+              <p className="mb-0 mt-3 text-xs leading-relaxed text-muted">Ước tính từ lượt chat hoàn tất, giả sử mỗi key thuộc một project. Số thực tế có thể khác do lượt gọi lại, lượt lỗi và các ứng dụng khác.</p>
+            </>
+          )}
+        </Card>
+      </div>
+
       {/* ---- Bộ lọc ---- */}
       <div className="mb-6 flex flex-col gap-4 rounded-xl border border-line bg-surface p-4">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
@@ -372,15 +413,6 @@ export default function AdminDashboard() {
               <LineChart label={t('admin.dash.chart.totalUsers')} labels={short} titles={full} format={number} series={[{ name: t('admin.dash.totalUsers'), color: '#2e9e5b', values: col('total_users') }]} />
             </Card>
 
-            <Card title={t('admin.dash.registrations')} hint={t('admin.dash.registrationsHint')}>
-              <BarChart
-                label={t('admin.dash.registrations')}
-                labels={[t('admin.dash.reg.week'), t('admin.dash.reg.month'), t('admin.dash.reg.sixMonths'), t('admin.dash.reg.year')]}
-                format={number}
-                series={[{ name: t('admin.dash.newUsers'), color: 'var(--accent)', values: [stats.registrations.week, stats.registrations.month, stats.registrations.six_months, stats.registrations.year] }]}
-              />
-            </Card>
-
             <Card title={t('admin.dash.chart.cached')} hint={t('admin.dash.chart.cachedHint')}>
               <BarChart
                 stacked
@@ -402,19 +434,6 @@ export default function AdminDashboard() {
             <Card title={t('admin.dash.weekday')}>
               <BarChart label={t('admin.dash.weekday')} labels={WEEKDAYS} titles={WEEKDAYS_FULL} format={number} series={[{ name: t('admin.dash.messages'), color: '#d99a00', values: stats.weekday }]} />
             </Card>
-          </div>
-
-          {/* ---- Toàn hệ thống & mức độ gắn bó ---- */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <Card title={t('admin.dash.system')}>
-              <div className="grid grid-cols-2 gap-3">
-                <Mini label={t('admin.dash.totalUsers')} value={number(stats.totals.users)} />
-                <Mini label={t('admin.dash.activeAccounts')} value={number(stats.totals.active_accounts)} hint={`${number(stats.totals.users - stats.totals.active_accounts)} ${t('admin.dash.locked')}`} />
-                <Mini label={t('admin.dash.admins')} value={number(stats.totals.admins)} />
-                <Mini label={t('admin.dash.allMessages')} value={number(stats.totals.messages)} hint={`${number(stats.totals.conversations)} ${t('admin.dash.totalConversations').toLowerCase()}`} />
-              </div>
-            </Card>
-
             <Card title={t('admin.dash.engagement')} hint={`${t('admin.dash.engagementHint')} ${dmy(stats.range.to)}`}>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <Mini label="DAU" value={number(stats.activity.dau)} hint={t('admin.dash.dau')} />
@@ -427,8 +446,9 @@ export default function AdminDashboard() {
                 <div className="flex justify-between gap-3"><dt className="text-muted">{t('admin.dash.f.usersPerDay')}</dt><dd className="m-0 font-semibold tabular-nums text-heading">{p.avg_active_users_per_day}</dd></div>
               </dl>
             </Card>
-
-            <Card wide title={t('admin.dash.topUsers')} hint={t('admin.dash.topUsersHint')}>
+          </div>
+          <div>
+            <Card title={t('admin.dash.topUsers')} hint={t('admin.dash.topUsersHint')}>
               {stats.top_users.length === 0 ? (
                 <p className="m-0 text-sm">{t('admin.dash.noUsage')}</p>
               ) : (

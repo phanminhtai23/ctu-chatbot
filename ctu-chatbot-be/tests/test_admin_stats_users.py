@@ -25,6 +25,23 @@ def add_events(db, user, *when):
     db.commit()
 
 
+def test_gemini_quota_uses_completed_noncached_chats_and_requires_admin(client, admin_headers, auth_headers, session_factory):
+    from sqlalchemy import select
+
+    assert client.get('/api/v1/admin/stats/gemini-quota', headers=auth_headers).status_code == 403
+    now = datetime.now(timezone.utc)
+    with session_factory() as db:
+        user = db.scalar(select(User).where(User.email == 'admin@student.ctu.edu.vn'))
+        db.add(UsageEvent(user_id=user.id, cached=False, created_at=now - timedelta(seconds=5)))
+        db.add(UsageEvent(user_id=user.id, cached=True, created_at=now - timedelta(seconds=5)))
+        db.commit()
+    quota = client.get('/api/v1/admin/stats/gemini-quota', headers=admin_headers).json()
+    assert quota['minute']['completed_chats'] == 1
+    assert quota['minute']['capacity'] == quota['key_count'] * quota['rpm_per_project']
+    assert quota['day']['completed_chats'] >= 1
+    assert datetime.fromisoformat(quota['day_reset_at']) > now
+
+
 @pytest.fixture()
 def seeded(session_factory):
     with session_factory() as db:

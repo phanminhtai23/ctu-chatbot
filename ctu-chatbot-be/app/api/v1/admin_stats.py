@@ -1,13 +1,46 @@
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.api.deps import require_admin
+from app.core.config import settings
 from app.db.session import get_db
+from app.models import UsageEvent
 from app.services.usage import MAX_RANGE_DAYS, Granularity, compute_stats, stats_csv
 
 router = APIRouter(prefix="/admin/stats", tags=["admin"], dependencies=[Depends(require_admin)])
+
+
+@router.get("/gemini-quota")
+def gemini_quota(db: Session = Depends(get_db)) -> dict:
+    now = datetime.now(timezone.utc)
+    pacific = now.astimezone(ZoneInfo("America/Los_Angeles"))
+    day_start = pacific.replace(hour=0, minute=0, second=0, microsecond=0)
+    next_day = day_start + timedelta(days=1)
+
+    def completed_since(start: datetime) -> int:
+        return db.scalar(select(func.count()).select_from(UsageEvent).where(
+            UsageEvent.cached.is_(False), UsageEvent.created_at >= start, UsageEvent.created_at <= now,
+        )) or 0
+
+    keys = len(settings.gemini_api_keys)
+    minute_start = now - timedelta(minutes=1)
+    day_start_utc = day_start.astimezone(timezone.utc)
+    minute = completed_since(minute_start)
+    day = completed_since(day_start_utc)
+    rpm_limit = keys * settings.gemini_quota_rpm_per_project
+    rpd_limit = keys * settings.gemini_quota_rpd_per_project
+    return {
+        "model": settings.llm_model, "key_count": keys,
+        "rpm_per_project": settings.gemini_quota_rpm_per_project,
+        "rpd_per_project": settings.gemini_quota_rpd_per_project,
+        "minute": {"completed_chats": minute, "capacity": rpm_limit, "estimated_remaining": max(0, rpm_limit - minute)},
+        "day": {"completed_chats": day, "capacity": rpd_limit, "estimated_remaining": max(0, rpd_limit - day)},
+        "day_reset_at": next_day.astimezone(timezone.utc).isoformat(), "generated_at": now.isoformat(),
+    }
 
 
 def _stats(db: Session, date_from: date | None, date_to: date | None, granularity: Granularity, days: int | None) -> dict:

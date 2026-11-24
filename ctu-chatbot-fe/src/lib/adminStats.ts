@@ -69,6 +69,19 @@ function queryString(q: StatsQuery): string {
 
 export const getStats = (q: StatsQuery): Promise<Stats> => apiFetch(`/api/v1/admin/stats?${queryString(q)}`)
 
+export type GeminiQuota = {
+  model: string
+  key_count: number
+  rpm_per_project: number
+  rpd_per_project: number
+  minute: { completed_chats: number; capacity: number; estimated_remaining: number }
+  day: { completed_chats: number; capacity: number; estimated_remaining: number }
+  day_reset_at: string
+  generated_at: string
+}
+
+export const getGeminiQuota = (): Promise<GeminiQuota> => apiFetch('/api/v1/admin/stats/gemini-quota')
+
 /** Tải bảng số liệu theo ngày/tuần/tháng (CSV) của khoảng đang xem. */
 export async function downloadStatsCsv(q: StatsQuery, filename: string): Promise<void> {
   const res = await apiStream(`/api/v1/admin/stats/export.csv?${queryString(q)}`)

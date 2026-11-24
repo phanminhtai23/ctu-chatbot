@@ -291,6 +291,7 @@ const vi = {
   'admin.dash.hourlyHint': 'Giờ Việt Nam, cộng dồn trong khoảng đang xem.',
   'admin.dash.system': 'Toàn hệ thống',
   'admin.dash.activeAccounts': 'Tài khoản đang hoạt động',
+  'admin.dash.lockedAccounts': 'Tài khoản bị khóa',
   'admin.dash.locked': 'đã khoá',
   'admin.dash.admins': 'Quản trị viên',
   'admin.dash.allMessages': 'Tổng lượt hỏi từ trước tới nay',

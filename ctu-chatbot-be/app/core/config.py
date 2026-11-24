@@ -17,6 +17,8 @@ class Settings(BaseSettings):
 
     # LLM (Gemini). Điền GEMINI_API_KEY hoặc GEMINI_API_KEY_N (không giới hạn N) trong .env.
     llm_model: str = "gemini-3.5-flash-lite"
+    gemini_quota_rpm_per_project: int = Field(default=15, ge=0)
+    gemini_quota_rpd_per_project: int = Field(default=500, ge=0)
     gemini_api_key: str = ""  # key đơn (tuỳ chọn, được tính như key đầu tiên)
     gemini_api_key_1: str = ""
     gemini_api_key_2: str = ""

@@ -21,7 +21,13 @@ export type KnowledgeStats = {
   vector_count: number | null
 }
 
-export type KnowledgeList = { total: number; items: KnowledgeEntry[]; stats: KnowledgeStats; min_score: number }
+export type KnowledgeList = {
+  total: number
+  items: KnowledgeEntry[]
+  stats: KnowledgeStats
+  min_score: number
+  snapshot: { can_export: boolean; sync_enabled: boolean; available: boolean }
+}
 
 export type KnowledgeHit = { id: string; question: string; answer: string; score: number; used: boolean }
 export type KnowledgeTest = { min_score: number; strong_score: number; hits: KnowledgeHit[] }
@@ -50,10 +56,27 @@ export const embedPending = (force = false): Promise<{ embedded: number; stats: 
 export const embedOne = (id: string): Promise<{ embedded: number; stats: KnowledgeStats }> =>
   apiFetch(`/api/v1/admin/knowledge/${encodeURIComponent(id)}/embed`, { method: 'POST' })
 
+export const exportKnowledge = (): Promise<{ count: number }> =>
+  apiFetch('/api/v1/admin/knowledge/export', { method: 'POST' })
+
+export const syncKnowledge = (): Promise<{ added: number; updated: number; embedded: number }> =>
+  apiFetch('/api/v1/admin/knowledge/sync', { method: 'POST' })
+
 export const testQuery = (query: string): Promise<KnowledgeTest> =>
   apiFetch('/api/v1/admin/knowledge/test', { method: 'POST', body: JSON.stringify({ query }) })
 
-const CODES = ['DUPLICATE_QUESTION', 'EMBEDDING_UNAVAILABLE', 'KNOWLEDGE_UNAVAILABLE', 'EMPTY_FIELD', 'TOO_LONG'] as const
+const CODES = [
+  'DUPLICATE_QUESTION',
+  'EMBEDDING_UNAVAILABLE',
+  'KNOWLEDGE_UNAVAILABLE',
+  'EMPTY_FIELD',
+  'TOO_LONG',
+  'KNOWLEDGE_EXPORT_UNAVAILABLE',
+  'KNOWLEDGE_SYNC_DISABLED',
+  'KNOWLEDGE_SNAPSHOT_MISSING',
+  'KNOWLEDGE_SNAPSHOT_INVALID',
+  'KNOWLEDGE_SYNC_CONFLICT',
+] as const
 export type KnowledgeErrorCode = (typeof CODES)[number] | 'UNKNOWN'
 
 export function knowledgeErrorCode(err: unknown): KnowledgeErrorCode {

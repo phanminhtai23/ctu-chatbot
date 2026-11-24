@@ -1,4 +1,5 @@
 import hashlib
+import json
 import re
 
 import pytest
@@ -162,6 +163,50 @@ def test_force_reembeds_everything_after_the_vector_db_was_lost(client, store, e
 
     res = client.post(f"{URL}/embed", headers=admin_headers, params={"force": "true"}).json()
     assert res["embedded"] == 2 and res["stats"]["vector_count"] == 2
+
+
+def test_deployed_snapshot_merges_questions_and_embeds_without_removing_server_entries(
+    client, store, embedder, admin_headers, tmp_path, monkeypatch
+):
+    monkeypatch.setattr(settings, "vector_docs_dir", str(tmp_path))
+    monkeypatch.setattr(settings, "document_catalog_edit_enabled", True)
+    monkeypatch.setattr(settings, "document_catalog_sync_enabled", True)
+    question = "Giờ mở cửa thư viện?"
+    local = _add(client, admin_headers, question, "7h đến 21h").json()
+    new = _add(client, admin_headers, "Nộp hồ sơ ở đâu?", "Tại phòng công tác sinh viên.").json()
+    exported = client.post(f"{URL}/export", headers=admin_headers)
+    assert exported.status_code == 200 and exported.json() == {"count": 2}
+    snapshot = json.loads((tmp_path / "knowledge.json").read_text(encoding="utf-8"))
+    assert snapshot["version"] == 1
+    assert all(set(item) == {"question", "answer"} for item in snapshot["entries"])
+
+    # Tạo trạng thái production khác dữ liệu local đã xuất.
+    monkeypatch.setattr(settings, "document_catalog_edit_enabled", False)
+    assert client.post(f"{URL}/export", headers=admin_headers).status_code == 403
+    client.delete(f"{URL}/{new['id']}", headers=admin_headers)
+    client.patch(f"{URL}/{local['id']}", headers=admin_headers, json={"question": question.upper(), "answer": "Giờ cũ"})
+    server_only = _add(client, admin_headers, "Liên hệ phòng đào tạo thế nào?", "Dùng email CTU.").json()
+    client.post(f"{URL}/embed", headers=admin_headers)
+
+    synced = client.post(f"{URL}/sync", headers=admin_headers)
+    assert synced.status_code == 200
+    assert synced.json() == {
+        "added": 1,
+        "updated": 1,
+        "embedded": 2,
+        "stats": {"total": 3, "embedded": 3, "pending": 0, "vector_count": 3},
+    }
+    items = client.get(URL, headers=admin_headers).json()["items"]
+    assert {local["id"], server_only["id"]} <= {item["id"] for item in items}
+    assert store.search(question, 1)[0].answer == "7h đến 21h"
+
+    again = client.post(f"{URL}/sync", headers=admin_headers).json()
+    assert (again["added"], again["updated"], again["embedded"]) == (0, 0, 0)
+    assert embedder.calls["docs"] == 4
+
+    store.delete([local["id"]])
+    assert client.post(f"{URL}/sync", headers=admin_headers).json()["embedded"] == 1
+    assert store.count() == 3
 
 
 def test_embedding_failure_returns_503_and_keeps_entries_pending(client, store, embedder, admin_headers):

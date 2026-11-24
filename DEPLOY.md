@@ -262,6 +262,8 @@ Quy trình tài liệu mới:
 3. Commit/push thư mục timestamp và `vector-docs/routes.json`. Giữ các version cũ, không xóa nếu chưa chủ động dọn.
 4. GitHub Actions build/deploy image từ commit. Sau deploy, đăng nhập admin trên production và bấm **Sync catalog vào vector DB** để cập nhật Chroma production từ các route/tài liệu đã commit. Thao tác production này không sửa source repo.
 
+Với **Kiến thức bổ sung**, thêm hoặc sửa các cặp hỏi đáp ở `/admin/knowledge` trên local rồi bấm **Xuất dữ liệu**. Commit `vector-docs/knowledge.json` vào bản deploy. Trên server, vào cùng trang và bấm **Sync dữ liệu** để nhập câu hỏi mới, cập nhật câu hỏi trùng và tạo embedding. Các mục chỉ có trên server được giữ lại.
+
 Push/merge commit đã kiểm tra vào `main`; GitHub Actions tự build và deploy. Workflow pin tag theo commit SHA và giữ tag `latest`. Nếu deployment lỗi, xem **Actions → workflow run** và logs service bằng lệnh ở mục 3.4. Migration chạy tự động trước khi backend bắt đầu phục vụ.
 
 ## 10. Sao lưu và bảo mật

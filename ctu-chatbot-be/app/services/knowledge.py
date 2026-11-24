@@ -3,13 +3,19 @@
 import hashlib
 import re
 from datetime import datetime, timezone
+from pathlib import Path
 
 from sqlalchemy.orm import Session
 
 from app.models import KnowledgeEntry
+from app.services.chat.route_catalog import vector_docs_root
 from app.services.rag.knowledge import KnowledgeStore
 
 EMBED_GROUP = 16  # embedding theo nhóm, lưu trạng thái sau từng nhóm: lỗi giữa chừng thì các nhóm trước vẫn giữ
+
+
+def snapshot_path() -> Path:
+    return vector_docs_root() / "knowledge.json"
 
 
 def normalize_question(question: str) -> str:

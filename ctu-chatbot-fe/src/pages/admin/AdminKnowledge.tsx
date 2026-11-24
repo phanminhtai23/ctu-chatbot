@@ -11,8 +11,10 @@ import {
   deleteEntry,
   embedOne,
   embedPending,
+  exportKnowledge,
   knowledgeErrorCode,
   listKnowledge,
+  syncKnowledge,
   testQuery,
   updateEntry,
   type KnowledgeEntry,
@@ -32,6 +34,11 @@ const errorKeys: Record<KnowledgeErrorCode, TranslationKey> = {
   KNOWLEDGE_UNAVAILABLE: 'admin.kb.err.unavailable',
   EMPTY_FIELD: 'admin.kb.err.empty',
   TOO_LONG: 'admin.kb.err.tooLong',
+  KNOWLEDGE_EXPORT_UNAVAILABLE: 'admin.kb.err.export',
+  KNOWLEDGE_SYNC_DISABLED: 'admin.kb.err.syncDisabled',
+  KNOWLEDGE_SNAPSHOT_MISSING: 'admin.kb.snapshotMissing',
+  KNOWLEDGE_SNAPSHOT_INVALID: 'admin.kb.err.snapshotInvalid',
+  KNOWLEDGE_SYNC_CONFLICT: 'admin.kb.err.syncConflict',
   UNKNOWN: 'admin.kb.err.unknown',
 }
 
@@ -67,7 +74,7 @@ export default function AdminKnowledge() {
   const [query, setQuery] = useState('')
   const [state, setState] = useState<'all' | KnowledgeState>('all')
   const [notice, setNotice] = useState<Notice | null>(null)
-  const [busy, setBusy] = useState<string | null>(null) // 'save' | 'embed' | 'embedAll' | id đang embedding
+  const [busy, setBusy] = useState<string | null>(null)
 
   const [editingId, setEditingId] = useState<string | null>(null)
   const [question, setQuestion] = useState('')
@@ -96,6 +103,7 @@ export default function AdminKnowledge() {
   }, [load, query])
 
   const stats = data?.stats
+  const snapshot = data?.snapshot
   const mismatch = stats && stats.vector_count !== null && stats.vector_count !== stats.embedded
 
   const fail = (err: unknown) => setNotice({ kind: 'error', text: t(errorKeys[knowledgeErrorCode(err)]) })
@@ -131,20 +139,27 @@ export default function AdminKnowledge() {
     formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
-  const runEmbed = async (mode: 'embed' | 'embedAll' | string, action: () => Promise<{ embedded: number }>) => {
+  const runAction = async (mode: string, action: () => Promise<string>) => {
     setBusy(mode)
     setNotice(null)
     try {
-      const res = await action()
-      setNotice({ kind: 'ok', text: fillTemplate(t('admin.kb.embedded'), { n: res.embedded }) })
-      await load()
+      setNotice({ kind: 'ok', text: await action() })
     } catch (err) {
       fail(err)
-      await load()
     } finally {
+      await load()
       setBusy(null)
     }
   }
+
+  const runEmbed = (mode: string, action: () => Promise<{ embedded: number }>) =>
+    runAction(mode, async () => fillTemplate(t('admin.kb.embedded'), { n: (await action()).embedded }))
+
+  const runExport = () =>
+    runAction('export', async () => fillTemplate(t('admin.kb.exported'), { n: (await exportKnowledge()).count }))
+
+  const runSync = () =>
+    runAction('sync', async () => fillTemplate(t('admin.kb.synced'), await syncKnowledge()))
 
   const handleDelete = async () => {
     if (!deleteTarget) return
@@ -232,6 +247,38 @@ export default function AdminKnowledge() {
           <span className="text-sm">{t('admin.kb.pendingHint')}</span>
         </div>
       </form>
+
+      {(snapshot?.can_export || snapshot?.sync_enabled) && (
+        <section aria-labelledby="kb-sync-title" className="mb-5 rounded-2xl border border-line bg-surface p-5">
+          <h2 id="kb-sync-title" className="mb-1 mt-0 text-lg">{t('admin.kb.syncTitle')}</h2>
+          <p className="mb-3 mt-0 text-sm">
+            {t(snapshot.can_export ? 'admin.kb.exportHint' : 'admin.kb.syncHint')}
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            {snapshot.can_export && (
+              <button type="button" onClick={runExport} disabled={busy !== null} className={secondaryButton}>
+                <Icon name="doc" size={18} />
+                {t(busy === 'export' ? 'admin.kb.exporting' : 'admin.kb.export')}
+              </button>
+            )}
+            {snapshot.sync_enabled && (
+              <button
+                type="button"
+                onClick={runSync}
+                disabled={busy !== null || !snapshot.available || stats?.vector_count == null}
+                className={primaryButton}
+              >
+                <Icon name="swap" size={18} />
+                {t(busy === 'sync' ? 'admin.kb.syncing' : 'admin.kb.sync')}
+              </button>
+            )}
+            {snapshot.sync_enabled && !snapshot.available && <span className="text-sm">{t('admin.kb.snapshotMissing')}</span>}
+            {snapshot.sync_enabled && snapshot.available && stats?.vector_count == null && (
+              <span className="text-sm">{t('admin.kb.err.unavailable')}</span>
+            )}
+          </div>
+        </section>
+      )}
 
       {notice && (
         <p

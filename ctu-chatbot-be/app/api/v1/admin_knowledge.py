@@ -2,7 +2,7 @@ import uuid
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, ValidationError, field_validator
 from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -12,6 +12,8 @@ from app.core.config import settings
 from app.db.session import get_db
 from app.models import KnowledgeEntry, User
 from app.services import knowledge as kb
+from app.services.chat import route_catalog
+from app.services.ingest.storage import atomic_write_text
 from app.services.rag.embeddings import EmbeddingError
 from app.services.rag.knowledge import KnowledgeStore
 
@@ -64,6 +66,11 @@ class EntryPatch(BaseModel):
     @classmethod
     def _strip(cls, v: str | None) -> str | None:
         return v.strip() if v is not None else v
+
+
+class KnowledgeSnapshot(BaseModel):
+    version: Literal[1] = 1
+    entries: list[EntryIn]
 
 
 class TestIn(BaseModel):
@@ -123,6 +130,11 @@ def list_entries(
         "items": [_item(e) for e in rows[offset : offset + limit]],
         "stats": _stats(db, store),
         "min_score": settings.kb_min_score,
+        "snapshot": {
+            "can_export": route_catalog.editable(),
+            "sync_enabled": settings.document_catalog_sync_enabled,
+            "available": kb.snapshot_path().is_file(),
+        },
     }
 
 
@@ -183,6 +195,64 @@ def _embed(db: Session, store: KnowledgeStore, entries: list[KnowledgeEntry]) ->
     except EmbeddingError:
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, detail="EMBEDDING_UNAVAILABLE") from None
     return {"embedded": done, "stats": _stats(db, store)}
+
+
+@router.post("/export")
+def export_snapshot(db: Session = Depends(get_db)) -> dict:
+    """Ghi các cặp hỏi đáp vào source để đóng gói cùng lần deploy tiếp theo."""
+    if not route_catalog.editable():
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="KNOWLEDGE_EXPORT_UNAVAILABLE")
+    rows = db.scalars(select(KnowledgeEntry).order_by(KnowledgeEntry.question_key))
+    snapshot = KnowledgeSnapshot(entries=[EntryIn(question=row.question, answer=row.answer) for row in rows])
+    try:
+        atomic_write_text(kb.snapshot_path(), snapshot.model_dump_json(indent=2) + "\n")
+    except OSError:
+        raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, detail="KNOWLEDGE_EXPORT_UNAVAILABLE") from None
+    return {"count": len(snapshot.entries)}
+
+
+@router.post("/sync")
+def sync_snapshot(
+    admin: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+    store: KnowledgeStore = Depends(require_knowledge_store),
+) -> dict:
+    """Nhập bản hỏi đáp đã deploy vào Postgres và xây các vector cần thiết."""
+    if not settings.document_catalog_sync_enabled:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="KNOWLEDGE_SYNC_DISABLED")
+    try:
+        snapshot = KnowledgeSnapshot.model_validate_json(kb.snapshot_path().read_bytes())
+    except FileNotFoundError:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="KNOWLEDGE_SNAPSHOT_MISSING") from None
+    except (OSError, ValidationError):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="KNOWLEDGE_SNAPSHOT_INVALID") from None
+    incoming = {kb.question_key(item.question): item for item in snapshot.entries}
+    if len(incoming) != len(snapshot.entries):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail="KNOWLEDGE_SNAPSHOT_INVALID")
+
+    added = updated = 0
+    existing = {row.question_key: row for row in db.scalars(select(KnowledgeEntry))}
+    synced = []
+    for key, item in incoming.items():
+        row = existing.get(key)
+        if row is None:
+            row = KnowledgeEntry(question_key=key, question=item.question, answer=item.answer, created_by=admin.id)
+            db.add(row)
+            added += 1
+        elif (row.question, row.answer) != (item.question, item.answer):
+            row.question, row.answer = item.question, item.answer
+            updated += 1
+        synced.append(row)
+
+    # Lưu trước để các mục chờ có thể tiếp tục nhúng nếu API embedding lỗi giữa chừng.
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status.HTTP_409_CONFLICT, detail="KNOWLEDGE_SYNC_CONFLICT") from None
+    indexed_ids = store.ids()
+    pending = [row for row in synced if kb.status_of(row) == "pending" or str(row.id) not in indexed_ids]
+    return {"added": added, "updated": updated, **_embed(db, store, pending)}
 
 
 @router.post("/embed")

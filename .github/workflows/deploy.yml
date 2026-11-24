@@ -30,10 +30,31 @@ jobs:
 
       - name: Build frontend
         working-directory: ctu-chatbot-fe
+        env:
+          VITE_API_BASE_URL: ''
+          VITE_GOOGLE_CLIENT_ID: ${{ vars.VITE_GOOGLE_CLIENT_ID }}
         run: |
+          if [[ "$GITHUB_EVENT_NAME" != pull_request && "$GITHUB_REF" == refs/heads/main ]]; then
+            test -n "$VITE_GOOGLE_CLIENT_ID" || { echo "Missing repository variable VITE_GOOGLE_CLIENT_ID"; exit 1; }
+          fi
           npm ci
           npm run lint
           npm run build
+
+      - name: Archive frontend
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: tar -czf frontend.tar.gz -C ctu-chatbot-fe/dist .
+
+      - name: Upload frontend
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-${{ github.sha }}
+          path: frontend.tar.gz
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+          overwrite: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -50,7 +71,7 @@ jobs:
           python -m pytest -q -m "not live"
 
   publish:
-    name: Build and publish ARM64 images
+    name: Build and publish ARM64 backend
     needs: verify
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
@@ -98,27 +119,6 @@ jobs:
           cache-from: type=gha,scope=backend
           cache-to: type=gha,mode=max,scope=backend
 
-      - name: Validate frontend deployment config
-        env:
-          VITE_GOOGLE_CLIENT_ID: ${{ vars.VITE_GOOGLE_CLIENT_ID }}
-        run: |
-          test -n "$VITE_GOOGLE_CLIENT_ID" || { echo "Missing repository variable VITE_GOOGLE_CLIENT_ID"; exit 1; }
-      - name: Build and publish frontend image
-        uses: docker/build-push-action@v6
-        with:
-          context: ctu-chatbot-fe
-          file: ctu-chatbot-fe/Dockerfile
-          platforms: linux/arm64
-          push: true
-          build-args: |
-            VITE_API_BASE_URL=
-            VITE_GOOGLE_CLIENT_ID=${{ vars.VITE_GOOGLE_CLIENT_ID }}
-          tags: |
-            ghcr.io/${{ steps.names.outputs.owner }}/${{ steps.names.outputs.name }}-frontend:${{ github.sha }}
-            ghcr.io/${{ steps.names.outputs.owner }}/${{ steps.names.outputs.name }}-frontend:latest
-          cache-from: type=gha,scope=frontend
-          cache-to: type=gha,mode=max,scope=frontend
-
   deploy:
     name: Deploy to ARM64 server
     needs: publish
@@ -127,6 +127,12 @@ jobs:
     steps:
       - name: Check out deployment manifest
         uses: actions/checkout@v4
+
+      - name: Download frontend
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-${{ github.sha }}
+          path: release
 
       - name: Configure SSH
         env:
@@ -141,20 +147,7 @@ jobs:
           printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Copy Compose manifest and prepare server
-        env:
-          SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
-          SSH_USER: ${{ secrets.DEPLOY_SSH_USER }}
-          SSH_PORT: ${{ secrets.DEPLOY_SSH_PORT || '22' }}
-        run: |
-          test -n "$SSH_HOST" || { echo "Missing repository secret DEPLOY_SSH_HOST"; exit 1; }
-          test -n "$SSH_USER" || { echo "Missing repository secret DEPLOY_SSH_USER"; exit 1; }
-          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" \
-            'test -d /home/opc/projects/ctu-chatbot && test -w /home/opc/projects/ctu-chatbot'
-          scp -i ~/.ssh/deploy_key -P "$SSH_PORT" docker-compose.prod.yml \
-            "$SSH_USER@$SSH_HOST:/home/opc/projects/ctu-chatbot/docker-compose.prod.yml"
-
-      - name: Pull and start the release
+      - name: Deploy backend and static frontend
         env:
           SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
           SSH_USER: ${{ secrets.DEPLOY_SSH_USER }}
@@ -163,32 +156,13 @@ jobs:
           IMAGE_NAME: ${{ needs.publish.outputs.image_name }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" \
-            "IMAGE_OWNER='$IMAGE_OWNER' IMAGE_NAME='$IMAGE_NAME' IMAGE_TAG='$IMAGE_TAG' bash -s" <<'REMOTE'
-          set -eu
-          cd /home/opc/projects/ctu-chatbot
-          test -f ctu-chatbot-be/.env || { echo "Create /home/opc/projects/ctu-chatbot/ctu-chatbot-be/.env before deploying"; exit 1; }
-          docker compose --env-file ctu-chatbot-be/.env -f docker-compose.prod.yml pull
-          docker compose --env-file ctu-chatbot-be/.env -f docker-compose.prod.yml up -d --remove-orphans
-          for attempt in $(seq 1 60); do
-            if curl --fail --silent http://127.0.0.1:8080/health >/dev/null; then
-              echo "Deployment is healthy"
-              for component in backend frontend; do
-                image_repo="ghcr.io/$IMAGE_OWNER/$IMAGE_NAME-$component"
-                docker image ls --format '{{.Tag}}' "$image_repo" | while IFS= read -r old_tag; do
-                  case "$old_tag" in
-                    "$IMAGE_TAG"|latest) continue ;;
-                  esac
-                  if [[ "$old_tag" =~ ^[0-9a-f]{40}$ ]]; then
-                    docker image rm "$image_repo:$old_tag" || true
-                  fi
-                done
-              done
-              exit 0
-            fi
-            sleep 5
-          done
-          docker compose --env-file ctu-chatbot-be/.env -f docker-compose.prod.yml ps
-          echo "Frontend health check timed out"
-          exit 1
-          REMOTE
+          test -n "$SSH_HOST" || { echo "Missing repository secret DEPLOY_SSH_HOST"; exit 1; }
+          test -n "$SSH_USER" || { echo "Missing repository secret DEPLOY_SSH_USER"; exit 1; }
+          target="$SSH_USER@$SSH_HOST"
+          ssh_cmd=(ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" "$target")
+          stage=$("${ssh_cmd[@]}" 'mktemp -d /home/opc/projects/ctu-chatbot/.deploy.XXXXXXXX')
+          [[ "$stage" =~ ^/home/opc/projects/ctu-chatbot/\.deploy\.[a-zA-Z0-9]{8}$ ]]
+          trap '"${ssh_cmd[@]}" "rm -rf -- $stage" || true' EXIT
+          scp -i ~/.ssh/deploy_key -P "$SSH_PORT" docker-compose.prod.yml release/frontend.tar.gz \
+            ops/deploy-host.sh ops/nginx/ctu-chatbot.locations.conf "$target:$stage/"
+          "${ssh_cmd[@]}" "IMAGE_OWNER='$IMAGE_OWNER' IMAGE_NAME='$IMAGE_NAME' IMAGE_TAG='$IMAGE_TAG' bash '$stage/deploy-host.sh' '$stage'"

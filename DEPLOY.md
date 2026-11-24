@@ -1,16 +1,16 @@
 # Hướng dẫn triển khai (deploy) CTU Chatbot
 
-Quy trình production dùng GitHub Actions để kiểm tra code, build image `linux/arm64`, đẩy lên GitHub Container Registry (GHCR), rồi SSH vào một máy chủ ARM64 và cập nhật Docker Compose.
+GitHub Actions kiểm tra code, đưa image backend `linux/arm64` lên GHCR và gửi bản build frontend qua SSH để Nginx trên server phục vụ.
 
 | Phần | Công nghệ | Chạy ở đâu |
 |---|---|---|
 | Backend (BE) | FastAPI + LangGraph + ChromaDB nhúng | Docker container trên server ARM64 |
 | Database | PostgreSQL 16 | Docker container trên cùng server, chỉ trong mạng nội bộ |
-| Frontend (FE) | React + Vite, Nginx Alpine | Docker container trên cùng server, cổng `8080` |
+| Frontend (FE) | React + Vite | File tĩnh do Nginx trên host phục vụ |
 
 Ngoài ra cần: **API key Gemini** (LLM + embedding) và **OAuth Client ID của Google** (đăng nhập).
 
-FE container phục vụ SPA và proxy `/api/` tới BE; sau này Nginx trên host chỉ cần reverse-proxy tới `127.0.0.1:8080`. Workflow deploy khi push vào `main`; PR chỉ chạy kiểm tra.
+Nginx trên host phục vụ SPA và chuyển `/api/` tới backend ở `127.0.0.1:8000`. Workflow deploy khi push vào `main`. PR chỉ chạy kiểm tra.
 
 ---
 
@@ -57,7 +57,7 @@ Trong production của hướng dẫn này, PostgreSQL chạy cùng stack Docker
 ## 3. CI/CD: triển khai tự động lên server ARM64
 
 ### 3.1. Chuẩn bị server
-Dùng Ubuntu/Debian 64-bit trên ARM (`aarch64`/`arm64`), cài Docker Engine cùng Docker Compose v2 và `curl`. Server hiện có source tại `/home/opc/projects/ctu-chatbot`; workflow dùng thư mục này làm thư mục deploy. User SSH (thường là `opc`) cần quyền ghi thư mục đó và quyền chạy Docker (thường bằng cách thêm vào group `docker`). Database chạy trong Compose, không cần cài riêng và không publish cổng `5432`.
+Dùng máy Linux ARM64 có Docker Compose, Nginx, Python 3 và `curl`. Workflow triển khai vào `/home/opc/projects/ctu-chatbot`. User deploy `opc` cần quyền ghi tại đó, chạy Docker và dùng `sudo -n` để tạo thư mục web, cập nhật cấu hình và reload Nginx. Postgres chạy trong mạng Compose.
 
 ### 3.1.1. Trỏ domain
 Trong trang quản lý DNS của nhà cung cấp domain, tạo:
@@ -122,7 +122,7 @@ CHAT_MAX_CONCURRENT=4
 Đặt `IMAGE_OWNER` và `IMAGE_NAME` đúng owner/repository GHCR (giá trị trên đúng cho repo này); workflow sẽ truyền tag commit cụ thể khi deploy. Password trong `DATABASE_URL` phải percent-encode nếu có ký tự đặc biệt. Tạo `SECRET_KEY` bằng `python -c "import secrets; print(secrets.token_urlsafe(64))"`. Có thể thêm `GEMINI_API_KEY_3`, `_4`, ... không giới hạn số thứ tự. Thêm Cloudinary variables nếu bật upload ảnh/PDF.
 
 ### 3.4. Chạy lần đầu và cập nhật
-- Pull/merge vào `main` chạy lint/build FE và test BE offline (không gọi Gemini thật, tránh tốn quota). Chỉ khi kiểm tra pass, Actions build image ARM64 theo commit SHA, publish lên GHCR, gửi Compose manifest qua SSH, pull image và khởi động stack.
+- Push vào `main` chạy lint/build FE và test BE offline. Sau khi kiểm tra qua, Actions publish image backend ARM64 theo commit SHA. Job deploy gửi Compose, file frontend và cấu hình Nginx qua SSH, rồi chạy `ops/deploy-host.sh`.
 - Migration Alembic tự chạy khi BE container khởi động; bảng checkpoint LangGraph được tạo khi app khởi động.
 - Deploy đóng gói nội dung Git trong `vector-docs/` vào image nhưng **không tự vector hóa tài liệu mới**. Sau deploy, admin vào `/admin/documents` và bấm **Sync catalog vào vector DB**; nút này chỉ đọc các `clean.md` đã commit và cập nhật Chroma.
 - Chạy thủ công tại **Actions → CI and ARM64 deployment → Run workflow** trên branch `main`.
@@ -184,40 +184,29 @@ CHAT_MAX_CONCURRENT=4
 ```
 
 
-## 5. Nginx trên host và HTTPS (bước làm sau)
+## 5. Nginx trên host và HTTPS
 
-Trong stack hiện tại, Nginx bên trong FE container phục vụ SPA, proxy `/api/` tới BE và đã tắt buffering cho SSE, đặt timeout 600 giây và giới hạn upload 40 MB. Khi cài Nginx trên host để gắn domain/HTTPS, reverse-proxy toàn bộ request về FE container; không proxy trực tiếp sang BE:
+Server hiện dùng `/etc/nginx/conf.d/ctu-chatbot.conf` cho domain CTU và chứng chỉ Certbot. Lần deploy đầu tiên thay khối proxy frontend cũ (`127.0.0.1:8080`) bằng include tới cấu hình trong `ops/nginx/ctu-chatbot.locations.conf`. Script giữ các thiết lập HTTPS, kiểm tra `nginx -t` và kiểm tra trang chủ, đường dẫn SPA và API qua HTTPS trước khi dừng container frontend cũ.
+
+Trên host mới, tạo vhost cho `ctu-chatbot.io.vn` và cấp chứng chỉ trước khi deploy. Trong block HTTPS, đặt `client_max_body_size 40m;` và include đúng dòng sau. Cài file include vào đường dẫn này trước khi nạp vhost.
 
 ```nginx
-server {
-    listen 80;
-    server_name ctu-chatbot.io.vn www.ctu-chatbot.io.vn;
-    client_max_body_size 40m;
-
-    location / {
-        proxy_pass http://127.0.0.1:8080;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_buffering off;
-        proxy_read_timeout 600s;
-    }
-}
+    include /etc/nginx/ctu-chatbot.locations.conf;
 ```
-Port mapping đã bind `127.0.0.1:8080:80` để FE chỉ được truy cập từ máy chủ. Deploy thay đổi này, cài Nginx host rồi kiểm tra HTTP. Cấp TLS bằng Certbot (ví dụ Ubuntu: `sudo certbot --nginx -d ctu-chatbot.io.vn -d www.ctu-chatbot.io.vn`); sau khi xác nhận HTTPS hoạt động, có thể bật chuyển hướng HTTP → HTTPS. Chỉ mở cổng 80/443 công khai. Cập nhật Authorized JavaScript origins trong Google Cloud thành `https://ctu-chatbot.io.vn`; CORS không cần chỉnh vì trình duyệt gọi API cùng origin.
+
+Frontend nằm trong `/usr/share/nginx/html/ctu-chatbot`. Nginx dùng `current` cho bản đang chạy và `previous` để tìm asset từ bản liền trước. Nginx chuyển API tới backend qua loopback và tắt buffering để chat SSE vẫn hiện từng đoạn. Trên host bật SELinux, Nginx cần quyền kết nối tới backend qua mạng nội bộ (`httpd_can_network_connect`).
 
 ---
 
 ## 6. Frontend
 
-FE được build thành image ARM64 trong CI. `VITE_API_BASE_URL` để rỗng để request dùng cùng origin; Nginx trong container chuyển `/api/` sang backend. Actions cần repository variable:
+CI build frontend một lần, gửi thư mục `dist` trong gói `frontend.tar.gz` và đổi symlink sau khi backend sẵn sàng. `VITE_API_BASE_URL` để rỗng để trình duyệt gọi API cùng origin. Actions cần repository variable sau.
 
 | Biến | Giá trị |
 |---|---|
 | `VITE_GOOGLE_CLIENT_ID` | Client ID Google ở mục 2.2; thay đổi biến này cần chạy deploy/build lại. |
 
-FE và BE được deploy đồng bộ từ cùng một commit; không deploy FE tĩnh riêng cho stack Docker này.
+FE và BE được deploy từ cùng một commit. Nếu bước pull backend gặp lỗi mạng, job tự thử lại tối đa ba lần. Có thể bấm **Re-run failed jobs** để deploy lại từ artifact đã build.
 
 ---
 
@@ -272,7 +261,7 @@ Push/merge commit đã kiểm tra vào `main`; GitHub Actions tự build và dep
 - Mất `chroma_data` thì phải dựng lại vector hoặc vào trang quản trị chọn "Embedding lại tất cả"; quá trình này tốn quota Gemini.
 - **Bí mật:** không commit `.env`, key Gemini, `SECRET_KEY`. Nếu lộ key, thu hồi và tạo lại ở Google.
 - **Phân quyền:** chỉ đưa email thật sự cần vào `ADMIN_EMAILS`; admin có quyền nạp tài liệu thay đổi nội dung chatbot trả lời.
-- **Mạng:** trước khi có Nginx host, chỉ mở SSH và cổng 8080 cần thiết; sau khi cấu hình Nginx/TLS thì chỉ mở 80/443. BE và Postgres không publish host port.
+- **Mạng:** web public đi qua 80/443 trên Nginx. Backend bind `127.0.0.1:8000` và Postgres chạy trong mạng Compose.
 
 ## 11. Sự cố thường gặp
 

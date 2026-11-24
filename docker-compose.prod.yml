@@ -18,6 +18,8 @@ services:
   backend:
     image: ghcr.io/${IMAGE_OWNER:?Set IMAGE_OWNER}/${IMAGE_NAME:-ctu-chatbot}-backend:${IMAGE_TAG:-latest}
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:8000:8000"
     env_file:
       - ./ctu-chatbot-be/.env
     environment:
@@ -46,20 +48,6 @@ services:
       timeout: 5s
       retries: 10
       start_period: 10m
-
-  frontend:
-    image: ghcr.io/${IMAGE_OWNER:?Set IMAGE_OWNER}/${IMAGE_NAME:-ctu-chatbot}-frontend:${IMAGE_TAG:-latest}
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:8080:80"
-    depends_on:
-      backend:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/health"]
-      interval: 15s
-      timeout: 5s
-      retries: 5
 
 volumes:
   postgres_data:

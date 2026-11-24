@@ -2,7 +2,7 @@ import random
 import re
 import time
 import uuid
-from collections.abc import Iterator
+from collections.abc import Generator
 from dataclasses import dataclass, field
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, RemoveMessage
@@ -187,7 +187,7 @@ def cached_turn(
 
 def stream_cached_turn(
     graph, conversation_id: uuid.UUID, text: str, hit: suggested.SuggestedAnswer, author_name: str | None = None
-) -> Iterator[dict]:
+) -> Generator[dict, None, None]:
     """Như cached_turn nhưng trả các sự kiện giống stream_turn (user_message, nhiều token, done) để FE không phải khác đi."""
     duration = random.uniform(*CACHED_DELAY_SECONDS)
     user_msg, bot_msg = cached_turn(graph, conversation_id, text, hit, duration, author_name)
@@ -208,7 +208,7 @@ def stream_turn(
     routes: list[str] | None = None,
     *,
     turn_started_at: float | None = None,
-) -> Iterator[dict]:
+) -> Generator[dict, None, None]:
     """Như run_turn nhưng trả từng sự kiện: user_message, rồi nhiều token, cuối cùng done.
 
     Nếu LLM lỗi hoặc client ngắt kết nối giữa chừng, tin của người dùng bị gỡ khỏi lịch sử

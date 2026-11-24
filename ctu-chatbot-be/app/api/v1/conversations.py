@@ -3,14 +3,17 @@ import logging
 import re
 import time
 import uuid
-from collections.abc import Iterator
+from collections.abc import Generator
 from dataclasses import asdict
 from datetime import datetime, timezone
 
+import anyio
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
+from starlette.concurrency import run_in_threadpool
+from starlette.types import Receive, Scope, Send
 
 from app.api.deps import get_chat_graph, get_current_user
 from app.db.session import get_db, get_sessionmaker
@@ -26,7 +29,7 @@ from app.schemas.conversation import (
 from app.services import sharing
 from app.services.chat import smalltalk, suggested
 from app.services.chat.moderation import is_profane
-from app.services.chat.queue import QueueFull, QueueTimeout, Ticket, UserBusy, conversation_guard, get_turn_queue
+from app.services.chat.queue import QueueFull, QueueTimeout, Ticket, TurnQueue, UserBusy, conversation_guard, get_turn_queue
 from app.services.chat.service import cached_turn, delete_thread, get_history, run_turn, stream_cached_turn, stream_turn
 from app.core.config import settings
 from app.services.llm.gemini import LLMError, LLMNotConfigured, LLMUnavailable
@@ -100,10 +103,10 @@ def _enforce_rate_limit(db: Session, user: User) -> None:
         )
 
 
-def _enter_queue(user: User) -> Ticket:
+def _enter_queue(user: User, queue: TurnQueue) -> Ticket:
     """Xin chỗ trong hàng đợi lượt chat. Đầy thì 503, người dùng đang có lượt khác chạy thì 429."""
     try:
-        return get_turn_queue().enter(str(user.id), busy_wait=settings.chat_busy_wait_seconds)
+        return queue.enter(str(user.id), busy_wait=settings.chat_busy_wait_seconds)
     except UserBusy:
         logger.warning("429 TURN_IN_PROGRESS user=%s (lượt trước của người này chưa trả chỗ trong hàng đợi)", user.id)
         raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, detail="TURN_IN_PROGRESS", headers={"Retry-After": "5"}) from None
@@ -152,16 +155,16 @@ def _pre_screen(db: Session, user: User, text: str, has_attachments: bool = Fals
     return hit
 
 
-def _admit(db: Session, user: User, hit) -> Ticket | None:
+def _admit(db: Session, user: User, hit, queue: TurnQueue) -> Ticket | None:
     """Vào hàng đợi rồi kiểm tra giới hạn tốc độ (theo thứ tự này để lượt bị từ chối vì hàng đầy không mất lượt hỏi).
     Câu hỏi gợi ý có sẵn đáp án nên không cần hàng đợi và không tính giới hạn."""
     if hit is not None:
         return None
-    ticket = _enter_queue(user)
+    ticket = _enter_queue(user, queue)
     try:
         _enforce_rate_limit(db, user)
-    except HTTPException:
-        get_turn_queue().release(ticket)
+    except Exception:
+        queue.release(ticket)
         raise
     return ticket
 
@@ -250,14 +253,15 @@ def send_message(
     db.rollback()  # trả kết nối DB về pool trong lúc chờ LLM (có thể mất vài chục giây)
     # Câu hỏi gợi ý / chào hỏi: trả lời có sẵn, không gọi LLM và không tính vào giới hạn chat. Chửi thề: từ chối.
     hit = _pre_screen(db, user, text, bool(attachments))
-    ticket = _admit(db, user, hit)
+    queue = get_turn_queue()
+    ticket = _admit(db, user, hit, queue)
 
     holding = False
     try:
         if hit is not None:
             user_msg, bot_msg = cached_turn(graph, conv_id, text, hit, author_name=author)
         else:
-            for _ in get_turn_queue().wait(ticket):  # chờ tới lượt (không có sự kiện để báo vì đây là request thường)
+            for _ in queue.wait(ticket):  # chờ tới lượt (không có sự kiện để báo vì đây là request thường)
                 pass
             holding = conversation_guard.acquire(conv_id)
             if not holding:
@@ -281,7 +285,7 @@ def send_message(
         if holding:
             conversation_guard.release(conv_id)
         if ticket is not None:
-            get_turn_queue().release(ticket)
+            queue.release(ticket)
 
     conv = _touch(db, conv_id, text)
     if conv is None:
@@ -297,6 +301,35 @@ def send_message(
 
 def _sse(event: str, data: dict) -> str:
     return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
+
+
+class _ChatStreamingResponse(StreamingResponse):
+    def __init__(self, events: Generator[str, None, None], queue: TurnQueue, ticket: Ticket | None):
+        super().__init__(
+            events,
+            media_type="text/event-stream",
+            headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+        )
+        self._events = events
+        self._queue = queue
+        self._ticket = ticket
+
+    async def listen_for_disconnect(self, receive: Receive) -> None:
+        await super().listen_for_disconnect(receive)
+        if self._ticket is not None:
+            self._queue.cancel_waiting(self._ticket)
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        try:
+            await super().__call__(scope, receive, send)
+        finally:
+            # The transport can disconnect before the generator is even entered.
+            with anyio.CancelScope(shield=True):
+                try:
+                    await run_in_threadpool(self._events.close)
+                finally:
+                    if self._ticket is not None:
+                        self._queue.release(self._ticket)
 
 
 @router.post("/{conversation_id}/messages/stream")
@@ -330,22 +363,23 @@ def stream_response(
     attachments = _resolve_attachments(db, user, body.attachment_ids)
     db.rollback()
     hit = _pre_screen(db, user, text, bool(attachments))  # chửi: 422; chào hỏi: trả lời có sẵn (cả hai tính giới hạn); câu gợi ý: có sẵn, không tính giới hạn
-    ticket = _admit(db, user, hit)
+    queue = get_turn_queue()
+    ticket = _admit(db, user, hit, queue)
 
-    def events() -> Iterator[str]:
+    def events() -> Generator[str, None, None]:
         holding = False
+        turn = None
         try:
             if hit is not None:
                 turn = stream_cached_turn(graph, conv_id, text, hit, author_name=author)
             else:
-                for position in get_turn_queue().wait(ticket):  # đông người thì xếp hàng, báo vị trí cho client
+                for position in queue.wait(ticket):  # đông người thì xếp hàng, báo vị trí cho client
                     yield _sse("queued", {"position": position})
                 holding = conversation_guard.acquire(conv_id)  # hai người cùng chat vào một cuộc trò chuyện: lần lượt
-                if not holding:
-                    yield _sse("error", {"code": "CONVERSATION_BUSY"})
-                    return
-                turn = stream_turn(graph, conv_id, text, author, attachments, routes, turn_started_at=turn_started_at)
-            for event in turn:
+                if holding:
+                    turn = stream_turn(graph, conv_id, text, author, attachments, routes, turn_started_at=turn_started_at)
+            terminal = _sse("error", {"code": "CONVERSATION_BUSY" if turn is None else "INTERNAL_ERROR"})
+            for event in turn or ():
                 kind = event["type"]
                 if kind == "user_message":
                     yield _sse("start", {"user_message": ChatMessageOut(**asdict(event["message"])).model_dump()})
@@ -356,35 +390,40 @@ def stream_response(
                         conv_row = _touch(session, conv_id, text)
                         conv_out = ConversationOut.model_validate(conv_row).model_dump(mode="json") if conv_row else None
                         record_usage(session, user_id, conv_id, cached=hit is not None)
-                    yield _sse(
+                    terminal = _sse(
                         "done",
                         {
                             "assistant_message": ChatMessageOut(**asdict(event["message"])).model_dump(),
                             "conversation": conv_out,
                         },
                     )
+                    break
         except QueueTimeout as exc:
-            yield _sse("error", {"code": "SERVER_BUSY", "retry_after": exc.retry_after})
+            terminal = _sse("error", {"code": "SERVER_BUSY", "retry_after": exc.retry_after})
         except LLMNotConfigured:
-            yield _sse("error", {"code": "LLM_NOT_CONFIGURED"})
+            terminal = _sse("error", {"code": "LLM_NOT_CONFIGURED"})
         except LLMUnavailable as exc:
-            yield _sse("error", {"code": "LLM_RATE_LIMITED", "retry_after": exc.retry_after})
+            terminal = _sse("error", {"code": "LLM_RATE_LIMITED", "retry_after": exc.retry_after})
         except LLMError:
-            yield _sse("error", {"code": "LLM_ERROR"})
+            terminal = _sse("error", {"code": "LLM_ERROR"})
         except Exception:  # noqa: BLE001 - không để stream đứt không báo gì cho client
             logger.exception("Lỗi không mong đợi khi stream câu trả lời")
-            yield _sse("error", {"code": "INTERNAL_ERROR"})
+            terminal = _sse("error", {"code": "INTERNAL_ERROR"})
         finally:
+            if turn is not None:
+                try:
+                    turn.close()
+                except Exception:
+                    logger.exception("Lỗi khi dọn lượt chat đã dừng")
             if holding:
                 conversation_guard.release(conv_id)
             if ticket is not None:
-                get_turn_queue().release(ticket)  # luôn trả chỗ, kể cả khi client ngắt kết nối giữa chừng
+                queue.release(ticket)
 
-    return StreamingResponse(
-        events(),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
-    )
+        # Once the final event reaches the browser, another turn can already start.
+        yield terminal
+
+    return _ChatStreamingResponse(events(), queue, ticket)
 
 
 @router.delete("/{conversation_id}", status_code=status.HTTP_204_NO_CONTENT)

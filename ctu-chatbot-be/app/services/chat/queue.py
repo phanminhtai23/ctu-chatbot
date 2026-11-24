@@ -162,6 +162,12 @@ class TurnQueue:
         with self._cond:
             self._finish(ticket)
 
+    def cancel_waiting(self, ticket: Ticket) -> None:
+        """Đánh thức lượt đang chờ khi client ngắt kết nối; lượt đang chạy tự dọn sau khi dừng."""
+        with self._cond:
+            if ticket.state == "waiting":
+                self._finish(ticket)
+
 
 class ConversationGuard:
     """Mỗi cuộc trò chuyện chỉ chạy MỘT lượt tại một thời điểm: khi được chia sẻ cho nhiều người chat, hai lượt cùng lúc

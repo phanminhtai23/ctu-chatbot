@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import proofSmall from '../assets/landing-preview-480.webp?no-inline'
+import proofMedium from '../assets/landing-preview-768.webp?no-inline'
 import { useAuth } from '../auth'
 import BrandLockup from '../components/BrandLockup'
 import Icon from '../components/Icon'
@@ -13,6 +15,7 @@ import './Landing.css'
 
 type IconName = Parameters<typeof Icon>[0]['name']
 const COPYRIGHT_YEAR = new Date().getFullYear()
+const proofOriginal = '/landing/chat-reference-preview.webp'
 const features: { icon: IconName; title: TranslationKey; text: TranslationKey }[] = [
   { icon: 'calc', title: 'feat2.t', text: 'feat2.x' },
   { icon: 'shield', title: 'feat3.t', text: 'feat3.x' },
@@ -34,26 +37,48 @@ export default function Landing() {
   const { user } = useAuth()
   const chatPath = user ? '/chat' : '/login'
   const rootRef = useRef<HTMLDivElement>(null)
+  const catalogSection = useRef<HTMLElement>(null)
+  const samplesSection = useRef<HTMLElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
-  const [samples, setSamples] = useState<Suggestion[]>([])
+  const [samples, setSamples] = useState<Suggestion[] | null>(null)
+  const showSamples = samples === null || samples.length > 0
   const [summary, setSummary] = useState<CatalogSummary | null>(null)
   const [catalogState, setCatalogState] = useState<'loading' | 'ready' | 'error'>('loading')
   const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     let alive = true
-    getSuggestions()
-      .then((items) => alive && setSamples(items))
-      .catch(() => {})
-    getCatalogSummary()
-      .then((data) => {
-        if (!alive) return
-        setSummary(data)
-        setCatalogState('ready')
-      })
-      .catch(() => alive && setCatalogState('error'))
+    const nearSection = (section: HTMLElement | null, load: () => void) => {
+      if (!section || !('IntersectionObserver' in window) || window.location.hash === `#${section.id}`) {
+        load()
+        return
+      }
+      const observer = new IntersectionObserver(([entry]) => {
+        if (!alive || !entry.isIntersecting) return
+        observer.disconnect()
+        load()
+      }, { rootMargin: '320px 0px' })
+      observer.observe(section)
+      return () => observer.disconnect()
+    }
+    const stopCatalog = nearSection(catalogSection.current, () => {
+      getCatalogSummary()
+        .then((data) => {
+          if (!alive) return
+          setSummary(data)
+          setCatalogState('ready')
+        })
+        .catch(() => alive && setCatalogState('error'))
+    })
+    const stopSamples = nearSection(samplesSection.current, () => {
+      getSuggestions()
+        .then((items) => alive && setSamples(items))
+        .catch(() => alive && setSamples([]))
+    })
     return () => {
       alive = false
+      stopCatalog?.()
+      stopSamples?.()
     }
   }, [])
 
@@ -120,7 +145,7 @@ export default function Landing() {
           <a href="#tai-lieu" onClick={closeMenu}>
             {t('nav.docs')}
           </a>
-          {samples.length > 0 && (
+          {showSamples && (
             <a href="#cau-hoi-mau" onClick={closeMenu}>
               {t('nav.samples')}
             </a>
@@ -181,7 +206,7 @@ export default function Landing() {
               </p>
             </div>
             <div className="lp-hero__visual">
-              <DocumentSearchVisual documents={summary?.documents ?? []} />
+              <DocumentSearchVisual />
             </div>
           </div>
           <div className="lp-hero__foot">
@@ -224,7 +249,7 @@ export default function Landing() {
                 {t('landing.proof.realUI')}
               </span>
               <a
-                href="/landing/chat-reference-preview.webp"
+                href={proofOriginal}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={t('landing.proof.enlarge')}
@@ -233,18 +258,21 @@ export default function Landing() {
               </a>
             </div>
             <a
-              href="/landing/chat-reference-preview.webp"
+              href={proofOriginal}
               target="_blank"
               rel="noopener noreferrer"
               className="lp-product__image"
               aria-label={t('landing.proof.enlarge')}
             >
               <img
-                src="/landing/chat-reference-preview.webp"
+                src={proofMedium}
+                srcSet={`${proofSmall} 480w, ${proofMedium} 768w, ${proofOriginal} 1300w`}
+                sizes="(max-width: 720px) calc(100vw - 40px), (max-width: 1200px) calc(100vw - 80px), 1120px"
                 alt={t('landing.proof.imageAlt')}
                 width="1300"
                 height="900"
                 loading="lazy"
+                fetchPriority="low"
                 decoding="async"
               />
             </a>
@@ -275,7 +303,7 @@ export default function Landing() {
           </ul>
         </section>
 
-        <section id="tai-lieu" className="lp-library" aria-labelledby="docs-title">
+        <section ref={catalogSection} id="tai-lieu" className="lp-library" aria-labelledby="docs-title">
           <div className="lp-container">
             <div className="lp-section-heading" data-reveal>
               <div>
@@ -356,8 +384,8 @@ export default function Landing() {
           </div>
         </section>
 
-        {samples.length > 0 && (
-          <section id="cau-hoi-mau" className="lp-section lp-container" aria-labelledby="samples-title">
+        {showSamples && (
+          <section ref={samplesSection} id="cau-hoi-mau" className="lp-section lp-container" aria-labelledby="samples-title">
             <div className="lp-section-heading" data-reveal>
               <div>
                 <p className="lp-eyebrow">{t('landing.samples.eyebrow')}</p>
@@ -369,8 +397,9 @@ export default function Landing() {
               </div>
               <p className="lp-section-heading__desc">{t('samples.sub')}</p>
             </div>
+            {samples === null && <p role="status" className="lp-catalog-state lp-glass">{t('common.loading')}</p>}
             <ul className="lp-samples">
-              {samples.slice(0, 4).map((sample, index) => (
+              {samples?.slice(0, 4).map((sample, index) => (
                 <li key={sample.id} data-reveal>
                   <Link to={chatPath} className="lp-sample lp-glass">
                     <div className="lp-sample__top">

@@ -364,13 +364,17 @@
 }
 .lp-research__lens {
   transform: translate(348px, 166px);
-  animation: lp-document-search 8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
-.lp-research__highlight {
-  animation: lp-document-highlight 4s ease-in-out infinite;
-}
-.lp-research__art > g > g:nth-last-child(2) .lp-research__highlight {
-  animation-delay: -2s;
+@media (hover: hover) and (pointer: fine) {
+  .lp-research:hover .lp-research__lens {
+    animation: lp-document-search 8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+  .lp-research:hover .lp-research__highlight {
+    animation: lp-document-highlight 4s ease-in-out infinite;
+  }
+  .lp-research:hover .lp-research__art > g > g:nth-last-child(2) .lp-research__highlight {
+    animation-delay: -2s;
+  }
 }
 .lp-research figcaption {
   margin: 3px 20px 0 30px;

@@ -1,6 +1,5 @@
 import { useId } from 'react'
 import { useI18n } from '../../i18n'
-import type { CatalogSummary } from '../../lib/documents'
 import Icon from '../Icon'
 
 function titleLines(title: string): string[] {
@@ -20,22 +19,15 @@ function titleLines(title: string): string[] {
   return lines
 }
 
-/** Minh hoạ SVG có chữ thật từ catalog, độc lập với request chat. */
-export default function DocumentSearchVisual({ documents }: { documents: CatalogSummary['documents'] }) {
+export default function DocumentSearchVisual() {
   const { t } = useI18n()
   const id = useId()
-  const cards = documents.length ? documents.slice(0, 2) : [null, null]
+  const cards = [t('pick.docName'), t('landing.lookup.placeholder')]
 
   return (
     <figure className="lp-research">
       <svg className="lp-research__art" viewBox="0 0 520 460" role="img" aria-labelledby={`${id}-title`}>
-        <title id={`${id}-title`}>
-          {t('landing.lookup.alt')}{' '}
-          {documents
-            .slice(0, 2)
-            .map((doc) => doc.label)
-            .join(', ')}
-        </title>
+        <title id={`${id}-title`}>{t('landing.lookup.alt')}</title>
         <defs>
           <linearGradient id={`${id}-paper`} x1="0" y1="0" x2="1" y2="1">
             <stop stopColor="#fff" stopOpacity="0.98" />
@@ -73,9 +65,9 @@ export default function DocumentSearchVisual({ documents }: { documents: Catalog
           />
           <circle cx="432" cy="50" r="5" fill="#fbc500" />
           <path d="M457 361h13m-6.5-6.5v13M41 57h10m-5-5v10" stroke="#9ddfff" strokeWidth="2" strokeLinecap="round" />
-          {cards.map((doc, index) => (
+          {cards.map((label, index) => (
             <g
-              key={doc?.id ?? index}
+              key={label}
               transform={index === 0 ? 'translate(30 37) rotate(-4 180 85)' : 'translate(76 244) rotate(3 180 85)'}
             >
               <rect
@@ -108,7 +100,7 @@ export default function DocumentSearchVisual({ documents }: { documents: Catalog
                 strokeWidth="1.5"
                 strokeLinejoin="round"
               />
-              {titleLines(doc?.label ?? t('landing.lookup.placeholder')).map((line, lineIndex) => (
+              {titleLines(label).map((line, lineIndex) => (
                 <text
                   key={lineIndex}
                   x="24"
@@ -121,11 +113,6 @@ export default function DocumentSearchVisual({ documents }: { documents: Catalog
                   {line}
                 </text>
               ))}
-              {doc?.decision_no && (
-                <text x="24" y="112" fill="#617c98" fontSize="10">
-                  {doc.decision_no}
-                </text>
-              )}
               <rect x="24" y="130" width={index === 0 ? '196' : '224'} height="8" rx="4" fill="#c0d6ed" />
               <rect x="24" y="147" width={index === 0 ? '260' : '180'} height="6" rx="3" fill="#d4e4f4" />
               <rect

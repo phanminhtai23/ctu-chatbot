@@ -2,11 +2,12 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import RequireAdmin from './components/RequireAdmin'
 import RequireAuth from './components/RequireAuth'
-import WelcomeDialog from './components/WelcomeDialog'
+import { useAuth } from './auth'
 import { useI18n } from './i18n'
 import Landing from './pages/Landing'
 
 const Chat = lazy(() => import('./pages/Chat'))
+const WelcomeDialog = lazy(() => import('./components/WelcomeDialog'))
 const DevGifs = lazy(() => import('./pages/DevGifs'))
 const Login = lazy(() => import('./pages/Login'))
 const SharedView = lazy(() => import('./pages/SharedView'))
@@ -18,10 +19,15 @@ const AdminKnowledge = lazy(() => import('./pages/admin/AdminKnowledge'))
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'))
 
 function App() {
+  const { user } = useAuth()
   const { t } = useI18n()
   return (
     <BrowserRouter>
-      <WelcomeDialog />
+      {user && (
+        <Suspense fallback={null}>
+          <WelcomeDialog />
+        </Suspense>
+      )}
       <Suspense fallback={<p role="status" className="m-0 p-6 text-muted">{t('common.loading')}</p>}>
         <Routes>
           <Route path="/" element={<Landing />} />

@@ -1,3 +1,4 @@
+import { GoogleOAuthProvider } from '@react-oauth/google'
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../auth'
@@ -90,10 +91,12 @@ export default function Login() {
             <p className="mb-8">{t('login.welcome')}</p>
 
             {GOOGLE_CLIENT_ID ? (
-              <GoogleSignInButton
-                onCredential={handleGoogleCredential}
-                onError={() => setError(t('login.errGoogle'))}
-              />
+              <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+                <GoogleSignInButton
+                  onCredential={handleGoogleCredential}
+                  onError={() => setError(t('login.errGoogle'))}
+                />
+              </GoogleOAuthProvider>
             ) : (
               <>
                 <button

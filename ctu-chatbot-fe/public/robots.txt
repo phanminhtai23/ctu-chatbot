@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /admin
+Disallow: /chat
+Disallow: /login
+Disallow: /profile
+Disallow: /s/
+Disallow: /api/
+Allow: /api/v1/documents/
+Allow: /api/v1/suggestions

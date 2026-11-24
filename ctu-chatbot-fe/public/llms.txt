@@ -1,0 +1,12 @@
+# CTU Chatbot
+
+> Trợ lý tiếng Việt giúp sinh viên Đại học Cần Thơ tra cứu quy chế học vụ và xem các nguồn tham khảo.
+
+Đây là dự án phi chính thức. Trang chủ hiển thị danh sách tài liệu và câu hỏi mẫu. Gửi câu hỏi trong chatbot cần đăng nhập bằng tài khoản CTU.
+
+## Tài nguyên công khai
+
+- [Trang giới thiệu CTU Chatbot](https://ctu-chatbot.io.vn/)
+- [Danh mục nguồn tài liệu (JSON)](https://ctu-chatbot.io.vn/api/v1/documents/catalog/summary)
+- [Danh sách câu hỏi mẫu (JSON)](https://ctu-chatbot.io.vn/api/v1/suggestions)
+- [Danh mục API công khai (ARD)](https://ctu-chatbot.io.vn/.well-known/ard.json)

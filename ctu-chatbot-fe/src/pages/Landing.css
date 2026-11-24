@@ -278,7 +278,6 @@
 .lp-hero__copy {
   min-width: 0;
   padding-bottom: 12px;
-  animation: lp-rise 0.7s ease-out both;
 }
 .lp-hero .lp-eyebrow {
   display: inline-flex;
@@ -351,7 +350,6 @@
   position: relative;
   min-width: 0;
   padding: 0;
-  animation: lp-rise 0.9s 0.1s ease-out both;
 }
 .lp-research {
   position: relative;
@@ -1033,17 +1031,6 @@
   opacity: 1;
   translate: none;
 }
-@keyframes lp-rise {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @media (min-width: 1600px) {
   .lp-hero__grid {
     padding-top: 64px;

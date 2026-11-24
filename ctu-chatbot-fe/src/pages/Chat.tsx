@@ -635,7 +635,7 @@ export default function Chat() {
           {isEmpty && !busy && (
             <div className="mb-auto mt-[min(4vh,40px)] flex w-full max-w-[860px] flex-col items-center gap-2 text-center">
               <img
-                src="/ctu-chatbot-avatar.webp"
+                src="/ctu-chatbot-avatar-384.webp"
                 alt="Mascot CTU Chatbot"
                 width={128}
                 height={128}

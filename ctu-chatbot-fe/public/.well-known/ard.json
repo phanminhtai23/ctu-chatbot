@@ -1,0 +1,88 @@
+{
+  "entries": [
+    {
+      "identifier": "urn:air:ctu-chatbot.io.vn:api:public-resources",
+      "displayName": "CTU Chatbot Public Resources",
+      "type": "application/openapi+json",
+      "description": "Danh mục tài liệu tham khảo và câu hỏi mẫu công khai của CTU Chatbot.",
+      "representativeQueries": [
+        "CTU Chatbot đang hỗ trợ tài liệu quy chế học vụ nào?",
+        "Tìm câu hỏi mẫu về học vụ của Đại học Cần Thơ."
+      ],
+      "data": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "CTU Chatbot Public Resources",
+          "version": "1.0.0"
+        },
+        "servers": [
+          { "url": "https://ctu-chatbot.io.vn/api/v1" }
+        ],
+        "paths": {
+          "/documents/catalog/summary": {
+            "get": {
+              "operationId": "listDocumentSources",
+              "summary": "List the public academic reference sources.",
+              "responses": {
+                "200": {
+                  "description": "Document source metadata and official links.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "required": ["count", "documents"],
+                        "properties": {
+                          "count": { "type": "integer", "minimum": 0 },
+                          "documents": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": { "type": "string" },
+                                "label": { "type": "string" },
+                                "decision_no": { "type": "string" },
+                                "description": { "type": "string" },
+                                "official_url": { "type": "string" }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/suggestions": {
+            "get": {
+              "operationId": "listSampleQuestions",
+              "summary": "List the public sample questions.",
+              "responses": {
+                "200": {
+                  "description": "Sample questions with their categories.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": ["id", "category", "question"],
+                          "properties": {
+                            "id": { "type": "string" },
+                            "category": { "type": "string" },
+                            "question": { "type": "string" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

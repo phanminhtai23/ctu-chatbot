@@ -5,7 +5,7 @@ type Props = {
 export default function Logo({ size = 44 }: Props) {
   return (
     <img
-      src="/ctu-chatbot-logo.webp"
+      src="/ctu-chatbot-logo-192.webp"
       width={size}
       height={size}
       alt="Biểu trưng CTU"

@@ -139,10 +139,33 @@ if ! cmp -s "$site" "$stage/next-site.conf" || ! cmp -s "$locations" "$stage/ctu
     sudo -n systemctl reload nginx
 fi
 
-https=(curl -fsS --max-time 10 --resolve "$host:443:127.0.0.1")
-"${https[@]}" "https://$host/" | cmp -s - "$release/index.html"
-"${https[@]}" "https://$host/chat" | cmp -s - "$release/index.html"
-"${https[@]}" "https://$host/api/v1/health" >/dev/null
+https=(curl -fsS --max-time 5 --noproxy "$host" --resolve "$host:443:127.0.0.1")
+
+check_frontend() {
+    local path=$1
+    if ! "${https[@]}" -o "$stage/probe.html" "https://$host$path"; then
+        echo "HTTPS $path is not ready" >&2
+        return 1
+    fi
+    if ! cmp -s "$stage/probe.html" "$release/index.html"; then
+        echo "HTTPS $path is not serving the new frontend yet" >&2
+        return 1
+    fi
+}
+
+# systemctl reload returns before Nginx finishes starting workers with the new config.
+for attempt in {1..12}; do
+    if check_frontend / && check_frontend /chat &&
+       "${https[@]}" -o /dev/null "https://$host/api/v1/health"; then
+        break
+    fi
+    if (( attempt == 12 )); then
+        echo "HTTPS checks failed after $attempt attempts; rolling back the release" >&2
+        exit 1
+    fi
+    sleep 2
+done
+
 mv -f -- "$stage/docker-compose.prod.yml" "$project/docker-compose.prod.yml"
 published=true
 echo "Backend and static frontend are healthy"

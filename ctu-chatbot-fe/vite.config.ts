@@ -6,11 +6,12 @@ const inlineEntryStyles: Plugin = {
   apply: 'build',
   transformIndexHtml: {
     order: 'post',
-    handler(html, { bundle }) {
+    handler(html, { bundle, chunk }) {
       return html.replace(/<link rel="stylesheet" crossorigin href="\/([^"\n]+\.css)">/g, (tag, file: string) => {
         const asset = bundle?.[file]
         if (asset?.type !== 'asset' || typeof asset.source !== 'string') return tag
-        // Put the entry styles in the first response so they are ready when React mounts.
+        // The inline stylesheet is already loaded. Keep it out of async route preloads.
+        chunk?.viteMetadata?.importedCss.delete(file)
         return `<style>${asset.source.replace(/<\/style/gi, '<\\/style')}</style>`
       })
     },

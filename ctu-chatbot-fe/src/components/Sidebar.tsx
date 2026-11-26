@@ -122,9 +122,9 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
       <aside
         // Đóng trên điện thoại thì nằm ngoài màn hình và không cho Tab vào (inert).
         inert={isMobile && !mobileOpen}
-        className={`fixed bottom-0 left-0 top-0 z-40 box-border flex h-dvh w-[min(86vw,320px)] flex-none flex-col bg-ctu-navy-dark text-white transition-transform duration-200 md:sticky md:bottom-auto md:left-auto md:z-auto md:translate-x-0 md:transition-[width] ${
+        className={`fixed bottom-0 left-0 top-0 z-40 box-border flex h-dvh w-[min(calc(100vw-2rem),352px)] flex-none flex-col bg-ctu-navy-dark text-white transition-transform duration-200 md:sticky md:bottom-auto md:left-auto md:z-auto md:translate-x-0 md:transition-[width] ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
-        } ${collapsed ? 'md:w-[72px]' : 'md:w-[300px]'}`}
+        } ${collapsed ? 'md:w-[72px]' : 'md:w-[clamp(320px,25vw,344px)]'}`}
       >
         <div className={`flex items-center p-3 ${collapsed ? 'md:flex-col md:py-4' : ''}`}>
           <BrandLockup size={52} title={title} subtitle={subtitle} textClassName={labelClass(collapsed)} />

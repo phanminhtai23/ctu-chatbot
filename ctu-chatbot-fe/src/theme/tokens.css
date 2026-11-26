@@ -31,7 +31,8 @@
   color-scheme: dark;
 }
 
-@theme inline {
+/* Landing.css tham chiếu trực tiếp các biến này bằng var(). */
+@theme static inline {
   --font-sans: 'Readex Pro', ui-sans-serif, system-ui, sans-serif;
 
   /* Brand cố định (CTU) */
@@ -40,7 +41,9 @@
   --color-ctu-cyan: #22b8f0;
   --color-ctu-gold: #fff201;
   --color-ctu-gold-active: #fbc500;
+}
 
+@theme inline {
   /* Theo theme */
   --color-surface: var(--surface);
   --color-tint: var(--tint);
